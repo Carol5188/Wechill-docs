@@ -1,0 +1,3058 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WeChill Game Room MVP Prototype v3.0</title>
+<style>
+/* ═══════════════════════════════════════════
+   WeChill 游戏房客户端 MVP 原型 v3.0
+   中东主题 · 星月夜风格 · 仿手机端交互
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* 夜空色系 */
+  --night-deep: #0a0e1a;
+  --night: #111827;
+  --night-mid: #1a1f36;
+  --night-light: #252b45;
+  /* 金色系 - 中东皇室感 */
+  --gold: #d4a843;
+  --gold-bright: #f0c654;
+  --gold-dim: #a07828;
+  --gold-glow: rgba(212, 168, 67, 0.3);
+  /* 游戏色 */
+  --ludo-blue: #3b82f6;
+  --ludo-red: #ef4444;
+  --ludo-yellow: #eab308;
+  --ludo-green: #22c55e;
+  --uno-red: #dc2626;
+  --uno-blue: #2563eb;
+  --uno-green: #16a34a;
+  --uno-yellow: #ca8a04;
+  /* UI色 */
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-hover: rgba(255, 255, 255, 0.1);
+  --surface-active: rgba(255, 255, 255, 0.15);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.15);
+  --text-primary: #f1f5f9;
+  --text-secondary: rgba(241, 245, 249, 0.65);
+  --text-muted: rgba(241, 245, 249, 0.4);
+  --accent: #8b5cf6;
+  --accent-glow: rgba(139, 92, 246, 0.3);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --coin-pink: #e879a8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+  background: #050810;
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* 手机壳容器 */
+.phone-frame {
+  position: relative;
+  width: 393px;
+  height: 852px;
+  margin: 10px auto;
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow: 0 0 0 3px #1a1a2e, 0 0 0 5px #0a0a15, 0 25px 80px rgba(0,0,0,0.7);
+  background: var(--night);
+}
+
+/* 页面容器 */
+.page {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--night);
+}
+
+.page.active {
+  display: flex;
+}
+
+/* 状态栏 */
+.status-bar {
+  height: 54px;
+  padding: 14px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.status-bar .time { font-size: 15px; font-weight: 700; }
+.status-bar .icons { display: flex; gap: 6px; align-items: center; }
+.status-bar .icons svg { width: 16px; height: 16px; fill: var(--text-primary); }
+
+/* 星空背景 */
+.starry-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.starry-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(30, 27, 75, 0.6) 0%, transparent 70%);
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* 弯月 */
+.crescent-moon {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f5e6b8;
+  box-shadow: 0 0 20px rgba(245, 230, 184, 0.4), -8px 4px 0 4px var(--night);
+  z-index: 1;
+}
+
+/* 导航栏 */
+.nav-bar {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-bar .back-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border-radius: 50%;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.nav-bar .title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.nav-bar .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-bar .icon-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border-radius: 50%;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* 内容滚动区 */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 2;
+}
+
+.scroll-content::-webkit-scrollbar { display: none; }
+
+/* 底部操作栏 */
+.bottom-bar {
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+}
+
+/* ═══ 按钮 ═══ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: #1a1000;
+  box-shadow: 0 4px 15px var(--gold-glow);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary {
+  background: var(--surface-active);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.btn-full { width: 100%; }
+.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 8px; }
+.btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 14px; }
+
+/* ═══ 头像 ═══ */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.sm { width: 32px; height: 32px; font-size: 13px; }
+.avatar.lg { width: 56px; height: 56px; font-size: 22px; }
+.avatar.xl { width: 72px; height: 72px; font-size: 28px; }
+
+.avatar-ring {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* ═══ 标签/徽章 ═══ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badge-gold { background: rgba(212, 168, 67, 0.2); color: var(--gold-bright); }
+.badge-green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.badge-red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+
+/* ═══ 卡片 ═══ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.card:active {
+  background: var(--surface-hover);
+  transform: scale(0.98);
+}
+
+/* ═══ 聊天区 ═══ */
+.chat-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-input {
+  flex: 1;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0 16px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.chat-input::placeholder { color: var(--text-muted); }
+
+.mic-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-active);
+  border: none;
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: #1a1000;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ═══ Toast ═══ */
+.toast-container {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(20px);
+  animation: toastIn 0.3s ease-out;
+  white-space: nowrap;
+}
+
+.toast-info { background: rgba(59, 130, 246, 0.85); color: #fff; }
+.toast-success { background: rgba(34, 197, 94, 0.85); color: #fff; }
+.toast-warning { background: rgba(245, 158, 11, 0.85); color: #fff; }
+.toast-error { background: rgba(239, 68, 68, 0.85); color: #fff; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ 加载动画 ═══ */
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px;
+}
+
+.loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ═══ 弹窗/模态 ═══ */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-sheet {
+  width: 100%;
+  max-height: 80%;
+  background: var(--night-mid);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px;
+  animation: slideUp 0.3s ease-out;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+/* ═══ 游戏房列表页 ═══ */
+.game-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.game-tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.game-tab.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: #1a1000;
+}
+
+.room-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 0 16px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.room-card:active {
+  background: var(--surface-hover);
+  transform: scale(0.98);
+}
+
+.room-card .game-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.room-card .info { flex: 1; min-width: 0; }
+.room-card .room-name {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.room-card .room-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-card .room-status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.status-waiting { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.status-playing { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.status-preparing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+/* ═══ 创建游戏房 ═══ */
+.create-section {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.create-section .label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.game-select-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.game-select-card {
+  padding: 16px 10px;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-select-card.selected {
+  border-color: var(--gold);
+  background: rgba(212, 168, 67, 0.1);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.game-select-card .icon { font-size: 32px; margin-bottom: 6px; }
+.game-select-card .name { font-size: 12px; font-weight: 700; }
+.game-select-card .players { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--gold);
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toggle-row .toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-row .toggle-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--surface-active);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle.on { background: var(--success); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.toggle.on::after { transform: translateX(20px); }
+
+/* ═══ 游戏房主界面 ═══ */
+.room-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.room-header .room-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-header .room-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.room-header .room-id {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.room-header .header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 游戏座位区 */
+.seats-area {
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+
+.seats-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.seat.occupied {
+  border-color: var(--gold-dim);
+  background: rgba(212, 168, 67, 0.08);
+}
+
+.seat.occupied .seat-avatar {
+  border: 2px solid var(--gold);
+}
+
+.seat.host {
+  border-color: var(--gold);
+  background: rgba(212, 168, 67, 0.12);
+}
+
+.seat.empty {
+  border-style: dashed;
+  border-color: var(--text-muted);
+}
+
+.seat.empty:active {
+  background: var(--surface-hover);
+  border-color: var(--gold);
+}
+
+.seat.ready .ready-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+}
+
+.seat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.seat-name {
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+  text-align: center;
+}
+
+.seat-status {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.seat-add {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px dashed var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+/* 游戏容器区 */
+.game-container {
+  flex: 1;
+  margin: 0 16px;
+  border-radius: 16px;
+  background: var(--night-deep);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.game-container .game-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.game-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--night-deep);
+  z-index: 2;
+}
+
+.game-loading .game-icon-large {
+  font-size: 56px;
+  margin-bottom: 16px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.game-loading .progress-bar {
+  width: 200px;
+  height: 4px;
+  background: var(--surface-active);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.game-loading .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  border-radius: 2px;
+  animation: progressAnim 3s ease-in-out;
+}
+
+@keyframes progressAnim {
+  0% { width: 0%; }
+  30% { width: 40%; }
+  60% { width: 70%; }
+  80% { width: 85%; }
+  100% { width: 100%; }
+}
+
+/* 麦位横条 */
+.mic-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.mic-strip::-webkit-scrollbar { display: none; }
+
+.mic-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 48px;
+  position: relative;
+}
+
+.mic-slot .mic-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.mic-slot .mic-avatar.speaking {
+  border-color: var(--success);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+}
+
+.mic-slot .mic-avatar.host-mic {
+  border-color: var(--gold);
+}
+
+.mic-slot .mic-avatar.empty-mic {
+  border-style: dashed;
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.mic-slot .mic-name {
+  font-size: 9px;
+  color: var(--text-muted);
+  max-width: 48px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mic-slot .mic-tag {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 8px;
+  background: var(--gold);
+  color: #1a1000;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 800;
+}
+
+/* ═══ Ludo 棋盘模拟 ═══ */
+.ludo-board {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.ludo-board svg {
+  width: 100%;
+  height: 100%;
+  max-width: 320px;
+  max-height: 320px;
+}
+
+/* ═══ UNO 牌面模拟 ═══ */
+.uno-hand {
+  display: flex;
+  gap: -5px;
+  justify-content: center;
+  padding: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.uno-card {
+  width: 50px;
+  height: 72px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  margin: 0 -4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.uno-card:hover { transform: translateY(-8px); }
+
+/* ═══ 结算页 ═══ */
+.settle-page {
+  background: linear-gradient(180deg, var(--night-mid) 0%, var(--night-deep) 100%);
+}
+
+.settle-header {
+  text-align: center;
+  padding: 30px 20px 16px;
+}
+
+.settle-header .trophy {
+  font-size: 64px;
+  margin-bottom: 8px;
+  animation: trophyBounce 1s ease-out;
+}
+
+@keyframes trophyBounce {
+  0% { transform: scale(0) rotate(-10deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.settle-header .settle-title {
+  font-size: 22px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rank-list {
+  padding: 0 16px;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.rank-item.first {
+  background: rgba(212, 168, 67, 0.12);
+  border-color: var(--gold-dim);
+}
+
+.rank-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  background: var(--surface-active);
+}
+
+.rank-item.first .rank-num {
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: #1a1000;
+}
+
+.rank-info { flex: 1; }
+.rank-name { font-size: 14px; font-weight: 700; }
+.rank-detail { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.rank-reward {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--coin-pink);
+}
+
+.settle-actions {
+  padding: 20px 16px;
+  display: flex;
+  gap: 10px;
+}
+
+/* ═══ 最小化/缩球 ═══ */
+.mini-game {
+  position: absolute;
+  bottom: 70px;
+  right: 16px;
+  width: 120px;
+  height: 80px;
+  border-radius: 14px;
+  background: var(--night-mid);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  z-index: 30;
+  display: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mini-game.active { display: block; }
+
+.mini-game .mini-label {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: rgba(0,0,0,0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.mini-game .mini-expand {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* ═══ 观战标签 ═══ */
+.spectator-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(139, 92, 246, 0.15);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+  font-size: 12px;
+  font-weight: 700;
+  color: #a78bfa;
+}
+
+/* ═══ 底部Tab ═══ */
+.home-tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.home-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 12px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.home-tab.active {
+  color: var(--gold);
+}
+
+.home-tab .tab-icon {
+  font-size: 22px;
+}
+
+/* ═══ 浮动按钮 ═══ */
+.fab {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  color: #1a1000;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--gold-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* ═══ 邀请模态 ═══ */
+.invite-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.invite-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.invite-item .invite-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.invite-item .invite-name {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.invite-item .invite-btn {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+/* ═══ 动画 ═══ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade { animation: fadeIn 0.3s ease-out; }
+.animate-slide { animation: slideInRight 0.3s ease-out; }
+
+/* ═══ 沙漠底部装饰 ═══ */
+.desert-footer {
+  position: relative;
+  height: 100px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.desert-footer svg {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/* ═══ 用户资料卡弹窗 ═══ */
+.profile-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.profile-card .profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  border: 3px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.profile-card .profile-name {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.profile-card .profile-id {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.profile-card .profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.profile-card .stat-item {
+  text-align: center;
+}
+
+.profile-card .stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.profile-card .stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* 充值面板 */
+.recharge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.recharge-item {
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.recharge-item.selected {
+  border-color: var(--gold);
+  background: rgba(212, 168, 67, 0.1);
+}
+
+.recharge-item .coin-amount {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--coin-pink);
+}
+
+.recharge-item .coin-price {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* 语言选择 */
+.lang-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lang-option {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.lang-option.selected {
+  background: rgba(212, 168, 67, 0.15);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* 门票选择 */
+.ticket-options {
+  display: flex;
+  gap: 8px;
+}
+
+.ticket-option {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-option.selected {
+  border-color: var(--gold);
+  background: rgba(212, 168, 67, 0.1);
+}
+
+.ticket-option .ticket-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ticket-option .ticket-price {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* 二次确认弹窗 */
+.confirm-dialog {
+  padding: 24px;
+  text-align: center;
+}
+
+.confirm-dialog .confirm-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.confirm-dialog .confirm-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.confirm-dialog .confirm-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.confirm-dialog .confirm-btns {
+  display: flex;
+  gap: 10px;
+}
+
+/* 声音控制 */
+.sound-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.sound-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--surface-active);
+  border-radius: 2px;
+  outline: none;
+}
+
+.sound-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+}
+
+/* 聊天消息列表 */
+.chat-messages {
+  padding: 8px 16px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.chat-messages::-webkit-scrollbar { display: none; }
+
+.chat-msg {
+  padding: 4px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.chat-msg .msg-name {
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.chat-msg .msg-text {
+  color: var(--text-secondary);
+}
+
+.chat-msg.system {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* 桌面预览标签 */
+.desktop-label {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* 页面切换指示器 */
+.page-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  z-index: 200;
+  border: 1px solid var(--border);
+}
+
+.page-indicator .current-page {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* 错误页 */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  flex: 1;
+}
+
+.error-page .error-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.error-page .error-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.error-page .error-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* 在线人数指示 */
+.online-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.online-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* 横幅提示 */
+.banner {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.banner-info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.banner-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+}
+</style>
+</head>
+<body>
+
+<!-- 页面指示器 -->
+<div class="page-indicator">
+  当前页面：<span class="current-page" id="pageLabel">游戏房列表</span>
+</div>
+
+<!-- 手机壳 -->
+<div class="phone-frame" id="phoneFrame">
+
+  <!-- ══════════════════════════════════
+       页面1：游戏房列表
+       ══════════════════════════════════ -->
+  <div class="page active" id="page-list">
+    <!-- 星空背景 -->
+    <div class="starry-bg" id="starryBg"></div>
+    <div class="crescent-moon"></div>
+
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </span>
+    </div>
+
+    <!-- 用户信息条 -->
+    <div style="padding: 4px 16px 12px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 5;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="avatar sm">
+          <span>👤</span>
+        </div>
+        <div>
+          <div style="font-size: 14px; font-weight: 700;">游客 1284</div>
+          <div style="font-size: 10px; color: var(--text-muted);">ID: 10001949</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 13px; font-weight: 800; color: var(--coin-pink);">9.9B</span>
+        <span style="font-size: 16px;">💰</span>
+      </div>
+    </div>
+
+    <!-- 游戏分类Tab -->
+    <div class="game-tabs" style="position: relative; z-index: 5;">
+      <button class="game-tab active" onclick="switchGameTab(this)">🎲 全部</button>
+      <button class="game-tab" onclick="switchGameTab(this)">🎯 Ludo</button>
+      <button class="game-tab" onclick="switchGameTab(this)">🃏 UNO</button>
+      <button class="game-tab" onclick="switchGameTab(this)">🎲 Domino</button>
+    </div>
+
+    <!-- 房间列表 -->
+    <div class="scroll-content" style="position: relative; z-index: 5;">
+      <!-- 等待中 - Ludo -->
+      <div class="room-card" onclick="navigateTo('page-room-waiting')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">🎯</div>
+        <div class="info">
+          <div class="room-name">Ahmed 的 Ludo 房 🎲</div>
+          <div class="room-meta">
+            <span>👤 Ahmed_Love</span>
+            <span>👥 2/4</span>
+            <span>🇸🇦 阿语</span>
+          </div>
+        </div>
+        <div class="room-status status-waiting">等待中</div>
+      </div>
+
+      <!-- 等待中 - UNO -->
+      <div class="room-card" onclick="navigateTo('page-room-waiting')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">🃏</div>
+        <div class="info">
+          <div class="room-name">Fatima UNO Night 🌙</div>
+          <div class="room-meta">
+            <span>👤 Fatima_99</span>
+            <span>👥 3/4</span>
+            <span>🇪🇬 阿语</span>
+          </div>
+        </div>
+        <div class="room-status status-waiting">等待中</div>
+      </div>
+
+      <!-- 准备中 -->
+      <div class="room-card" onclick="navigateTo('page-room-waiting')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">🎯</div>
+        <div class="info">
+          <div class="room-name">Khalid's Ludo Arena</div>
+          <div class="room-meta">
+            <span>👤 Khalid_K</span>
+            <span>👥 4/4</span>
+            <span>🇦🇪 英语</span>
+          </div>
+        </div>
+        <div class="room-status status-preparing">准备中</div>
+      </div>
+
+      <!-- 游戏中 - 可观战 -->
+      <div class="room-card" onclick="navigateTo('page-room-playing')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🃏</div>
+        <div class="info">
+          <div class="room-name">UNO Champions 🏆</div>
+          <div class="room-meta">
+            <span>👤 Omar_G</span>
+            <span>👥 4/4</span>
+            <span>👁 12观战</span>
+          </div>
+        </div>
+        <div class="room-status status-playing">观战</div>
+      </div>
+
+      <!-- 游戏中 - Ludo -->
+      <div class="room-card" onclick="navigateTo('page-room-playing')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🎯</div>
+        <div class="info">
+          <div class="room-name">Sara's Game Night ✨</div>
+          <div class="room-meta">
+            <span>👤 Sara_M</span>
+            <span>👥 4/4</span>
+            <span>👁 8观战</span>
+          </div>
+        </div>
+        <div class="room-status status-playing">观战</div>
+      </div>
+
+      <!-- Domino -->
+      <div class="room-card" onclick="navigateTo('page-room-waiting')">
+        <div class="game-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">🎲</div>
+        <div class="info">
+          <div class="room-name">Domino Majlis 🕌</div>
+          <div class="room-meta">
+            <span>👤 Yusuf_D</span>
+            <span>👥 1/4</span>
+            <span>🇸🇦 阿语</span>
+          </div>
+        </div>
+        <div class="room-status status-waiting">等待中</div>
+      </div>
+
+      <div style="height: 80px;"></div>
+    </div>
+
+    <!-- 创建按钮 FAB -->
+    <button class="fab" onclick="navigateTo('page-create')">＋</button>
+
+    <!-- 底部Tab -->
+    <div class="home-tabs">
+      <button class="home-tab" onclick="showToast('首页', 'info')">
+        <span class="tab-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="home-tab active">
+        <span class="tab-icon">🎮</span>
+        <span>游戏房</span>
+      </button>
+      <button class="home-tab" onclick="showToast('语聊房', 'info')">
+        <span class="tab-icon">🎙️</span>
+        <span>语聊房</span>
+      </button>
+      <button class="home-tab" onclick="showToast('消息', 'info')">
+        <span class="tab-icon">💬</span>
+        <span>消息</span>
+      </button>
+      <button class="home-tab" onclick="showToast('我的', 'info')">
+        <span class="tab-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面2：创建游戏房
+       ══════════════════════════════════ -->
+  <div class="page" id="page-create">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </span>
+    </div>
+
+    <div class="nav-bar" style="background: transparent; border: none;">
+      <button class="back-btn" onclick="navigateTo('page-list')">←</button>
+      <span class="title">创建游戏房</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="scroll-content">
+      <!-- 选择游戏 -->
+      <div class="create-section">
+        <div class="label">选择游戏 🎮</div>
+        <div class="game-select-grid">
+          <div class="game-select-card selected" onclick="selectGame(this)">
+            <div class="icon">🎯</div>
+            <div class="name">Ludo</div>
+            <div class="players">2-4人</div>
+          </div>
+          <div class="game-select-card" onclick="selectGame(this)">
+            <div class="icon">🃏</div>
+            <div class="name">UNO</div>
+            <div class="players">2-4人</div>
+          </div>
+          <div class="game-select-card" onclick="selectGame(this)">
+            <div class="icon">🎲</div>
+            <div class="name">Domino</div>
+            <div class="players">2-4人</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 房间名称 -->
+      <div class="create-section">
+        <div class="label">房间名称</div>
+        <div class="form-group">
+          <input type="text" class="form-input" value="Ahmed 的 Ludo 房 🎲" placeholder="输入房间名称">
+        </div>
+      </div>
+
+      <!-- 语言 -->
+      <div class="create-section">
+        <div class="label">语言</div>
+        <div class="lang-options">
+          <div class="lang-option selected" onclick="selectLang(this)">🇸🇦 العربية</div>
+          <div class="lang-option" onclick="selectLang(this)">🇬🇧 English</div>
+          <div class="lang-option" onclick="selectLang(this)">🇹🇷 Türkçe</div>
+          <div class="lang-option" onclick="selectLang(this)">🇵🇰 اردو</div>
+        </div>
+      </div>
+
+      <!-- 门票 -->
+      <div class="create-section">
+        <div class="label">门票档位</div>
+        <div class="ticket-options">
+          <div class="ticket-option selected" onclick="selectTicket(this)">
+            <div class="ticket-label">🆓 免费</div>
+            <div class="ticket-price">0 金币</div>
+          </div>
+          <div class="ticket-option" onclick="selectTicket(this)">
+            <div class="ticket-label">🥉 青铜</div>
+            <div class="ticket-price">500 G</div>
+          </div>
+          <div class="ticket-option" onclick="selectTicket(this)">
+            <div class="ticket-label">🥇 黄金</div>
+            <div class="ticket-price">2000 G</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 开关设置 -->
+      <div class="create-section">
+        <div class="label">房间设置</div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">👁 允许观战</div>
+            <div class="toggle-desc">其他用户可以进入房间观战</div>
+          </div>
+          <button class="toggle on" onclick="toggleSwitch(this)"></button>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">🎁 允许送礼</div>
+            <div class="toggle-desc">房间内可以发送和接收礼物</div>
+          </div>
+          <button class="toggle on" onclick="toggleSwitch(this)"></button>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">🔓 公开房间</div>
+            <div class="toggle-desc">所有人可在列表中看到此房间</div>
+          </div>
+          <button class="toggle on" onclick="toggleSwitch(this)"></button>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">🎤 语聊麦位 15位</div>
+            <div class="toggle-desc">复用语聊房麦位模板</div>
+          </div>
+          <button class="toggle on" onclick="toggleSwitch(this)"></button>
+        </div>
+      </div>
+
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部创建按钮 -->
+    <div class="bottom-bar">
+      <button class="btn btn-primary btn-full btn-lg" onclick="navigateTo('page-loading')">
+        🚀 创建游戏房
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面3：加载中
+       ══════════════════════════════════ -->
+  <div class="page" id="page-loading">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </span>
+    </div>
+
+    <div class="nav-bar" style="background: transparent; border: none;">
+      <button class="back-btn" onclick="navigateTo('page-create')">←</button>
+      <span class="title">正在创建...</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="loader" style="flex: 1;">
+      <div style="font-size: 72px; animation: bounce 2s ease-in-out infinite;">🎯</div>
+      <div class="loader-spinner"></div>
+      <div class="loader-text">正在加载 Ludo 游戏资源...</div>
+      <div style="width: 200px; height: 4px; background: var(--surface-active); border-radius: 2px; overflow: hidden; margin-top: 8px;">
+        <div style="height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); border-radius: 2px; animation: progressAnim 3s ease-in-out forwards;"></div>
+      </div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">正在连接 Bytesun 服务器 (gsp:201)...</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn btn-secondary btn-full" onclick="navigateTo('page-create')">取消</button>
+    </div>
+
+    <!-- 自动跳转 -->
+    <script>
+      setTimeout(() => {
+        if (document.getElementById('page-loading').classList.contains('active')) {
+          navigateTo('page-room-waiting');
+        }
+      }, 3500);
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面4：游戏房 - 等待中
+       ══════════════════════════════════ -->
+  <div class="page" id="page-room-waiting">
+    <div class="starry-bg"></div>
+
+    <!-- 房间顶部信息 -->
+    <div class="room-header" style="position: relative; z-index: 5;">
+      <div class="room-info">
+        <div>
+          <div class="room-title">Ahmed 的 Ludo 房 🎲</div>
+          <div class="room-id">Room #10086 · <span class="online-indicator"><span class="online-dot"></span> 6人在线</span></div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="showModal('modal-sound')">🔊</button>
+        <button class="icon-btn" onclick="showModal('modal-invite')">📨</button>
+        <button class="icon-btn" onclick="showModal('modal-room-menu')">⋯</button>
+      </div>
+    </div>
+
+    <!-- 状态Banner -->
+    <div class="banner banner-info" style="position: relative; z-index: 5;">
+      ⏳ 等待玩家上座 · 还需 <strong>2人</strong> 即可开局
+    </div>
+
+    <!-- 游戏座位区 -->
+    <div class="seats-area" style="position: relative; z-index: 5;">
+      <div class="seats-title">
+        🎯 游戏座位 · <span id="seatCount">2/4</span>
+        <span class="badge badge-gold" style="margin-left: auto;">Ludo</span>
+      </div>
+      <div class="seats-grid">
+        <!-- 房主 -->
+        <div class="seat host ready" onclick="showModal('modal-profile')">
+          <div class="ready-dot"></div>
+          <div class="seat-avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">A</div>
+          <div class="seat-name">Ahmed</div>
+          <div class="seat-status" style="color: var(--gold);">👑 房主</div>
+        </div>
+        <!-- 已上座玩家 -->
+        <div class="seat occupied ready">
+          <div class="ready-dot"></div>
+          <div class="seat-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">F</div>
+          <div class="seat-name">Fatima</div>
+          <div class="seat-status" style="color: var(--success);">✓ 已准备</div>
+        </div>
+        <!-- 空位 -->
+        <div class="seat empty" onclick="handleSeatUp()">
+          <div class="seat-add">+</div>
+          <div class="seat-name" style="color: var(--text-muted);">空位</div>
+          <div class="seat-status">点击上座</div>
+        </div>
+        <!-- 空位 -->
+        <div class="seat empty" onclick="handleSeatUp()">
+          <div class="seat-add">+</div>
+          <div class="seat-name" style="color: var(--text-muted);">空位</div>
+          <div class="seat-status">点击上座</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 语聊麦位条 -->
+    <div class="mic-strip" style="position: relative; z-index: 5;">
+      <div class="mic-slot">
+        <div class="mic-avatar host-mic speaking">A</div>
+        <div class="mic-name">Ahmed</div>
+        <div class="mic-tag">房主</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">F</div>
+        <div class="mic-name">Fatima</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic">+</div>
+        <div class="mic-name">空麦</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic">+</div>
+        <div class="mic-name">空麦</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic">+</div>
+        <div class="mic-name">空麦</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic">+</div>
+        <div class="mic-name">空麦</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar" style="background: linear-gradient(135deg, #22c55e, #16a34a);">K</div>
+        <div class="mic-name">Khalid</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic">+</div>
+        <div class="mic-name">空麦</div>
+      </div>
+    </div>
+
+    <!-- 游戏容器区 - 等待中显示占位 -->
+    <div class="game-container" style="position: relative; z-index: 5; margin-bottom: 8px;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 12px;">🎯</div>
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Ludo 等待开局</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">等待所有玩家上座并准备</div>
+        <div style="display: flex; gap: 8px;">
+          <span class="badge badge-blue">2/4 已上座</span>
+          <span class="badge badge-green">游戏已就绪</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 聊天消息 -->
+    <div class="chat-messages" style="position: relative; z-index: 5;">
+      <div class="chat-msg system">📝 系统消息：房间已创建，等待玩家加入</div>
+      <div class="chat-msg"><span class="msg-name">Ahmed：</span><span class="msg-text">快来玩 Ludo！🎉</span></div>
+      <div class="chat-msg"><span class="msg-name">Fatima：</span><span class="msg-text">我来了！等一下</span></div>
+      <div class="chat-msg system">📝 Fatima 已上座（座位2）</div>
+    </div>
+
+    <!-- 底部操作 -->
+    <div class="bottom-bar" style="position: relative; z-index: 5;">
+      <div class="chat-area">
+        <button class="mic-btn">🎤</button>
+        <input type="text" class="chat-input" placeholder="Say something...">
+        <button class="send-btn">Send</button>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button class="btn btn-success btn-sm" style="flex: 1;" onclick="handleReady()">✓ 准备</button>
+        <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="navigateTo('page-room-playing')">🚀 开始游戏</button>
+        <button class="btn btn-secondary btn-sm" onclick="showModal('modal-invite')">📨 邀请</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面5：游戏房 - 游戏中 (Ludo)
+       ══════════════════════════════════ -->
+  <div class="page" id="page-room-playing">
+    <!-- 顶部信息 -->
+    <div class="room-header">
+      <div class="room-info">
+        <div>
+          <div class="room-title">Ahmed 的 Ludo 房 🎲</div>
+          <div class="room-id">
+            <span class="badge badge-red" style="font-size: 9px;">🔴 LIVE</span>
+            <span style="margin-left: 6px;">游戏中 · 回合 3/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleMiniGame()">⤓</button>
+        <button class="icon-btn" onclick="showModal('modal-room-menu')">⋯</button>
+      </div>
+    </div>
+
+    <!-- 玩家座位（紧凑模式） -->
+    <div style="display: flex; gap: 6px; padding: 8px 16px; flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; flex: 1;">
+        <div class="avatar sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); width: 28px; height: 28px; font-size: 11px;">A</div>
+        <div>
+          <div style="font-size: 11px; font-weight: 700;">Ahmed</div>
+          <div style="font-size: 9px; color: var(--ludo-blue);">🔵 3步</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; flex: 1;">
+        <div class="avatar sm" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); width: 28px; height: 28px; font-size: 11px;">F</div>
+        <div>
+          <div style="font-size: 11px; font-weight: 700;">Fatima</div>
+          <div style="font-size: 9px; color: var(--ludo-red);">🔴 5步</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.3); border-radius: 10px; flex: 1;">
+        <div class="avatar sm" style="background: linear-gradient(135deg, #22c55e, #16a34a); width: 28px; height: 28px; font-size: 11px;">K</div>
+        <div>
+          <div style="font-size: 11px; font-weight: 700;">Khalid</div>
+          <div style="font-size: 9px; color: var(--ludo-yellow);">🟡 2步</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); border-radius: 10px; flex: 1;">
+        <div class="avatar sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); width: 28px; height: 28px; font-size: 11px;">S</div>
+        <div>
+          <div style="font-size: 11px; font-weight: 700;">Sara</div>
+          <div style="font-size: 9px; color: var(--ludo-green);">🟢 4步</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 骰子提示 -->
+    <div style="text-align: center; padding: 4px; background: rgba(212,168,67,0.1); border-bottom: 1px solid rgba(212,168,67,0.15); flex-shrink: 0;">
+      <span style="font-size: 12px; font-weight: 700; color: var(--gold);">🎯 轮到 Ahmed 掷骰子</span>
+      <span style="font-size: 16px; margin-left: 8px;">🎲</span>
+    </div>
+
+    <!-- Ludo 棋盘 -->
+    <div class="game-container" style="flex: 1; margin: 8px 16px;">
+      <div class="ludo-board">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- 外框 -->
+          <rect x="5" y="5" width="390" height="390" rx="12" fill="#1a1a2e" stroke="#d4a843" stroke-width="3"/>
+
+          <!-- 蓝色区域 (左上) -->
+          <rect x="10" y="10" width="156" height="156" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+          <rect x="30" y="30" width="116" height="116" rx="6" fill="#2563eb" opacity="0.4"/>
+          <circle cx="55" cy="55" r="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="88" cy="55" r="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="55" cy="88" r="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="88" cy="88" r="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/>
+          <text x="88" y="130" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="700">Ahmed</text>
+
+          <!-- 红色区域 (右上) -->
+          <rect x="234" y="10" width="156" height="156" rx="8" fill="#5f1e1e" stroke="#ef4444" stroke-width="1.5"/>
+          <rect x="254" y="30" width="116" height="116" rx="6" fill="#dc2626" opacity="0.4"/>
+          <circle cx="310" cy="55" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="343" cy="55" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="310" cy="88" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="343" cy="88" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+          <text x="312" y="130" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="700">Fatima</text>
+
+          <!-- 黄色区域 (左下) -->
+          <rect x="10" y="234" width="156" height="156" rx="8" fill="#5f4f1e" stroke="#eab308" stroke-width="1.5"/>
+          <rect x="30" y="254" width="116" height="116" rx="6" fill="#ca8a04" opacity="0.4"/>
+          <circle cx="55" cy="310" r="12" fill="#eab308" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="88" cy="310" r="12" fill="#eab308" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="55" cy="343" r="12" fill="#eab308" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="88" cy="343" r="12" fill="#eab308" stroke="#fff" stroke-width="1.5"/>
+          <text x="88" y="370" text-anchor="middle" fill="#fde047" font-size="10" font-weight="700">Khalid</text>
+
+          <!-- 绿色区域 (右下) -->
+          <rect x="234" y="234" width="156" height="156" rx="8" fill="#1e5f2e" stroke="#22c55e" stroke-width="1.5"/>
+          <rect x="254" y="254" width="116" height="116" rx="6" fill="#16a34a" opacity="0.4"/>
+          <circle cx="310" cy="310" r="12" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="343" cy="310" r="12" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="310" cy="343" r="12" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="343" cy="343" r="12" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
+          <text x="312" y="370" text-anchor="middle" fill="#86efac" font-size="10" font-weight="700">Sara</text>
+
+          <!-- 十字路径 - 横向 -->
+          <rect x="166" y="10" width="68" height="156" rx="2" fill="#2d2d44"/>
+          <rect x="166" y="234" width="68" height="156" rx="2" fill="#2d2d44"/>
+
+          <!-- 十字路径 - 纵向 -->
+          <rect x="10" y="166" width="156" height="68" rx="2" fill="#2d2d44"/>
+          <rect x="234" y="166" width="156" height="68" rx="2" fill="#2d2d44"/>
+
+          <!-- 中心区域 -->
+          <rect x="166" y="166" width="68" height="68" rx="4" fill="#2d2d44" stroke="#d4a843" stroke-width="1.5"/>
+
+          <!-- 中心三角形 -->
+          <polygon points="200,172 228,226 172,226" fill="#3b82f6" opacity="0.8"/>
+          <polygon points="194,178 222,220 172,200" fill="#ef4444" opacity="0.8"/>
+          <polygon points="194,222 172,178 222,200" fill="#22c55e" opacity="0.8"/>
+          <polygon points="172,194 228,194 200,228" fill="#eab308" opacity="0.8"/>
+
+          <!-- 路径格子 - 上 -->
+          <rect x="172" y="16" width="14" height="14" rx="2" fill="#fca5a5" opacity="0.6"/>
+          <rect x="188" y="16" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="16" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="16" width="14" height="14" rx="2" fill="#374151"/>
+
+          <!-- 路径格子示例 -->
+          <rect x="172" y="34" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="34" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="34" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="34" width="14" height="14" rx="2" fill="#fde047" opacity="0.6"/>
+
+          <!-- 更多路径格子 -->
+          <rect x="172" y="52" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="52" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="52" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="52" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="70" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="70" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="70" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="70" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="88" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="88" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="88" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="88" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="106" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="106" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="106" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="106" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="124" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="124" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="124" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="124" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="142" width="14" height="14" rx="2" fill="#93c5fd" opacity="0.6"/>
+          <rect x="188" y="142" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="142" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="142" width="14" height="14" rx="2" fill="#374151"/>
+
+          <!-- 左侧路径 -->
+          <rect x="16" y="172" width="14" height="14" rx="2" fill="#86efac" opacity="0.6"/>
+          <rect x="16" y="188" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="16" y="204" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="16" y="220" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="34" y="172" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="34" y="188" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="34" y="204" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="34" y="220" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="52" y="172" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="52" y="188" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="52" y="204" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="52" y="220" width="14" height="14" rx="2" fill="#fde047" opacity="0.6"/>
+
+          <!-- 右侧路径 -->
+          <rect x="370" y="172" width="14" height="14" rx="2" fill="#fca5a5" opacity="0.6"/>
+          <rect x="370" y="188" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="370" y="204" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="370" y="220" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="352" y="172" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="352" y="188" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="352" y="204" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="352" y="220" width="14" height="14" rx="2" fill="#374151"/>
+
+          <!-- 下侧路径 -->
+          <rect x="172" y="370" width="14" height="14" rx="2" fill="#86efac" opacity="0.6"/>
+          <rect x="188" y="370" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="370" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="370" width="14" height="14" rx="2" fill="#374151"/>
+
+          <rect x="172" y="352" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="188" y="352" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="204" y="352" width="14" height="14" rx="2" fill="#374151"/>
+          <rect x="220" y="352" width="14" height="14" rx="2" fill="#374151"/>
+
+          <!-- 星标特殊格子 -->
+          <text x="50" y="195" fill="#fbbf24" font-size="10">⭐</text>
+          <text x="350" y="195" fill="#fbbf24" font-size="10">⭐</text>
+          <text x="195" y="50" fill="#fbbf24" font-size="10">⭐</text>
+          <text x="195" y="350" fill="#fbbf24" font-size="10">⭐</text>
+
+          <!-- 棋子 - 蓝色(Ahmed) 在路径上 -->
+          <circle cx="195" cy="50" r="8" fill="#3b82f6" stroke="#fff" stroke-width="2">
+            <animate attributeName="r" values="8;9;8" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <text x="195" y="54" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">A</text>
+
+          <!-- 棋子 - 红色(Fatima) -->
+          <circle cx="220" cy="145" r="8" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+          <text x="220" y="149" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">F</text>
+
+          <!-- 棋子 - 黄色(Khalid) -->
+          <circle cx="50" cy="200" r="8" fill="#eab308" stroke="#fff" stroke-width="2"/>
+          <text x="50" y="204" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">K</text>
+
+          <!-- 棋子 - 绿色(Sara) -->
+          <circle cx="370" cy="200" r="8" fill="#22c55e" stroke="#fff" stroke-width="2"/>
+          <text x="370" y="204" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">S</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 麦位横条（紧凑） -->
+    <div class="mic-strip" style="padding: 6px 16px;">
+      <div class="mic-slot">
+        <div class="mic-avatar host-mic speaking" style="width: 30px; height: 30px; font-size: 10px;">A</div>
+        <div class="mic-tag">主</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar" style="width: 30px; height: 30px; font-size: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1);">F</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar" style="width: 30px; height: 30px; font-size: 10px; background: linear-gradient(135deg, #22c55e, #16a34a);">K</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar" style="width: 30px; height: 30px; font-size: 10px; background: linear-gradient(135deg, #6366f1, #4f46e5);">S</div>
+      </div>
+      <div class="mic-slot">
+        <div class="mic-avatar empty-mic" style="width: 30px; height: 30px; font-size: 10px;">+</div>
+      </div>
+      <div style="flex: 1;"></div>
+      <button class="btn btn-sm btn-secondary" onclick="showToast('🎁 送礼', 'info')">🎁</button>
+    </div>
+
+    <!-- 底部操作 -->
+    <div class="bottom-bar">
+      <div class="chat-area">
+        <button class="mic-btn">🎤</button>
+        <input type="text" class="chat-input" placeholder="Say something...">
+        <button class="send-btn">Send</button>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="handleDiceRoll()">🎲 掷骰子</button>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('🔊 语音优先', 'info')">🔊</button>
+        <button class="btn btn-secondary btn-sm" onclick="navigateTo('page-settling')">🏁 结束</button>
+      </div>
+    </div>
+
+    <!-- 缩球小窗 -->
+    <div class="mini-game" id="miniGame" onclick="navigateTo('page-room-playing')">
+      <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e3a5f, #0a0e1a); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 24px;">🎯</span>
+      </div>
+      <div class="mini-expand">⤢</div>
+      <div class="mini-label">Ludo 进行中</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面6：观战界面
+       ══════════════════════════════════ -->
+  <div class="page" id="page-spectator">
+    <div class="room-header">
+      <div class="room-info">
+        <div>
+          <div class="room-title">Ahmed 的 Ludo 房 🎲</div>
+          <div class="room-id">👁 观战模式</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="navigateTo('page-list')">✕</button>
+      </div>
+    </div>
+
+    <!-- 观战Banner -->
+    <div class="spectator-banner">
+      👁 你正在观战 · 等待下一局可上座参与
+    </div>
+
+    <!-- 游戏区 -->
+    <div class="game-container" style="flex: 1; margin: 8px 16px;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; opacity: 0.7;">
+        <div style="font-size: 48px; margin-bottom: 12px;">🎯</div>
+        <div style="font-size: 14px; font-weight: 700;">Ludo 对局进行中</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">回合 5/20</div>
+      </div>
+    </div>
+
+    <!-- 观战玩家列表 -->
+    <div style="padding: 12px 16px; flex-shrink: 0;">
+      <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">👥 对局玩家</div>
+      <div style="display: flex; gap: 10px;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div class="avatar sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);">A</div>
+          <div style="font-size: 10px;">Ahmed</div>
+          <span class="badge badge-blue" style="font-size: 8px;">🔵</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div class="avatar sm" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">F</div>
+          <div style="font-size: 10px;">Fatima</div>
+          <span class="badge badge-red" style="font-size: 8px;">🔴</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div class="avatar sm" style="background: linear-gradient(135deg, #22c55e, #16a34a);">K</div>
+          <div style="font-size: 10px;">Khalid</div>
+          <span class="badge badge-gold" style="font-size: 8px;">🟡</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div class="avatar sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">S</div>
+          <div style="font-size: 10px;">Sara</div>
+          <span class="badge badge-green" style="font-size: 8px;">🟢</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部操作 -->
+    <div class="bottom-bar">
+      <div class="chat-area">
+        <button class="mic-btn">🎤</button>
+        <input type="text" class="chat-input" placeholder="Say something...">
+        <button class="send-btn">Send</button>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="showToast('🎁 送礼', 'info')">🎁 送礼</button>
+        <button class="btn btn-secondary btn-sm" onclick="navigateTo('page-list')">离开房间</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面7：结算页
+       ══════════════════════════════════ -->
+  <div class="page" id="page-settling">
+    <div class="starry-bg"></div>
+    <div class="crescent-moon"></div>
+
+    <div class="status-bar" style="position: relative; z-index: 5;">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+      </span>
+    </div>
+
+    <div class="scroll-content" style="position: relative; z-index: 5;">
+      <div class="settle-header">
+        <div class="trophy">🏆</div>
+        <div class="settle-title">游戏结束</div>
+        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Ludo · 回合 18/20 · 用时 12分38秒</div>
+      </div>
+
+      <div class="rank-list">
+        <!-- 第1名 -->
+        <div class="rank-item first">
+          <div class="rank-num">1</div>
+          <div class="avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">A</div>
+          <div class="rank-info">
+            <div class="rank-name">Ahmed 👑</div>
+            <div class="rank-detail">率先完成 · 4棋子全部到家</div>
+          </div>
+          <div class="rank-reward">+500 G</div>
+        </div>
+
+        <!-- 第2名 -->
+        <div class="rank-item">
+          <div class="rank-num">2</div>
+          <div class="avatar sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">S</div>
+          <div class="rank-info">
+            <div class="rank-name">Sara</div>
+            <div class="rank-detail">3棋子到家</div>
+          </div>
+          <div class="rank-reward">+200 G</div>
+        </div>
+
+        <!-- 第3名 -->
+        <div class="rank-item">
+          <div class="rank-num">3</div>
+          <div class="avatar sm" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">F</div>
+          <div class="rank-info">
+            <div class="rank-name">Fatima</div>
+            <div class="rank-detail">2棋子到家</div>
+          </div>
+          <div class="rank-reward" style="color: var(--text-muted);">+50 G</div>
+        </div>
+
+        <!-- 第4名 -->
+        <div class="rank-item">
+          <div class="rank-num">4</div>
+          <div class="avatar sm" style="background: linear-gradient(135deg, #22c55e, #16a34a);">K</div>
+          <div class="rank-info">
+            <div class="rank-name">Khalid</div>
+            <div class="rank-detail">1棋子到家</div>
+          </div>
+          <div class="rank-reward" style="color: var(--danger);">-100 G</div>
+        </div>
+      </div>
+
+      <!-- 余额变化 -->
+      <div style="padding: 16px; margin-top: 8px;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 12px; color: var(--text-secondary);">当前余额</div>
+            <div style="font-size: 20px; font-weight: 900; color: var(--coin-pink); margin-top: 2px;">💰 9,999,500 G</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 12px; color: var(--text-secondary);">本局变化</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--success); margin-top: 2px;">+500 G</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="settle-actions" style="flex-direction: column;">
+        <button class="btn btn-primary btn-full btn-lg" onclick="handleReplay()">
+          🔄 再来一局
+        </button>
+        <button class="btn btn-secondary btn-full" onclick="navigateTo('page-room-waiting')">
+          💬 返回房间
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="navigateTo('page-list')" style="align-self: center;">
+          离开房间
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面8：异常页 - 加载失败
+       ══════════════════════════════════ -->
+  <div class="page" id="page-error-load">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+    </div>
+
+    <div class="nav-bar" style="background: transparent; border: none;">
+      <button class="back-btn" onclick="navigateTo('page-list')">←</button>
+      <span class="title">加载失败</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="error-page">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title">游戏加载失败</div>
+      <div class="error-desc">
+        连接 Bytesun 服务器超时<br>
+        请检查网络后重试
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px;">
+        <button class="btn btn-primary btn-full" onclick="navigateTo('page-loading')">🔄 重新加载</button>
+        <button class="btn btn-secondary btn-full" onclick="navigateTo('page-room-waiting')">💬 返回房间</button>
+        <button class="btn btn-secondary btn-full" onclick="navigateTo('page-list')">离开房间</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面9：异常页 - 余额不足
+       ══════════════════════════════════ -->
+  <div class="page" id="page-error-balance">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+    </div>
+
+    <div class="nav-bar" style="background: transparent; border: none;">
+      <button class="back-btn" onclick="navigateTo('page-room-playing')">←</button>
+      <span class="title">余额不足</span>
+      <div style="width: 36px;"></div>
+    </div>
+
+    <div class="error-page">
+      <div class="error-icon">💰</div>
+      <div class="error-title">金币余额不足</div>
+      <div class="error-desc">
+        当前余额：<strong style="color: var(--coin-pink);">120 G</strong><br>
+        本局需要：<strong style="color: var(--gold);">500 G</strong><br>
+        请充值后继续游戏
+      </div>
+
+      <!-- 充值选项 -->
+      <div style="width: 100%; max-width: 300px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; text-align: left;">选择充值金额</div>
+        <div class="recharge-grid">
+          <div class="recharge-item selected" onclick="selectRecharge(this)">
+            <div class="coin-amount">1,000</div>
+            <div class="coin-price">$0.99</div>
+          </div>
+          <div class="recharge-item" onclick="selectRecharge(this)">
+            <div class="coin-amount">5,000</div>
+            <div class="coin-price">$4.49</div>
+          </div>
+          <div class="recharge-item" onclick="selectRecharge(this)">
+            <div class="coin-amount">20,000</div>
+            <div class="coin-price">$15.99</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full btn-lg" onclick="showToast('充值成功！余额已刷新', 'success'); setTimeout(()=>navigateTo('page-room-playing'), 1000);">
+          💳 立即充值
+        </button>
+        <button class="btn btn-secondary btn-full" style="margin-top: 8px;" onclick="navigateTo('page-room-playing')">
+          取消
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       页面10：断线重连
+       ══════════════════════════════════ -->
+  <div class="page" id="page-reconnect">
+    <div class="error-page" style="background: rgba(0,0,0,0.8);">
+      <div class="loader-spinner"></div>
+      <div style="font-size: 18px; font-weight: 800; margin-top: 16px;">🔄 正在重连</div>
+      <div style="font-size: 13px; color: var(--text-secondary); margin-top: 8px; text-align: center;">
+        正在尝试恢复游戏连接...<br>
+        <span style="color: var(--text-muted);">座位已保留，请稍候</span>
+      </div>
+      <div style="width: 200px; height: 4px; background: var(--surface-active); border-radius: 2px; overflow: hidden; margin-top: 16px;">
+        <div style="height: 100%; width: 60%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); border-radius: 2px; animation: progressAnim 3s ease-in-out;"></div>
+      </div>
+      <button class="btn btn-secondary btn-sm" style="margin-top: 24px;" onclick="navigateTo('page-room-waiting')">返回房间</button>
+    </div>
+
+    <script>
+      setTimeout(() => {
+        if (document.getElementById('page-reconnect').classList.contains('active')) {
+          navigateTo('page-room-playing');
+          showToast('重连成功！游戏已恢复', 'success');
+        }
+      }, 3000);
+    </script>
+  </div>
+
+  <!-- ══════════════════════════════════
+       模态弹窗们
+       ══════════════════════════════════ -->
+
+  <!-- 邀请弹窗 -->
+  <div class="modal-overlay" id="modal-invite" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">📨 邀请好友</div>
+      <div class="invite-grid">
+        <div class="invite-item">
+          <div class="invite-avatar">M</div>
+          <div class="invite-name">Mohammed</div>
+          <button class="invite-btn" style="background: rgba(34,197,94,0.2); color: #22c55e;" onclick="showToast('邀请已发送', 'success')">邀请</button>
+        </div>
+        <div class="invite-item">
+          <div class="invite-avatar">N</div>
+          <div class="invite-name">Noor</div>
+          <button class="invite-btn" style="background: rgba(34,197,94,0.2); color: #22c55e;" onclick="showToast('邀请已发送', 'success')">邀请</button>
+        </div>
+        <div class="invite-item">
+          <div class="invite-avatar">L</div>
+          <div class="invite-name">Layla</div>
+          <button class="invite-btn" style="background: rgba(34,197,94,0.2); color: #22c55e;" onclick="showToast('邀请已发送', 'success')">邀请</button>
+        </div>
+        <div class="invite-item">
+          <div class="invite-avatar">O</div>
+          <div class="invite-name">Omar</div>
+          <button class="invite-btn" style="background: rgba(239,68,68,0.2); color: #ef4444;">游戏中</button>
+        </div>
+        <div class="invite-item">
+          <div class="invite-avatar">Z</div>
+          <div class="invite-name">Zainab</div>
+          <button class="invite-btn" style="background: rgba(34,197,94,0.2); color: #22c55e;" onclick="showToast('邀请已发送', 'success')">邀请</button>
+        </div>
+        <div class="invite-item">
+          <div class="invite-avatar">H</div>
+          <div class="invite-name">Hassan</div>
+          <button class="invite-btn" style="background: rgba(100,100,120,0.2); color: #999;">离线</button>
+        </div>
+      </div>
+      <div style="margin-top: 16px; text-align: center;">
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">或分享房间码</div>
+        <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+          <div style="background: var(--surface); padding: 8px 20px; border-radius: 8px; font-size: 16px; font-weight: 800; letter-spacing: 3px; color: var(--gold);">LUDO-10086</div>
+          <button class="btn btn-sm btn-secondary" onclick="showToast('房间码已复制', 'success')">📋</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 声音设置弹窗 -->
+  <div class="modal-overlay" id="modal-sound" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🔊 声音设置</div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">🎙️ 语聊音量</div>
+        <div class="sound-controls">
+          <span style="font-size: 14px;">🔈</span>
+          <input type="range" class="sound-slider" min="0" max="100" value="80">
+          <span style="font-size: 14px;">🔊</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">🎵 游戏BGM</div>
+        <div class="sound-controls">
+          <span style="font-size: 14px;">🔈</span>
+          <input type="range" class="sound-slider" min="0" max="100" value="30">
+          <span style="font-size: 14px;">🔊</span>
+        </div>
+        <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px; padding-left: 36px;">游戏中默认降低BGM，语聊优先</div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">🎯 游戏音效</div>
+        <div class="sound-controls">
+          <span style="font-size: 14px;">🔈</span>
+          <input type="range" class="sound-slider" min="0" max="100" value="60">
+          <span style="font-size: 14px;">🔊</span>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">🔇 游戏开始自动降低BGM</div>
+        </div>
+        <button class="toggle on" onclick="toggleSwitch(this)"></button>
+      </div>
+
+      <button class="btn btn-primary btn-full" style="margin-top: 16px;" onclick="hideModal('modal-sound'); showToast('声音设置已保存', 'success')">保存</button>
+    </div>
+  </div>
+
+  <!-- 房间菜单弹窗 -->
+  <div class="modal-overlay" id="modal-room-menu" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">⚙️ 房间管理</div>
+
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="padding: 14px 12px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer;" onclick="hideModal('modal-room-menu'); showToast('房间信息已复制', 'success')">
+          <span style="font-size: 20px;">📋</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">复制房间信息</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Room #10086 · LUDO-10086</div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 12px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer;" onclick="hideModal('modal-room-menu'); showModal('modal-admin')">
+          <span style="font-size: 20px;">🛡️</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">管理员设置</div>
+            <div style="font-size: 11px; color: var(--text-muted);">踢人、锁麦、邀请上麦</div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 12px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer;" onclick="hideModal('modal-room-menu'); showToast('已举报', 'success')">
+          <span style="font-size: 20px;">🚩</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">举报房间</div>
+            <div style="font-size: 11px; color: var(--text-muted);">举报违规行为</div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 12px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer;" onclick="hideModal('modal-room-menu'); navigateTo('page-error-load')">
+          <span style="font-size: 20px;">🔧</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">游戏设置</div>
+            <div style="font-size: 11px; color: var(--text-muted);">安全区、显示模式</div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); margin: 6px 0;"></div>
+
+        <div style="padding: 14px 12px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer;" onclick="hideModal('modal-room-menu'); navigateTo('page-list')">
+          <span style="font-size: 20px;">🚪</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--danger);">离开房间</div>
+            <div style="font-size: 11px; color: var(--text-muted);">游戏中离开将视为弃权</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理员权限弹窗 -->
+  <div class="modal-overlay" id="modal-admin" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🛡️ 管理员操作</div>
+
+      <div style="margin-bottom: 12px; padding: 10px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px;">
+        <div style="font-size: 12px; color: #fbbf24;">⚠️ 管理员操作将通知房主</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="padding: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>👢</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">踢人下麦</div>
+              <div style="font-size: 10px; color: var(--text-muted);">将用户从语聊麦位移出</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-danger" onclick="showToast('请选择目标用户', 'info')">操作</button>
+        </div>
+
+        <div style="padding: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>🚫</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">踢出房间</div>
+              <div style="font-size: 10px; color: var(--text-muted);">将用户移出房间</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-danger" onclick="showToast('请选择目标用户', 'info')">操作</button>
+        </div>
+
+        <div style="padding: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>🎤</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">邀请上麦</div>
+              <div style="font-size: 10px; color: var(--text-muted);">邀请用户上语聊麦位</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-success" onclick="showToast('请选择目标用户', 'info')">操作</button>
+        </div>
+
+        <div style="padding: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>🔒</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">锁麦 / 解锁麦</div>
+              <div style="font-size: 10px; color: var(--text-muted);">锁定后普通用户不可上该麦位</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-secondary" onclick="showToast('请选择目标麦位', 'info')">操作</button>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary btn-full" style="margin-top: 16px;" onclick="hideModal('modal-admin')">关闭</button>
+    </div>
+  </div>
+
+  <!-- 用户资料卡弹窗 -->
+  <div class="modal-overlay" id="modal-profile" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="profile-card">
+        <div class="profile-avatar">A</div>
+        <div class="profile-name">Ahmed 👑</div>
+        <div class="profile-id">ID: 534206265 · 🇸🇦 Saudi Arabia</div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-value">156</div>
+            <div class="stat-label">Ludo局</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">68%</div>
+            <div class="stat-label">胜率</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">Lv.28</div>
+            <div class="stat-label">等级</div>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="btn btn-sm btn-primary" onclick="showToast('关注成功', 'success'); hideModal('modal-profile')">➕ 关注</button>
+          <button class="btn btn-sm btn-secondary" onclick="showToast('已发送私信', 'success'); hideModal('modal-profile')">💬 私信</button>
+          <button class="btn btn-sm btn-secondary" onclick="showToast('🎁', 'info'); hideModal('modal-profile')">🎁 送礼</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下座确认弹窗 -->
+  <div class="modal-overlay" id="modal-leave-seat" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()" style="padding: 0;">
+      <div class="confirm-dialog">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">确认下座？</div>
+        <div class="confirm-msg">
+          游戏进行中下座将视为弃权<br>
+          当前局投入将不予退还
+        </div>
+        <div class="confirm-btns">
+          <button class="btn btn-secondary btn-full" onclick="hideModal('modal-leave-seat')">取消</button>
+          <button class="btn btn-danger btn-full" onclick="hideModal('modal-leave-seat'); showToast('已下座，本局弃权', 'warning')">确认下座</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 容器 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+</div><!-- phone-frame end -->
+
+<script>
+// ═══════════════════════════════════════════
+// 页面导航
+// ═══════════════════════════════════════════
+const pageLabels = {
+  'page-list': '游戏房列表',
+  'page-create': '创建游戏房',
+  'page-loading': '加载中',
+  'page-room-waiting': '游戏房 · 等待中',
+  'page-room-playing': '游戏房 · 游戏中',
+  'page-spectator': '观战界面',
+  'page-settling': '结算页',
+  'page-error-load': '加载失败',
+  'page-error-balance': '余额不足',
+  'page-reconnect': '断线重连'
+};
+
+function navigateTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) {
+    page.classList.add('active');
+    page.classList.add('animate-fade');
+    setTimeout(() => page.classList.remove('animate-fade'), 300);
+  }
+  document.getElementById('pageLabel').textContent = pageLabels[pageId] || pageId;
+
+  // 隐藏小窗
+  document.getElementById('miniGame').classList.remove('active');
+}
+
+// ═══════════════════════════════════════════
+// Toast 提示
+// ═══════════════════════════════════════════
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// ═══════════════════════════════════════════
+// 模态弹窗
+// ═══════════════════════════════════════════
+function showModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+
+function hideModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+function closeModal(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('active');
+  }
+}
+
+// ═══════════════════════════════════════════
+// 交互逻辑
+// ═══════════════════════════════════════════
+
+// 游戏分类Tab切换
+function switchGameTab(el) {
+  el.parentElement.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// 选择游戏
+function selectGame(el) {
+  el.parentElement.querySelectorAll('.game-select-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// 选择语言
+function selectLang(el) {
+  el.parentElement.querySelectorAll('.lang-option').forEach(l => l.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// 选择门票
+function selectTicket(el) {
+  el.parentElement.querySelectorAll('.ticket-option').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// 选择充值金额
+function selectRecharge(el) {
+  el.parentElement.querySelectorAll('.recharge-item').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// 开关切换
+function toggleSwitch(el) {
+  el.classList.toggle('on');
+}
+
+// 上座
+function handleSeatUp() {
+  showToast('正在上座...同步 Bytesun 座位', 'info');
+  setTimeout(() => {
+    showToast('上座成功！座位已同步 (type=16)', 'success');
+  }, 1000);
+}
+
+// 准备
+function handleReady() {
+  showToast('已准备 ✓', 'success');
+}
+
+// 掷骰子
+function handleDiceRoll() {
+  const dice = Math.floor(Math.random() * 6) + 1;
+  const emojis = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+  showToast(`🎲 掷出了 ${dice} 点！${emojis[dice-1]}`, dice === 6 ? 'success' : 'info');
+}
+
+// 缩球/最小化
+function toggleMiniGame() {
+  const mini = document.getElementById('miniGame');
+  mini.classList.toggle('active');
+  showToast('游戏已最小化，可继续聊天', 'info');
+}
+
+// 再来一局
+function handleReplay() {
+  showToast('正在重置游戏...', 'info');
+  setTimeout(() => {
+    navigateTo('page-room-waiting');
+    showToast('新一局已准备就绪！', 'success');
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════
+// 星空生成
+// ═══════════════════════════════════════════
+function generateStars(containerId, count = 40) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 60 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+    container.appendChild(star);
+  }
+}
+
+// 初始化星空
+document.querySelectorAll('.starry-bg').forEach((bg, i) => {
+  bg.id = 'starryBg_' + i;
+  generateStars(bg.id);
+});
+
+// ═══════════════════════════════════════════
+// 快捷键：模拟各种场景
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case '1': navigateTo('page-list'); break;
+    case '2': navigateTo('page-create'); break;
+    case '3': navigateTo('page-room-waiting'); break;
+    case '4': navigateTo('page-room-playing'); break;
+    case '5': navigateTo('page-spectator'); break;
+    case '6': navigateTo('page-settling'); break;
+    case '7': navigateTo('page-error-load'); break;
+    case '8': navigateTo('page-error-balance'); break;
+    case '9': navigateTo('page-reconnect'); break;
+  }
+});
+</script>
+
+</body>
+</html>
