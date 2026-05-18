@@ -3,431 +3,768 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>语聊房三方休闲游戏 Axure 线框原型</title>
+  <title>语聊房三方休闲游戏 Axure 交互线框原型</title>
   <style>
     * {
       box-sizing: border-box;
     }
 
     :root {
-      --bg: #ededed;
+      --phone-w: 390px;
+      --phone-h: 844px;
+      --bg: #efefef;
       --paper: #fff;
-      --line: #9f9f9f;
-      --line-soft: #cfcfcf;
+      --wire: #9e9e9e;
+      --wire-soft: #d0d0d0;
       --ink: #111;
-      --muted: #666;
+      --muted: #707070;
       --blue: #2d7ff9;
-      --red: #e24b4b;
-      --phone-w: 300px;
-      --phone-h: 640px;
+      --gold: #f1bb39;
+      --dark: #151515;
     }
 
     body {
       margin: 0;
-      min-width: 1280px;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
       background: var(--bg);
       color: var(--ink);
       font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
-    button {
+    button,
+    input {
       border: 0;
       padding: 0;
       background: none;
       color: inherit;
       font: inherit;
+      outline: none;
+    }
+
+    button {
       cursor: pointer;
     }
 
-    .page {
-      width: 1280px;
-      margin: 0 auto;
-      padding: 24px 24px 48px;
-    }
-
-    .header {
+    .wrap {
+      width: min(1180px, 100vw);
+      min-height: 900px;
+      padding: 28px 24px;
       display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 18px;
-      align-items: stretch;
-      margin-bottom: 18px;
+      grid-template-columns: 260px var(--phone-w) 1fr;
+      gap: 26px;
+      align-items: start;
     }
 
-    .title-panel,
+    .side,
     .inspector {
-      border: 1px solid var(--line);
+      border: 1px solid var(--wire);
       background: var(--paper);
       padding: 16px 18px;
     }
 
-    .title-panel h1 {
-      margin: 0 0 10px;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: 0;
-    }
-
-    .title-panel p,
-    .inspector p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
+    .side h1,
     .inspector h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight: 600;
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 700;
     }
 
-    .flow-rail {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0;
-      margin-bottom: 20px;
-      border: 1px solid var(--line);
-      background: var(--paper);
-    }
-
-    .flow-step {
-      position: relative;
-      min-height: 72px;
-      padding: 12px 14px;
-      border-right: 1px solid var(--line-soft);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .flow-step:last-child {
-      border-right: 0;
-    }
-
-    .flow-step::after {
-      content: "";
-      position: absolute;
-      right: -8px;
-      top: 50%;
-      z-index: 2;
-      width: 14px;
-      height: 14px;
-      border-top: 1px solid var(--line);
-      border-right: 1px solid var(--line);
-      background: var(--paper);
-      transform: translateY(-50%) rotate(45deg);
-    }
-
-    .flow-step:last-child::after {
-      display: none;
-    }
-
-    .flow-step b {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 15px;
-    }
-
-    .flow-step.active {
-      outline: 3px solid rgba(45, 127, 249, 0.22);
-      background: #f5f9ff;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .screen-card {
-      position: relative;
-      border: 1px solid var(--line);
-      background: var(--paper);
-    }
-
-    .screen-card.active {
-      outline: 3px solid rgba(45, 127, 249, 0.45);
-      box-shadow: 0 0 0 1px var(--blue);
-    }
-
-    .screen-head {
-      min-height: 58px;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--line-soft);
-      background: #f7f7f7;
-    }
-
-    .screen-head b {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .screen-head span {
-      display: block;
+    .side p,
+    .inspector p {
+      margin: 0 0 12px;
       color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .flow-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .flow-list button {
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      text-align: left;
       font-size: 12px;
-      line-height: 1.35;
+    }
+
+    .flow-list button.active {
+      border-color: var(--blue);
+      background: #eef5ff;
+      color: #0f62d9;
+      font-weight: 700;
+    }
+
+    .legend {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .legend span {
+      min-height: 30px;
+      padding: 7px 8px;
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
     }
 
     .phone {
       position: relative;
       width: var(--phone-w);
       height: var(--phone-h);
-      margin: 12px auto;
       overflow: hidden;
-      border: 1px solid var(--line);
+      border: 1px solid #b7b7b7;
       background: #fff;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
     }
 
     .status {
-      height: 36px;
-      padding: 8px 14px 0;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 20;
+      height: 34px;
+      padding: 8px 12px 0;
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px solid #ededed;
+      color: #151515;
       font-size: 11px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #fff;
+    }
+
+    .screen.show {
+      display: block;
+    }
+
+    .wire-screen {
+      padding-top: 36px;
+      background: #f8f8f8;
+    }
+
+    .wire-header {
+      min-height: 62px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff;
+      border-bottom: 1px solid var(--wire-soft);
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab {
+      height: 34px;
+      min-width: 66px;
+      padding: 0 12px;
+      border: 1px solid var(--wire-soft);
+      background: #f1f1f1;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      border-color: #111;
+      background: #fff;
       font-weight: 700;
     }
 
-    .nav {
-      height: 44px;
-      padding: 0 12px;
-      display: grid;
-      grid-template-columns: 28px 1fr 28px;
+    .top-icons {
+      display: flex;
       align-items: center;
-      border-bottom: 1px solid var(--line-soft);
-      text-align: center;
-      font-size: 16px;
-      font-weight: 600;
+      gap: 8px;
     }
 
-    .nav-icon,
-    .circle-icon {
+    .wire-header.activity-mode .task-btn,
+    .wire-header.activity-mode .top-avatar {
+      display: none;
+    }
+
+    .icon-btn,
+    .round-btn {
       display: grid;
       place-items: center;
-      border: 1px solid var(--line);
-      background: #fafafa;
-      color: #333;
+      border: 1px solid var(--wire);
+      background: #fff;
       font-size: 12px;
       font-weight: 700;
     }
 
-    .nav-icon {
-      width: 22px;
-      height: 22px;
+    .icon-btn {
+      width: 34px;
+      height: 34px;
     }
 
-    .circle-icon {
-      width: 28px;
-      height: 28px;
+    .round-btn {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
     }
 
-    .tabs {
-      height: 40px;
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--wire);
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        #fff;
+    }
+
+    .discover-page {
+      display: none;
+      height: calc(100% - 62px);
+      padding: 10px 10px 72px;
+      overflow: hidden;
+    }
+
+    .discover-page.active {
+      display: block;
+    }
+
+    .asset-line {
       display: flex;
-      align-items: end;
-      gap: 20px;
-      padding: 0 14px 8px;
-      border-bottom: 1px solid var(--line-soft);
-      font-size: 15px;
-    }
-
-    .tabs span {
-      color: #777;
-    }
-
-    .tabs .on {
-      color: #111;
-      font-weight: 700;
-      border-bottom: 2px solid #111;
-    }
-
-    .phone-content {
-      padding: 12px;
-    }
-
-    .asset-row {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      justify-content: space-between;
+      margin-bottom: 9px;
     }
 
-    .pill {
-      min-height: 28px;
+    .coin-pill {
+      min-height: 34px;
       padding: 0 10px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--wire);
       border-radius: 999px;
-      background: #fafafa;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .coin-dot {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #fff;
+      font-size: 11px;
+    }
+
+    .plus-dot {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #28b76b;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .private-room {
+      min-height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--wire);
+      border-radius: 6px;
+      background: #fff;
       font-size: 12px;
       font-weight: 700;
     }
 
-    .grid-3 {
+    .game-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
-    .game-cell,
-    .game-icon,
-    .room-row,
-    .placeholder,
-    .field,
-    .event-row {
+    .game-card {
       position: relative;
-      border: 1px solid var(--line);
-      background: #fbfbfb;
-    }
-
-    .game-cell {
-      height: 68px;
-      padding: 8px 4px;
+      height: 112px;
+      padding: 8px 6px;
       display: grid;
       place-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 2px;
+      background: #fff;
       text-align: center;
-      font-size: 12px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .game-card::before,
+    .placeholder::before,
+    .room-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px));
+      pointer-events: none;
+    }
+
+    .game-card b {
+      position: relative;
+      z-index: 1;
+      display: block;
+      padding-top: 38px;
+      font-weight: 500;
+    }
+
+    .game-card .status-tag {
+      position: absolute;
+      left: 3px;
+      bottom: 3px;
+      z-index: 1;
+      padding: 2px 5px;
+      background: #ffb72b;
+      color: #fff;
+      font-size: 9px;
     }
 
     .section-title {
-      margin: 14px 0 8px;
+      height: 28px;
       display: flex;
+      align-items: end;
       justify-content: space-between;
-      font-size: 14px;
+      color: #111;
+      font-size: 15px;
       font-weight: 700;
     }
 
-    .room-row {
-      min-height: 62px;
+    .country-filter {
+      height: 38px;
       margin-bottom: 8px;
+      display: block;
+    }
+
+    .country-scroll {
+      width: 100%;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .country-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .country-chip {
+      flex: 0 0 auto;
+      min-width: 54px;
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--wire-soft);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .country-chip.active {
+      border-color: #111;
+      background: #f1f1f1;
+    }
+
+    .country-search-btn {
+      width: 42px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      background: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .room-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .room-card {
+      min-height: 74px;
       padding: 8px;
       display: grid;
-      grid-template-columns: 42px 1fr 34px;
+      grid-template-columns: 58px 1fr 42px;
       gap: 8px;
       align-items: center;
-      font-size: 11px;
+      border: 1px solid var(--wire);
+      border-radius: 2px;
+      background: #fff;
       text-align: left;
     }
 
-    .thumb {
-      height: 38px;
-      border: 1px solid var(--line-soft);
-      background:
-        linear-gradient(to bottom right, transparent calc(50% - 1px), #d6d6d6, transparent calc(50% + 1px)),
-        linear-gradient(to top right, transparent calc(50% - 1px), #d6d6d6, transparent calc(50% + 1px));
+    .room-cover {
+      position: relative;
+      height: 56px;
+      border: 1px solid var(--wire-soft);
+      background: #f6f6f6;
+      overflow: hidden;
     }
 
-    .bottom-nav,
-    .room-toolbar {
+    .room-main {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .room-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tag-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #555;
+      font-size: 10px;
+    }
+
+    .tag {
+      padding: 1px 4px;
+      border: 1px solid var(--wire-soft);
+      background: #f6f6f6;
+      font-size: 9px;
+    }
+
+    .mini-avatars {
+      display: flex;
+    }
+
+    .mini-avatars i {
+      width: 16px;
+      height: 16px;
+      margin-right: -4px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      background: #ddd;
+    }
+
+    .online {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .activity-page .activity-sort {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .activity-card {
+      position: relative;
+      min-height: 92px;
+      padding: 12px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: left;
+    }
+
+    .activity-card .rank {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 2px 8px;
+      border: 1px solid var(--wire-soft);
+      border-radius: 999px;
+      background: #f4f4f4;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .activity-card b {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    .activity-card span {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .bottom-nav {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
-      min-height: 58px;
-      padding: 8px 10px;
+      z-index: 22;
+      height: 64px;
+      padding: 8px 8px 12px;
       display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
-      border-top: 1px solid var(--line-soft);
+      border-top: 1px solid var(--wire-soft);
       background: #fff;
     }
 
-    .bottom-nav {
-      grid-template-columns: repeat(5, 1fr);
-    }
-
-    .room-toolbar {
-      grid-template-columns: 32px 32px 1fr 32px 32px 32px;
-      align-items: center;
-    }
-
-    .nav-item,
-    .tool-item {
-      position: relative;
-      min-height: 36px;
+    .nav-item {
       display: grid;
       place-items: center;
-      border: 1px solid var(--line);
+      border: 1px solid var(--wire-soft);
       background: #fafafa;
       font-size: 10px;
-      text-align: center;
     }
 
-    .chat-input {
-      min-height: 32px;
-      display: grid;
+    .nav-item.active {
+      border-color: #111;
+      font-weight: 700;
+    }
+
+    .room-screen {
+      padding-top: 36px;
+      background: #fff;
+    }
+
+    .room-top {
+      height: 78px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--wire-soft);
+    }
+
+    .room-title-box {
+      display: flex;
       align-items: center;
-      padding: 0 10px;
-      border: 1px solid var(--line);
-      color: #777;
-      background: #fafafa;
-      font-size: 10px;
+      gap: 8px;
+      min-width: 0;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .room-stage {
-      height: 410px;
-      margin-top: 12px;
-      border: 1px solid var(--line);
+    .room-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .seat-area {
+      position: relative;
+      height: 446px;
+      margin: 10px;
+      border: 1px solid var(--wire);
       background:
-        linear-gradient(to bottom right, transparent calc(50% - 1px), #d6d6d6, transparent calc(50% + 1px)),
-        linear-gradient(to top right, transparent calc(50% - 1px), #d6d6d6, transparent calc(50% + 1px)),
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #ddd, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #ddd, transparent calc(50% + 1px)),
         #fafafa;
     }
 
     .seat-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px 6px;
-      padding: 12px;
+      gap: 12px 8px;
+      padding: 18px 12px;
     }
 
     .seat {
-      position: relative;
       display: grid;
-      gap: 4px;
       justify-items: center;
+      gap: 4px;
       color: #555;
       font-size: 10px;
     }
 
     .seat i {
-      width: 34px;
-      height: 34px;
-      border: 1px solid var(--line);
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--wire);
       border-radius: 50%;
       background: #fff;
+    }
+
+    .room-current-game {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 16px;
+      min-height: 52px;
+      padding: 8px 10px;
+      display: none;
+      border: 1px solid var(--wire);
+      background: #fff;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .room-current-game.show {
+      display: block;
     }
 
     .chat-lines {
       position: absolute;
       left: 12px;
       right: 12px;
-      bottom: 72px;
+      bottom: 88px;
       display: grid;
       gap: 6px;
     }
 
     .chat-line {
-      min-height: 24px;
-      padding: 5px 7px;
-      border: 1px solid var(--line-soft);
+      min-height: 25px;
+      padding: 5px 8px;
+      border: 1px solid var(--wire-soft);
       background: #fff;
       color: #555;
+      font-size: 11px;
+    }
+
+    .room-toolbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 74px;
+      padding: 10px 10px 14px;
+      display: grid;
+      grid-template-columns: 38px 38px 1fr 38px 38px 38px;
+      gap: 7px;
+      align-items: center;
+      border-top: 1px solid var(--wire-soft);
+      background: #fff;
+    }
+
+    .tool {
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fafafa;
       font-size: 10px;
-      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .chat-input {
+      height: 36px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 999px;
+      background: #fafafa;
+      color: #777;
+      font-size: 11px;
     }
 
     .sheet-mask {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(to bottom right, transparent calc(50% - 1px), #dedede, transparent calc(50% + 1px)),
-        rgba(255, 255, 255, 0.72);
+      z-index: 110;
+      display: none;
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .sheet-mask.show {
+      display: block;
+    }
+
+    .country-search-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 118;
+      display: none;
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .country-search-mask.show {
+      display: block;
+    }
+
+    .country-search-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: 390px;
+      padding: 16px;
+      border-top: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .country-search-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .country-search-input {
+      height: 40px;
+      margin-bottom: 12px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .country-result-title {
+      margin: 8px 0;
+      color: #555;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .country-hot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .country-hot-grid button {
+      min-height: 32px;
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .bottom-sheet {
@@ -435,706 +772,1436 @@
       left: 0;
       right: 0;
       bottom: 0;
-      min-height: 360px;
-      padding: 14px 12px;
-      border-top: 1px solid var(--line);
+      min-height: 365px;
+      padding: 16px 16px 22px;
+      border-top: 1px solid var(--wire);
       background: #fff;
     }
 
     .sheet-head {
+      height: 34px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
     }
 
     .sheet-tabs {
+      height: 38px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .sheet-tabs button {
-      height: 30px;
-      border: 1px solid var(--line);
+    .sheet-tab {
+      border: 1px solid var(--wire-soft);
       background: #fafafa;
-      font-size: 11px;
+      font-size: 12px;
     }
 
-    .current-box {
-      margin-bottom: 12px;
+    .sheet-tab.active {
+      border-color: #111;
+      font-weight: 700;
+    }
+
+    .sheet-page {
+      display: none;
+    }
+
+    .sheet-page.active {
+      display: block;
+    }
+
+    .current-game-box {
+      display: none;
+      margin-bottom: 10px;
       padding: 8px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--wire);
       background: #fafafa;
-      font-size: 11px;
+      font-size: 12px;
     }
 
-    .game-icon {
-      min-height: 54px;
+    .current-game-box.show {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+    }
+
+    .sheet-game {
+      position: relative;
+      min-height: 58px;
       padding: 6px 4px;
       display: grid;
       place-items: center;
-      font-size: 10px;
+      border: 1px solid var(--wire);
+      background: #fff;
       text-align: center;
+      font-size: 10px;
     }
 
-    .setting-bg {
-      height: 120px;
-      border-bottom: 1px solid var(--line-soft);
+    .sheet-game::before,
+    .event-mini::before,
+    .emoji-cell::before,
+    .placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 0;
       background:
-        linear-gradient(to bottom right, transparent calc(50% - 1px), #dedede, transparent calc(50% + 1px)),
-        #fafafa;
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #d1d1d1, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #d1d1d1, transparent calc(50% + 1px));
+      pointer-events: none;
+    }
+
+    .sheet-game span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .event-mini {
+      position: relative;
+      min-height: 76px;
+      margin-bottom: 9px;
+      padding: 10px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .event-mini b,
+    .event-mini small {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .emoji-cell {
+      position: relative;
+      min-height: 52px;
+      border: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .setting-screen {
+      z-index: 70;
+      padding-top: 36px;
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #d8d8d8, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #d8d8d8, transparent calc(50% + 1px)),
+        #f8f8f8;
+    }
+
+    .setting-top {
+      height: 118px;
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--wire-soft);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .setting-brand {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .setting-seats {
+      margin-top: 16px;
+      display: flex;
+      gap: 9px;
+    }
+
+    .setting-seats i {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fff;
     }
 
     .setting-panel {
       position: absolute;
-      left: 26px;
-      right: 26px;
-      top: 160px;
-      min-height: 300px;
-      padding: 16px;
-      border: 1px solid var(--line);
+      left: 30px;
+      right: 30px;
+      top: 210px;
+      min-height: 320px;
+      padding: 18px;
+      border: 1px solid var(--wire);
       background: #fff;
     }
 
-    .setting-title {
-      margin-bottom: 12px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 600;
+    .setting-coin {
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      transform: translateX(-50%);
+      min-height: 32px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--wire);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .field {
-      min-height: 42px;
+    .setting-logo {
+      margin: 14px 0 18px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .setting-row {
+      min-height: 44px;
       margin-bottom: 10px;
       padding: 0 10px;
       display: grid;
-      grid-template-columns: 34px 1fr 34px;
+      grid-template-columns: 40px 1fr 40px;
       align-items: center;
+      border: 1px solid var(--wire);
+      background: #fafafa;
       text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .segments {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .segment {
+      min-height: 40px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
       font-size: 13px;
-      font-weight: 600;
+    }
+
+    .segment.active {
+      border-color: #111;
+      font-weight: 700;
     }
 
     .seat-dots {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 16px 0 18px;
+      gap: 12px;
+      margin: 16px 0 20px;
     }
 
-    .seat-dots button {
+    .seat-dot {
       height: 42px;
-      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
       border-radius: 50%;
       background: #fafafa;
       font-size: 20px;
     }
 
-    .actions {
+    .setting-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .wire-btn {
-      min-height: 40px;
-      border: 1px solid var(--line);
+    .btn {
+      min-height: 42px;
+      border: 1px solid var(--wire);
       background: #fafafa;
+      font-size: 14px;
       font-weight: 700;
     }
 
-    .modal-mask {
+    .btn.primary {
+      border-color: #111;
+      background: #fff;
+    }
+
+    .setting-chat-note {
       position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(0, 0, 0, 0.14);
-    }
-
-    .modal {
-      width: 246px;
-      padding: 18px 16px;
-      border: 1px solid var(--line);
+      left: 14px;
+      right: 14px;
+      bottom: 70px;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--wire-soft);
       background: #fff;
-      text-align: center;
-    }
-
-    .modal h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .modal p {
-      margin: 0 0 16px;
       color: #555;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .wallet-tabs {
-      height: 44px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      align-items: center;
-      gap: 6px;
-      padding: 0 12px;
-      border-bottom: 1px solid var(--line-soft);
-      text-align: center;
-      font-size: 13px;
-    }
-
-    .wallet-tabs .on {
-      color: #111;
-      font-weight: 700;
-    }
-
-    .balance-card {
-      margin: 14px 12px;
-      min-height: 100px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      background: #fafafa;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .balance-card b {
-      display: block;
-      margin-top: 18px;
-      font-size: 34px;
-      line-height: 1;
-    }
-
-    .exchange-form {
-      margin: 0 12px;
-      padding: 16px 14px;
-      border: 1px solid var(--line);
-      background: #fff;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .exchange-form h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .input {
-      min-height: 38px;
-      margin: 8px 0 12px;
-      padding: 9px 10px;
-      border: 1px solid var(--line-soft);
-      background: #f7f7f7;
-      color: #888;
-    }
-
-    .warn {
-      color: var(--red);
       font-size: 11px;
       line-height: 1.45;
     }
 
-    .game-real {
+    .insufficient-mask {
       position: absolute;
       inset: 0;
-      background-image: url("outputs/game-prototype-assets/uno-game.png");
+      z-index: 120;
+      display: none;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.34);
+    }
+
+    .insufficient-mask.show {
+      display: grid;
+    }
+
+    .insufficient-card {
+      width: 300px;
+      padding: 22px 18px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: center;
+    }
+
+    .insufficient-card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .insufficient-card p {
+      margin: 0 0 18px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .exchange-screen {
+      z-index: 90;
+      background: #f5f5f7;
+      color: #151515;
+    }
+
+    .exchange-status {
+      height: 40px;
+      padding: 8px 34px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #0f0f13;
+      font-size: 13px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    .exchange-nav {
+      height: 56px;
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .exchange-back,
+    .exchange-record {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #101014;
+      font-size: 24px;
+      font-weight: 800;
+      background: transparent;
+    }
+
+    .exchange-record {
+      border-radius: 10px;
+      border: 2px solid #151515;
+      font-size: 16px;
+      color: #79c23a;
+    }
+
+    .exchange-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      color: #9a9aa3;
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .exchange-tabs span.active {
+      color: #111;
+    }
+
+    .exchange-body {
+      padding: 18px 12px 26px;
+    }
+
+    .exchange-hero {
+      position: relative;
+      min-height: 112px;
+      padding: 22px 24px;
+      overflow: hidden;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 84% 30%, #fff27f 0 22%, transparent 23%),
+        linear-gradient(135deg, #19c94e, #a8fa4b);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(34, 198, 82, 0.22);
+    }
+
+    .exchange-hero span {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .exchange-hero strong {
+      display: block;
+      margin-top: 20px;
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 1000;
+    }
+
+    .exchange-hero .controller {
+      position: absolute;
+      right: 22px;
+      top: 24px;
+      font-size: 64px;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.18));
+      transform: rotate(-12deg);
+    }
+
+    .exchange-card {
+      margin-top: 18px;
+      padding: 22px 18px 20px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.04);
+    }
+
+    .exchange-card h3 {
+      margin: 0 0 22px;
+      color: #17171a;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .exchange-card label {
+      display: block;
+      margin-bottom: 12px;
+      color: #1f1f23;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .exchange-input {
+      width: 100%;
+      height: 48px;
+      margin-bottom: 12px;
+      border: 0;
+      border-radius: 12px;
+      padding: 0 16px;
+      background: #f1f1f4;
+      color: #111;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .exchange-quick {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .exchange-quick button {
+      height: 34px;
+      border-radius: 999px;
+      background: #eef8ed;
+      color: #1b9d46;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .exchange-meta {
+      display: grid;
+      gap: 10px;
+      color: #262629;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .exchange-meta b {
+      color: #ff8b1d;
+    }
+
+    .exchange-warning {
+      margin: 14px 0 20px;
+      color: #ff4b52;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 850;
+    }
+
+    .exchange-submit {
+      width: 100%;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffb23f, #ff7f19);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .exchange-submit:disabled {
+      background: #d7d7d7;
+    }
+
+    .h5-screen {
+      z-index: 95;
+      background: #050505;
+    }
+
+    .h5-game {
+      position: absolute;
+      inset: 0;
+      background-image: url("outputs/game-prototype-assets/ludo-game.png");
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100% 100%;
     }
 
-    .game-top-tools {
+    .h5-game.uno {
+      background-image: url("outputs/game-prototype-assets/uno-game.png");
+    }
+
+    .h5-game.ball {
+      background-image: url("outputs/game-prototype-assets/8ball-game.png");
+    }
+
+    .h5-game.snake {
+      background-image: url("outputs/game-prototype-assets/snake-game.png");
+    }
+
+    .h5-actions {
       position: absolute;
-      right: 10px;
-      top: 38px;
+      right: 12px;
+      top: 48px;
+      z-index: 4;
       display: flex;
-      gap: 6px;
+      gap: 7px;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
     }
 
-    .game-top-tools button {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.45);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .game-bottom-tools {
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 18px;
-      min-height: 54px;
-      padding: 7px 8px;
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 5px;
-      border-radius: 10px;
-      background: rgba(0, 0, 0, 0.72);
-      color: #fff;
-    }
-
-    .game-bottom-tools button {
-      position: relative;
-      min-height: 36px;
+    .h5-action {
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      font-size: 9px;
-      font-weight: 700;
+      background: rgba(0, 0, 0, 0.44);
+      color: #fff;
+      font-weight: 900;
     }
 
-    .badge {
+    .game-tools {
       position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 19px;
       z-index: 5;
+      min-height: 62px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 6px;
+      align-items: center;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 210, 108, 0.24), transparent 40%),
+        rgba(0, 0, 0, 0.72);
+      color: #fff;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.38);
+    }
+
+    .game-tool-btn {
+      position: relative;
+      width: min(40px, 100%);
+      aspect-ratio: 1;
+      justify-self: center;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff8ec;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .game-tool-badge {
+      position: absolute;
+      right: -5px;
+      top: -7px;
       min-width: 20px;
-      height: 20px;
+      height: 18px;
       padding: 0 5px;
       display: grid;
       place-items: center;
-      border: 1px solid #111;
-      border-radius: 50%;
-      background: #fff;
-      color: #111;
-      font-size: 11px;
-      font-weight: 700;
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+      border-radius: 999px;
+      background: #ff4261;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
     }
 
-    .badge.blue {
-      border-color: var(--blue);
-      background: var(--blue);
+    .loading-overlay,
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 130;
+      display: none;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.32);
+    }
+
+    .loading-overlay.show,
+    .result-overlay.show {
+      display: grid;
+    }
+
+    .overlay-card {
+      width: 300px;
+      padding: 22px 18px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: center;
+    }
+
+    .overlay-card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .overlay-card p {
+      margin: 0 0 16px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 100px;
+      z-index: 150;
+      min-width: 210px;
+      max-width: 310px;
+      padding: 10px 14px;
+      transform: translateX(-50%) translateY(18px);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.78);
       color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .hotspot {
-      outline: 2px dashed transparent;
-      outline-offset: 2px;
+      outline: 2px solid transparent;
+      outline-offset: 1px;
     }
 
     .hotspot:hover,
-    .hotspot.is-selected {
+    .hotspot.active-hotspot {
       outline-color: var(--blue);
     }
 
-    .notes {
-      padding: 0 12px 14px;
-      display: grid;
-      gap: 6px;
-      font-size: 11px;
-      line-height: 1.45;
-    }
+    @media (max-width: 860px) {
+      body {
+        display: block;
+        background: #111;
+      }
 
-    .notes div {
-      padding: 6px 8px;
-      border-top: 1px solid var(--line-soft);
-      color: #333;
-    }
+      .wrap {
+        width: 100vw;
+        min-height: 100vh;
+        display: block;
+        padding: 0;
+      }
 
-    .notes b {
-      display: inline-grid;
-      place-items: center;
-      width: 18px;
-      height: 18px;
-      margin-right: 6px;
-      border: 1px solid #111;
-      border-radius: 50%;
-      font-size: 10px;
-    }
+      .side,
+      .inspector {
+        display: none;
+      }
 
-    .connector-note {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .wide {
-      grid-column: span 2;
-    }
-
-    .wide .phone {
-      width: 620px;
-      height: 640px;
-    }
-
-    .wide .game-real {
-      background-size: auto 100%;
-      background-color: #111;
-    }
-
-    .icon-legend {
-      margin-top: 18px;
-      border: 1px solid var(--line);
-      background: var(--paper);
-    }
-
-    .icon-legend h2 {
-      margin: 0;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line-soft);
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .legend-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-    }
-
-    .legend-item {
-      min-height: 54px;
-      padding: 10px 12px;
-      border-right: 1px solid var(--line-soft);
-      border-bottom: 1px solid var(--line-soft);
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .legend-item:nth-child(4n) {
-      border-right: 0;
-    }
-
-    .legend-item b {
-      display: inline-block;
-      min-width: 56px;
-      margin-right: 8px;
-      font-size: 13px;
+      .phone {
+        width: min(100vw, var(--phone-w));
+        height: min(100vh, var(--phone-h));
+        margin: 0 auto;
+        border: 0;
+        box-shadow: none;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <section class="header">
-      <div class="title-panel">
-        <h1>语聊房内三方休闲游戏接入 - Axure 线框评审稿</h1>
-        <p>参考高保真交互原型重排为多屏流程看板。所有关键屏幕同时展示，页面内编号对应下方说明；点击编号/按钮只做高亮和说明，不再切乱状态。主路径：Discover 入口 -> 语聊房 -> 房内游戏面板 -> 游戏设置 -> 游戏币不足 -> Game coins 兑换 -> 三方 H5 游戏。</p>
+  <div class="wrap">
+    <aside class="side">
+      <h1>Axure 线框原型</h1>
+      <p>本文件复用客户端原型的交互链路：Discover、Activity、More Games、语聊房、房内游戏面板、设置页、游戏币不足、Game coins 兑换页、H5 游戏页。</p>
+      <p>游戏页和兑换页保留高保真样式；其它主页面按附件结构做线框占位。</p>
+      <div class="flow-list">
+        <button class="active" type="button" data-jump="discover">1 Discover / Games</button>
+        <button type="button" data-jump="activity">2 Discover / Activity</button>
+        <button type="button" data-open-sheet="moreGames">3 More Games 半屏</button>
+        <button type="button" data-open-room>4 语聊房</button>
+        <button type="button" data-open-room-sheet>5 房内游戏面板</button>
+        <button type="button" data-open-setting="UNO">6 游戏设置页</button>
+        <button type="button" data-demo-start>7 不足 -> 兑换 -> 游戏</button>
       </div>
-      <aside class="inspector" aria-live="polite">
-        <h2 id="inspectorTitle">交互说明</h2>
-        <p id="inspectorText">点击任意编号热点，查看该 icon / 控件的交互、跳转目标和异常说明。</p>
-      </aside>
-    </section>
+    </aside>
 
-    <nav class="flow-rail" aria-label="主流程">
-      <div class="flow-step active" data-flow="discover"><b>1 Discover</b>游戏入口、Game coins 余额、游戏房聚合</div>
-      <div class="flow-step" data-flow="room"><b>2 语聊房</b>不新增房型，在普通语聊房内调起游戏</div>
-      <div class="flow-step" data-flow="sheet"><b>3 游戏面板</b>休闲游戏 / 活动 / 动态表情半屏面板</div>
-      <div class="flow-step" data-flow="setting"><b>4 设置页</b>人数、门票、座位、Start / Join</div>
-      <div class="flow-step" data-flow="insufficient"><b>5 不足提示</b>门票或下注游戏币不足时拦截</div>
-      <div class="flow-step" data-flow="exchange"><b>6 兑换页</b>金币兑换游戏币，成功后 walletUpdate</div>
-      <div class="flow-step" data-flow="h5"><b>7 H5 游戏</b>三方游戏全屏，保留语聊房底部工具</div>
-    </nav>
+    <main class="phone" id="phone">
+      <div class="status"><span>5:25</span><span>171KB/s · Wi-Fi · 95</span></div>
 
-    <section class="board">
-      <article class="screen-card active" id="card-discover" data-card="discover">
-        <span class="connector-note">下一步：点 UNO -> 设置页</span>
-        <header class="screen-head">
-          <b>1. Discover / Games 首页</b>
-          <span>底部 tab 第二个 discover；顶部 Games / Activity 双 tab；最后一个游戏卡为更多入口。</span>
+      <section class="screen wire-screen show" id="discoverScreen">
+        <header class="wire-header" id="discoverHeader">
+          <div class="tab-row">
+            <button class="tab active" type="button" data-discover-tab="games">Games</button>
+            <button class="tab" type="button" data-discover-tab="activity">Activity</button>
+          </div>
+          <div class="top-icons">
+            <button class="icon-btn hotspot task-btn" type="button" data-note="任务入口：展示游戏任务、活动激励、运营奖励。">TASK</button>
+            <span class="avatar top-avatar"></span>
+            <button class="icon-btn hotspot" type="button" data-note="搜索入口：支持搜索房间 ID / 用户 ID。">SEARCH</button>
+          </div>
         </header>
-        <div class="phone">
-          <div class="status"><span>5:25</span><span>Wi-Fi 95</span></div>
-          <div class="tabs"><span class="on">Games</span><span>Activity</span></div>
-          <div class="phone-content">
-            <div class="asset-row">
-              <button class="pill hotspot" data-focus="discover" data-title="01 游戏币余额与兑换入口" data-text="展示当前游戏币余额；点击加号进入 Game coins 兑换页。游戏币由金币兑换，不能反向兑换金币。" style="position:relative;">
-                Game coins 300 <span class="badge blue" style="right:-10px; top:-10px;">01</span>
-              </button>
-              <button class="pill hotspot" data-focus="room" data-title="02 Private room" data-text="创建或进入私密语聊房。V1 不新增游戏房类型，进入后仍在语聊房内打开游戏。" style="position:relative;">
-                Private room + <span class="badge" style="right:-10px; top:-10px;">02</span>
-              </button>
-            </div>
-            <div class="grid-3">
-              <button class="game-cell hotspot" data-focus="setting" data-title="03 游戏卡片" data-text="点击游戏卡打开对应游戏设置页。若游戏未下载展示加载态；若被审核/地区策略隐藏则不展示。" style="position:relative;">8 Ball<span class="badge" style="right:2px; top:2px;">03</span></button>
-              <button class="game-cell hotspot" data-focus="setting" data-title="04 UNO 卡片" data-text="点击 UNO 直接进入房间内游戏设置页。本稿用 UNO 演示门票 500 游戏币、不足后兑换。" style="position:relative;">UNO<span class="badge blue" style="right:2px; top:2px;">04</span></button>
-              <button class="game-cell">Bingo</button>
-              <button class="game-cell">Domino</button>
-              <button class="game-cell">Slot</button>
-              <button class="game-cell hotspot" data-focus="sheet" data-title="05 More Games" data-text="打开更多游戏半屏列表；列表内区分正常、未下载、下载中、审核隐藏等状态。" style="position:relative;">More Games<span class="badge" style="right:2px; top:2px;">05</span></button>
-            </div>
-            <div class="section-title"><span>Game Rooms</span><button class="nav-icon hotspot" data-focus="room" data-title="06 游戏房聚合入口" data-text="展示当前正在玩游戏的语聊房列表，点击任一房间进入普通语聊房并带出当前游戏状态。" style="position:relative;">06</button></div>
-            <button class="room-row hotspot" data-focus="room" data-title="07 Game Rooms 列表项" data-text="列表项展示房间封面、语言、游戏名、waiting/playing 状态和在线人数。" style="position:relative;">
-              <span class="thumb"></span><span>Arabic room<br>Ludo · Waiting</span><b>818</b>
+
+        <div class="discover-page active" id="gamesPage">
+          <div class="asset-line">
+            <button class="coin-pill hotspot" type="button" data-open-exchange data-note="游戏币余额：点击加号进入 Game coins 兑换页。">
+              <span class="avatar" style="width:24px;height:24px;"></span>
+              <span class="coin-dot">G</span>
+              <span id="walletValue">300</span>
+              <span class="plus-dot">+</span>
             </button>
-            <button class="room-row"><span class="thumb"></span><span>Arabic room<br>UNO · Playing</span><b>3167</b></button>
+            <button class="private-room hotspot" type="button" data-open-room data-note="Private room：创建或进入私密语聊房，本期不新增游戏房类型。">Private room <span class="plus-dot">+</span></button>
           </div>
-          <nav class="bottom-nav">
-            <button class="nav-item hotspot" data-focus="room" data-title="08 Party" data-text="进入语聊房列表或默认派对页，游戏能力不改变原有底部导航。">Party</button>
-            <button class="nav-item hotspot" data-focus="discover" data-title="41 Discover" data-text="当前所在底部 tab，承载 Games / Activity 双 tab。">Discover</button>
-            <button class="nav-item hotspot" data-focus="discover" data-title="42 Community" data-text="社区入口保持原链路，不承接游戏启动。">Community</button>
-            <button class="nav-item hotspot" data-focus="discover" data-title="43 Messages" data-text="消息入口保持原链路，游戏内消息红点与此能力一致。">Messages</button>
-            <button class="nav-item hotspot" data-focus="discover" data-title="44 Mine" data-text="我的页面入口，可从钱包页进入 Game coins tab。">Mine</button>
-          </nav>
-        </div>
-        <div class="notes">
-          <div><b>01</b>游戏币余额与兑换入口。</div>
-          <div><b>04</b>点击游戏卡进入设置页；不新建游戏房。</div>
-          <div><b>05</b>更多游戏列表入口，承接未下载/下载中状态。</div>
-        </div>
-      </article>
 
-      <article class="screen-card" id="card-room" data-card="room">
-        <span class="connector-note">下一步：点 GAME -> 游戏面板</span>
-        <header class="screen-head">
-          <b>2. 语聊房内入口</b>
-          <span>普通语聊房保持麦位、聊天、礼物、音乐、底部工具；游戏入口作为房内常驻功能。</span>
-        </header>
-        <div class="phone">
-          <div class="status"><span>09:41</span><span>Wi-Fi 100</span></div>
-          <div class="nav"><button class="nav-icon">‹</button><span>房间名称</span><button class="nav-icon">?</button></div>
-          <div class="phone-content">
-            <div class="pill hotspot" data-focus="room" data-title="09 房间标题区" data-text="展示房间名、ID、房主头像、在线人数；进入 H5 后仍保留必要的房间信息入口。" style="position:relative;">房间信息 / 在线人数<span class="badge" style="right:-10px; top:-10px;">09</span></div>
-            <div class="seat-grid">
-              <span class="seat"><i></i>1</span><span class="seat"><i></i>2</span><span class="seat"><i></i>3</span><span class="seat"><i></i>4</span><span class="seat"><i></i>5</span>
-              <span class="seat"><i></i>6</span><span class="seat"><i></i>7</span><span class="seat"><i></i>8</span><span class="seat"><i></i>9</span><span class="seat"><i></i>10</span>
-            </div>
-            <div class="room-stage"></div>
+          <div class="game-grid">
+            <button class="game-card hotspot" type="button" data-open-setting="8 Ball" data-note="8 Ball：点击进入对应设置页。"><b>8 Ball</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="UNO" data-note="UNO：点击进入设置页，默认门票 500 游戏币用于演示不足流程。"><b>ONO</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="Bingo" data-note="Bingo：占位，三方返回后可进入设置页。"><b>Bingo</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="Domino" data-note="Domino：占位。"><b>Domino 50</b></button>
+            <button class="game-card hotspot" type="button" data-note="Golden Slot：合规审核账号隐藏或禁用。"><b>Golden Slot<br>Machine</b><span class="status-tag">Hot</span></button>
+            <button class="game-card hotspot" type="button" data-open-sheet="moreGames" data-note="More Games：打开更多游戏半屏列表。"><b>More Games</b></button>
           </div>
-          <div class="chat-lines">
-            <div class="chat-line">公屏消息：欢迎来到聊天室</div>
-            <div class="chat-line">系统：当前房间支持休闲游戏</div>
-          </div>
-          <div class="room-toolbar">
-            <button class="tool-item hotspot" data-focus="room" data-title="10 麦克风" data-text="语音能力保持，不因 H5 游戏打开而关闭。">MIC</button>
-            <button class="tool-item hotspot" data-focus="room" data-title="11 扬声器" data-text="控制房间/游戏声音策略；H5 可通过桥查询当前 sound 状态。">SPK</button>
-            <span class="chat-input hotspot" data-focus="room" data-title="45 聊天输入框" data-text="输入房间公屏消息；H5 打开后仍保留聊天能力。">Say something</span>
-            <button class="tool-item hotspot" data-focus="room" data-title="46 表情入口" data-text="打开表情面板；动态表情可复用游戏面板内的内容分区。">EMO</button>
-            <button class="tool-item hotspot" data-focus="sheet" data-title="12 游戏入口" data-text="点击打开房内半屏游戏面板。进入 H5 后底部仍复用此入口，方便切回游戏列表。" style="outline-color:var(--blue);">GAME</button>
-            <button class="tool-item hotspot" data-focus="room" data-title="47 更多入口" data-text="打开房间更多工具，如举报、分享、设置等。">MORE</button>
-          </div>
-        </div>
-        <div class="notes">
-          <div><b>09</b>房间基础信息保留。</div>
-          <div><b>10</b>麦克风/扬声器不被游戏遮断。</div>
-          <div><b>12</b>房内游戏入口，打开半屏游戏面板。</div>
-        </div>
-      </article>
 
-      <article class="screen-card" id="card-sheet" data-card="sheet">
-        <span class="connector-note">下一步：点游戏 icon -> 设置页</span>
-        <header class="screen-head">
-          <b>3. 房内游戏半屏面板</b>
-          <span>按 PRD 拆分休闲游戏、活动、动态表情；当前局状态在顶部展示。</span>
-        </header>
-        <div class="phone">
-          <div class="sheet-mask"></div>
-          <section class="bottom-sheet">
-            <div class="sheet-head">
-              <span>Games</span>
-              <button class="nav-icon hotspot" data-focus="room" data-title="13 关闭面板" data-text="关闭半屏面板，回到语聊房，不影响当前局状态。">X</button>
-            </div>
-            <div class="sheet-tabs">
-              <button class="hotspot" data-focus="sheet" data-title="14 休闲游戏 tab" data-text="默认选中休闲游戏，展示三方游戏列表。">休闲游戏</button>
-              <button class="hotspot" data-focus="sheet" data-title="48 游戏 tab" data-text="承载游戏相关活动或后续扩展内容；V1 默认不作为主路径。">游戏</button>
-              <button class="hotspot" data-focus="sheet" data-title="49 动态表情 tab" data-text="展示房内动态表情，不影响休闲游戏当前局。">动态表情</button>
-            </div>
-            <div class="current-box hotspot" data-focus="h5" data-title="15 当前游戏卡" data-text="房间已有 waiting/playing 游戏时展示 Current Game，点击 Open 可恢复 H5 容器。">Current Game · Ludo<br>Waiting · Join / Open</div>
-            <div class="grid-3">
-              <button class="game-icon hotspot" data-focus="setting" data-title="16 Ludo icon" data-text="点击进入 Ludo 设置页；具体设置字段由三方能力返回。">Ludo<span class="badge" style="right:0; top:0;">16</span></button>
-              <button class="game-icon hotspot" data-focus="setting" data-title="17 UNO icon" data-text="点击进入 UNO 设置页；本流程演示 UNO 门票不足。">UNO<span class="badge blue" style="right:0; top:0;">17</span></button>
-              <button class="game-icon">Snake</button>
-              <button class="game-icon">8 Ball</button>
-              <button class="game-icon">Black Jack</button>
-              <button class="game-icon">Rocket</button>
-              <button class="game-icon">Domino</button>
-              <button class="game-icon">Carrom</button>
-              <button class="game-icon hotspot" data-focus="sheet" data-title="18 帮助/规则" data-text="进入游戏规则说明；可展示三方返回的玩法、门票、结算规则。">Help<span class="badge" style="right:0; top:0;">18</span></button>
-            </div>
-          </section>
-        </div>
-        <div class="notes">
-          <div><b>14</b>三类内容 tab，默认休闲游戏。</div>
-          <div><b>15</b>当前局状态卡，支持恢复游戏。</div>
-          <div><b>17</b>点击游戏 icon 进入设置页。</div>
-        </div>
-      </article>
+          <div class="section-title">
+            <span>Game Rooms</span>
+            <button class="country-search-btn hotspot" type="button" data-open-country-search data-note="国家搜索：点击后展示国家搜索弹窗；下方国家列表为整行横向滑动。">SEARCH</button>
+          </div>
 
-      <article class="screen-card" id="card-setting" data-card="setting">
-        <span class="connector-note">下一步：点 Start -> 余额校验</span>
-        <header class="screen-head">
-          <b>4. 游戏设置页</b>
-          <span>半屏设置由三方游戏决定；门票单位固定为游戏币，Start 前做余额校验。</span>
-        </header>
-        <div class="phone">
-          <div class="status"><span>09:41</span><span>Wi-Fi 100</span></div>
-          <div class="setting-bg"></div>
-          <section class="setting-panel">
-            <button class="pill hotspot" data-focus="exchange" data-title="19 游戏币余额" data-text="点击余额可进入 Game coins 兑换页；Start 校验也以此余额为准。" style="position:absolute; left:50%; top:-14px; transform:translateX(-50%);">
-              Game coins 300 <span class="badge blue" style="right:-10px; top:-10px;">19</span>
+          <div class="country-filter" aria-label="国家筛选">
+            <div class="country-scroll">
+              <button class="country-chip active" type="button" data-country="全部">全部</button>
+              <button class="country-chip" type="button" data-country="沙特">🇸🇦 沙特</button>
+              <button class="country-chip" type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+              <button class="country-chip" type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+              <button class="country-chip" type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+              <button class="country-chip" type="button" data-country="埃及">🇪🇬 埃及</button>
+              <button class="country-chip" type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+            </div>
+          </div>
+
+          <div class="room-list">
+            <button class="room-card hotspot" type="button" data-open-room data-room-mode="waiting" data-note="房间列表项：展示封面、房名、语言、游戏状态、在线人数。">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">ترحيب مستخدمين الجدد والدا</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> Ludo · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">818</span>
             </button>
-            <div class="setting-title">UNO</div>
-            <div class="field hotspot" data-focus="setting" data-title="20 人数/模式" data-text="展示 1V1、4 Player 等三方支持的模式；不同游戏字段不同。"><span></span><b>1 V 1 / 4 Player</b><span></span></div>
-            <div class="field hotspot" data-focus="insufficient" data-title="21 门票设置" data-text="门票为游戏币。当前门票 500，用户余额 300，点击 Start 会触发游戏币不足。"><span>-</span><b>500 游戏币</b><span>+</span></div>
-            <div class="field"><span></span><b>Magic / Rule</b><span>?</span></div>
-            <div class="seat-dots">
-              <button>+</button><button>+</button><button>+</button><button>+</button>
-            </div>
-            <div class="actions">
-              <button class="wire-btn hotspot" data-focus="sheet" data-title="22 Quit Game" data-text="退出设置页，回到房内游戏面板；不会关闭语聊房。">Quit</button>
-              <button class="wire-btn hotspot" data-focus="insufficient" data-title="23 Start" data-text="Start / Join 前校验权限、座位、游戏币余额；余额不足时展示不足提示并引导兑换。" style="outline-color:var(--blue);">Start<span class="badge blue" style="right:-6px; top:-8px;">23</span></button>
-            </div>
-          </section>
-          <div class="chat-lines">
-            <div class="chat-line">房间语音、聊天、礼物能力保持可用</div>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">GAME OVER</span><span class="tag-line">🇦🇪 <i class="tag">Arabic</i> UNO · Playing</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">3167</span>
+            </button>
+            <button class="room-card" type="button" data-open-room>
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">وكاله آزلزالTop1</span><span class="tag-line">🇮🇶 <i class="tag">Arabic</i> 8 Ball · Watch</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">2686</span>
+            </button>
+            <button class="room-card" type="button" data-open-room>
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">√enüs مملكة</span><span class="tag-line">🇱🇧 <i class="tag">French</i> Domino · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">3376</span>
+            </button>
           </div>
         </div>
-        <div class="notes">
-          <div><b>19</b>设置页余额入口，可主动兑换。</div>
-          <div><b>21</b>门票单位为游戏币，不使用金币直接下注。</div>
-          <div><b>23</b>Start 前做游戏币不足校验。</div>
-        </div>
-      </article>
 
-      <article class="screen-card" id="card-insufficient" data-card="insufficient">
-        <span class="connector-note">下一步：点去兑换 -> Game coins</span>
-        <header class="screen-head">
-          <b>5. 游戏币不足提示</b>
-          <span>门票、上座、H5 下注、结算前扣费失败均按此口径提示并引导兑换。</span>
-        </header>
-        <div class="phone">
-          <div class="status"><span>09:41</span><span>Wi-Fi 100</span></div>
-          <div class="setting-bg"></div>
-          <div class="modal-mask">
-            <section class="modal">
-              <h3>游戏币不足</h3>
-              <p>本局门票需要 500 游戏币，当前余额 300，还差 200。</p>
-              <div class="actions">
-                <button class="wire-btn hotspot" data-focus="setting" data-title="24 取消" data-text="关闭提示，停留在设置页；不发起扣费订单。">取消</button>
-                <button class="wire-btn hotspot" data-focus="exchange" data-title="25 去兑换" data-text="打开钱包 Game coins tab，预填不足额或推荐兑换额；兑换成功后可回到原游戏上下文。" style="outline-color:var(--blue);">去兑换<span class="badge blue" style="right:-8px; top:-8px;">25</span></button>
-              </div>
-            </section>
+        <div class="discover-page activity-page" id="activityPage">
+          <div class="activity-sort"><span>Hot Events</span><span>Sorted by count</span></div>
+          <div class="activity-list">
+            <button class="activity-card hotspot" type="button" data-note="活动列表占位：点击进入活动详情或跳指定房间/指定游戏。"><i class="rank">NEW · 01</i><b>2026 وكالات العالم HAWA</b><span>2026/01/01 - 2027/01/01</span></button>
+            <button class="activity-card" type="button"><i class="rank">NEW · 02</i><b>2026 تحدي قلاع الوكالات</b><span>2026/05/01 05:00 - 2027/02/01 05:00</span></button>
+            <button class="activity-card" type="button"><i class="rank">03</i><b>hawa MISS</b><span>2026/01/01 - 2026/12/31</span></button>
+            <button class="activity-card" type="button"><i class="rank">04</i><b>الأيدي الديناميكي بجائزة جديدة</b><span>Long-term activity banner</span></button>
           </div>
         </div>
-        <div class="notes">
-          <div><b>24</b>取消后不扣费，不进入 H5。</div>
-          <div><b>25</b>跳转 Game coins 兑换页。</div>
-          <div><b>规则</b>若 H5 内下注不足，三方调 gameRecharge，App 打开同一兑换页。</div>
-        </div>
-      </article>
 
-      <article class="screen-card" id="card-exchange" data-card="exchange">
-        <span class="connector-note">下一步：兑换成功 -> walletUpdate -> H5</span>
-        <header class="screen-head">
-          <b>6. Game coins 兑换页</b>
-          <span>金币兑换游戏币。默认比例 100 金币 = 1000 游戏币，比例由后台配置。</span>
+        <nav class="bottom-nav">
+          <button class="nav-item hotspot" type="button" data-open-room data-note="Party：进入语聊房。">Party</button>
+          <button class="nav-item active" type="button" data-jump="discover">Discover</button>
+          <button class="nav-item" type="button" data-note="Community 占位。">Community</button>
+          <button class="nav-item" type="button" data-note="Messages 占位。">Messages</button>
+          <button class="nav-item" type="button" data-note="Mine 占位，可从钱包进入 Game coins。">Mine</button>
+        </nav>
+      </section>
+
+      <section class="screen room-screen" id="roomScreen">
+        <div class="room-top">
+          <div class="room-title-box">
+            <span class="avatar"></span>
+            <span>房间名称房间...<br><small>ID 1234567 · 25 online</small></span>
+          </div>
+          <div class="room-actions">
+            <button class="icon-btn" type="button" data-show-discover>BACK</button>
+            <button class="icon-btn" type="button" data-note="分享房间">SHR</button>
+          </div>
+        </div>
+        <div class="seat-area">
+          <div class="seat-grid">
+            <span class="seat"><i></i>1号麦</span><span class="seat"><i></i>2号麦</span><span class="seat"><i></i>3号麦</span><span class="seat"><i></i>4号麦</span><span class="seat"><i></i>5号麦</span>
+            <span class="seat"><i></i>6号麦</span><span class="seat"><i></i>7号麦</span><span class="seat"><i></i>8号麦</span><span class="seat"><i></i>9号麦</span><span class="seat"><i></i>10号麦</span>
+          </div>
+          <button class="room-current-game hotspot" id="roomCurrentGame" type="button" data-open-current-game data-note="当前游戏浮窗：游戏最小化或房间已有游戏时展示，点击恢复 H5。">Current Game · <span id="roomCurrentName">UNO</span><br><small id="roomCurrentState">Playing · Open</small></button>
+        </div>
+        <div class="chat-lines">
+          <div class="chat-line">公屏消息：欢迎来到聊天室</div>
+          <div class="chat-line">系统：当前房间支持休闲游戏</div>
+        </div>
+        <div class="room-toolbar">
+          <button class="tool hotspot" type="button" data-note="麦克风：进入游戏后仍保留。">MIC</button>
+          <button class="tool hotspot" type="button" data-note="扬声器：H5 可查询 sound 状态。">SPK</button>
+          <span class="chat-input">Say something</span>
+          <button class="tool" type="button">EMO</button>
+          <button class="tool hotspot" type="button" data-open-room-sheet data-note="游戏入口：打开房内游戏半屏面板。">GAME</button>
+          <button class="tool" type="button">MORE</button>
+        </div>
+      </section>
+
+      <div class="sheet-mask" id="moreGamesSheet">
+        <section class="bottom-sheet">
+          <div class="sheet-head"><span>Game</span><button class="icon-btn" type="button" data-close-sheets>X</button></div>
+          <div class="sheet-grid">
+            <button class="sheet-game" type="button" data-note="Jackpot 审核隐藏占位。"><span>Jackpot</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Dragon Tiger"><span>Dragon Tiger</span></button>
+            <button class="sheet-game" type="button" data-open-setting="CrazyFruit"><span>CrazyFruit</span></button>
+            <button class="sheet-game" type="button" data-open-setting="ShootGoal"><span>ShootGoal</span></button>
+            <button class="sheet-game" type="button" data-open-setting="UnderOrOver"><span>UnderOrOver</span></button>
+            <button class="sheet-game" type="button" data-note="Slot777 审核隐藏。"><span>Slot777</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Teen Patti"><span>Teen Patti</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Wise Kingdoms"><span>Wise Kingdoms</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Lucky77"><span>Lucky77</span></button>
+            <button class="sheet-game" type="button" data-open-setting="GreedyCatKing"><span>GreedyCatKing</span></button>
+            <button class="sheet-game" type="button" data-open-setting="LampOfInfinity"><span>LampOfInfinity</span></button>
+            <button class="sheet-game" type="button" data-open-room-sheet><span>Room Games</span></button>
+          </div>
+        </section>
+      </div>
+
+      <div class="country-search-mask" id="countrySearchMask">
+        <section class="country-search-panel">
+          <div class="country-search-head">
+            <span>国家搜索</span>
+            <button class="icon-btn" type="button" id="closeCountrySearch">X</button>
+          </div>
+          <div class="country-search-input">搜索国家 / 房间 ID / 房间名称</div>
+          <div class="country-result-title">热门国家</div>
+          <div class="country-hot-grid">
+            <button type="button" data-country="全部">全部</button>
+            <button type="button" data-country="沙特">🇸🇦 沙特</button>
+            <button type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+            <button type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+            <button type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+            <button type="button" data-country="埃及">🇪🇬 埃及</button>
+            <button type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+            <button type="button" data-country="约旦">🇯🇴 约旦</button>
+          </div>
+          <div class="country-result-title">示例搜索结果 · 沙特</div>
+          <div class="room-list">
+            <button class="room-card" type="button" data-open-room data-room-mode="waiting">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">Saudi Ludo Room</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> Ludo · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">818</span>
+            </button>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">Riyadh UNO Night</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> UNO · Playing</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">1466</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div class="sheet-mask" id="roomGamesSheet">
+        <section class="bottom-sheet">
+          <div class="sheet-head"><span>休闲游戏</span><button class="icon-btn" type="button" data-close-sheets>X</button></div>
+          <div class="sheet-tabs">
+            <button class="sheet-tab active" type="button" data-room-tab="casual">休闲游戏</button>
+            <button class="sheet-tab" type="button" data-room-tab="events">游戏</button>
+            <button class="sheet-tab" type="button" data-room-tab="emoji">动态表情</button>
+          </div>
+          <div class="current-game-box" id="currentGameBox">
+            <span>Current Game · <b id="currentGameName">UNO</b><br><small id="currentGameState">Waiting</small></span>
+            <button class="btn" type="button" data-open-current-game>Open</button>
+          </div>
+          <div class="sheet-page active" id="roomTabCasual">
+            <div class="sheet-grid">
+              <button class="sheet-game" type="button" data-open-setting="Black Jack"><span>Black Jack</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Ludo"><span>Ludo</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Rocket"><span>Rocket</span></button>
+              <button class="sheet-game" type="button" data-open-setting="UNO"><span>UNO</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Domino"><span>Domino</span></button>
+              <button class="sheet-game" type="button" data-open-setting="8 Ball"><span>8 Ball</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Snake & Ladder"><span>Snake</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Carrom"><span>Carrom</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Bingo"><span>Bingo</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Draw Guess"><span>Draw</span></button>
+              <button class="sheet-game" type="button" data-note="更多游戏加载态。"><span>More</span></button>
+              <button class="sheet-game" type="button" data-note="规则说明。"><span>Help</span></button>
+            </div>
+          </div>
+          <div class="sheet-page" id="roomTabEvents">
+            <button class="event-mini" type="button"><b>2026 HAWA</b><small>活动入口占位：可跳活动详情 / 指定游戏 / 指定房间</small></button>
+            <button class="event-mini" type="button"><b>Domino Weekly</b><small>活动入口占位</small></button>
+            <button class="event-mini" type="button"><b>Room Challenge</b><small>活动入口占位</small></button>
+          </div>
+          <div class="sheet-page" id="roomTabEmoji">
+            <div class="emoji-grid">
+              <button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button>
+              <button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="screen setting-screen" id="settingScreen">
+        <div class="setting-top">
+          <div class="setting-brand">BIGBOSS · ID:10002063</div>
+          <div class="setting-seats"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <section class="setting-panel">
+          <button class="setting-coin hotspot" type="button" data-open-exchange data-note="设置页游戏币余额：点击可进入兑换页。"><span class="coin-dot">G</span><span id="settingBalance">300</span> Game coins</button>
+          <div class="setting-logo" id="settingTitle">UNO</div>
+          <div class="segments">
+            <button class="segment active" type="button">1 V 1</button>
+            <button class="segment" type="button">4 Player</button>
+          </div>
+          <div class="setting-row">
+            <button type="button" id="ticketMinus">-</button>
+            <span id="ticketValue">500</span>
+            <button type="button" id="ticketPlus">+</button>
+          </div>
+          <div class="setting-row"><span></span><span>Magic / Rule</span><span>?</span></div>
+          <div class="seat-dots"><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button></div>
+          <div class="setting-actions">
+            <button class="btn" type="button" id="quitSetting">Quit</button>
+            <button class="btn primary hotspot" type="button" id="startGame" data-note="Start：校验座位、权限、游戏币余额。余额不足进入兑换页。">Start</button>
+          </div>
+        </section>
+        <div class="setting-chat-note">房间语音、聊天、礼物能力保留；门票、下注、结算统一使用游戏币。</div>
+      </section>
+
+      <section class="screen exchange-screen" id="exchangeScreen">
+        <div class="exchange-status"><span>20:33</span><span>•••• Wi-Fi 100</span></div>
+        <header class="exchange-nav">
+          <button class="exchange-back" type="button" id="exchangeBack">‹</button>
+          <div class="exchange-tabs"><span>Gold coins</span><span>Diamonds</span><span class="active">Game coins</span></div>
+          <button class="exchange-record" type="button" data-note="兑换记录">▤</button>
         </header>
-        <div class="phone">
-          <div class="status"><span>20:33</span><span>Wi-Fi 100</span></div>
-          <div class="nav"><button class="nav-icon hotspot" data-focus="setting" data-title="26 返回" data-text="返回来源页；若兑换未提交，不产生订单。">‹</button><span>Wallet</span><button class="nav-icon hotspot" data-focus="exchange" data-title="27 兑换记录" data-text="查看金币兑换游戏币订单记录，后台需可查询和对账。">REC</button></div>
-          <div class="wallet-tabs"><span>Gold coins</span><span>Diamonds</span><span class="on">Game coins</span></div>
-          <button class="balance-card hotspot" data-focus="exchange" data-title="28 游戏币余额卡" data-text="展示当前游戏币余额；兑换成功后刷新。" style="width:276px; text-align:left;">
-            我的游戏币余额 <b>300</b>
-            <span class="badge blue" style="right:8px; top:8px;">28</span>
-          </button>
-          <section class="exchange-form">
+        <div class="exchange-body">
+          <div class="exchange-hero">
+            <span>我的游戏币余额</span>
+            <strong id="exchangeBalance">300</strong>
+            <i class="controller">🎮</i>
+          </div>
+          <section class="exchange-card">
             <h3>兑换游戏币</h3>
-            <p>输入兑换的游戏币数量</p>
-            <div class="input hotspot" data-focus="exchange" data-title="29 兑换输入框" data-text="输入希望获得的游戏币数量；实时计算需扣除金币数量，并校验金币余额。">200</div>
-            <p>我的金币余额：384397340</p>
-            <p>扣除金币数量：20</p>
-            <p>兑换比例：100金币 = 1000游戏币</p>
-            <p class="warn">注意：游戏币仅供游戏内使用，不得提现及兑换金币</p>
-            <button class="wire-btn hotspot" data-focus="h5" data-title="30 立即兑换" data-text="输入合法且金币充足时高亮。成功后扣减金币、增加游戏币、落兑换订单，并通过 walletUpdate 通知 H5 刷新余额。" style="width:100%; margin-top:8px; outline-color:var(--blue);">立即兑换<span class="badge blue" style="right:4px; top:-8px;">30</span></button>
+            <label for="exchangeInput">输入兑换的游戏币数量</label>
+            <input class="exchange-input" id="exchangeInput" inputmode="numeric" placeholder="请输入">
+            <div class="exchange-quick">
+              <button type="button" data-exchange-amount="200">+200</button>
+              <button type="button" data-exchange-amount="500">+500</button>
+              <button type="button" data-exchange-amount="1000">+1000</button>
+            </div>
+            <div class="exchange-meta">
+              <span>我的金币余额：<b id="goldBalance">384,397,340</b></span>
+              <span>扣除金币数量：<b id="goldCost">0</b></span>
+              <span>兑换比例：100金币 = 1000游戏币</span>
+            </div>
+            <p class="exchange-warning">注意：游戏币仅供游戏内使用，不得提现及兑换金币</p>
+            <button class="exchange-submit" type="button" id="exchangeSubmit" disabled>立即兑换</button>
           </section>
         </div>
-        <div class="notes">
-          <div><b>28</b>展示游戏币余额，不展示金币为游戏内余额。</div>
-          <div><b>29</b>输入游戏币数量，系统换算金币扣除。</div>
-          <div><b>30</b>兑换成功后 walletUpdate，允许继续开局。</div>
-        </div>
-      </article>
+      </section>
 
-      <article class="screen-card wide" id="card-h5" data-card="h5">
-        <span class="connector-note">终态：三方 H5 + 语聊房常驻工具</span>
-        <header class="screen-head">
-          <b>7. 三方 H5 游戏页</b>
-          <span>实际游戏页保留高清图；底部复用语聊房 icon 入口，红圈区域对应的房间工具保持同位置。</span>
-        </header>
-        <div class="phone">
-          <div class="game-real"></div>
-          <div class="game-top-tools">
-            <button class="hotspot" data-focus="room" data-title="31 最小化" data-text="收起 H5 容器回到语聊房，当前游戏状态保持 playing；房内浮窗可恢复。">MIN</button>
-            <button class="hotspot" data-focus="room" data-title="32 关闭" data-text="关闭 H5；若游戏未结束需弹确认，避免误退出。">X</button>
-          </div>
-          <div class="game-bottom-tools">
-            <button class="hotspot" data-focus="h5" data-title="33 公屏聊天" data-text="打开房间公屏聊天，不影响 H5 游戏状态。">CHAT</button>
-            <button class="hotspot" data-focus="h5" data-title="34 扬声器" data-text="切换房间/游戏声音。H5 可查询 App sound 状态。">SPK</button>
-            <button class="hotspot" data-focus="h5" data-title="35 麦克风" data-text="切换麦克风，上麦能力保持。">MIC</button>
-            <button class="hotspot" data-focus="h5" data-title="36 表情" data-text="打开房间表情面板，表情可叠加展示。">EMO</button>
-            <button class="hotspot" data-focus="h5" data-title="37 消息" data-text="打开消息列表；未读红点保持。">MSG</button>
-            <button class="hotspot" data-focus="sheet" data-title="38 游戏入口" data-text="复用房间内游戏入口，可打开游戏面板或恢复当前局。">GAME</button>
-            <button class="hotspot" data-focus="h5" data-title="39 礼物" data-text="打开礼物面板，礼物流水与游戏结算分账独立。">GIFT</button>
-            <button class="hotspot" data-focus="h5" data-title="40 更多" data-text="打开更多房间工具，如投诉、分享、设置等。">MORE</button>
-          </div>
+      <section class="screen h5-screen" id="h5Screen">
+        <div class="h5-game uno" id="h5Game"></div>
+        <div class="h5-actions">
+          <button class="h5-action" type="button" id="minimizeGame">—</button>
+          <button class="h5-action" type="button" id="finishGame">✓</button>
+          <button class="h5-action" type="button" id="closeGame">×</button>
         </div>
-        <div class="notes">
-          <div><b>31</b>最小化回房间，保留游戏状态。</div>
-          <div><b>38</b>H5 内仍可打开游戏入口，和房间底部位置一致。</div>
-          <div><b>结算</b>H5 通过 change_balance 扣/加游戏币；不足返回 1008 后拉起兑换页。</div>
+        <div class="game-tools">
+          <button class="game-tool-btn" type="button" data-note="公屏聊天">CHAT</button>
+          <button class="game-tool-btn" type="button" data-note="扬声器">SPK</button>
+          <button class="game-tool-btn" type="button" data-note="麦克风">MIC</button>
+          <button class="game-tool-btn" type="button" data-note="表情">EMO</button>
+          <button class="game-tool-btn" type="button" data-note="消息">MSG<span class="game-tool-badge">78</span></button>
+          <button class="game-tool-btn" type="button" data-open-room-sheet>GAME</button>
+          <button class="game-tool-btn" type="button" data-note="礼物">GIFT</button>
+          <button class="game-tool-btn" type="button" data-note="更多">MORE</button>
         </div>
-      </article>
-    </section>
+      </section>
 
-    <section class="icon-legend">
-      <h2>全局 icon / 控件说明表</h2>
-      <div class="legend-grid">
-        <div class="legend-item"><b>Back / X</b>返回或关闭当前层级；未提交兑换时不生成订单。</div>
-        <div class="legend-item"><b>?</b>规则说明，展示玩法、门票、结算和异常提示。</div>
-        <div class="legend-item"><b>REC</b>兑换记录，后台需支持订单查询、导出和对账。</div>
-        <div class="legend-item"><b>Game coins</b>游戏币余额入口；游戏内门票、下注、结算只用游戏币。</div>
-        <div class="legend-item"><b>Private</b>创建私密语聊房，不新增游戏房类型。</div>
-        <div class="legend-item"><b>GAME</b>房内游戏入口；房间和 H5 页面保持同位置。</div>
-        <div class="legend-item"><b>MIC</b>麦克风开关，进入 H5 后不遮断语音能力。</div>
-        <div class="legend-item"><b>SPK</b>扬声器/音效开关，H5 可查询当前 sound 状态。</div>
-        <div class="legend-item"><b>CHAT</b>公屏聊天入口，游戏中仍可打开。</div>
-        <div class="legend-item"><b>EMO</b>表情入口，动态表情可作为面板 tab 展示。</div>
-        <div class="legend-item"><b>MSG</b>消息入口，未读红点和房间消息能力保留。</div>
-        <div class="legend-item"><b>GIFT</b>礼物入口，礼物流水与游戏币结算分离。</div>
-        <div class="legend-item"><b>MORE</b>更多工具，如分享、举报、设置。</div>
-        <div class="legend-item"><b>MIN</b>最小化 H5，回到语聊房并保留当前局。</div>
-        <div class="legend-item"><b>Start</b>开始/加入游戏前校验座位、权限、游戏币余额。</div>
-        <div class="legend-item"><b>立即兑换</b>金币兑换游戏币，成功后 walletUpdate 刷新 H5。</div>
+      <div class="insufficient-mask" id="insufficientMask">
+        <section class="insufficient-card">
+          <h3>游戏币不足</h3>
+          <p id="insufficientText">本局门票需要 500 游戏币，当前余额 300，还差 200。</p>
+          <div class="setting-actions">
+            <button class="btn" type="button" id="insufficientCancel">取消</button>
+            <button class="btn primary" type="button" id="insufficientExchange">去兑换</button>
+          </div>
+        </section>
       </div>
-    </section>
-  </main>
+
+      <div class="loading-overlay" id="loadingOverlay">
+        <section class="overlay-card"><h3 id="loadingTitle">Loading UNO</h3><p>getConfig 已返回，等待 gameLoaded 回调。</p></section>
+      </div>
+
+      <div class="result-overlay" id="resultOverlay">
+        <section class="overlay-card">
+          <h3>Game ended</h3>
+          <p>Winner: Ahmed · Reward: 1,200 Game coins</p>
+          <div class="setting-actions">
+            <button class="btn primary" type="button" id="playAgain">Play Again</button>
+            <button class="btn" type="button" id="backToRoom">Room</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </main>
+
+    <aside class="inspector">
+      <h2>交互说明</h2>
+      <p id="noteText">点击线框中的入口或左侧流程按钮查看状态。此文件保留真实 Game coins 兑换页和真实 H5 游戏页，其余主页面为线框占位。</p>
+      <div class="legend">
+        <span>Games tab</span><span>Activity tab</span>
+        <span>More Games</span><span>Game Rooms</span>
+        <span>Room Games</span><span>Game Setting</span>
+        <span>Insufficient</span><span>Game coins</span>
+        <span>H5 Game</span><span>Room tools</span>
+      </div>
+    </aside>
+  </div>
 
   <script>
-    const cards = document.querySelectorAll(".screen-card");
-    const flowSteps = document.querySelectorAll(".flow-step");
-    const hotspots = document.querySelectorAll(".hotspot");
-    const titleEl = document.querySelector("#inspectorTitle");
-    const textEl = document.querySelector("#inspectorText");
+    const state = {
+      activeGame: "UNO",
+      hasCurrentGame: false,
+      gameMode: "waiting",
+      gameCoins: 300,
+      goldCoins: 384397340,
+      ticketIndex: 2,
+      tickets: ["Free", "100", "500", "10.0B"],
+      previousScreen: "discoverScreen",
+      pendingStartAfterExchange: false
+    };
 
-    function focusStep(step) {
-      cards.forEach((card) => card.classList.toggle("active", card.dataset.card === step));
-      flowSteps.forEach((item) => item.classList.toggle("active", item.dataset.flow === step));
+    const gameMeta = {
+      "UNO": { title: "UNO", art: "uno" },
+      "Ludo": { title: "Ludo", art: "ludo" },
+      "8 Ball": { title: "8 Ball", art: "ball" },
+      "Snake & Ladder": { title: "Snake & Ladder", art: "snake" },
+      "Domino": { title: "Domino", art: "ludo" },
+      "Bingo": { title: "Bingo", art: "ludo" },
+      "Black Jack": { title: "Black Jack", art: "uno" },
+      "Rocket": { title: "Rocket", art: "uno" },
+      "Carrom": { title: "Carrom", art: "ball" },
+      "Dragon Tiger": { title: "Dragon Tiger", art: "uno" },
+      "CrazyFruit": { title: "CrazyFruit", art: "ludo" },
+      "ShootGoal": { title: "ShootGoal", art: "snake" },
+      "UnderOrOver": { title: "UnderOrOver", art: "uno" },
+      "Teen Patti": { title: "Teen Patti", art: "uno" },
+      "Wise Kingdoms": { title: "Wise Kingdoms", art: "ludo" },
+      "Lucky77": { title: "Lucky77", art: "uno" },
+      "GreedyCatKing": { title: "GreedyCatKing", art: "ludo" },
+      "LampOfInfinity": { title: "LampOfInfinity", art: "snake" }
+    };
+
+    const screens = document.querySelectorAll(".screen");
+    const discoverTabs = document.querySelectorAll("[data-discover-tab]");
+    const gamesPage = document.querySelector("#gamesPage");
+    const activityPage = document.querySelector("#activityPage");
+    const discoverHeader = document.querySelector("#discoverHeader");
+    const moreGamesSheet = document.querySelector("#moreGamesSheet");
+    const roomGamesSheet = document.querySelector("#roomGamesSheet");
+    const countrySearchMask = document.querySelector("#countrySearchMask");
+    const currentGameBox = document.querySelector("#currentGameBox");
+    const currentGameName = document.querySelector("#currentGameName");
+    const currentGameState = document.querySelector("#currentGameState");
+    const roomCurrentGame = document.querySelector("#roomCurrentGame");
+    const roomCurrentName = document.querySelector("#roomCurrentName");
+    const roomCurrentState = document.querySelector("#roomCurrentState");
+    const settingTitle = document.querySelector("#settingTitle");
+    const ticketValue = document.querySelector("#ticketValue");
+    const h5Game = document.querySelector("#h5Game");
+    const loadingOverlay = document.querySelector("#loadingOverlay");
+    const resultOverlay = document.querySelector("#resultOverlay");
+    const insufficientMask = document.querySelector("#insufficientMask");
+    const insufficientText = document.querySelector("#insufficientText");
+    const exchangeInput = document.querySelector("#exchangeInput");
+    const exchangeSubmit = document.querySelector("#exchangeSubmit");
+    const noteText = document.querySelector("#noteText");
+    const toast = document.querySelector("#toast");
+
+    function formatAmount(value) {
+      if (value >= 1000000000) return (value / 1000000000).toFixed(1) + "B";
+      return Number(value).toLocaleString("en-US");
     }
 
-    hotspots.forEach((hotspot) => {
-      hotspot.addEventListener("click", (event) => {
-        event.preventDefault();
-        hotspots.forEach((item) => item.classList.remove("is-selected"));
-        hotspot.classList.add("is-selected");
-        titleEl.textContent = hotspot.dataset.title || "交互说明";
-        textEl.textContent = hotspot.dataset.text || "该控件暂无补充说明。";
-        focusStep(hotspot.dataset.focus || "discover");
+    function parseTicket(value) {
+      if (!value || value === "Free") return 0;
+      if (value.includes("B")) return Math.round(Number.parseFloat(value) * 1000000000);
+      return Number(value.replace(/[^\d]/g, "")) || 0;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function setNote(message) {
+      if (message) noteText.textContent = message;
+    }
+
+    function showScreen(id) {
+      screens.forEach((screen) => screen.classList.toggle("show", screen.id === id));
+      countrySearchMask.classList.remove("show");
+      document.querySelectorAll(".flow-list button").forEach((button) => {
+        const target = button.dataset.jump;
+        button.classList.toggle("active", target === "discover" && id === "discoverScreen" || target === "activity" && id === "discoverScreen" && activityPage.classList.contains("active") || target === id);
+      });
+      if (id !== "exchangeScreen") state.previousScreen = id;
+      closeSheets();
+    }
+
+    function switchDiscover(tab) {
+      showScreen("discoverScreen");
+      discoverTabs.forEach((button) => button.classList.toggle("active", button.dataset.discoverTab === tab));
+      gamesPage.classList.toggle("active", tab === "games");
+      activityPage.classList.toggle("active", tab === "activity");
+      discoverHeader.classList.toggle("activity-mode", tab === "activity");
+      setNote(tab === "activity" ? "Activity：保留活动列表占位，可跳活动详情、指定房间、指定游戏或兑换页。" : "Games：首页游戏入口、更多游戏、Game Rooms 聚合占位。");
+    }
+
+    function closeSheets() {
+      moreGamesSheet.classList.remove("show");
+      roomGamesSheet.classList.remove("show");
+    }
+
+    function activateRoomTab(id) {
+      document.querySelectorAll("[data-room-tab]").forEach((item) => item.classList.toggle("active", item.dataset.roomTab === id));
+      document.querySelector("#roomTabCasual").classList.toggle("active", id === "casual");
+      document.querySelector("#roomTabEvents").classList.toggle("active", id === "events");
+      document.querySelector("#roomTabEmoji").classList.toggle("active", id === "emoji");
+    }
+
+    function openSheet(name) {
+      closeSheets();
+      if (name === "roomGames") {
+        activateRoomTab("casual");
+        roomGamesSheet.classList.add("show");
+        updateCurrentGameUI();
+        setNote("Party / 语聊房底部 GAME：打开与休闲游戏一致的半屏游戏弹窗，默认展示休闲游戏列表。");
+      } else {
+        moreGamesSheet.classList.add("show");
+      }
+    }
+
+    function openRoom(mode) {
+      showScreen("roomScreen");
+      if (mode === "playing") {
+        state.activeGame = "UNO";
+        state.hasCurrentGame = true;
+        state.gameMode = "playing";
+      }
+      if (mode === "waiting") {
+        state.activeGame = "Ludo";
+        state.hasCurrentGame = true;
+        state.gameMode = "waiting";
+      }
+      updateCurrentGameUI();
+      setNote("语聊房：普通房内保留麦位、聊天、礼物和底部工具，点击 GAME 打开房内游戏面板。");
+    }
+
+    function openSetting(gameName) {
+      closeSheets();
+      const meta = gameMeta[gameName] || { title: gameName, art: "uno" };
+      state.activeGame = gameName;
+      settingTitle.textContent = meta.title;
+      state.ticketIndex = gameName === "UNO" ? 2 : 0;
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+      showScreen("settingScreen");
+      updateCurrencyUI();
+      setNote("游戏设置页：字段占位参考三方设置页，Start 前校验游戏币余额。");
+    }
+
+    function updateCurrencyUI() {
+      document.querySelector("#walletValue").textContent = formatAmount(state.gameCoins);
+      document.querySelector("#settingBalance").textContent = formatAmount(state.gameCoins);
+      document.querySelector("#exchangeBalance").textContent = formatAmount(state.gameCoins);
+      document.querySelector("#goldBalance").textContent = formatAmount(state.goldCoins);
+      updateExchangePreview();
+    }
+
+    function updateCurrentGameUI() {
+      const visible = state.hasCurrentGame;
+      currentGameBox.classList.toggle("show", visible);
+      roomCurrentGame.classList.toggle("show", visible);
+      const label = state.gameMode === "playing" ? "Playing · Open" : state.gameMode === "settling" ? "Settling" : "Waiting · Join";
+      currentGameName.textContent = state.activeGame;
+      currentGameState.textContent = label;
+      roomCurrentName.textContent = state.activeGame;
+      roomCurrentState.textContent = label;
+    }
+
+    function openExchange(required) {
+      closeSheets();
+      insufficientMask.classList.remove("show");
+      const lack = Math.max((required || 0) - state.gameCoins, 0);
+      exchangeInput.value = lack ? String(Math.ceil(lack / 100) * 100) : "";
+      showScreen("exchangeScreen");
+      updateCurrencyUI();
+      setNote("Game coins 兑换页：此页保持高保真样式。游戏币由金币兑换，兑换成功后 walletUpdate 刷新 H5。");
+    }
+
+    function updateExchangePreview() {
+      const amount = Number((exchangeInput.value || "").replace(/[^\d]/g, "")) || 0;
+      const cost = amount ? Math.ceil(amount * 100 / 1000) : 0;
+      document.querySelector("#goldCost").textContent = formatAmount(cost);
+      exchangeSubmit.disabled = !(amount > 0 && cost <= state.goldCoins);
+    }
+
+    function submitExchange() {
+      const amount = Number((exchangeInput.value || "").replace(/[^\d]/g, "")) || 0;
+      const cost = amount ? Math.ceil(amount * 100 / 1000) : 0;
+      if (!amount || cost > state.goldCoins) {
+        showToast("金币余额不足或输入无效");
+        return;
+      }
+      state.goldCoins -= cost;
+      state.gameCoins += amount;
+      updateCurrencyUI();
+      showToast("兑换成功，游戏币已刷新");
+      if (state.pendingStartAfterExchange) {
+        state.pendingStartAfterExchange = false;
+        window.setTimeout(startGame, 500);
+      } else {
+        showScreen(state.previousScreen || "settingScreen");
+      }
+    }
+
+    function startGame() {
+      const required = parseTicket(ticketValue.textContent);
+      if (required > state.gameCoins) {
+        const lack = required - state.gameCoins;
+        insufficientText.textContent = "本局门票需要 " + formatAmount(required) + " 游戏币，当前余额 " + formatAmount(state.gameCoins) + "，还差 " + formatAmount(lack) + "。";
+        insufficientMask.classList.add("show");
+        state.pendingStartAfterExchange = true;
+        setNote("游戏币不足：Start / Join、上座、H5 下注不足均进入兑换链路。");
+        return;
+      }
+      state.gameCoins -= required;
+      updateCurrencyUI();
+      beginGame();
+    }
+
+    function beginGame() {
+      const meta = gameMeta[state.activeGame] || gameMeta.UNO;
+      h5Game.className = "h5-game " + meta.art;
+      loadingOverlay.classList.add("show");
+      state.hasCurrentGame = true;
+      state.gameMode = "playing";
+      updateCurrentGameUI();
+      showScreen("h5Screen");
+      setNote("H5 游戏页：此页保留高清游戏图和底部语聊房工具，不做线框化。");
+      window.setTimeout(() => {
+        loadingOverlay.classList.remove("show");
+        showToast("gameLoaded received");
+      }, 800);
+    }
+
+    function openCurrentGame() {
+      if (!state.hasCurrentGame) {
+        openSetting("Ludo");
+        return;
+      }
+      const meta = gameMeta[state.activeGame] || gameMeta.UNO;
+      h5Game.className = "h5-game " + meta.art;
+      showScreen("h5Screen");
+      setNote("恢复当前游戏 H5 容器。");
+    }
+
+    function minimizeGame() {
+      state.gameMode = "playing";
+      updateCurrentGameUI();
+      showScreen("roomScreen");
+      showToast("Game minimized");
+    }
+
+    function closeGame() {
+      state.hasCurrentGame = false;
+      state.gameMode = "ended";
+      resultOverlay.classList.remove("show");
+      updateCurrentGameUI();
+      showScreen("roomScreen");
+    }
+
+    discoverTabs.forEach((button) => {
+      button.addEventListener("click", () => switchDiscover(button.dataset.discoverTab));
+    });
+
+    document.addEventListener("click", (event) => {
+      const noteTarget = event.target.closest("[data-note]");
+      if (noteTarget) setNote(noteTarget.dataset.note);
+
+      const jumpTarget = event.target.closest("[data-jump]");
+      if (jumpTarget) {
+        const target = jumpTarget.dataset.jump;
+        if (target === "activity") switchDiscover("activity");
+        else switchDiscover("games");
+      }
+
+      const roomTarget = event.target.closest("[data-open-room]");
+      if (roomTarget) openRoom(roomTarget.dataset.roomMode);
+
+      const roomSheetTarget = event.target.closest("[data-open-room-sheet]");
+      if (roomSheetTarget) openSheet("roomGames");
+
+      const sheetTarget = event.target.closest("[data-open-sheet]");
+      if (sheetTarget) openSheet(sheetTarget.dataset.openSheet);
+
+      const settingTarget = event.target.closest("[data-open-setting]");
+      if (settingTarget) openSetting(settingTarget.dataset.openSetting);
+
+      if (event.target.closest("[data-open-exchange]")) {
+        state.pendingStartAfterExchange = false;
+        openExchange(0);
+      }
+
+      if (event.target.closest("[data-close-sheets]")) closeSheets();
+      if (event.target.closest("[data-open-country-search]")) {
+        countrySearchMask.classList.add("show");
+        setNote("国家搜索弹窗：搜索入口位于 Game Rooms 标题右侧，下方国家列表整行横向滑动。");
+      }
+      const countryTarget = event.target.closest("[data-country]");
+      if (countryTarget) {
+        document.querySelectorAll(".country-chip").forEach((item) => item.classList.toggle("active", item.dataset.country === countryTarget.dataset.country));
+        setNote("国家筛选：" + countryTarget.dataset.country + "。筛选后刷新下方 Game Rooms 列表。");
+      }
+      if (event.target.closest("[data-show-discover]")) switchDiscover("games");
+      if (event.target.closest("[data-open-current-game]")) openCurrentGame();
+      if (event.target.closest("[data-demo-start]")) {
+        openSetting("UNO");
+        window.setTimeout(startGame, 300);
+      }
+    });
+
+    document.querySelectorAll("[data-room-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        activateRoomTab(tab.dataset.roomTab);
       });
     });
 
-    flowSteps.forEach((step) => {
-      step.addEventListener("click", () => focusStep(step.dataset.flow));
+    document.querySelector("#closeCountrySearch").addEventListener("click", () => {
+      countrySearchMask.classList.remove("show");
     });
+
+    document.querySelector("#ticketPlus").addEventListener("click", () => {
+      state.ticketIndex = Math.min(state.ticketIndex + 1, state.tickets.length - 1);
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+    });
+
+    document.querySelector("#ticketMinus").addEventListener("click", () => {
+      state.ticketIndex = Math.max(state.ticketIndex - 1, 0);
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+    });
+
+    document.querySelector("#quitSetting").addEventListener("click", () => showScreen("roomScreen"));
+    document.querySelector("#startGame").addEventListener("click", startGame);
+    document.querySelector("#insufficientCancel").addEventListener("click", () => {
+      state.pendingStartAfterExchange = false;
+      insufficientMask.classList.remove("show");
+    });
+    document.querySelector("#insufficientExchange").addEventListener("click", () => openExchange(parseTicket(ticketValue.textContent)));
+    document.querySelector("#exchangeBack").addEventListener("click", () => {
+      state.pendingStartAfterExchange = false;
+      showScreen(state.previousScreen || "settingScreen");
+    });
+    exchangeInput.addEventListener("input", updateExchangePreview);
+    document.querySelectorAll("[data-exchange-amount]").forEach((button) => {
+      button.addEventListener("click", () => {
+        exchangeInput.value = button.dataset.exchangeAmount;
+        updateExchangePreview();
+      });
+    });
+    document.querySelector("#exchangeSubmit").addEventListener("click", submitExchange);
+    document.querySelector("#minimizeGame").addEventListener("click", minimizeGame);
+    document.querySelector("#finishGame").addEventListener("click", () => {
+      state.gameMode = "settling";
+      updateCurrentGameUI();
+      resultOverlay.classList.add("show");
+    });
+    document.querySelector("#closeGame").addEventListener("click", closeGame);
+    document.querySelector("#backToRoom").addEventListener("click", closeGame);
+    document.querySelector("#playAgain").addEventListener("click", () => {
+      resultOverlay.classList.remove("show");
+      state.gameMode = "waiting";
+      updateCurrentGameUI();
+      openSetting(state.activeGame || "UNO");
+    });
+
+    updateCurrencyUI();
+    updateCurrentGameUI();
   </script>
 </body>
 </html>

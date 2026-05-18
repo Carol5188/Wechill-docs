@@ -213,6 +213,10 @@
       gap: 10px;
     }
 
+    .topbar.activity-mode .activity-hidden {
+      display: none;
+    }
+
     .icon-btn {
       width: 32px;
       height: 32px;
@@ -420,6 +424,56 @@
       color: var(--muted);
       font-size: 12px;
       font-weight: 800;
+    }
+
+    .country-filter {
+      margin: 0 2px 10px;
+      display: block;
+    }
+
+    .country-scroll {
+      width: 100%;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .country-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .country-chip {
+      flex: 0 0 auto;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 232, 191, 0.86);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .country-chip.active {
+      border-color: rgba(243, 195, 95, 0.7);
+      background: rgba(243, 195, 95, 0.16);
+      color: var(--gold);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .country-search-btn {
+      width: 38px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.34);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--gold-2);
+      font-size: 14px;
+      font-weight: 900;
     }
 
     .room-list {
@@ -944,6 +998,96 @@
 
     .sheet-mask.open .bottom-sheet {
       transform: translateY(0);
+    }
+
+    .country-search-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 66;
+      display: flex;
+      align-items: flex-end;
+      background: rgba(0, 0, 0, 0.58);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .country-search-mask.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .country-search-panel {
+      width: 100%;
+      max-height: 620px;
+      padding: 18px 18px 24px;
+      border-radius: 20px 20px 0 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(243, 195, 95, 0.22), transparent 42%),
+        rgba(24, 14, 8, 0.98);
+      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.4);
+      transform: translateY(104%);
+      transition: transform 220ms ease;
+    }
+
+    .country-search-mask.open .country-search-panel {
+      transform: translateY(0);
+    }
+
+    .country-search-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .country-search-title {
+      margin: 0;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .country-search-input {
+      height: 42px;
+      margin-bottom: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.09);
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .country-search-subtitle {
+      margin: 0 0 9px;
+      color: var(--gold-2);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .country-hot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .country-hot-grid button {
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .country-result-list {
+      display: grid;
+      gap: 8px;
     }
 
     .sheet-head {
@@ -2432,14 +2576,14 @@
       </div>
 
       <section class="screen active" id="discoverScreen">
-        <header class="topbar">
+        <header class="topbar" id="discoverTopbar">
           <div class="tab-row" role="tablist">
             <button class="tab-button active" type="button" data-discover-tab="games">Games</button>
             <button class="tab-button" type="button" data-discover-tab="activity">Activity</button>
           </div>
           <div class="icon-actions">
-            <button class="icon-btn" type="button" data-toast="Game tasks will open in V1.1">🎁</button>
-            <span class="mini-avatar"></span>
+            <button class="icon-btn activity-hidden" type="button" data-toast="Game tasks will open in V1.1">🎁</button>
+            <span class="mini-avatar activity-hidden"></span>
             <button class="icon-btn" type="button" data-toast="Search room ID / user ID">⌕</button>
           </div>
         </header>
@@ -2470,7 +2614,19 @@
 
             <div class="section-title">
               <span>Game Rooms</span>
-              <button class="icon-btn" type="button" data-toast="Showing voice rooms with active games">▦</button>
+              <button class="country-search-btn" type="button" data-open-country-search>⌕</button>
+            </div>
+
+            <div class="country-filter" aria-label="Country filter">
+              <div class="country-scroll">
+                <button class="country-chip active" type="button" data-country="全部">全部</button>
+                <button class="country-chip" type="button" data-country="沙特">🇸🇦 沙特</button>
+                <button class="country-chip" type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+                <button class="country-chip" type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+                <button class="country-chip" type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+                <button class="country-chip" type="button" data-country="埃及">🇪🇬 埃及</button>
+                <button class="country-chip" type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+              </div>
             </div>
 
             <div class="room-list">
@@ -2633,6 +2789,48 @@
         </section>
       </div>
 
+      <div class="country-search-mask" id="countrySearchMask" aria-hidden="true">
+        <section class="country-search-panel" role="dialog" aria-label="国家搜索">
+          <div class="country-search-head">
+            <h2 class="country-search-title">国家搜索</h2>
+            <button class="sheet-close" type="button" id="closeCountrySearch">×</button>
+          </div>
+          <div class="country-search-input">⌕ 搜索国家 / 房间 ID / 房间名称</div>
+          <h3 class="country-search-subtitle">热门国家</h3>
+          <div class="country-hot-grid">
+            <button type="button" data-country="全部">全部</button>
+            <button type="button" data-country="沙特">🇸🇦 沙特</button>
+            <button type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+            <button type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+            <button type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+            <button type="button" data-country="埃及">🇪🇬 埃及</button>
+            <button type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+            <button type="button" data-country="约旦">🇯🇴 约旦</button>
+          </div>
+          <h3 class="country-search-subtitle">示例搜索结果 · 沙特</h3>
+          <div class="country-result-list">
+            <button class="room-card" type="button" data-open-room data-room-mode="waiting">
+              <span class="room-cover gold"></span>
+              <span>
+                <span class="room-name">Saudi Ludo Room</span>
+                <span class="room-meta"><span>🇸🇦</span><span class="pill">Arabic</span><span class="game-state">Ludo · Waiting</span></span>
+                <span class="avatars"><i></i><i></i><i></i></span>
+              </span>
+              <span class="online">818 ▮</span>
+            </button>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover pink"></span>
+              <span>
+                <span class="room-name">Riyadh UNO Night</span>
+                <span class="room-meta"><span>🇸🇦</span><span class="pill">Arabic</span><span class="game-state">UNO · Playing</span></span>
+                <span class="avatars"><i></i><i></i><i></i><i></i></span>
+              </span>
+              <span class="online">1466 ▮</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
       <div class="sheet-mask" id="roomGamesSheet" aria-hidden="true">
         <section class="bottom-sheet" role="dialog" aria-label="Room Games">
           <div class="sheet-head">
@@ -2642,7 +2840,7 @@
 
           <div class="room-game-tabs">
             <button class="room-game-tab active" type="button" data-room-tab="casual">休闲游戏</button>
-            <button class="room-game-tab" type="button" data-room-tab="events">活动</button>
+            <button class="room-game-tab" type="button" data-room-tab="events">游戏</button>
             <button class="room-game-tab" type="button" data-room-tab="emoji">动态表情</button>
           </div>
 
@@ -2851,7 +3049,7 @@
               💬
               <span class="game-tool-badge">78</span>
             </button>
-            <button class="game-tool-btn is-game" type="button" data-room-tool="game" aria-label="游戏入口">🎮</button>
+            <button class="game-tool-btn is-game" type="button" data-room-tool="game" data-open-sheet="roomGames" aria-label="游戏入口">🎮</button>
             <button class="game-tool-btn is-gift" type="button" data-room-tool="gift" aria-label="礼物">🎁</button>
             <button class="game-tool-btn" type="button" data-room-tool="menu" aria-label="更多">▦</button>
           </div>
@@ -2930,10 +3128,12 @@
     const screens = document.querySelectorAll(".screen");
     const toast = document.querySelector("#toast");
     const discoverTabs = document.querySelectorAll("[data-discover-tab]");
+    const discoverTopbar = document.querySelector("#discoverTopbar");
     const discoverGames = document.querySelector("#discoverGames");
     const discoverActivity = document.querySelector("#discoverActivity");
     const moreGamesSheet = document.querySelector("#moreGamesSheet");
     const roomGamesSheet = document.querySelector("#roomGamesSheet");
+    const countrySearchMask = document.querySelector("#countrySearchMask");
     const settingScreen = document.querySelector("#settingScreen");
     const phone = document.querySelector("#phone");
     const h5Screen = document.querySelector("#h5Screen");
@@ -3006,6 +3206,17 @@
       exchangeScreen.setAttribute("aria-hidden", "true");
     }
 
+    function closeCountrySearch() {
+      countrySearchMask.classList.remove("open");
+      countrySearchMask.setAttribute("aria-hidden", "true");
+    }
+
+    function openCountrySearch() {
+      closeSheets();
+      countrySearchMask.classList.add("open");
+      countrySearchMask.setAttribute("aria-hidden", "false");
+    }
+
     function openExchange(required) {
       closeInsufficient();
       state.exchangeRequired = required || 0;
@@ -3045,6 +3256,7 @@
 
     function showScreen(id) {
       screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
+      closeCountrySearch();
     }
 
     function closeSheets() {
@@ -3054,9 +3266,18 @@
       });
     }
 
+    function activateRoomTab(id) {
+      document.querySelectorAll("[data-room-tab]").forEach((item) => item.classList.toggle("active", item.dataset.roomTab === id));
+      document.querySelector("#roomTabCasual").classList.toggle("active", id === "casual");
+      document.querySelector("#roomTabEvents").classList.toggle("active", id === "events");
+      document.querySelector("#roomTabEmoji").classList.toggle("active", id === "emoji");
+    }
+
     function openSheet(name) {
       closeSheets();
+      closeCountrySearch();
       const sheet = name === "roomGames" ? roomGamesSheet : moreGamesSheet;
+      if (name === "roomGames") activateRoomTab("casual");
       sheet.classList.add("open");
       sheet.setAttribute("aria-hidden", "false");
       updateCurrentGameUI();
@@ -3206,6 +3427,7 @@
         discoverTabs.forEach((item) => item.classList.toggle("active", item === tab));
         discoverGames.classList.toggle("active", target === "games");
         discoverActivity.classList.toggle("active", target === "activity");
+        discoverTopbar.classList.toggle("activity-mode", target === "activity");
       });
     });
 
@@ -3242,6 +3464,19 @@
         openExchange(0);
       }
 
+      const countrySearchTarget = event.target.closest("[data-open-country-search]");
+      if (countrySearchTarget) {
+        event.preventDefault();
+        openCountrySearch();
+      }
+
+      const countryTarget = event.target.closest("[data-country]");
+      if (countryTarget) {
+        event.preventDefault();
+        document.querySelectorAll(".country-chip").forEach((item) => item.classList.toggle("active", item.dataset.country === countryTarget.dataset.country));
+        showToast("已筛选：" + countryTarget.dataset.country);
+      }
+
       const screenTarget = event.target.closest("[data-show-screen]");
       if (screenTarget) {
         event.preventDefault();
@@ -3273,15 +3508,15 @@
       if (event.target.classList.contains("sheet-mask")) {
         closeSheets();
       }
+
+      if (event.target.classList.contains("country-search-mask")) {
+        closeCountrySearch();
+      }
     });
 
     document.querySelectorAll("[data-room-tab]").forEach((tab) => {
       tab.addEventListener("click", () => {
-        const id = tab.dataset.roomTab;
-        document.querySelectorAll("[data-room-tab]").forEach((item) => item.classList.toggle("active", item === tab));
-        document.querySelector("#roomTabCasual").classList.toggle("active", id === "casual");
-        document.querySelector("#roomTabEvents").classList.toggle("active", id === "events");
-        document.querySelector("#roomTabEmoji").classList.toggle("active", id === "emoji");
+        activateRoomTab(tab.dataset.roomTab);
       });
     });
 
@@ -3314,6 +3549,7 @@
       state.pendingStartAfterExchange = false;
       closeExchange();
     });
+    document.querySelector("#closeCountrySearch").addEventListener("click", closeCountrySearch);
     document.querySelector("#exchangeSubmit").addEventListener("click", submitExchange);
     document.querySelector("#insufficientCancel").addEventListener("click", () => {
       state.pendingStartAfterExchange = false;
