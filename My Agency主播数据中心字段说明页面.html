@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>主播｜Data Center 字段详解</title>
+  <style>
+    :root {
+      --stage: #050403;
+      --topbar: #1b130f;
+      --phone: #0d0704;
+      --card: #2b2110;
+      --card-2: #423719;
+      --row: #241b18;
+      --cell: #302815;
+      --gold: #f4bd45;
+      --gold-2: #f8dc8c;
+      --note: #ffd863;
+      --red: #ff4d4f;
+      --text: #f8f5ed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--stage);
+      color: var(--text);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .stage {
+      position: relative;
+      width: 1280px;
+      max-width: 100%;
+      min-height: 1720px;
+      margin: 0 auto;
+      padding: 0 0 72px;
+    }
+
+    .page-title {
+      position: absolute;
+      left: 48px;
+      top: 32px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .legend {
+      position: absolute;
+      right: 42px;
+      top: 58px;
+      width: 372px;
+      padding: 18px;
+      border: 2px solid rgba(244, 189, 69, 0.58);
+      border-radius: 18px;
+      background: rgba(244, 189, 69, 0.08);
+    }
+
+    .legend h3 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 24px;
+    }
+
+    .legend p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .phone {
+      width: 430px;
+      min-height: 1600px;
+      margin: 0 auto;
+      background: var(--phone);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .status {
+      height: 38px;
+      padding: 8px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: var(--topbar);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .topbar {
+      position: relative;
+      height: 64px;
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      align-items: center;
+      background: var(--topbar);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .back {
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-size: 42px;
+      line-height: 1;
+      font-weight: 200;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .plus {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #f05a35;
+      color: #fff;
+      font-size: 42px;
+      line-height: 1;
+      box-shadow: 0 14px 28px rgba(240, 90, 53, 0.28);
+      z-index: 5;
+    }
+
+    .content {
+      padding: 16px 12px 34px;
+    }
+
+    .section {
+      position: relative;
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--card);
+    }
+
+    .section.salary {
+      background: var(--card-2);
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .section-icon {
+      position: absolute;
+      right: 14px;
+      top: 13px;
+      color: var(--gold-2);
+      font-size: 22px;
+      text-decoration: none;
+    }
+
+    .summary-title {
+      margin: 18px 0 22px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .progress {
+      height: 10px;
+      margin-bottom: 26px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ef5a28, #f8c72e);
+    }
+
+    .time-row {
+      min-height: 56px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: var(--row);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .time-row strong {
+      color: var(--gold-2);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      position: relative;
+      min-height: 130px;
+      padding: 14px 11px 10px;
+      border-radius: 9px;
+      background: var(--cell);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .field.wide {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      min-height: 42px;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .value {
+      display: block;
+      margin-top: 14px;
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .orange {
+      color: #ff9829;
+    }
+
+    .note {
+      display: block;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 216, 99, 0.45);
+      color: var(--note);
+      font-size: 10px;
+      line-height: 1.38;
+      font-weight: 900;
+    }
+
+    .note.red {
+      color: #ff6d6f;
+      border-top-color: rgba(255, 77, 79, 0.45);
+    }
+
+    .marker {
+      position: absolute;
+      right: 9px;
+      top: 9px;
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #2b210b;
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(244, 189, 69, 0.28);
+    }
+
+    .home-indicator {
+      width: 146px;
+      height: 4px;
+      margin: 26px auto 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    @media (max-width: 980px) {
+      .stage {
+        width: 100%;
+        min-height: 0;
+        padding: 12px 10px 40px;
+      }
+
+      .page-title,
+      .legend {
+        position: static;
+        width: min(430px, 100%);
+        margin: 14px auto;
+      }
+
+      .phone {
+        width: min(430px, 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="page-title">Host · Data Center 字段详解</div>
+
+    <aside class="legend">
+      <h3>主播数据中心</h3>
+      <p>本页按主播视角 Data Center 字段逐项标注。图标可返回 My Agency 主播字段说明页；黄色说明为字段统计口径。</p>
+    </aside>
+
+    <section class="phone" aria-label="主播 Data Center 字段详解">
+      <div class="status">
+        <span>17:24</span>
+        <span>Wi-Fi · 66</span>
+      </div>
+
+      <div class="topbar">
+        <a class="back" href="My Agency主播字段说明页面.html">‹</a>
+        <h1>Data Center</h1>
+        <div></div>
+        <div class="plus">+</div>
+      </div>
+
+      <div class="content">
+        <section class="section">
+          <a class="section-icon" href="My Agency主播字段说明页面.html" title="返回 My Agency 主播字段说明页">▤</a>
+          <div class="summary-title">My Diamonds received</div>
+          <div class="summary-row">
+            <span>LV0（$0）</span>
+            <span>💎 0 / 0</span>
+          </div>
+          <div class="progress"></div>
+          <span class="note">我的收钻进度：展示当前主播钻石流水对应薪资等级、当前流水 / 目标流水，以及达标进度。</span>
+
+          <h2 style="margin-top:28px;">Diamond</h2>
+          <div class="grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current Diamond target</span>
+              <span class="value">💎 0</span>
+              <span class="note">本期钻石流水：当前主播在本结算周期产生的钻石流水。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Diamond Balance</span>
+              <span class="value">💎 0</span>
+              <span class="note">钻石余额：当前主播实时钻石余额。</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="time-row">
+          <span>Time</span>
+          <strong>📅 2026/05/01-2026/05/15</strong>
+          <span class="note" style="grid-column:1 / -1;margin-top:4px;">当前数据中心查询周期；本期字段按该周期统计，余额 / 欠款类字段实时展示。</span>
+        </div>
+
+        <section class="section salary">
+          <h2>Salary</h2>
+          <div class="grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current Host total Salary</span>
+              <span class="value">$ 0</span>
+              <span class="note">本周期主播工资：仅统计主播工资，不含 TG 奖励。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current Host Total salary</span>
+              <span class="value">$ 0</span>
+              <span class="note">主播总工资 = 主播工资 + 主播 TG 奖励。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Diamond salary level</span>
+              <span class="value orange">LV 0</span>
+              <span class="note">钻石薪资等级：本期钻石流水对应的薪资档位。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Effective days  ›</span>
+              <span class="value">0 Days</span>
+              <span class="note">有效天数：本期满足有效开播 / 有效任务条件的天数，可点击查看明细。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current Salary balance</span>
+              <span class="value">$ 0</span>
+              <span class="note">当前主播工资余额 = 本周期主播工资 + 本周期主播 TG 奖励 - 已预支欠款金额。</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current TG Reward</span>
+              <span class="value">$ 0</span>
+              <span class="note">本周期主播 TG 奖励。</span>
+            </div>
+            <div class="field wide">
+              <span class="marker">?</span>
+              <span class="label">Host Advance Salary</span>
+              <span class="value">$ 0</span>
+              <span class="note">当前主播预支欠款金额，实时展示；可点击进入预支记录。</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

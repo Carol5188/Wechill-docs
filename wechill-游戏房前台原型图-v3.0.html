@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wechill 游戏房 - 前台产品设计原型图 v3.0</title>
+<style>
+  :root {
+    --primary: #6C5CE7;
+    --primary-light: #A29BFE;
+    --accent: #FD79A8;
+    --accent-light: #FDCB6E;
+    --bg: #0A0A1A;
+    --card: #161629;
+    --card-light: #1E1E3A;
+    --border: #2D2D5E;
+    --text: #FFFFFF;
+    --text-sec: #B8B8D4;
+    --text-dim: #6C6C9C;
+    --success: #00B894;
+    --warning: #FDCB6E;
+    --danger: #FF6B6B;
+    --info: #74B9FF;
+    --game-green: #00CEC9;
+    --game-blue: #0984E3;
+    --game-orange: #E17055;
+    --game-purple: #6C5CE7;
+    --seat-empty: #2D2D5E;
+    --seat-occupied: #00B894;
+    --seat-playing: #FD79A8;
+    --seat-locked: #636E72;
+    --seat-queue: #FDCB6E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* 顶部导航 */
+  .top-nav {
+    background: linear-gradient(135deg, #1A1A3E 0%, #0D0D2B 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+  .top-nav h1 {
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .top-nav .meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .top-nav .meta span {
+    margin-right: 16px;
+  }
+
+  /* 目录 */
+  .toc {
+    max-width: 1400px;
+    margin: 24px auto;
+    padding: 0 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .toc a {
+    padding: 6px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-sec);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .toc a:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  /* 章节标题 */
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+  .section-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-sec);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  /* 手机壳 */
+  .phone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+  .phone-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .phone-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-light);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .phone-label small {
+    display: block;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 40px;
+    border: 3px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* 状态栏 */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 6px; align-items: center; }
+  .status-bar .icons svg { width: 16px; height: 16px; fill: #fff; }
+
+  /* 导航栏 */
+  .nav-bar {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-bar .back { color: var(--primary-light); font-size: 14px; cursor: pointer; }
+  .nav-bar .title { font-size: 17px; font-weight: 700; }
+  .nav-bar .action { color: var(--primary-light); font-size: 14px; }
+
+  /* Tab栏 */
+  .tab-bar {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 4px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .tab-item {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-sec);
+    background: transparent;
+  }
+  .tab-item.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* 页面内容 */
+  .page-content {
+    height: calc(812px - 44px - 50px - 80px);
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .page-content-full {
+    height: calc(812px - 44px);
+    overflow-y: auto;
+  }
+
+  /* 底部Tab */
+  .bottom-tab {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: rgba(10,10,26,0.95);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .bottom-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .bottom-tab-item.active { color: var(--primary-light); }
+  .bottom-tab-item .icon { font-size: 22px; }
+
+  /* 通用组件 */
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .badge-green { background: rgba(0,184,148,0.2); color: var(--success); }
+  .badge-orange { background: rgba(253,203,110,0.2); color: var(--warning); }
+  .badge-red { background: rgba(255,107,107,0.2); color: var(--danger); }
+  .badge-blue { background: rgba(116,185,255,0.2); color: var(--info); }
+  .badge-purple { background: rgba(108,92,231,0.2); color: var(--primary-light); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; }
+  .btn-secondary { background: var(--card-light); color: var(--text-sec); border: 1px solid var(--border); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-sm { padding: 6px 16px; font-size: 12px; }
+  .btn-block { width: 100%; }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .avatar-sm { width: 28px; height: 28px; font-size: 12px; }
+  .avatar-lg { width: 56px; height: 56px; font-size: 22px; }
+  .avatar-xl { width: 72px; height: 72px; font-size: 28px; }
+
+  /* 游戏房间卡片 */
+  .room-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .room-card .game-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .room-card .info { flex: 1; min-width: 0; }
+  .room-card .info .name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .room-card .info .meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .room-card .status-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* 座位/麦位 */
+  .seat-grid {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+  .seat-grid-2x2 { grid-template-columns: 1fr 1fr; }
+  .seat-grid-4 { grid-template-columns: 1fr 1fr; }
+
+  .seat {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+    border: 2px solid transparent;
+    position: relative;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .seat.empty {
+    border-color: var(--seat-empty);
+    background: rgba(45,45,94,0.3);
+  }
+  .seat.occupied {
+    border-color: var(--seat-occupied);
+  }
+  .seat.playing {
+    border-color: var(--seat-playing);
+    animation: pulse-border 2s infinite;
+  }
+  .seat.locked {
+    border-color: var(--seat-locked);
+    opacity: 0.6;
+  }
+  .seat .seat-num {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .seat .mic-icon {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 12px;
+  }
+  .seat .seat-name {
+    font-size: 12px;
+    font-weight: 600;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .seat .seat-role {
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .seat .seat-score {
+    font-size: 10px;
+    color: var(--accent-light);
+    font-weight: 700;
+  }
+  .seat .add-icon {
+    font-size: 24px;
+    color: var(--text-dim);
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--seat-playing); }
+    50% { border-color: rgba(253,121,168,0.3); }
+  }
+
+  /* 排麦队列 */
+  .mic-queue {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+  }
+  .mic-queue .queue-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--warning);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mic-queue .queue-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .mic-queue .queue-item:last-child { border-bottom: none; }
+  .mic-queue .queue-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--warning);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mic-queue .queue-name { font-size: 12px; flex: 1; }
+  .mic-queue .queue-action { font-size: 11px; color: var(--danger); }
+
+  /* 游戏区域 */
+  .game-area {
+    background: linear-gradient(135deg, #1A1A3E, #0D0D2B);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .game-area .game-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .game-area .game-status {
+    font-size: 12px;
+    color: var(--text-sec);
+  }
+
+  /* 聊天区 */
+  .chat-area {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 10px;
+    max-height: 160px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+  .chat-msg {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: flex-start;
+  }
+  .chat-msg .msg-name { font-size: 11px; color: var(--primary-light); font-weight: 600; white-space: nowrap; }
+  .chat-msg .msg-text { font-size: 12px; color: var(--text-sec); word-break: break-all; }
+
+  /* 底部操作栏 */
+  .action-bar {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: rgba(10,10,26,0.95);
+    backdrop-filter: blur(20px);
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .action-bar .action-btn {
+    flex: 1;
+    height: 40px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* 结算页 */
+  .settle-result {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .settle-result .crown { font-size: 48px; margin-bottom: 8px; }
+  .settle-result .winner-name { font-size: 20px; font-weight: 800; }
+  .settle-result .winner-score { font-size: 14px; color: var(--accent-light); margin-top: 4px; }
+  
+  .rank-list { margin: 16px 0; }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 6px;
+    background: var(--card);
+  }
+  .rank-item.first { background: linear-gradient(135deg, rgba(253,203,110,0.15), rgba(253,121,168,0.1)); border: 1px solid rgba(253,203,110,0.3); }
+  .rank-num { font-size: 18px; font-weight: 800; width: 28px; text-align: center; }
+  .rank-item.first .rank-num { color: var(--warning); }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 14px; font-weight: 600; }
+  .rank-detail { font-size: 11px; color: var(--text-dim); }
+  .rank-score { font-size: 16px; font-weight: 800; color: var(--accent-light); }
+
+  /* 创建页表单 */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sec);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .form-input {
+    width: 100%;
+    height: 44px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 14px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .form-select {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .form-option {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-sec);
+    cursor: pointer;
+  }
+  .form-option.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  /* 管理员面板 */
+  .admin-panel {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .admin-panel .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 13px;
+  }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-row .label { color: var(--text-sec); }
+  .admin-row .value { font-weight: 600; }
+
+  .toggle {
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--seat-empty);
+    position: relative;
+    display: inline-block;
+  }
+  .toggle.on { background: var(--success); }
+  .toggle::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.2s;
+  }
+  .toggle.on::after { left: 22px; }
+
+  /* 观战面板 */
+  .spectator-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+  }
+  .spectator-bar .spectator-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* 匹配等待 */
+  .match-waiting {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .match-waiting .spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .match-waiting .timer { font-size: 32px; font-weight: 800; color: var(--primary-light); }
+  .match-waiting .hint { font-size: 14px; color: var(--text-sec); margin-top: 8px; }
+
+  /* 礼物/红包浮动按钮 */
+  .float-btns {
+    position: absolute;
+    right: 12px;
+    bottom: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .float-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  /* 注释标记 */
+  .note {
+    background: rgba(253,203,110,0.1);
+    border-left: 3px solid var(--warning);
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 11px;
+    color: var(--warning);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* RTL示例 */
+  .rtl-demo {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  /* 横屏游戏示例 */
+  .phone-landscape {
+    width: 812px;
+    height: 375px;
+    border-radius: 24px;
+    border: 3px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    background: var(--bg);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  /* 底部安全区指示器 */
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* 标注/批注 */
+  .annotation {
+    background: rgba(108,92,231,0.15);
+    border: 1px dashed var(--primary);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--primary-light);
+    margin: 8px 0;
+  }
+  .annotation strong {
+    color: var(--primary-light);
+  }
+
+  /* 信息标签 */
+  .info-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  /* 钱包余额条 */
+  .wallet-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(253,203,110,0.1), rgba(253,121,168,0.1));
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(253,203,110,0.2);
+  }
+  .wallet-bar .balance {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-light);
+  }
+  .wallet-bar .add-btn {
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* 邀请弹窗 */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-sheet {
+    width: 100%;
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 20px;
+    padding-bottom: 40px;
+  }
+  .modal-sheet .modal-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    margin: 0 auto 16px;
+  }
+  .modal-sheet .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .share-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .share-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-sec);
+  }
+  .share-option .share-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="top-nav">
+  <h1>wechill 游戏房 - 前台产品设计原型图</h1>
+  <div class="meta">
+    <span>版本 v3.0</span>
+    <span>MENA / 中东语聊房</span>
+    <span>BytesunGame 语聊房模式 v1.0.7</span>
+    <span>参考排麦模式麦位体系</span>
+  </div>
+</div>
+
+<!-- 目录 -->
+<div class="toc">
+  <a href="#s1">1. 游戏Tab首页</a>
+  <a href="#s2">2. 创建游戏房</a>
+  <a href="#s3">3. 等待中（座位/排麦）</a>
+  <a href="#s4">4. 准备中</a>
+  <a href="#s5">5. 游戏中-竖屏</a>
+  <a href="#s6">6. 游戏中-横屏</a>
+  <a href="#s7">7. 观战模式</a>
+  <a href="#s8">8. 结算页</a>
+  <a href="#s9">9. 随机匹配等待</a>
+  <a href="#s10">10. 管理员面板</a>
+  <a href="#s11">11. 邀请与分享</a>
+  <a href="#s12">12. 阿语RTL适配</a>
+  <a href="#s13">13. 异常场景</a>
+  <a href="#s14">14. 你画我猜模式</a>
+  <a href="#s15">15. 混合房开启游戏</a>
+</div>
+
+<!-- ============ 1. 游戏Tab首页 ============ -->
+<div class="section" id="s1">
+  <div class="section-title">1. 游戏Tab首页</div>
+  <div class="section-desc">首页新增游戏Tab入口，展示游戏房推荐、分类、快速匹配。参考PRD第6.1-6.2节。</div>
+  
+  <div class="phone-grid">
+    <!-- 游戏Tab首页 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">游戏Tab首页<small>展示推荐房间、游戏分类、好友在玩</small></div>
+      <div class="phone">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="icons">
+            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+          </div>
+        </div>
+        
+        <!-- 游戏Tab -->
+        <div class="tab-bar">
+          <div class="tab-item active">🎮 游戏</div>
+          <div class="tab-item">💬 语聊</div>
+          <div class="tab-item">👤 关注</div>
+          <div class="tab-item">🔥 热门</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 快速匹配横幅 -->
+          <div style="background: linear-gradient(135deg, #6C5CE7, #FD79A8); border-radius: 16px; padding: 20px; margin-bottom: 14px; position: relative; overflow: hidden;">
+            <div style="font-size: 18px; font-weight: 800;">快速匹配</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">选择游戏，即刻开局 🚀</div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; font-size: 12px; font-weight: 600;">🎲 Ludo</div>
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; font-size: 12px; font-weight: 600;">🃏 UNO</div>
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; font-size: 12px; font-weight: 600;">🎲 Domino</div>
+            </div>
+          </div>
+
+          <!-- 好友在玩 -->
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">好友在玩 👥</div>
+            <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;">
+              <div style="text-align: center; flex-shrink: 0;">
+                <div class="avatar" style="margin: 0 auto 4px; border: 2px solid var(--success);">🇸🇦</div>
+                <div style="font-size: 10px; font-weight: 600;">Ahmed</div>
+                <div style="font-size: 9px; color: var(--success);">Ludo中</div>
+              </div>
+              <div style="text-align: center; flex-shrink: 0;">
+                <div class="avatar" style="margin: 0 auto 4px; border: 2px solid var(--warning);">🇦🇪</div>
+                <div style="font-size: 10px; font-weight: 600;">Fatima</div>
+                <div style="font-size: 9px; color: var(--warning);">等待中</div>
+              </div>
+              <div style="text-align: center; flex-shrink: 0;">
+                <div class="avatar" style="margin: 0 auto 4px; border: 2px solid var(--accent);">🇪🇬</div>
+                <div style="font-size: 10px; font-weight: 600;">Omar</div>
+                <div style="font-size: 9px; color: var(--accent);">UNO中</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 分类筛选 -->
+          <div style="display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;">
+            <div class="form-option selected" style="font-size: 12px; padding: 6px 12px;">全部</div>
+            <div class="form-option" style="font-size: 12px; padding: 6px 12px;">🎲 Ludo</div>
+            <div class="form-option" style="font-size: 12px; padding: 6px 12px;">🃏 UNO</div>
+            <div class="form-option" style="font-size: 12px; padding: 6px 12px;">🎲 Domino</div>
+            <div class="form-option" style="font-size: 12px; padding: 6px 12px;">🎨 画猜</div>
+            <div class="form-option" style="font-size: 12px; padding: 6px 12px;">👁 可观战</div>
+          </div>
+
+          <!-- 房间卡片列表 -->
+          <div class="room-card">
+            <div class="game-icon" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🎲</div>
+            <div class="info">
+              <div class="name">中东Ludo破冰房</div>
+              <div class="meta">Ludo · 2/4人 · 🇸🇦 阿语 · 🎫 免费</div>
+              <div style="display: flex; gap: 4px; margin-top: 4px;">
+                <span class="badge badge-green">等待中</span>
+                <span class="badge badge-blue">好友在房</span>
+              </div>
+            </div>
+            <div class="status-tag" style="background: rgba(0,184,148,0.2); color: var(--success);">加入</div>
+          </div>
+
+          <div class="room-card">
+            <div class="game-icon" style="background: linear-gradient(135deg, #FD79A8, #E17055);">🃏</div>
+            <div class="info">
+              <div class="name">UNO 快乐局</div>
+              <div class="meta">UNO · 3/6人 · 🇦🇪 阿语 · 🎫 200</div>
+              <div style="display: flex; gap: 4px; margin-top: 4px;">
+                <span class="badge badge-orange">准备中</span>
+              </div>
+            </div>
+            <div class="status-tag" style="background: rgba(253,203,110,0.2); color: var(--warning);">观战</div>
+          </div>
+
+          <div class="room-card">
+            <div class="game-icon" style="background: linear-gradient(135deg, #6C5CE7, #A29BFE);">🎲</div>
+            <div class="info">
+              <div class="name">Domino 经典对弈</div>
+              <div class="meta">Domino · 1/4人 · 🇪🇬 阿语 · 🎫 免费</div>
+              <div style="display: flex; gap: 4px; margin-top: 4px;">
+                <span class="badge badge-green">等待中</span>
+              </div>
+            </div>
+            <div class="status-tag" style="background: rgba(0,184,148,0.2); color: var(--success);">加入</div>
+          </div>
+
+          <div class="room-card">
+            <div class="game-icon" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🎲</div>
+            <div class="info">
+              <div class="name">Ludo 高级金币局</div>
+              <div class="meta">Ludo · 4/4人 · 🇸🇦 阿语 · 🎫 500</div>
+              <div style="display: flex; gap: 4px; margin-top: 4px;">
+                <span class="badge badge-red">游戏中</span>
+              </div>
+            </div>
+            <div class="status-tag" style="background: rgba(116,185,255,0.2); color: var(--info);">观战</div>
+          </div>
+
+          <div style="height: 20px;"></div>
+        </div>
+
+        <!-- 底部Tab -->
+        <div class="bottom-tab">
+          <div class="bottom-tab-item"><div class="icon">🏠</div>首页</div>
+          <div class="bottom-tab-item active"><div class="icon">🎮</div>游戏</div>
+          <div class="bottom-tab-item"><div class="icon">💬</div>消息</div>
+          <div class="bottom-tab-item"><div class="icon">👤</div>我的</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- 最近玩过 + 游戏分类 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">游戏分类详情<small>按游戏类型浏览可加入房间</small></div>
+      <div class="phone">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="icons">
+            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+          </div>
+        </div>
+        
+        <div class="nav-bar">
+          <div class="back">← 返回</div>
+          <div class="title">🎲 Ludo</div>
+          <div class="action">🔍</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 游戏信息头 -->
+          <div style="background: linear-gradient(135deg, #00CEC9, #0984E3); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; gap: 14px; align-items: center;">
+            <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🎲</div>
+            <div style="flex: 1;">
+              <div style="font-size: 18px; font-weight: 800;">Ludo /飞行棋</div>
+              <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">2-4人 · 10-20分钟 · 支持观战</div>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <div class="btn btn-sm" style="background: rgba(255,255,255,0.25); color: #fff; padding: 4px 12px;">快速匹配</div>
+                <div class="btn btn-sm" style="background: rgba(255,255,255,0.15); color: #fff; padding: 4px 12px;">创建房间</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 筛选 -->
+          <div style="display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;">
+            <div class="form-option selected" style="font-size: 11px; padding: 5px 10px;">全部</div>
+            <div class="form-option" style="font-size: 11px; padding: 5px 10px;">🎫 免费</div>
+            <div class="form-option" style="font-size: 11px; padding: 5px 10px;">🎫 100</div>
+            <div class="form-option" style="font-size: 11px; padding: 5px 10px;">🎫 200</div>
+            <div class="form-option" style="font-size: 11px; padding: 5px 10px;">🎫 500</div>
+          </div>
+
+          <!-- 房间列表 -->
+          <div class="room-card">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #FD79A8, #6C5CE7); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">🇸🇦</div>
+            <div class="info">
+              <div class="name">阿拉伯Ludo休闲房</div>
+              <div class="meta">2/4 · 🎫免费 · 🇸🇦 阿语</div>
+            </div>
+            <div class="status-tag" style="background: rgba(0,184,148,0.2); color: var(--success);">加入</div>
+          </div>
+          <div class="room-card">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #FDCB6E, #E17055); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">🇦🇪</div>
+            <div class="info">
+              <div class="name">迪拜Ludo金币局</div>
+              <div class="meta">3/4 · 🎫200 · 🇦🇪 阿语</div>
+            </div>
+            <div class="status-tag" style="background: rgba(253,203,110,0.2); color: var(--warning);">准备中</div>
+          </div>
+          <div class="room-card">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #00CEC9, #0984E3); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">🇪🇬</div>
+            <div class="info">
+              <div class="name">开罗Ludo竞技房</div>
+              <div class="meta">4/4 · 🎫500 · 🇪🇬 阿语</div>
+            </div>
+            <div class="status-tag" style="background: rgba(116,185,255,0.2); color: var(--info);">观战</div>
+          </div>
+
+          <div class="annotation">
+            <strong>PRD关联</strong>：房间卡片字段来自5.2游戏Tab设计；门票档位参考9.6后台配置；好友在房标识来自5.2房间卡片字段
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2. 创建游戏房 ============ -->
+<div class="section" id="s2">
+  <div class="section-title">2. 创建游戏房</div>
+  <div class="section-desc">房主创建游戏房，配置游戏类型、门票、隐私等。参考PRD 5.3节、6.3节创建字段。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">创建游戏房<small>选择游戏 + 配置房间参数</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">✕ 取消</div>
+          <div class="title">创建游戏房</div>
+          <div class="action"></div>
+        </div>
+
+        <div class="page-content">
+          <!-- 选择游戏 -->
+          <div class="form-group">
+            <div class="form-label">选择游戏 *</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div style="text-align: center; padding: 12px 8px; background: var(--primary); border-radius: 14px; border: 2px solid var(--primary-light);">
+                <div style="font-size: 28px;">🎲</div>
+                <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Ludo</div>
+              </div>
+              <div style="text-align: center; padding: 12px 8px; background: var(--card); border-radius: 14px; border: 2px solid var(--border);">
+                <div style="font-size: 28px;">🃏</div>
+                <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">UNO</div>
+              </div>
+              <div style="text-align: center; padding: 12px 8px; background: var(--card); border-radius: 14px; border: 2px solid var(--border); opacity: 0.5;">
+                <div style="font-size: 28px;">🎲</div>
+                <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">Domino</div>
+                <div style="font-size: 9px; color: var(--warning);">待确认</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 房间名称 -->
+          <div class="form-group">
+            <div class="form-label">房间名称</div>
+            <input class="form-input" type="text" value="Ludo休闲局" readonly>
+          </div>
+
+          <!-- 语言/地区 -->
+          <div class="form-group">
+            <div class="form-label">语言 / 地区</div>
+            <div class="form-select">
+              <div class="form-option selected">🇸🇦 阿语</div>
+              <div class="form-option">🇬🇧 英语</div>
+              <div class="form-option">🇹🇷 土耳其语</div>
+            </div>
+          </div>
+
+          <!-- 门票档位 -->
+          <div class="form-group">
+            <div class="form-label">门票档位</div>
+            <div class="form-select">
+              <div class="form-option selected">🆓 免费</div>
+              <div class="form-option">🎫 100</div>
+              <div class="form-option">🎫 200</div>
+              <div class="form-option">🎫 500</div>
+            </div>
+          </div>
+
+          <!-- 房间隐私 -->
+          <div class="form-group">
+            <div class="form-label">房间隐私</div>
+            <div class="form-select">
+              <div class="form-option selected">🌐 公开</div>
+              <div class="form-option">👥 好友可见</div>
+              <div class="form-option">🔒 私密</div>
+            </div>
+          </div>
+
+          <!-- 开关配置 -->
+          <div class="card">
+            <div class="admin-row">
+              <div class="label">允许观战</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">允许随机匹配</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">允许中途加入</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">游戏中允许礼物</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">游戏中允许红包</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">计入CP/龙蛋任务</div>
+              <div class="toggle on"></div>
+            </div>
+          </div>
+
+          <div class="annotation">
+            <strong>PRD关联</strong>：创建字段来自5.3节（15项配置）；门票档位参考9.6后台配置4档；隐私3级来自room_privacy字段
+          </div>
+
+          <!-- 创建按钮 -->
+          <button class="btn btn-primary btn-block" style="margin-top: 16px; height: 50px; font-size: 16px;">创建游戏房</button>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- 混合房开启游戏 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">语聊房内开启游戏<small>S1.3 普通语聊房→混合房</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 返回</div>
+          <div class="title">语聊房</div>
+          <div class="action">⚙️</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 麦位区域（现有语聊房） -->
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 8px;">麦位 · 排麦模式</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div class="seat occupied" style="min-height: 80px;">
+                <div class="seat-num">1</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7);">🇸🇦</div>
+                <div class="seat-name">Ahmed</div>
+                <div class="seat-role" style="color: var(--accent);">房主</div>
+              </div>
+              <div class="seat occupied" style="min-height: 80px;">
+                <div class="seat-num">2</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🇦🇪</div>
+                <div class="seat-name">Fatima</div>
+                <div class="seat-role">主持</div>
+              </div>
+              <div class="seat occupied" style="min-height: 80px;">
+                <div class="seat-num">3</div>
+                <div class="mic-icon">🔇</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🇪🇬</div>
+                <div class="seat-name">Omar</div>
+                <div class="seat-role">管理员</div>
+              </div>
+              <div class="seat empty" style="min-height: 80px;">
+                <div class="seat-num">4</div>
+                <div class="add-icon">+</div>
+                <div class="seat-role">空闲</div>
+              </div>
+              <div class="seat locked" style="min-height: 80px;">
+                <div class="seat-num">5</div>
+                <div style="font-size: 14px;">🔒</div>
+                <div class="seat-role">锁麦</div>
+              </div>
+              <div class="seat locked" style="min-height: 80px;">
+                <div class="seat-num">6</div>
+                <div style="font-size: 14px;">🔒</div>
+                <div class="seat-role">锁麦</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 排麦队列（排麦模式参考） -->
+          <div class="mic-queue">
+            <div class="queue-title">⏳ 排麦队列 (3)</div>
+            <div class="queue-item">
+              <div class="queue-num">1</div>
+              <div class="avatar-sm" style="background: linear-gradient(135deg, #A29BFE, #6C5CE7);">🇯🇴</div>
+              <div class="queue-name">Youssef</div>
+              <div class="queue-action">移除</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-num">2</div>
+              <div class="avatar-sm" style="background: linear-gradient(135deg, #FD79A8, #E17055);">🇲🇦</div>
+              <div class="queue-name">Layla</div>
+              <div class="queue-action">移除</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-num">3</div>
+              <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #74B9FF);">🇰🇼</div>
+              <div class="queue-name">Khalid</div>
+              <div class="queue-action">移除</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 开启游戏入口 -->
+          <div style="background: linear-gradient(135deg, rgba(108,92,231,0.2), rgba(253,121,168,0.2)); border: 2px dashed var(--primary); border-radius: 16px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🎮</div>
+            <div style="font-size: 16px; font-weight: 700;">开启游戏</div>
+            <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">语聊房 → 混合房，边聊边玩</div>
+            <div class="btn btn-primary btn-sm" style="margin-top: 12px;">选择游戏</div>
+          </div>
+
+          <div class="note">
+            ⚠️ S1.3 混合房开启游戏：继承原房间ID、成员、语音频道。排麦队列自动迁移为游戏座位等待队列。
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. 等待中 ============ -->
+<div class="section" id="s3">
+  <div class="section-title">3. 游戏房 - 等待中</div>
+  <div class="section-desc">玩家进入游戏房，H5加载完成，等待上座。麦位排麦模式迁移为游戏座位。参考PRD 5.5节S4.1-S4.4、排麦模式管理员权限。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">等待中 - 房主视角<small>座位布局 + 排麦队列 + 管理员权限</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 退出</div>
+          <div class="title">🎲 Ludo 休闲局</div>
+          <div class="action">⚙️ 管理</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 游戏状态 -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="badge badge-green" style="font-size: 12px; padding: 4px 12px;">⏳ 等待中</span>
+            <span style="font-size: 12px; color: var(--text-dim);">1/4人 · 🎫免费</span>
+          </div>
+
+          <!-- 游戏区域（H5加载占位） -->
+          <div class="game-area" style="min-height: 160px; background: linear-gradient(135deg, rgba(0,206,201,0.1), rgba(9,132,227,0.1));">
+            <div style="font-size: 40px;">🎲</div>
+            <div class="game-title">Ludo</div>
+            <div class="game-status">游戏已加载 · 等待玩家上座</div>
+            <div style="font-size: 11px; color: var(--success); margin-top: 6px;">✓ gameLoaded 已回调</div>
+          </div>
+
+          <!-- 游戏座位（复用排麦麦位逻辑） -->
+          <div style="margin-top: 12px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 8px; display: flex; justify-content: space-between;">
+              <span>游戏座位</span>
+              <span style="color: var(--primary-light);">排麦模式</span>
+            </div>
+            <div class="seat-grid seat-grid-2x2">
+              <div class="seat occupied">
+                <div class="seat-num">#1</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7);">🇸🇦</div>
+                <div class="seat-name">Ahmed</div>
+                <div class="seat-role" style="color: var(--accent);">房主</div>
+              </div>
+              <div class="seat empty">
+                <div class="seat-num">#2</div>
+                <div class="add-icon">+</div>
+                <div class="seat-role">点击上座</div>
+              </div>
+              <div class="seat empty">
+                <div class="seat-num">#3</div>
+                <div class="add-icon">+</div>
+                <div class="seat-role">点击上座</div>
+              </div>
+              <div class="seat locked">
+                <div class="seat-num">#4</div>
+                <div style="font-size: 14px;">🔒</div>
+                <div class="seat-role">锁定</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 排麦队列 -->
+          <div class="mic-queue">
+            <div class="queue-title">⏳ 排队上座 (2)</div>
+            <div class="queue-item">
+              <div class="queue-num">1</div>
+              <div class="avatar-sm" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🇦🇪</div>
+              <div class="queue-name">Fatima</div>
+              <div style="font-size: 11px; color: var(--success);">等待中</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-num">2</div>
+              <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🇪🇬</div>
+              <div class="queue-name">Omar</div>
+              <div style="font-size: 11px; color: var(--success);">等待中</div>
+            </div>
+          </div>
+
+          <!-- 观战用户 -->
+          <div style="margin-bottom: 8px;">
+            <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 4px;">👁 观众 (5)</div>
+            <div class="spectator-bar">
+              <div class="spectator-avatar">🇯🇴</div>
+              <div class="spectator-avatar">🇲🇦</div>
+              <div class="spectator-avatar">🇰🇼</div>
+              <div class="spectator-avatar">🇶🇦</div>
+              <div class="spectator-avatar">🇧🇭</div>
+            </div>
+          </div>
+
+          <div class="annotation">
+            <strong>排麦模式参考</strong>：座位复用麦位逻辑 → 空闲/占用/锁定三态；排麦队列迁移为"排队上座"；管理员可锁座/踢人/移排
+          </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="action-bar">
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">💬 聊天</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🎁 礼物</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🧧 红包</div>
+          <div class="action-btn" style="background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff;">📢 邀请</div>
+        </div>
+
+        <div class="bottom-tab">
+          <div class="bottom-tab-item"><div class="icon">💬</div>聊天</div>
+          <div class="bottom-tab-item active"><div class="icon">🎮</div>游戏</div>
+          <div class="bottom-tab-item"><div class="icon">🎁</div>礼物</div>
+          <div class="bottom-tab-item"><div class="icon">👤</div>更多</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- 管理员权限面板 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">管理员权限面板<small>排麦模式管理员权限 + 游戏房权限扩展</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 返回</div>
+          <div class="title">⚙️ 房间管理</div>
+          <div class="action"></div>
+        </div>
+
+        <div class="page-content">
+          <!-- 麦位管理（排麦模式） -->
+          <div class="admin-panel">
+            <div class="panel-title">🎙️ 麦位管理（排麦模式）</div>
+            <div class="admin-row">
+              <div class="label">锁麦/锁座</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">抱上麦/抱上座</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">踢下麦/踢下座</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">禁言</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">排麦队列管理</div>
+              <div class="value" style="color: var(--primary-light);">查看 →</div>
+            </div>
+          </div>
+
+          <!-- 游戏房权限（扩展） -->
+          <div class="admin-panel">
+            <div class="panel-title">🎮 游戏房权限（扩展）</div>
+            <div class="admin-row">
+              <div class="label">开启/关闭游戏</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">踢出玩家（type=17/6）</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">调整门票档位</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">锁定/解锁座位</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">最大人数调整</div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="admin-row">
+              <div class="label">解散房间</div>
+              <div style="padding: 4px 12px; background: rgba(255,107,107,0.2); color: var(--danger); border-radius: 8px; font-size: 11px; font-weight: 600;">解散</div>
+            </div>
+          </div>
+
+          <!-- 房间信息 -->
+          <div class="admin-panel">
+            <div class="panel-title">📋 房间信息</div>
+            <div class="admin-row">
+              <div class="label">房间ID</div>
+              <div class="value" style="font-size: 11px; color: var(--text-dim);">room_8d7f2a</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">游戏</div>
+              <div class="value">Ludo / ludoPlus</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">game_id</div>
+              <div class="value" style="font-size: 11px; color: var(--text-dim);">待Bytesun确认</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">gsp节点</div>
+              <div class="value">201 (迪拜AWS)</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">语言</div>
+              <div class="value">阿拉伯语 (7)</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">创建时间</div>
+              <div class="value" style="font-size: 11px;">2026-04-22 14:30</div>
+            </div>
+          </div>
+
+          <div class="note">
+            ⚠️ 管理员权限 = 排麦模式原有权限 + 游戏房扩展权限。踢人需二次确认（type=17→App确认→type=6回传）
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 4. 准备中 ============ -->
+<div class="section" id="s4">
+  <div class="section-title">4. 游戏房 - 准备中</div>
+  <div class="section-desc">座位已满或达到最低人数，等待玩家准备。参考PRD 3.2状态机 preparing。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">准备中 - 全员就位<small>等待游戏开始(type=13)</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 退出</div>
+          <div class="title">🎲 Ludo 休闲局</div>
+          <div class="action">⚙️</div>
+        </div>
+
+        <div class="page-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="badge badge-orange" style="font-size: 12px; padding: 4px 12px;">🎯 准备中</span>
+            <span style="font-size: 12px; color: var(--text-dim);">4/4人 · 🎫免费</span>
+          </div>
+
+          <!-- 游戏区域 -->
+          <div class="game-area" style="min-height: 140px; background: linear-gradient(135deg, rgba(253,203,110,0.1), rgba(253,121,168,0.1));">
+            <div style="font-size: 36px;">🎲</div>
+            <div class="game-title">Ludo · 等待开局</div>
+            <div class="game-status">所有玩家准备完毕</div>
+            <div style="font-size: 12px; color: var(--warning); margin-top: 6px;">等待游戏发起开始...</div>
+          </div>
+
+          <!-- 座位 - 全部占用 -->
+          <div style="margin-top: 12px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 8px;">游戏座位</div>
+            <div class="seat-grid seat-grid-2x2">
+              <div class="seat occupied">
+                <div class="seat-num">#1</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7); width: 36px; height: 36px; font-size: 14px;">🇸🇦</div>
+                <div class="seat-name">Ahmed</div>
+                <div class="seat-role" style="color: var(--accent);">✅ 准备</div>
+              </div>
+              <div class="seat occupied">
+                <div class="seat-num">#2</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #FDCB6E, #E17055); width: 36px; height: 36px; font-size: 14px;">🇦🇪</div>
+                <div class="seat-name">Fatima</div>
+                <div class="seat-role" style="color: var(--accent);">✅ 准备</div>
+              </div>
+              <div class="seat occupied">
+                <div class="seat-num">#3</div>
+                <div class="mic-icon">🔇</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #00CEC9, #0984E3); width: 36px; height: 36px; font-size: 14px;">🇪🇬</div>
+                <div class="seat-name">Omar</div>
+                <div class="seat-role" style="color: var(--success);">✅ 准备</div>
+              </div>
+              <div class="seat occupied">
+                <div class="seat-num">#4</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #74B9FF, #A29BFE); width: 36px; height: 36px; font-size: 14px;">🇯🇴</div>
+                <div class="seat-name">Youssef</div>
+                <div class="seat-role" style="color: var(--text-dim);">⏳ 未准备</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 聊天区 -->
+          <div style="margin-top: 12px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 6px;">💬 房间聊天</div>
+            <div class="chat-area">
+              <div class="chat-msg">
+                <div class="msg-name">Ahmed:</div>
+                <div class="msg-text">快来快来，等人齐了开局！</div>
+              </div>
+              <div class="chat-msg">
+                <div class="msg-name">Fatima:</div>
+                <div class="msg-text">我都准备好了 😄</div>
+              </div>
+              <div class="chat-msg">
+                <div class="msg-name">Omar:</div>
+                <div class="msg-text">Youssef快点！</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">💬</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🎁</div>
+          <div class="action-btn" style="background: linear-gradient(135deg, var(--success), #00CEC9); color: #fff; flex: 2;">✅ 准备</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5. 游戏中 - 竖屏 ============ -->
+<div class="section" id="s5">
+  <div class="section-title">5. 游戏中 - 竖屏（语聊房模式）</div>
+  <div class="section-desc">游戏H5占据屏幕中间区域，上方为麦位/座位，下方为聊天。安全区参数game_margin_top/bottom。参考PRD 5.6节、7.5节声音冲突。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">游戏中 - 竖屏全屏<small>game_id以3开头 · 安全区参数</small></div>
+      <div class="phone">
+        <div class="status-bar" style="background: rgba(0,0,0,0.5);"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <!-- 顶部安全区：麦位+状态 -->
+        <div style="background: rgba(10,10,26,0.9); padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span class="badge badge-red" style="font-size: 10px;">🎮 游戏中</span>
+            <span style="font-size: 11px; color: var(--text-dim);">🎲 Ludo · 4人</span>
+            <span style="font-size: 11px; color: var(--danger);">⏱ 12:34</span>
+          </div>
+          <!-- 麦位缩略 -->
+          <div style="display: flex; gap: 6px; overflow-x: auto;">
+            <div style="display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(253,121,168,0.2); border-radius: 12px; border: 1px solid var(--seat-playing);">
+              <div style="width: 18px; height: 18px; border-radius: 50%; background: #FD79A8; display: flex; align-items: center; justify-content: center; font-size: 8px;">🇸🇦</div>
+              <span style="font-size: 10px;">Ahmed</span>
+              <span style="font-size: 10px; color: var(--accent-light);">320</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(253,121,168,0.2); border-radius: 12px; border: 1px solid var(--seat-playing);">
+              <div style="width: 18px; height: 18px; border-radius: 50%; background: #FDCB6E; display: flex; align-items: center; justify-content: center; font-size: 8px;">🇦🇪</div>
+              <span style="font-size: 10px;">Fatima</span>
+              <span style="font-size: 10px; color: var(--accent-light);">180</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(253,121,158,0.15); border-radius: 12px;">
+              <div style="width: 18px; height: 18px; border-radius: 50%; background: #00CEC9; display: flex; align-items: center; justify-content: center; font-size: 8px;">🇪🇬</div>
+              <span style="font-size: 10px;">Omar</span>
+              <span style="font-size: 10px; color: var(--accent-light);">560</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(253,121,158,0.15); border-radius: 12px;">
+              <div style="width: 18px; height: 18px; border-radius: 50%; background: #74B9FF; display: flex; align-items: center; justify-content: center; font-size: 8px;">🇯🇴</div>
+              <span style="font-size: 10px;">Youssef</span>
+              <span style="font-size: 10px; color: var(--accent-light);">90</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 游戏H5区域 -->
+        <div style="flex: 1; background: linear-gradient(135deg, #0D1B2A, #1B2838); display: flex; align-items: center; justify-content: center; position: relative; height: 440px;">
+          <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 8px;">🎲</div>
+            <div style="font-size: 14px; color: var(--text-sec);">Ludo 游戏画面</div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">Bytesun H5 WebView</div>
+          </div>
+          <!-- 安全区标注 -->
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--primary);"></div>
+          <div style="position: absolute; top: 2px; left: 8px; font-size: 8px; color: var(--primary-light);">↑ game_margin_top</div>
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent);"></div>
+          <div style="position: absolute; bottom: 2px; right: 8px; font-size: 8px; color: var(--accent-light);">game_margin_bottom ↓</div>
+        </div>
+
+        <!-- 底部安全区：聊天+操作 -->
+        <div style="background: rgba(10,10,26,0.95); padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <div class="chat-area" style="max-height: 80px; margin-bottom: 8px;">
+            <div class="chat-msg">
+              <div class="msg-name">Fatima:</div>
+              <div class="msg-text">我的棋子要到家了！</div>
+            </div>
+            <div class="chat-msg">
+              <div class="msg-name">Omar:</div>
+              <div class="msg-text">别急，看我把你打回去 😈</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <div style="flex: 1; height: 36px; background: var(--card); border-radius: 18px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; color: var(--text-dim); border: 1px solid var(--border);">说点什么...</div>
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--card-light); display: flex; align-items: center; justify-content: center; font-size: 16px;">🎁</div>
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--card-light); display: flex; align-items: center; justify-content: center; font-size: 16px;">🧧</div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- 缩球/最小化状态 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">游戏中 - 缩球模式<small>type=2016 最小化 · 语音继续</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="page-content-full">
+          <!-- 普通语聊房界面（游戏缩球悬浮） -->
+          <div style="padding: 12px;">
+            <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">💬 语聊房</div>
+            
+            <!-- 麦位 -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">1</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7);">🇸🇦</div>
+                <div class="seat-name" style="font-size: 10px;">Ahmed</div>
+              </div>
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">2</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🇦🇪</div>
+                <div class="seat-name" style="font-size: 10px;">Fatima</div>
+              </div>
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">3</div>
+                <div class="mic-icon">🔇</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🇪🇬</div>
+                <div class="seat-name" style="font-size: 10px;">Omar</div>
+              </div>
+            </div>
+
+            <!-- 聊天区 -->
+            <div class="chat-area" style="max-height: 300px;">
+              <div class="chat-msg"><div class="msg-name">Ahmed:</div><div class="msg-text">等等我！我在缩球模式里看棋盘 😂</div></div>
+              <div class="chat-msg"><div class="msg-name">Fatima:</div><div class="msg-text">你快看看棋，别光聊天</div></div>
+              <div class="chat-msg"><div class="msg-name">Omar:</div><div class="msg-text">哈哈缩球模式真方便</div></div>
+            </div>
+          </div>
+
+          <!-- 缩球悬浮窗 -->
+          <div style="position: absolute; right: 16px; bottom: 120px; width: 120px; height: 160px; background: linear-gradient(135deg, #0D1B2A, #1B2838); border-radius: 16px; border: 2px solid var(--primary); box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+            <div style="font-size: 24px;">🎲</div>
+            <div style="font-size: 10px; font-weight: 700;">Ludo</div>
+            <div style="font-size: 9px; color: var(--accent);">🎮 进行中</div>
+            <div style="font-size: 9px; color: var(--text-dim);">⏱ 12:34</div>
+            <div style="margin-top: 4px; padding: 2px 8px; background: var(--primary); border-radius: 8px; font-size: 9px; font-weight: 600;">展开</div>
+          </div>
+
+          <div class="annotation" style="margin: 0 16px;">
+            <strong>type=2016</strong>：collapseStatus 0=开始收起 1=收起完成 2=开始展开 3=展开完成。最少支持0和3两个状态
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 6. 横屏游戏 ============ -->
+<div class="section" id="s6">
+  <div class="section-title">6. 游戏中 - 横屏模式</div>
+  <div class="section-desc">部分游戏支持横屏（game_orientation=2），全屏沉浸式游戏体验。参考PRD 4.2节游戏参数模板。</div>
+
+  <div style="display: flex; justify-content: center; margin-bottom: 32px;">
+    <div class="phone-wrapper">
+      <div class="phone-label">横屏游戏（UNO等）<small>game_orientation=2 · 全屏沉浸</small></div>
+      <div class="phone-landscape">
+        <!-- 左侧：游戏画面 -->
+        <div style="display: flex; height: 100%;">
+          <div style="flex: 1; background: linear-gradient(135deg, #0D1B2A, #1B2838); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+            <div style="font-size: 40px;">🃏</div>
+            <div style="font-size: 14px; color: var(--text-sec);">UNO 游戏画面</div>
+            
+            <!-- 悬浮麦位 -->
+            <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 4px;">
+              <div style="padding: 2px 6px; background: rgba(0,0,0,0.6); border-radius: 8px; font-size: 9px; display: flex; align-items: center; gap: 3px;">
+                🎙️ <span>Ahmed</span>
+              </div>
+              <div style="padding: 2px 6px; background: rgba(0,0,0,0.6); border-radius: 8px; font-size: 9px; display: flex; align-items: center; gap: 3px;">
+                🔇 <span>Fatima</span>
+              </div>
+            </div>
+
+            <!-- 计时器 -->
+            <div style="position: absolute; top: 8px; right: 8px; padding: 2px 8px; background: rgba(253,121,168,0.3); border-radius: 8px; font-size: 11px; font-weight: 700; color: var(--accent);">⏱ 05:23</div>
+          </div>
+          
+          <!-- 右侧：聊天/操作侧栏 -->
+          <div style="width: 200px; background: rgba(10,10,26,0.95); border-left: 1px solid var(--border); display: flex; flex-direction: column;">
+            <div style="padding: 6px 8px; font-size: 11px; font-weight: 600; border-bottom: 1px solid var(--border);">💬 聊天</div>
+            <div style="flex: 1; padding: 6px 8px; overflow-y: auto;">
+              <div style="font-size: 10px; margin-bottom: 4px;"><span style="color: var(--primary-light);">Ahmed:</span> 出牌啊！</div>
+              <div style="font-size: 10px; margin-bottom: 4px;"><span style="color: var(--accent);">Fatima:</span> 想想...</div>
+              <div style="font-size: 10px; margin-bottom: 4px;"><span style="color: var(--success);">Omar:</span> 我要赢了</div>
+            </div>
+            <div style="padding: 6px 8px; display: flex; gap: 4px; border-top: 1px solid var(--border);">
+              <div style="flex: 1; height: 28px; background: var(--card); border-radius: 14px; display: flex; align-items: center; padding: 0 8px; font-size: 10px; color: var(--text-dim);">...</div>
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--card-light); display: flex; align-items: center; justify-content: center; font-size: 12px;">🎁</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 7. 观战模式 ============ -->
+<div class="section" id="s7">
+  <div class="section-title">7. 观战模式</div>
+  <div class="section-desc">观众以role=1进入，可观战、聊天、送礼，有座位时可直接上座转玩家。参考PRD 5.6节S5.1-S5.4。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">观战模式<small>role=1 · 等空位上座</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 退出</div>
+          <div class="title">🎲 Ludo 金币局</div>
+          <div class="action">👁</div>
+        </div>
+
+        <div class="page-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="badge badge-red" style="font-size: 12px; padding: 4px 12px;">🎮 游戏中</span>
+            <span class="badge badge-blue" style="font-size: 12px;">👁 观战中</span>
+          </div>
+
+          <!-- 游戏画面 -->
+          <div class="game-area" style="min-height: 200px;">
+            <div style="font-size: 48px;">🎲</div>
+            <div class="game-title">Ludo 游戏画面</div>
+            <div class="game-status">观战模式 · 不可操作游戏</div>
+          </div>
+
+          <!-- 座位（观战视角） -->
+          <div style="margin-top: 12px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-sec); margin-bottom: 8px;">玩家座位</div>
+            <div class="seat-grid seat-grid-2x2">
+              <div class="seat playing" style="min-height: 70px;">
+                <div class="seat-num">#1</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7); width: 28px; height: 28px; font-size: 12px;">🇸🇦</div>
+                <div class="seat-name" style="font-size: 10px;">Ahmed</div>
+                <div class="seat-score">🏆 320</div>
+              </div>
+              <div class="seat playing" style="min-height: 70px;">
+                <div class="seat-num">#2</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #FDCB6E, #E17055); width: 28px; height: 28px; font-size: 12px;">🇦🇪</div>
+                <div class="seat-name" style="font-size: 10px;">Fatima</div>
+                <div class="seat-score">180</div>
+              </div>
+              <div class="seat playing" style="min-height: 70px;">
+                <div class="seat-num">#3</div>
+                <div class="avatar" style="background: linear-gradient(135deg, #00CEC9, #0984E3); width: 28px; height: 28px; font-size: 12px;">🇪🇬</div>
+                <div class="seat-name" style="font-size: 10px;">Omar</div>
+                <div class="seat-score">560</div>
+              </div>
+              <div class="seat empty" style="min-height: 70px;">
+                <div class="seat-num">#4</div>
+                <div style="font-size: 14px; color: var(--success);">👆</div>
+                <div class="seat-role" style="color: var(--success); font-weight: 600;">点击上座</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 观众列表 -->
+          <div style="margin-top: 10px;">
+            <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 4px;">👁 观众 (8)</div>
+            <div class="spectator-bar">
+              <div class="spectator-avatar">🇯🇴</div>
+              <div class="spectator-avatar">🇲🇦</div>
+              <div class="spectator-avatar">🇰🇼</div>
+              <div class="spectator-avatar" style="background: linear-gradient(135deg, #74B9FF, #0984E3);">我</div>
+              <div class="spectator-avatar">🇶🇦</div>
+              <div class="spectator-avatar">🇧🇭</div>
+              <div class="spectator-avatar">🇮🇶</div>
+              <div class="spectator-avatar">🇴🇲</div>
+            </div>
+          </div>
+
+          <div class="note">
+            💡 S5.2 观战转玩家：有空位时座位显示"点击上座"，身份从role=1切为role=0
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">💬</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🎁</div>
+          <div class="action-btn" style="background: linear-gradient(135deg, var(--success), #00CEC9); color: #fff; flex: 2;">👆 上座参赛</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 8. 结算页 ============ -->
+<div class="section" id="s8">
+  <div class="section-title">8. 游戏结算页</div>
+  <div class="section-desc">游戏结束(type=14)，展示排名、得分、奖励、扣费。参考PRD 5.7节S6.1-S6.7。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">结算页<small>排名 + 奖励 + 再来一局</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back"></div>
+          <div class="title">🏆 游戏结算</div>
+          <div class="action">✕</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 冠军展示 -->
+          <div class="settle-result">
+            <div class="crown">👑</div>
+            <div class="winner-name">Omar</div>
+            <div class="winner-score">+560 金币</div>
+            <div style="font-size: 12px; color: var(--text-sec); margin-top: 2px;">Ludo · 用时 14:23</div>
+          </div>
+
+          <!-- 排名列表 -->
+          <div class="rank-list">
+            <div class="rank-item first">
+              <div class="rank-num">🥇</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #00CEC9, #0984E3); width: 36px; height: 36px; font-size: 14px;">🇪🇬</div>
+              <div class="rank-info">
+                <div class="rank-name">Omar</div>
+                <div class="rank-detail">最终得分: 560</div>
+              </div>
+              <div class="rank-score" style="color: var(--success);">+560</div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-num" style="color: var(--text-sec);">2</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7); width: 36px; height: 36px; font-size: 14px;">🇸🇦</div>
+              <div class="rank-info">
+                <div class="rank-name">Ahmed</div>
+                <div class="rank-detail">最终得分: 320</div>
+              </div>
+              <div class="rank-score" style="color: var(--success);">+320</div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-num" style="color: var(--text-sec);">3</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #FDCB6E, #E17055); width: 36px; height: 36px; font-size: 14px;">🇦🇪</div>
+              <div class="rank-info">
+                <div class="rank-name">Fatima</div>
+                <div class="rank-detail">最终得分: 180</div>
+              </div>
+              <div class="rank-score" style="color: var(--success);">+180</div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-num" style="color: var(--text-sec);">4</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #74B9FF, #A29BFE); width: 36px; height: 36px; font-size: 14px;">🇯🇴</div>
+              <div class="rank-info">
+                <div class="rank-name">Youssef</div>
+                <div class="rank-detail">最终得分: 90</div>
+              </div>
+              <div class="rank-score" style="color: var(--danger);">+90</div>
+            </div>
+          </div>
+
+          <!-- 门票/扣费信息 -->
+          <div class="card" style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-dim);">本局门票</div>
+            <div style="font-size: 16px; font-weight: 800; color: var(--accent-light); margin-top: 4px;">🆓 免费局</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 操作按钮 -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn btn-primary btn-block" style="height: 48px;">🔄 再来一局</button>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-secondary" style="flex: 1; height: 44px;">🎲 换游戏</button>
+              <button class="btn btn-secondary" style="flex: 1; height: 44px;">📤 分享</button>
+            </div>
+            <button class="btn btn-secondary btn-block" style="height: 40px; font-size: 13px;">返回语聊房</button>
+          </div>
+
+          <div class="annotation">
+            <strong>PRD关联</strong>：S6.1正常结算/S6.3再来一局/S6.4换游戏/S6.5成绩分享/S6.6解散房间；分享卡片需阿语RTL适配
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- 付费局结算 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">付费局结算<small>含门票扣费 + 返奖触发（V2.1）</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back"></div>
+          <div class="title">🏆 游戏结算</div>
+          <div class="action">✕</div>
+        </div>
+
+        <div class="page-content">
+          <div class="settle-result">
+            <div class="crown">👑</div>
+            <div class="winner-name">Ahmed</div>
+            <div class="winner-score">+2,500 金币</div>
+          </div>
+
+          <div class="rank-list">
+            <div class="rank-item first">
+              <div class="rank-num">🥇</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7); width: 36px; height: 36px; font-size: 14px;">🇸🇦</div>
+              <div class="rank-info">
+                <div class="rank-name">Ahmed</div>
+                <div class="rank-detail">门票 -500 · 奖励 +3000</div>
+              </div>
+              <div class="rank-score" style="color: var(--success);">+2,500</div>
+            </div>
+            <div class="rank-item">
+              <div class="rank-num" style="color: var(--text-sec);">2</div>
+              <div class="avatar" style="background: linear-gradient(135deg, #00CEC9, #0984E3); width: 36px; height: 36px; font-size: 14px;">🇪🇬</div>
+              <div class="rank-info">
+                <div class="rank-name">Omar</div>
+                <div class="rank-detail">门票 -500 · 奖励 +800</div>
+              </div>
+              <div class="rank-score" style="color: var(--success);">+300</div>
+            </div>
+          </div>
+
+          <!-- 门票/返奖信息 -->
+          <div class="card">
+            <div class="admin-row">
+              <div class="label">本局门票</div>
+              <div class="value" style="color: var(--danger);">-500 金币</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">游戏奖励</div>
+              <div class="value" style="color: var(--success);">+3,000 金币</div>
+            </div>
+            <div class="admin-row">
+              <div class="label">净收益</div>
+              <div class="value" style="color: var(--accent-light);">+2,500 金币</div>
+            </div>
+          </div>
+
+          <!-- 返奖触发（V2.1） -->
+          <div style="background: linear-gradient(135deg, rgba(253,203,110,0.15), rgba(253,121,168,0.1)); border: 2px dashed var(--accent-light); border-radius: 12px; padding: 12px; text-align: center; margin: 12px 0;">
+            <div style="font-size: 20px;">🧧</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--accent-light);">恭喜触发返奖！</div>
+            <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">B档 · 门票≥500 · 10%比例</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--accent-light); margin-top: 4px;">+250 金币</div>
+            <div class="badge badge-purple" style="margin-top: 6px;">V2.1 开启</div>
+          </div>
+
+          <div class="annotation">
+            <strong>PRD 14.1</strong>：返奖分档 A档(门票200-499,3%,5%) B档(≥500,5%,10%)；需≥5分钟游戏时长 + ≥2真人 + 非黑名单
+          </div>
+
+          <button class="btn btn-primary btn-block" style="height: 48px;">🔄 再来一局</button>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 9. 随机匹配 ============ -->
+<div class="section" id="s9">
+  <div class="section-title">9. 随机匹配等待页（V2）</div>
+  <div class="section-desc">V2上线，等待队列+匹配状态机。参考PRD 13.5节等待时间设计、13.6节匹配状态机。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">匹配等待中<small>5-15秒 · 展示找到人数</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="page-content-full">
+          <div class="match-waiting" style="padding-top: 80px;">
+            <div class="spinner"></div>
+            <div style="font-size: 20px; font-weight: 800; margin-bottom: 4px;">正在寻找同桌玩家</div>
+            <div style="font-size: 14px; color: var(--text-sec); margin-bottom: 20px;">🎲 Ludo · 🇸🇦 阿语 · 🎫免费</div>
+            <div class="timer">00:12</div>
+            <div class="hint">已找到 2/4 人</div>
+            
+            <!-- 已匹配用户头像 -->
+            <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
+              <div style="text-align: center;">
+                <div class="avatar-lg" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7); margin: 0 auto;">🇸🇦</div>
+                <div style="font-size: 11px; margin-top: 4px;">我</div>
+              </div>
+              <div style="text-align: center;">
+                <div class="avatar-lg" style="background: linear-gradient(135deg, #FDCB6E, #E17055); margin: 0 auto;">🇦🇪</div>
+                <div style="font-size: 11px; margin-top: 4px;">Fatima</div>
+              </div>
+              <div style="text-align: center;">
+                <div class="avatar-lg" style="background: var(--seat-empty); margin: 0 auto; color: var(--text-dim);">?</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">等待中</div>
+              </div>
+              <div style="text-align: center;">
+                <div class="avatar-lg" style="background: var(--seat-empty); margin: 0 auto; color: var(--text-dim);">?</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">等待中</div>
+              </div>
+            </div>
+
+            <!-- 邀请好友 -->
+            <div style="margin-top: 32px; padding: 12px; background: var(--card); border-radius: 14px; border: 1px solid var(--border);">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">还差2人，邀请好友加速匹配 🚀</div>
+              <div style="display: flex; gap: 8px;">
+                <div class="btn btn-sm btn-primary" style="flex: 1;">📢 邀请好友</div>
+                <div class="btn btn-sm btn-secondary" style="flex: 1;">📱 WhatsApp</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+              <button class="btn btn-secondary btn-block" style="height: 44px;">取消匹配</button>
+            </div>
+          </div>
+
+          <div class="annotation" style="margin: 16px;">
+            <strong>PRD 13.5</strong>：0-5s严格匹配 → 5-15s补等待房 → 15-30s邀好友 → 30-45s选继续等/换游戏 → 45-60s兜底
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 10. 已省略管理员面板（见3节） ============ -->
+
+<!-- ============ 11. 邀请与分享 ============ -->
+<div class="section" id="s11">
+  <div class="section-title">11. 邀请与分享</div>
+  <div class="section-desc">站内邀请卡、WhatsApp分享、深链拉起。参考PRD 5.4节S2.1-S2.5。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">邀请弹窗<small>站内邀请 + WhatsApp + 深链</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <!-- 底部弹窗 -->
+        <div class="modal-overlay">
+          <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <div class="modal-title">邀请好友一起玩 🎮</div>
+            
+            <!-- 房间信息卡 -->
+            <div style="background: linear-gradient(135deg, rgba(108,92,231,0.2), rgba(253,121,168,0.2)); border-radius: 14px; padding: 14px; margin-bottom: 16px; display: flex; gap: 12px; align-items: center;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 24px;">🎲</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 700;">Ludo 休闲局</div>
+                <div style="font-size: 12px; color: var(--text-sec);">2/4人 · 🎫免费 · 等待中</div>
+              </div>
+            </div>
+
+            <!-- 分享方式 -->
+            <div class="share-options">
+              <div class="share-option">
+                <div class="share-icon" style="background: #25D366;">📱</div>
+                WhatsApp
+              </div>
+              <div class="share-option">
+                <div class="share-icon" style="background: #0088CC;">🔗</div>
+                复制链接
+              </div>
+              <div class="share-option">
+                <div class="share-icon" style="background: var(--primary);">👥</div>
+                站内邀请
+              </div>
+              <div class="share-option">
+                <div class="share-icon" style="background: var(--accent);">📬</div>
+                更多
+              </div>
+            </div>
+
+            <!-- 在线好友 -->
+            <div style="margin-top: 12px;">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">在线好友</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--card-light); border-radius: 12px;">
+                  <div class="avatar-sm" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🇦🇪</div>
+                  <div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">Fatima</div><div style="font-size: 10px; color: var(--success);">在线</div></div>
+                  <div class="btn btn-sm btn-primary">邀请</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--card-light); border-radius: 12px;">
+                  <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🇪🇬</div>
+                  <div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">Omar</div><div style="font-size: 10px; color: var(--success);">在线</div></div>
+                  <div class="btn btn-sm btn-primary">邀请</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp分享卡片 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">WhatsApp分享卡片<small>阿语RTL · 深链直达</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="page-content" style="display: flex; align-items: center; justify-content: center; height: calc(812px - 94px);">
+          <!-- WhatsApp分享卡片预览 -->
+          <div style="width: 300px; background: linear-gradient(135deg, #1A1A3E, #0D0D2B); border-radius: 16px; overflow: hidden; border: 1px solid var(--border);">
+            <div style="height: 120px; background: linear-gradient(135deg, #00CEC9, #0984E3); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="font-size: 36px;">🎲</div>
+              <div style="font-size: 16px; font-weight: 800; margin-top: 4px;">Ludo</div>
+            </div>
+            <div style="padding: 16px;" class="rtl-demo">
+              <div style="font-size: 16px; font-weight: 800;">🎮 تعال نلعب معًا!</div>
+              <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">لعبة الطيران · 2/4 لاعبين</div>
+              <div style="margin-top: 12px; padding: 8px 16px; background: var(--primary); border-radius: 12px; font-size: 13px; font-weight: 700; text-align: center;">انضم الآن</div>
+              <div style="font-size: 10px; color: var(--text-dim); margin-top: 8px; text-align: center;">wechill://game?room=abc123</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 12. 阿语RTL适配 ============ -->
+<div class="section" id="s12">
+  <div class="section-title">12. 阿语RTL适配</div>
+  <div class="section-desc">MENA核心市场阿拉伯语RTL布局。所有界面元素需支持从右到左排列。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">阿语RTL - 游戏Tab首页<small>direction: rtl · 界面镜像</small></div>
+      <div class="phone">
+        <div class="status-bar" class="rtl-demo"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar rtl-demo">
+          <div class="action">🔍</div>
+          <div class="title">🎮 ألعاب</div>
+          <div class="back">→ رجوع</div>
+        </div>
+
+        <div class="page-content rtl-demo">
+          <!-- 快速匹配横幅 -->
+          <div style="background: linear-gradient(135deg, #6C5CE7, #FD79A8); border-radius: 16px; padding: 20px; margin-bottom: 14px;">
+            <div style="font-size: 18px; font-weight: 800;">مطابقة سريعة</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">اختر لعبة وابدأ فوراً 🚀</div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; font-size: 12px; font-weight: 600;">🎲 لودو</div>
+              <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; font-size: 12px; font-weight: 600;">🃏 أونو</div>
+            </div>
+          </div>
+
+          <!-- 房间卡片 RTL -->
+          <div class="room-card" style="direction: rtl;">
+            <div class="game-icon" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🎲</div>
+            <div class="info">
+              <div class="name">غرفة لودو للتعارف</div>
+              <div class="meta">لودو · 2/4 · 🇸🇦 عربي · 🎫 مجاني</div>
+              <span class="badge badge-green">في الانتظار</span>
+            </div>
+            <div class="status-tag" style="background: rgba(0,184,148,0.2); color: var(--success);">انضم</div>
+          </div>
+
+          <div class="room-card" style="direction: rtl;">
+            <div class="game-icon" style="background: linear-gradient(135deg, #FD79A8, #E17055);">🃏</div>
+            <div class="info">
+              <div class="name">أونو سعيدة</div>
+              <div class="meta">أونو · 3/6 · 🇦🇪 عربي · 🎫 200</div>
+              <span class="badge badge-orange">جاهز</span>
+            </div>
+            <div class="status-tag" style="background: rgba(253,203,110,0.2); color: var(--warning);">شاهد</div>
+          </div>
+
+          <div class="note">
+            ⚠️ RTL适配要点：导航栏镜像、文字右对齐、卡片排列方向、按钮位置、返回箭头方向→
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 13. 异常场景 ============ -->
+<div class="section" id="s13">
+  <div class="section-title">13. 异常场景</div>
+  <div class="section-desc">余额不足、上座失败、断线重连等异常处理。参考PRD第12节。</div>
+
+  <div class="phone-grid">
+    <!-- 余额不足 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">余额不足<small>E3 错误码1008 · gameRecharge</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="page-content" style="display: flex; align-items: center; justify-content: center; height: calc(812px - 44px);">
+          <div style="text-align: center; padding: 40px;">
+            <div style="font-size: 56px; margin-bottom: 16px;">💰</div>
+            <div style="font-size: 20px; font-weight: 800;">余额不足</div>
+            <div style="font-size: 14px; color: var(--text-sec); margin-top: 8px;">当前余额: 80 金币</div>
+            <div style="font-size: 14px; color: var(--text-sec);">门票需要: 200 金币</div>
+            <div class="wallet-bar" style="margin-top: 24px;">
+              <div style="font-size: 13px; color: var(--text-sec);">还差</div>
+              <div class="balance">120 金币</div>
+            </div>
+            <button class="btn btn-primary btn-block" style="height: 48px; margin-top: 12px;">🛒 去充值</button>
+            <button class="btn btn-secondary btn-block" style="height: 40px; margin-top: 8px; font-size: 13px;">返回</button>
+            <div class="annotation" style="margin-top: 16px; text-align: left;">
+              <strong>S4.9</strong>：change_balance返回1008 → H5调gameRecharge → App打开商城 → 充值后walletUpdate
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 上座失败 -->
+    <div class="phone-wrapper">
+      <div class="phone-label">上座失败 + 断线重连<small>E2 type=18 · E4.8 断线</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="page-content" style="display: flex; flex-direction: column; justify-content: center; height: calc(812px - 44px); padding: 40px;">
+          <!-- 上座失败 -->
+          <div style="text-align: center; margin-bottom: 40px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">😵</div>
+            <div style="font-size: 18px; font-weight: 800;">上座失败</div>
+            <div style="font-size: 13px; color: var(--text-sec); margin-top: 6px;">座位已被占用或网络延迟</div>
+            <div style="display: flex; gap: 8px; margin-top: 16px; justify-content: center;">
+              <button class="btn btn-primary btn-sm">重试上座</button>
+              <button class="btn btn-secondary btn-sm">继续观战</button>
+            </div>
+            <div class="annotation" style="text-align: left; margin-top: 12px;">
+              <strong>E2</strong>：收到type=18上座失败 → 释放预占座位 → 提示重试
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 断线重连 -->
+          <div style="text-align: center;">
+            <div class="spinner" style="width: 48px; height: 48px; margin: 0 auto 12px;"></div>
+            <div style="font-size: 16px; font-weight: 700;">重新连接中...</div>
+            <div style="font-size: 13px; color: var(--text-sec); margin-top: 4px;">座位已保留，请稍候</div>
+            <div style="font-size: 12px; color: var(--warning); margin-top: 8px;">⏱ 54秒后自动退出</div>
+            <div class="annotation" style="text-align: left; margin-top: 12px;">
+              <strong>7.7节</strong>：<10s自动重连 → 10-60s显示倒计时 → >60s退出游戏保留语聊房
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 14. 你画我猜 ============ -->
+<div class="section" id="s14">
+  <div class="section-title">14. 你画我猜模式（V1.1）</div>
+  <div class="section-desc">聊天双向同步：type=22(H5→App) + type=2014(App→H5)。参考PRD 7.4节。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">你画我猜 - 聊天同步<small>type=22 + type=2014 · 审核拦截</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+        
+        <div class="nav-bar">
+          <div class="back">← 退出</div>
+          <div class="title">🎨 你画我猜</div>
+          <div class="action">⚙️</div>
+        </div>
+
+        <div class="page-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="badge badge-red">🎮 游戏中</span>
+            <span style="font-size: 12px; color: var(--warning);">🎨 正在画画: Fatima</span>
+          </div>
+
+          <!-- 画板区域 -->
+          <div style="background: #fff; border-radius: 16px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; position: relative;">
+            <div style="font-size: 48px;">🎨</div>
+            <div style="position: absolute; bottom: 8px; font-size: 11px; color: #999;">画板内容（Bytesun H5）</div>
+          </div>
+
+          <!-- 座位缩略 -->
+          <div style="display: flex; gap: 4px; margin-bottom: 10px; overflow-x: auto;">
+            <div style="padding: 3px 8px; background: rgba(253,121,158,0.2); border-radius: 10px; font-size: 10px; border: 1px solid var(--accent);">🎨 Fatima(画)</div>
+            <div style="padding: 3px 8px; background: rgba(108,92,231,0.15); border-radius: 10px; font-size: 10px;">🇸🇦 Ahmed</div>
+            <div style="padding: 3px 8px; background: rgba(108,92,231,0.15); border-radius: 10px; font-size: 10px;">🇪🇬 Omar</div>
+            <div style="padding: 3px 8px; background: rgba(108,92,231,0.15); border-radius: 10px; font-size: 10px;">🇯🇴 Youssef</div>
+          </div>
+
+          <!-- 聊天区（同步到游戏） -->
+          <div style="margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-size: 12px; font-weight: 600; color: var(--text-sec);">💬 猜词聊天</span>
+              <span class="badge badge-purple" style="font-size: 9px;">type=22/2014同步</span>
+            </div>
+            <div class="chat-area" style="max-height: 140px;">
+              <div class="chat-msg">
+                <div class="msg-name">Ahmed:</div>
+                <div class="msg-text">🐱 猫？</div>
+              </div>
+              <div class="chat-msg">
+                <div class="msg-name">Omar:</div>
+                <div class="msg-text">🐢 乌龟？</div>
+              </div>
+              <div class="chat-msg" style="background: rgba(0,184,148,0.1); border-radius: 8px; padding: 4px 6px;">
+                <div class="msg-name" style="color: var(--success);">✅ Ahmed:</div>
+                <div class="msg-text" style="color: var(--success); font-weight: 600;">狮子！🦁</div>
+              </div>
+              <div class="chat-msg">
+                <div class="msg-name" style="color: var(--danger);">🚫 系统:</div>
+                <div class="msg-text" style="color: var(--danger);">已拦截违规内容1条</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 输入框 -->
+          <div style="display: flex; gap: 6px;">
+            <div style="flex: 1; height: 40px; background: var(--card); border-radius: 20px; display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: var(--text-dim); border: 1px solid var(--border);">输入你的猜测...</div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 16px;">➤</div>
+          </div>
+
+          <div class="note">
+            ⚠️ S4.10：H5发送type=22到App聊天 → App审核通过后展示 → 用户输入 → App审核后type=2014同步回游戏。违规内容拦截计入"违规拦截量"指标
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 15. 混合房开启游戏 ============ -->
+<div class="section" id="s15">
+  <div class="section-title">15. 混合房 - 语聊+游戏</div>
+  <div class="section-desc">普通语聊房开启游戏后变成混合房，游戏可挂起。参考PRD 3.1节四层房间模型。</div>
+
+  <div class="phone-grid">
+    <div class="phone-wrapper">
+      <div class="phone-label">混合房 - 游戏挂起<small>回到语聊 · 游戏缩球悬浮</small></div>
+      <div class="phone">
+        <div class="status-bar"><div class="time">9:41</div><div class="icons"><svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg></div></div>
+
+        <div class="nav-bar">
+          <div class="back">← 退出</div>
+          <div class="title">💬 语聊 + 🎮 Ludo</div>
+          <div class="action">⚙️</div>
+        </div>
+
+        <div class="page-content">
+          <!-- 混合房标识 -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; gap: 6px;">
+              <span class="badge badge-purple">🔀 混合房</span>
+              <span class="badge badge-green">💬 语聊中</span>
+            </div>
+            <span class="badge badge-orange">🎮 游戏暂停</span>
+          </div>
+
+          <!-- 麦位 -->
+          <div style="margin-bottom: 12px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">1</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FD79A8, #6C5CE7);">🇸🇦</div>
+                <div class="seat-name" style="font-size: 10px;">Ahmed</div>
+                <div class="seat-role" style="color: var(--accent); font-size: 9px;">房主</div>
+              </div>
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">2</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #FDCB6E, #E17055);">🇦🇪</div>
+                <div class="seat-name" style="font-size: 10px;">Fatima</div>
+                <div class="seat-role" style="font-size: 9px;">主持</div>
+              </div>
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">3</div>
+                <div class="mic-icon">🔇</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #00CEC9, #0984E3);">🇪🇬</div>
+                <div class="seat-name" style="font-size: 10px;">Omar</div>
+                <div class="seat-role" style="font-size: 9px;">管理员</div>
+              </div>
+              <div class="seat occupied" style="min-height: 70px;">
+                <div class="seat-num">4</div>
+                <div class="mic-icon">🎙️</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg, #74B9FF, #A29BFE);">🇯🇴</div>
+                <div class="seat-name" style="font-size: 10px;">Youssef</div>
+                <div class="seat-role" style="font-size: 9px;">🟢</div>
+              </div>
+              <div class="seat empty" style="min-height: 70px;">
+                <div class="seat-num">5</div>
+                <div class="add-icon">+</div>
+              </div>
+              <div class="seat locked" style="min-height: 70px;">
+                <div class="seat-num">6</div>
+                <div style="font-size: 12px;">🔒</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 游戏挂起提示 -->
+          <div style="background: linear-gradient(135deg, rgba(253,203,110,0.1), rgba(108,92,231,0.1)); border: 2px dashed var(--primary-light); border-radius: 14px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 13px; font-weight: 700;">🎲 Ludo 已暂停</div>
+              <div style="font-size: 11px; color: var(--text-sec);">比分: Ahmed 320 - Omar 560</div>
+            </div>
+            <div class="btn btn-sm btn-primary">继续游戏</div>
+          </div>
+
+          <!-- 聊天 -->
+          <div class="chat-area" style="max-height: 160px;">
+            <div class="chat-msg"><div class="msg-name">Ahmed:</div><div class="msg-text">暂停一下游戏，聊会天 😄</div></div>
+            <div class="chat-msg"><div class="msg-name">Fatima:</div><div class="msg-text">好的好的</div></div>
+            <div class="chat-msg"><div class="msg-name">Omar:</div><div class="msg-text">我领先！等会继续碾压你们 😎</div></div>
+          </div>
+
+          <div class="annotation">
+            <strong>PRD 3.1</strong>：混合房 = 语聊为主+随时开小游戏；游戏可挂起回到语聊；麦位/座位并存；游戏缩球悬浮
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">💬</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🎁</div>
+          <div class="action-btn" style="background: var(--card-light); color: var(--text-sec);">🧧</div>
+          <div class="action-btn" style="background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff;">🎮 继续游戏</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 底部说明 ============ -->
+<div class="section" style="text-align: center; padding: 40px 32px; border-top: 1px solid var(--border);">
+  <div style="font-size: 14px; color: var(--text-dim);">wechill 游戏房前台产品设计原型图 v3.0</div>
+  <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">基于 PRD v3.0 + 排麦模式麦位体系</div>
+  <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">覆盖15个核心页面：游戏Tab首页 / 创建游戏房 / 等待中 / 准备中 / 游戏中竖屏 / 横屏 / 观战 / 结算 / 匹配等待 / 管理员面板 / 邀请分享 / 阿语RTL / 异常场景 / 你画我猜 / 混合房</div>
+</div>
+
+</body>
+</html>

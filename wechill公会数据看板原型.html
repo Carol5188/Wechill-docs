@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wechill 公会后台数据看板原型</title>
+  <style>
+    :root {
+      --bg: #f5efe4;
+      --panel: rgba(255, 251, 245, 0.9);
+      --panel-strong: #fffaf1;
+      --panel-dark: #102a31;
+      --text: #1f2b2f;
+      --muted: #607278;
+      --line: rgba(17, 42, 49, 0.1);
+      --line-strong: rgba(17, 42, 49, 0.16);
+      --brand: #0f7c82;
+      --brand-soft: rgba(15, 124, 130, 0.12);
+      --accent: #e36a43;
+      --accent-soft: rgba(227, 106, 67, 0.14);
+      --gold: #b9871c;
+      --ok: #2f8b57;
+      --warn: #d98324;
+      --danger: #cb4e34;
+      --shadow: 0 16px 40px rgba(23, 38, 44, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-ui: "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+      --font-display: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-ui);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(227, 106, 67, 0.16), transparent 24%),
+        radial-gradient(circle at top right, rgba(15, 124, 130, 0.14), transparent 26%),
+        linear-gradient(180deg, #f7f1e6 0%, #efe6d7 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      color: #f7f6f0;
+      background: linear-gradient(180deg, rgba(8, 29, 33, 0.94), rgba(17, 42, 49, 0.96)), linear-gradient(180deg, #132f35, #102a31);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: auto;
+    }
+
+    .brand {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(247, 246, 240, 0.62);
+    }
+
+    .brand h1 {
+      margin: 8px 0 10px;
+      font-family: var(--font-display);
+      font-size: 26px;
+      line-height: 1.15;
+    }
+
+    .brand p {
+      margin: 0;
+      color: rgba(247, 246, 240, 0.7);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .nav-group { margin-top: 28px; }
+
+    .nav-label {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(247, 246, 240, 0.42);
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: rgba(247, 246, 240, 0.82);
+      background: rgba(255, 255, 255, 0.03);
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #fffef8;
+      background: linear-gradient(120deg, rgba(227, 106, 67, 0.24), rgba(15, 124, 130, 0.28));
+      transform: translateX(4px);
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.36);
+      flex: 0 0 auto;
+    }
+
+    .nav-link.active .nav-dot {
+      background: #ffdcb2;
+      box-shadow: 0 0 0 6px rgba(255, 220, 178, 0.14);
+    }
+
+    .sidebar-note {
+      margin-top: 28px;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-note h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .sidebar-note p {
+      margin: 0;
+      color: rgba(247, 246, 240, 0.72);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .content {
+      padding: 32px;
+      min-width: 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 28px 28px 22px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(255, 250, 241, 0.92), rgba(255, 245, 232, 0.88)), linear-gradient(120deg, rgba(15, 124, 130, 0.07), rgba(227, 106, 67, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.54);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 124, 130, 0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero h2 {
+      margin: 8px 0 12px;
+      font-family: var(--font-display);
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn, .ghost-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .btn {
+      color: #fffef8;
+      background: linear-gradient(135deg, var(--accent), #e98b4c);
+      box-shadow: 0 14px 28px rgba(227, 106, 67, 0.22);
+    }
+
+    .btn:hover, .ghost-btn:hover { transform: translateY(-1px); }
+
+    .ghost-btn {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(17, 42, 49, 0.08);
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(17, 42, 49, 0.08);
+      color: var(--muted);
+    }
+
+    .tag strong { color: var(--text); }
+
+    .panel {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .panel-header h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-family: var(--font-display);
+    }
+
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #fffdf8;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+
+    .chip.active {
+      background: var(--panel-dark);
+      color: #fffef8;
+      border-color: var(--panel-dark);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .field {
+      grid-column: span 2;
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.wide { grid-column: span 4; }
+
+    .field label {
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field input, .field select {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(17, 42, 49, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: rgba(15, 124, 130, 0.5);
+      box-shadow: 0 0 0 4px rgba(15, 124, 130, 0.1);
+    }
+
+    .field-actions {
+      grid-column: span 2;
+      display: flex;
+      align-items: end;
+      gap: 10px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .metric {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(250, 245, 238, 0.78));
+      border: 1px solid rgba(17, 42, 49, 0.07);
+    }
+
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: auto -16px -26px auto;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 124, 130, 0.12), transparent 70%);
+    }
+
+    .metric:nth-child(2n)::before {
+      background: radial-gradient(circle, rgba(227, 106, 67, 0.14), transparent 70%);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric-value {
+      margin-top: 10px;
+      font-family: var(--font-display);
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .metric-sub {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .delta { font-weight: 700; }
+    .delta.up { color: var(--ok); }
+    .delta.warn { color: var(--warn); }
+
+    .layout-two {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .chart-card, .list-card, .brief-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 42, 49, 0.07);
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 280px;
+      display: block;
+    }
+
+    .chart-axis {
+      font-size: 12px;
+      fill: #7a8c91;
+      font-family: var(--font-ui);
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .risk-item {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #fffdfa;
+      border: 1px solid rgba(17, 42, 49, 0.08);
+    }
+
+    .risk-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .badge.danger { color: var(--danger); background: rgba(203, 78, 52, 0.12); }
+    .badge.warn { color: var(--warn); background: rgba(217, 131, 36, 0.14); }
+    .badge.ok { color: var(--ok); background: rgba(47, 139, 87, 0.14); }
+    .badge.brand { color: var(--brand); background: var(--brand-soft); }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(17, 42, 49, 0.08);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 180ms ease;
+    }
+
+    .tab-btn.active {
+      background: var(--panel-dark);
+      border-color: var(--panel-dark);
+      color: #fffef8;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fffefb, #f8f3ec);
+      border: 1px solid rgba(17, 42, 49, 0.08);
+    }
+
+    .mini-card h4 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-top: 12px;
+      font-size: 28px;
+      font-family: var(--font-display);
+      letter-spacing: -0.03em;
+    }
+
+    .mini-card span {
+      display: block;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 22px;
+      border: 1px solid rgba(17, 42, 49, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1400px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: linear-gradient(180deg, rgba(255, 250, 241, 0.98), rgba(244, 236, 223, 0.98));
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(17, 42, 49, 0.07);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    tbody tr:hover { background: rgba(15, 124, 130, 0.05); }
+
+    .id-link {
+      color: var(--brand);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .money {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(15, 124, 130, 0.28), rgba(227, 106, 67, 0.24));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--panel-dark);
+      font-weight: 700;
+    }
+
+    .table-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .module-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 243, 234, 0.82));
+      border: 1px solid rgba(17, 42, 49, 0.08);
+      min-height: 196px;
+    }
+
+    .module-card h4 {
+      margin: 0;
+      font-size: 18px;
+      font-family: var(--font-display);
+    }
+
+    .module-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .module-card ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.95fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .salary-breakdown {
+      display: grid;
+      gap: 14px;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .breakdown-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 42, 49, 0.07);
+    }
+
+    .breakdown-item h5 {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .breakdown-item strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 24px;
+      font-family: var(--font-display);
+      letter-spacing: -0.03em;
+    }
+
+    .breakdown-item span {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rule-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 42, 49, 0.08);
+    }
+
+    .rule-item h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .rule-item p, .rule-item ul {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .rule-item ul { padding-left: 18px; }
+
+    .footer-note {
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 22px;
+      background: rgba(16, 42, 49, 0.92);
+      color: rgba(255, 250, 241, 0.88);
+    }
+
+    .footer-note strong { color: #fffdf6; }
+
+    .footer-note p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255, 250, 241, 0.7);
+    }
+
+    @media (max-width: 1280px) {
+      .metrics-grid, .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .insight-grid, .breakdown-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .detail-grid, .layout-two { grid-template-columns: 1fr; }
+      .field, .field.wide, .field-actions { grid-column: span 4; }
+    }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .content { padding: 18px; }
+      .hero h2 { font-size: 28px; }
+      .metrics-grid, .module-grid, .insight-grid, .breakdown-row { grid-template-columns: 1fr; }
+      .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .field, .field.wide, .field-actions { grid-column: span 2; }
+    }
+
+    @media (max-width: 640px) {
+      .panel, .hero { padding: 18px; }
+      .filter-grid { grid-template-columns: 1fr; }
+      .field, .field.wide, .field-actions { grid-column: span 1; }
+      .hero-top, .panel-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-eyebrow">Wechill Guild Console</div>
+        <h1>公会后台<br>数据中枢</h1>
+        <p>面向公会薪资结算、财务流转、风险监控的一体化运营后台原型。覆盖中东区GMT+3时区，支持双周政策与自由政策。</p>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-label">核心模块</p>
+        <div class="nav-list">
+          <a class="nav-link active" href="#overview"><span>总览看板</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#salary"><span>结算与薪资</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#guild"><span>公会看板</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#host"><span>主播看板</span><span class="nav-dot"></span></a>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-label">专项视图</p>
+        <div class="nav-list">
+          <a class="nav-link" href="#finance"><span>钱包与提现</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#finance"><span>预支与借支</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#risk"><span>退出与审核</span><span class="nav-dot"></span></a>
+          <a class="nav-link" href="#risk"><span>健康度与风控</span><span class="nav-dot"></span></a>
+        </div>
+      </div>
+
+      <div class="sidebar-note">
+        <h3>当前默认口径</h3>
+        <p>时间范围默认锁定为当前结算周期，日期精确到秒。字段区分起始钻石余额、最终钻石余额、钻石变化与可提现金额。统计时区 GMT+3。</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <div class="hero-top">
+          <div>
+            <div class="brand-eyebrow" style="color:#6b7f84;">Wechill Admin Dashboard</div>
+            <h2>公会后台数据看板原型</h2>
+            <p>面向运营、财务和管理层的公会后台原型。重点覆盖薪资结算字段调整、钻石变化追踪、财务流转监控与风险预警。适合用于需求评审、视觉对齐和前端切图确认。</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn" type="button" onclick="window.scrollTo({ top: document.getElementById('salary').offsetTop - 20, behavior: 'smooth' });">查看薪资结算</button>
+            <button class="ghost-btn" type="button" onclick="window.scrollTo({ top: document.getElementById('risk').offsetTop - 20, behavior: 'smooth' });">查看风控模块</button>
+          </div>
+        </div>
+        <div class="hero-tags">
+          <span class="tag"><strong>当前周期</strong> 2026-05 第1周期 (01日~15日)</span>
+          <span class="tag"><strong>数据更新</strong> 2026-05-07 18:30:00 GMT+3</span>
+          <span class="tag"><strong>大区</strong> 中东区</span>
+          <span class="tag"><strong>政策覆盖</strong> 双周政策 + 自由政策</span>
+        </div>
+      </section>
+
+      <!-- 总览看板 -->
+      <section class="panel" id="overview">
+        <div class="panel-header">
+          <div>
+            <h3>总览看板</h3>
+            <p>运营、财务和管理层的经营总览。默认展示当前结算周期的公会经营、薪资发放、提现流转和风险情况。</p>
+          </div>
+          <div class="header-meta">
+            <button class="chip active">本周期</button>
+            <button class="chip">上一周期</button>
+            <button class="chip">本周</button>
+            <button class="chip">上周</button>
+            <button class="chip">今天</button>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="field wide">
+            <label>时间范围（精确到秒）</label>
+            <input type="text" value="2026-05-01 00:00:00 ~ 2026-05-15 23:59:59">
+          </div>
+          <div class="field">
+            <label>公会 ID / 名称</label>
+            <input type="text" placeholder="支持ID精确查找 / 公会名模糊搜索">
+          </div>
+          <div class="field">
+            <label>公会长 ID</label>
+            <input type="text" placeholder="输入公会长用户ID">
+          </div>
+          <div class="field">
+            <label>主播 ID / 昵称</label>
+            <input type="text" placeholder="输入主播ID或昵称">
+          </div>
+          <div class="field">
+            <label>结算政策</label>
+            <select>
+              <option>全部政策</option>
+              <option>双周政策</option>
+              <option>自由政策</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>大区</label>
+            <select>
+              <option>全部大区</option>
+              <option selected>中东区</option>
+              <option>印度区</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>成员状态</label>
+            <select>
+              <option>全部状态</option>
+              <option>在会</option>
+              <option>退出中</option>
+              <option>已退出</option>
+              <option>封禁</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>健康度</label>
+            <select>
+              <option>全部健康度</option>
+              <option>Healthy</option>
+              <option>Fine</option>
+              <option>Not Fine</option>
+            </select>
+          </div>
+          <div class="field-actions">
+            <button class="btn" type="button">查询</button>
+            <button class="ghost-btn" type="button">导出</button>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <article class="metric">
+            <div class="metric-label">公会总数</div>
+            <div class="metric-value">1,247</div>
+            <div class="metric-sub">
+              <span>当前筛选范围</span>
+              <span class="delta up">+23 本周期</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">活跃主播数</div>
+            <div class="metric-value">11,245</div>
+            <div class="metric-sub">
+              <span>有开播或收入</span>
+              <span class="delta up">+12.8%</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">钻石流水总额</div>
+            <div class="metric-value">89.2M</div>
+            <div class="metric-sub">
+              <span>结算口径钻石</span>
+              <span class="delta up">+9.5%</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">钻石净变化</div>
+            <div class="metric-value">+12.4M</div>
+            <div class="metric-sub">
+              <span>最终余额 - 起始余额</span>
+              <span class="delta warn">波动较大</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">主播工资总额</div>
+            <div class="metric-value">$289,500</div>
+            <div class="metric-sub">
+              <span>当前周期主播工资</span>
+              <span class="delta up">+8.1%</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">TG 奖励总额</div>
+            <div class="metric-value">$67,300</div>
+            <div class="metric-sub">
+              <span>当前周期奖励</span>
+              <span class="delta up">+15.2%</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">可提现余额总额</div>
+            <div class="metric-value">$356,800</div>
+            <div class="metric-sub">
+              <span>已结算可提现</span>
+              <span class="delta up">+3.8%</span>
+            </div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">退出申请数</div>
+            <div class="metric-value">78</div>
+            <div class="metric-sub">
+              <span>待处理 23 笔</span>
+              <span class="delta warn">需跟进</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="layout-two">
+          <div class="chart-card">
+            <div class="panel-header" style="margin-bottom:10px;">
+              <div>
+                <h3 style="font-size:20px;">收入趋势</h3>
+                <p>按结算周期查看主播工资、TG奖励、公会长工资走势。</p>
+              </div>
+            </div>
+            <svg class="chart-svg" viewBox="0 0 720 280" aria-label="收入趋势图">
+              <defs>
+                <linearGradient id="areaSalary" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(15,124,130,0.35)"/>
+                  <stop offset="100%" stop-color="rgba(15,124,130,0)"/>
+                </linearGradient>
+              </defs>
+              <g stroke="rgba(17,42,49,0.08)" stroke-width="1">
+                <line x1="50" y1="40" x2="690" y2="40"></line>
+                <line x1="50" y1="95" x2="690" y2="95"></line>
+                <line x1="50" y1="150" x2="690" y2="150"></line>
+                <line x1="50" y1="205" x2="690" y2="205"></line>
+                <line x1="50" y1="260" x2="690" y2="260"></line>
+              </g>
+              <g class="chart-axis">
+                <text x="10" y="44">$300k</text>
+                <text x="10" y="99">$225k</text>
+                <text x="10" y="154">$150k</text>
+                <text x="10" y="209">$75k</text>
+                <text x="16" y="264">$0</text>
+                <text x="58" y="276">04-01</text>
+                <text x="164" y="276">04-16</text>
+                <text x="270" y="276">05-01</text>
+                <text x="376" y="276">05-16</text>
+                <text x="482" y="276">06-01</text>
+                <text x="588" y="276">06-16</text>
+              </g>
+              <path d="M50 188 L156 170 L262 146 L368 128 L474 116 L580 92 L686 78 L686 260 L50 260 Z" fill="url(#areaSalary)"></path>
+              <path d="M50 188 L156 170 L262 146 L368 128 L474 116 L580 92 L686 78" fill="none" stroke="#0f7c82" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M50 214 L156 204 L262 196 L368 184 L474 176 L580 162 L686 150" fill="none" stroke="#e36a43" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M50 230 L156 226 L262 212 L368 200 L474 196 L580 178 L686 170" fill="none" stroke="#b9871c" stroke-width="4" stroke-linecap="round"></path>
+              <g fill="#0f7c82"><circle cx="686" cy="78" r="5"></circle></g>
+              <g fill="#e36a43"><circle cx="686" cy="150" r="5"></circle></g>
+              <g fill="#b9871c"><circle cx="686" cy="170" r="5"></circle></g>
+            </svg>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:#0f7c82;"></span>主播工资</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:#e36a43;"></span>TG 奖励</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:#b9871c;"></span>公会长工资</span>
+            </div>
+          </div>
+
+          <div class="brief-card">
+            <div class="panel-header" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:20px;">异常概览</h3>
+                <p>需要运营优先关注的风险对象。</p>
+              </div>
+            </div>
+            <div class="risk-list">
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>有收入但总工资为 0</span>
+                  <span class="badge danger">45 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">可能存在任务未达标、梯度未命中或结算引擎异常，需核对工资规则与任务达成状态。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>未归还预支但发起退出</span>
+                  <span class="badge warn">23 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">需联动退出审核页，阻止违规退出，并同步提示公会长与运营处理。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>健康度 Not Fine</span>
+                  <span class="badge danger">156 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">建议按封禁次数、同设备账号数、近30天退出次数等维度支持下钻。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>提现失败 / 驳回</span>
+                  <span class="badge brand">12 笔</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">需要在财务模块中进一步追踪渠道、账户信息与失败原因。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 结算与薪资 -->
+      <section class="panel" id="salary">
+        <div class="panel-header">
+          <div>
+            <h3>结算与薪资</h3>
+            <p>核心变化：时间筛选精确到秒、新增公会长ID/公会ID快速查找、新增钻石变化字段（最终钻石余额 - 起始钻石余额）。</p>
+          </div>
+          <div class="header-meta">
+            <span class="badge brand">默认周期：2026-05-01 ~ 2026-05-15</span>
+          </div>
+        </div>
+
+        <div class="tabs" data-tabs="salary-tabs">
+          <button class="tab-btn active" data-target="host-salary">主播薪资明细</button>
+          <button class="tab-btn" data-target="guild-salary">公会薪资汇总</button>
+          <button class="tab-btn" data-target="salary-rules">字段与规则说明</button>
+        </div>
+
+        <div class="tab-panel active" id="host-salary">
+          <div class="insight-grid">
+            <article class="mini-card">
+              <h4>主播总数</h4>
+              <strong>11,245</strong>
+              <span>筛选结果中的主播数量，可与公会总数联动核对数据覆盖面。</span>
+            </article>
+            <article class="mini-card">
+              <h4>钻石净变化</h4>
+              <strong>+12,438,220</strong>
+              <span>计算方式为最终钻石余额减起始钻石余额，对应新增字段"钻石变化"。</span>
+            </article>
+            <article class="mini-card">
+              <h4>可提现余额总额</h4>
+              <strong>$356,800</strong>
+              <span>用于运营和财务快速判断本周期可转入提现环节的资金规模。</span>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>主播</th>
+                  <th>主播 ID</th>
+                  <th>公会 ID</th>
+                  <th>公会名</th>
+                  <th>公会长 ID</th>
+                  <th>政策</th>
+                  <th>大区</th>
+                  <th>起始钻石余额</th>
+                  <th>最终钻石余额</th>
+                  <th>钻石变化</th>
+                  <th>钻石流水</th>
+                  <th>主播工资</th>
+                  <th>TG 奖励</th>
+                  <th>总工资</th>
+                  <th>已预支</th>
+                  <th>已借支</th>
+                  <th>工资余额</th>
+                  <th>可提现余额</th>
+                  <th>任务状态</th>
+                  <th>健康度</th>
+                  <th>成员状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>
+                    <div class="table-user">
+                      <span class="avatar">月光</span>
+                      <div>月光女神 ✨</div>
+                    </div>
+                  </td>
+                  <td><a href="#host" class="id-link">8530064</a></td>
+                  <td><a href="#guild" class="id-link">15393</a></td>
+                  <td>星辰公会</td>
+                  <td><a href="#host" class="id-link">8531008</a></td>
+                  <td><span class="badge brand">双周</span></td>
+                  <td>中东区</td>
+                  <td class="money">856,000</td>
+                  <td class="money">1,234,000</td>
+                  <td class="money" style="color:var(--ok);">+378,000</td>
+                  <td class="money">1,245,000</td>
+                  <td class="money">$526.60</td>
+                  <td class="money">$50.00</td>
+                  <td class="money">$576.60</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$576.60</td>
+                  <td class="money">$576.60</td>
+                  <td><span class="badge ok">达成</span></td>
+                  <td><span class="badge ok">Healthy</span></td>
+                  <td><span class="badge brand">在会</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>
+                    <div class="table-user">
+                      <span class="avatar">沙漠</span>
+                      <div>沙漠玫瑰🌹</div>
+                    </div>
+                  </td>
+                  <td><a href="#host" class="id-link">8538011</a></td>
+                  <td><a href="#guild" class="id-link">15421</a></td>
+                  <td>月影公会</td>
+                  <td><a href="#host" class="id-link">8531202</a></td>
+                  <td><span class="badge brand">双周</span></td>
+                  <td>中东区</td>
+                  <td class="money">723,000</td>
+                  <td class="money">978,000</td>
+                  <td class="money" style="color:var(--ok);">+255,000</td>
+                  <td class="money">986,000</td>
+                  <td class="money">$391.20</td>
+                  <td class="money">$38.50</td>
+                  <td class="money">$429.70</td>
+                  <td class="money">$50.00</td>
+                  <td class="money">$0</td>
+                  <td class="money">$379.70</td>
+                  <td class="money">$379.70</td>
+                  <td><span class="badge ok">达成</span></td>
+                  <td><span class="badge ok">Healthy</span></td>
+                  <td><span class="badge brand">在会</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>
+                    <div class="table-user">
+                      <span class="avatar">风中</span>
+                      <div>风中精灵</div>
+                    </div>
+                  </td>
+                  <td><a href="#host" class="id-link">8542103</a></td>
+                  <td><a href="#guild" class="id-link">15572</a></td>
+                  <td>沙漠玫瑰</td>
+                  <td><a href="#host" class="id-link">8531222</a></td>
+                  <td><span class="badge brand">自由</span></td>
+                  <td>中东区</td>
+                  <td class="money">520,000</td>
+                  <td class="money">580,000</td>
+                  <td class="money" style="color:var(--ok);">+60,000</td>
+                  <td class="money">689,000</td>
+                  <td class="money">$271.20</td>
+                  <td class="money">$0</td>
+                  <td class="money">$271.20</td>
+                  <td class="money">$30.00</td>
+                  <td class="money">$0</td>
+                  <td class="money">$241.20</td>
+                  <td class="money">$241.20</td>
+                  <td><span class="badge warn">未达成</span></td>
+                  <td><span class="badge warn">Fine</span></td>
+                  <td><span class="badge brand">在会</span></td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>
+                    <div class="table-user">
+                      <span class="avatar">星空</span>
+                      <div>星空漫步</div>
+                    </div>
+                  </td>
+                  <td><a href="#host" class="id-link">8545021</a></td>
+                  <td><a href="#guild" class="id-link">15570</a></td>
+                  <td>绿洲之家</td>
+                  <td><a href="#host" class="id-link">8532110</a></td>
+                  <td><span class="badge brand">双周</span></td>
+                  <td>中东区</td>
+                  <td class="money">380,000</td>
+                  <td class="money">310,000</td>
+                  <td class="money" style="color:var(--danger);">-70,000</td>
+                  <td class="money">420,000</td>
+                  <td class="money">$124.00</td>
+                  <td class="money">$0</td>
+                  <td class="money">$124.00</td>
+                  <td class="money">$84.00</td>
+                  <td class="money">$20.00</td>
+                  <td class="money">$20.00</td>
+                  <td class="money">$20.00</td>
+                  <td><span class="badge warn">未达成</span></td>
+                  <td><span class="badge danger">Not Fine</span></td>
+                  <td><span class="badge warn">退出中</span></td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>
+                    <div class="table-user">
+                      <span class="avatar">夜莺</span>
+                      <div>夜莺之歌</div>
+                    </div>
+                  </td>
+                  <td><a href="#host" class="id-link">8530145</a></td>
+                  <td><a href="#guild" class="id-link">15393</a></td>
+                  <td>星辰公会</td>
+                  <td><a href="#host" class="id-link">8531008</a></td>
+                  <td><span class="badge brand">双周</span></td>
+                  <td>中东区</td>
+                  <td class="money">650,000</td>
+                  <td class="money">0</td>
+                  <td class="money" style="color:var(--danger);">-650,000</td>
+                  <td class="money">0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td class="money">$0</td>
+                  <td><span class="badge warn">未达成</span></td>
+                  <td><span class="badge danger">Not Fine</span></td>
+                  <td><span class="badge danger">封禁</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="guild-salary">
+          <div class="insight-grid">
+            <article class="mini-card">
+              <h4>公会总数</h4>
+              <strong>1,247</strong>
+              <span>可进一步按公会ID、公会名、公会长ID进行精准定位。</span>
+            </article>
+            <article class="mini-card">
+              <h4>当前周期总工资</h4>
+              <strong>$356,800</strong>
+              <span>包含公会长工资、公会长TG、主播工资和主播TG奖励。</span>
+            </article>
+            <article class="mini-card">
+              <h4>预支未还总额</h4>
+              <strong>$45,230</strong>
+              <span>建议与退出申请和可提现余额联动展示，避免财务穿透不清。</span>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>公会 ID</th>
+                  <th>公会名称</th>
+                  <th>公会长</th>
+                  <th>大区</th>
+                  <th>成员数</th>
+                  <th>主播数</th>
+                  <th>起始钻石余额</th>
+                  <th>最终钻石余额</th>
+                  <th>钻石变化</th>
+                  <th>钻石流水</th>
+                  <th>主播工资</th>
+                  <th>TG 奖励</th>
+                  <th>公会长工资</th>
+                  <th>总工资</th>
+                  <th>预支未还</th>
+                  <th>借支未还</th>
+                  <th>退出成员</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#guild" class="id-link">15393</a></td>
+                  <td>星辰公会</td>
+                  <td><a href="#host" class="id-link">8531008</a></td>
+                  <td>中东区</td>
+                  <td>128</td>
+                  <td>95</td>
+                  <td class="money">8,560,000</td>
+                  <td class="money">12,450,000</td>
+                  <td class="money" style="color:var(--ok);">+3,890,000</td>
+                  <td class="money">12.5M</td>
+                  <td class="money">$98,800</td>
+                  <td class="money">$23,110</td>
+                  <td class="money">$18,600</td>
+                  <td class="money">$140,510</td>
+                  <td class="money">$16,200</td>
+                  <td class="money">$4,200</td>
+                  <td>4</td>
+                </tr>
+                <tr>
+                  <td><a href="#guild" class="id-link">15421</a></td>
+                  <td>月影公会</td>
+                  <td><a href="#host" class="id-link">8531202</a></td>
+                  <td>中东区</td>
+                  <td>95</td>
+                  <td>72</td>
+                  <td class="money">7,230,000</td>
+                  <td class="money">9,860,000</td>
+                  <td class="money" style="color:var(--ok);">+2,630,000</td>
+                  <td class="money">9.8M</td>
+                  <td class="money">$65,400</td>
+                  <td class="money">$18,680</td>
+                  <td class="money">$14,300</td>
+                  <td class="money">$98,380</td>
+                  <td class="money">$24,800</td>
+                  <td class="money">$7,600</td>
+                  <td>6</td>
+                </tr>
+                <tr>
+                  <td><a href="#guild" class="id-link">15572</a></td>
+                  <td>沙漠玫瑰</td>
+                  <td><a href="#host" class="id-link">8531222</a></td>
+                  <td>中东区</td>
+                  <td>87</td>
+                  <td>65</td>
+                  <td class="money">5,200,000</td>
+                  <td class="money">6,890,000</td>
+                  <td class="money" style="color:var(--ok);">+1,690,000</td>
+                  <td class="money">8.2M</td>
+                  <td class="money">$32,810</td>
+                  <td class="money">$10,520</td>
+                  <td class="money">$8,800</td>
+                  <td class="money">$52,130</td>
+                  <td class="money">$11,200</td>
+                  <td class="money">$3,600</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="salary-rules">
+          <div class="detail-grid">
+            <div class="salary-breakdown">
+              <div class="breakdown-row">
+                <article class="breakdown-item">
+                  <h5>时间快捷项</h5>
+                  <strong>5 个</strong>
+                  <span>今天、本周、上周、本周期、上一周期。默认选中当前结算周期。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>新增精确查询</h5>
+                  <strong>2 个</strong>
+                  <span>新增公会长ID、公会ID输入框，方便运营按对象直接定位。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>字段改名</h5>
+                  <strong>2 项</strong>
+                  <span>本期总钻石 → 起始钻石余额，本期剩余钻石 → 最终钻石余额。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>新增字段</h5>
+                  <strong>钻石变化</strong>
+                  <span>公式为最终钻石余额减起始钻石余额，提升周期变动可解释性。</span>
+                </article>
+              </div>
+              <div class="breakdown-row">
+                <article class="breakdown-item">
+                  <h5>顶部汇总</h5>
+                  <strong>8 项</strong>
+                  <span>主播总数、公会总数、钻石流水总额、钻石净变化、工资总额等。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>预支借支字段</h5>
+                  <strong>已预支 / 已借支</strong>
+                  <span>分开显示预支和借支金额，工资余额 = 总工资 - 已预支 - 已借支。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>排序规则</h5>
+                  <strong>默认流水降序</strong>
+                  <span>支持按总工资、TG奖励、钻石变化、可提现余额切换排序。</span>
+                </article>
+                <article class="breakdown-item">
+                  <h5>异常标记</h5>
+                  <strong>5 类</strong>
+                  <span>收入为0、异常退出、未还预支、健康度异常、余额异常等统一打标签。</span>
+                </article>
+              </div>
+            </div>
+            <div class="rule-list">
+              <article class="rule-item">
+                <h4>字段口径说明</h4>
+                <ul>
+                  <li>钻石流水表示周期内累计收入，不等于余额。</li>
+                  <li>起始/最终钻石余额属于时点值，用于描述周期内库存变化。</li>
+                  <li>钻石变化 = 最终钻石余额 - 起始钻石余额。</li>
+                  <li>工资余额 = 总工资 - 已预支 - 已借支。</li>
+                </ul>
+              </article>
+              <article class="rule-item">
+                <h4>筛选条件优化</h4>
+                <p>大区筛选替代原有国家筛选，同时补充状态、健康度和是否存在预支/借支等条件，保证运营可以快速圈定目标人群。</p>
+              </article>
+              <article class="rule-item">
+                <h4>异常提示策略</h4>
+                <p>当出现"起始余额大于最终余额但无结算/提现记录""有收入但总工资为0""存在未归还预支仍可退出"等情况时，列表需标红并支持跳转异常页。</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 公会看板 -->
+      <section class="panel" id="guild">
+        <div class="panel-header">
+          <div>
+            <h3>公会看板</h3>
+            <p>看清楚每个公会经营得怎么样：流水、工资、预支借支、成员结构和退出情况都要能一屏判断。</p>
+          </div>
+          <div class="header-meta">
+            <span class="badge brand">Top 公会按钻石流水排序</span>
+          </div>
+        </div>
+        <div class="module-grid">
+          <article class="module-card">
+            <h4>公会基础信息</h4>
+            <p>公会ID、名称、公会长、创建时间、大区、成员数、管理员数、主播数。</p>
+            <ul>
+              <li>支持复制ID</li>
+              <li>支持跳转公会详情</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>经营卡片</h4>
+            <p>展示当前周期流水、余额、主播工资、TG、公会长工资、可提现余额、退出人数。</p>
+            <ul>
+              <li>核心指标一屏聚合</li>
+              <li>适合运营日常巡检</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>成员结构</h4>
+            <p>按政策、角色、健康度、状态分布，帮助快速判断公会质量和结构稳定性。</p>
+            <ul>
+              <li>双周 / 自由比例</li>
+              <li>Healthy / Fine / Not Fine</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>成员异动</h4>
+            <p>记录加入、退出、被踢、管理员任命和取消，形成完整的公会流转审计链路。</p>
+            <ul>
+              <li>适合与退出审核联动</li>
+              <li>支持按时间筛查</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- 主播看板 -->
+      <section class="panel" id="host">
+        <div class="panel-header">
+          <div>
+            <h3>主播看板</h3>
+            <p>围绕单个主播看完整链路：属于哪个公会、赚了多少、提了多少、有没有预支借支、近期是否频繁跳会。</p>
+          </div>
+          <div class="header-meta">
+            <span class="badge ok">支持从公会列表下钻</span>
+          </div>
+        </div>
+
+        <div class="layout-two">
+          <div class="list-card">
+            <div class="panel-header" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:20px;">主播详情卡片示例</h3>
+                <p>用于承接列表点击后的详情页。</p>
+              </div>
+            </div>
+            <div class="breakdown-row">
+              <article class="breakdown-item">
+                <h5>主播信息</h5>
+                <strong>8530064</strong>
+                <span>昵称 月光女神✨，双周政策，角色为普通成员，所属公会 星辰公会。</span>
+              </article>
+              <article class="breakdown-item">
+                <h5>当前周期总工资</h5>
+                <strong>$576.60</strong>
+                <span>主播工资 $526.60 + TG奖励 $50.00。</span>
+              </article>
+              <article class="breakdown-item">
+                <h5>可提现余额</h5>
+                <strong>$576.60</strong>
+                <span>已结算可提现金额，需与提现记录联动核对。</span>
+              </article>
+              <article class="breakdown-item">
+                <h5>近30天退出次数</h5>
+                <strong>0 次</strong>
+                <span>若大于等于3次，需要进入风险预警视图。</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="brief-card">
+            <div class="panel-header" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:20px;">下钻路径</h3>
+                <p>主播页应支持的进一步查询动作。</p>
+              </div>
+            </div>
+            <div class="risk-list">
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>结算记录</span>
+                  <span class="badge brand">按周期</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">查看每次结算时间、结算政策、结算金额、扣减项和到账金额。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>提现记录</span>
+                  <span class="badge brand">按渠道</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">展示 Coins / Cash / 转公会长等提现方式、手续费、状态和收款账户。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>预支 / 借支</span>
+                  <span class="badge warn">财务链路</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">查看操作人、借款人、金额、未归还金额及是否影响退出。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 财务模块 -->
+      <section class="panel" id="finance">
+        <div class="panel-header">
+          <div>
+            <h3>财务模块</h3>
+            <p>把提现、预支、借支拆成可独立巡检的视图，避免财务链路只能在主播详情里被动查询。</p>
+          </div>
+          <div class="header-meta">
+            <span class="badge brand">财务 / 运营协同</span>
+          </div>
+        </div>
+        <div class="module-grid">
+          <article class="module-card">
+            <h4>钱包与提现</h4>
+            <p>支持查询用户ID、公会ID、提现类型、提现渠道、提现金额、手续费、到账金额和状态。</p>
+            <ul>
+              <li>今日提现金额</li>
+              <li>提现成功率</li>
+              <li>Coins 兑换金额</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>预支管理</h4>
+            <p>追踪主播预支申请、审批、发放与归还情况，防止超额预支与违规退出。</p>
+            <ul>
+              <li>未归还预支总额</li>
+              <li>当前周期应发工资</li>
+              <li>连续多周期未还清</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>借支管理</h4>
+            <p>公会级别的借支审批与追踪，管理公会资金流转与还款计划。</p>
+            <ul>
+              <li>借支申请与审批</li>
+              <li>还款计划与进度</li>
+              <li>逾期预警</li>
+            </ul>
+          </article>
+          <article class="module-card">
+            <h4>账务预警</h4>
+            <p>面向财务的异常规则：提现失败、预支超额、借支接近上限、可提现余额异常等。</p>
+            <ul>
+              <li>异常标签汇总</li>
+              <li>支持跳转对应记录</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- 风控模块 -->
+      <section class="panel" id="risk">
+        <div class="panel-header">
+          <div>
+            <h3>退出审核与健康度风控</h3>
+            <p>用统一的风控视图处理跳会、赔付、未归还预支、封禁、小号等问题，避免多个后台页面来回切换。</p>
+          </div>
+          <div class="header-meta">
+            <span class="badge danger">需要高优先级打通</span>
+          </div>
+        </div>
+        <div class="layout-two">
+          <div class="list-card">
+            <div class="panel-header" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:20px;">退出审核列表</h3>
+                <p>建议支持赔付钻石、未归还预支、审批状态和近30天退出次数的联动判断。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table style="min-width:1100px;">
+                <thead>
+                  <tr>
+                    <th>申请时间</th>
+                    <th>主播 ID</th>
+                    <th>当前公会</th>
+                    <th>入会时长</th>
+                    <th>退出规则</th>
+                    <th>应赔付钻石</th>
+                    <th>未归还预支</th>
+                    <th>未归还借支</th>
+                    <th>审批状态</th>
+                    <th>近30天退出</th>
+                    <th>当前状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2026-05-07 14:32:09</td>
+                    <td><a href="#host" class="id-link">8545021</a></td>
+                    <td>绿洲之家</td>
+                    <td>9天</td>
+                    <td>15%赎回</td>
+                    <td class="money">50,000</td>
+                    <td class="money">$84.00</td>
+                    <td class="money">$20.00</td>
+                    <td><span class="badge warn">待审</span></td>
+                    <td>2</td>
+                    <td><span class="badge warn">退出中</span></td>
+                  </tr>
+                  <tr>
+                    <td>2026-05-06 10:15:31</td>
+                    <td><a href="#host" class="id-link">8538818</a></td>
+                    <td>星辰公会</td>
+                    <td>42天</td>
+                    <td>二次拒绝强退</td>
+                    <td class="money">500,000</td>
+                    <td class="money">$0</td>
+                    <td class="money">$0</td>
+                    <td><span class="badge danger">超时拒绝</span></td>
+                    <td>3</td>
+                    <td><span class="badge danger">高风险</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="brief-card">
+            <div class="panel-header" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:20px;">健康度卡片</h3>
+                <p>健康度应直接展示等级和原始指标值，方便运营快速解释。</p>
+              </div>
+            </div>
+            <div class="risk-list">
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>Healthy</span>
+                  <span class="badge ok">10,234 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">满足多数健康规则，适合作为公会稳定成员池。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>Fine</span>
+                  <span class="badge warn">855 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">建议按封禁次数、设备共享和收入异常做进一步筛查。</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-title">
+                  <span>Not Fine</span>
+                  <span class="badge danger">156 人</span>
+                </div>
+                <div style="color:var(--muted); font-size:13px; line-height:1.65;">应优先进入风控队列，并与退出审核、公会长投诉和提现异常联合查看。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-note">
+        <strong>原型说明</strong>
+        <p>这份HTML是对应PRD的静态后台原型，重点覆盖薪资结算字段调整、钻石变化追踪、财务流转监控与风险预警。不接真实接口，适合用于需求评审、视觉对齐和前端切图确认。字段口径：钻石变化 = 最终钻石余额 - 起始钻石余额；工资余额 = 总工资 - 已预支 - 已借支。</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const chips = document.querySelectorAll(".chip");
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const group = chip.parentElement.querySelectorAll(".chip");
+        group.forEach((item) => item.classList.remove("active"));
+        chip.classList.add("active");
+      });
+    });
+
+    const tabGroups = document.querySelectorAll("[data-tabs]");
+    tabGroups.forEach((group) => {
+      const buttons = group.querySelectorAll(".tab-btn");
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.dataset.target;
+          buttons.forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          const parent = group.parentElement;
+          parent.querySelectorAll(".tab-panel").forEach((panel) => {
+            panel.classList.toggle("active", panel.id === target);
+          });
+        });
+      });
+    });
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = [...navLinks].map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          navLinks.forEach((link) => {
+            link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id);
+          });
+        });
+      },
+      { threshold: 0.35 }
+    );
+    sections.forEach((section) => observer.observe(section));
+  </script>
+</body>
+</html>
