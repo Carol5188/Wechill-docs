@@ -1,0 +1,1794 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>10 Country Search Popup</title><style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --phone-w: 390px;
+      --phone-h: 844px;
+      --bg: #efefef;
+      --paper: #fff;
+      --wire: #9e9e9e;
+      --wire-soft: #d0d0d0;
+      --ink: #111;
+      --muted: #707070;
+      --blue: #2d7ff9;
+      --gold: #f1bb39;
+      --dark: #151515;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    button,
+    input {
+      border: 0;
+      padding: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      outline: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(1180px, 100vw);
+      min-height: 900px;
+      padding: 28px 24px;
+      display: grid;
+      grid-template-columns: 260px var(--phone-w) 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .side,
+    .inspector {
+      border: 1px solid var(--wire);
+      background: var(--paper);
+      padding: 16px 18px;
+    }
+
+    .side h1,
+    .inspector h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .side p,
+    .inspector p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .flow-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .flow-list button {
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .flow-list button.active {
+      border-color: var(--blue);
+      background: #eef5ff;
+      color: #0f62d9;
+      font-weight: 700;
+    }
+
+    .legend {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .legend span {
+      min-height: 30px;
+      padding: 7px 8px;
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
+    }
+
+    .phone {
+      position: relative;
+      width: var(--phone-w);
+      height: var(--phone-h);
+      overflow: hidden;
+      border: 1px solid #b7b7b7;
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+    }
+
+    .status {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 20;
+      height: 34px;
+      padding: 8px 12px 0;
+      display: flex;
+      justify-content: space-between;
+      color: #151515;
+      font-size: 11px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #fff;
+    }
+
+    .screen.show {
+      display: block;
+    }
+
+    .wire-screen {
+      padding-top: 36px;
+      background: #f8f8f8;
+    }
+
+    .wire-header {
+      min-height: 62px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff;
+      border-bottom: 1px solid var(--wire-soft);
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab {
+      height: 34px;
+      min-width: 66px;
+      padding: 0 12px;
+      border: 1px solid var(--wire-soft);
+      background: #f1f1f1;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      border-color: #111;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .top-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wire-header.activity-mode .task-btn,
+    .wire-header.activity-mode .top-avatar {
+      display: none;
+    }
+
+    .icon-btn,
+    .round-btn {
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+    }
+
+    .round-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--wire);
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        #fff;
+    }
+
+    .discover-page {
+      display: none;
+      height: calc(100% - 62px);
+      padding: 10px 10px 72px;
+      overflow: hidden;
+    }
+
+    .discover-page.active {
+      display: block;
+    }
+
+    .asset-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 9px;
+    }
+
+    .coin-pill {
+      min-height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--wire);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .coin-dot {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #fff;
+      font-size: 11px;
+    }
+
+    .plus-dot {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #28b76b;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .private-room {
+      min-height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--wire);
+      border-radius: 6px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .game-card {
+      position: relative;
+      height: 112px;
+      padding: 8px 6px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 2px;
+      background: #fff;
+      text-align: center;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .game-card::before,
+    .placeholder::before,
+    .room-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #cfcfcf, transparent calc(50% + 1px));
+      pointer-events: none;
+    }
+
+    .game-card b {
+      position: relative;
+      z-index: 1;
+      display: block;
+      padding-top: 38px;
+      font-weight: 500;
+    }
+
+    .game-card .status-tag {
+      position: absolute;
+      left: 3px;
+      bottom: 3px;
+      z-index: 1;
+      padding: 2px 5px;
+      background: #ffb72b;
+      color: #fff;
+      font-size: 9px;
+    }
+
+    .section-title {
+      height: 28px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      color: #111;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .country-filter {
+      height: 38px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .country-scroll {
+      width: 100%;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .country-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .country-chip {
+      flex: 0 0 auto;
+      min-width: 54px;
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--wire-soft);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .country-chip.active {
+      border-color: #111;
+      background: #f1f1f1;
+    }
+
+    .country-search-btn {
+      width: 42px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      background: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .room-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .room-card {
+      min-height: 74px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: 58px 1fr 42px;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 2px;
+      background: #fff;
+      text-align: left;
+    }
+
+    .room-cover {
+      position: relative;
+      height: 56px;
+      border: 1px solid var(--wire-soft);
+      background: #f6f6f6;
+      overflow: hidden;
+    }
+
+    .room-main {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .room-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tag-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #555;
+      font-size: 10px;
+    }
+
+    .tag {
+      padding: 1px 4px;
+      border: 1px solid var(--wire-soft);
+      background: #f6f6f6;
+      font-size: 9px;
+    }
+
+    .mini-avatars {
+      display: flex;
+    }
+
+    .mini-avatars i {
+      width: 16px;
+      height: 16px;
+      margin-right: -4px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      background: #ddd;
+    }
+
+    .online {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .activity-page .activity-sort {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .activity-card {
+      position: relative;
+      min-height: 92px;
+      padding: 12px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: left;
+    }
+
+    .activity-card .rank {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 2px 8px;
+      border: 1px solid var(--wire-soft);
+      border-radius: 999px;
+      background: #f4f4f4;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .activity-card b {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    .activity-card span {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 22;
+      height: 64px;
+      padding: 8px 8px 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      border-top: 1px solid var(--wire-soft);
+      background: #fff;
+    }
+
+    .nav-item {
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
+      font-size: 10px;
+    }
+
+    .nav-item.active {
+      border-color: #111;
+      font-weight: 700;
+    }
+
+    .room-screen {
+      padding-top: 36px;
+      background: #fff;
+    }
+
+    .room-top {
+      height: 78px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--wire-soft);
+    }
+
+    .room-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .room-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .seat-area {
+      position: relative;
+      height: 446px;
+      margin: 10px;
+      border: 1px solid var(--wire);
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #ddd, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #ddd, transparent calc(50% + 1px)),
+        #fafafa;
+    }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px 8px;
+      padding: 18px 12px;
+    }
+
+    .seat {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      color: #555;
+      font-size: 10px;
+    }
+
+    .seat i {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .room-current-game {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 16px;
+      min-height: 52px;
+      padding: 8px 10px;
+      display: none;
+      border: 1px solid var(--wire);
+      background: #fff;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .room-current-game.show {
+      display: block;
+    }
+
+    .chat-lines {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 88px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .chat-line {
+      min-height: 25px;
+      padding: 5px 8px;
+      border: 1px solid var(--wire-soft);
+      background: #fff;
+      color: #555;
+      font-size: 11px;
+    }
+
+    .room-toolbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 74px;
+      padding: 10px 10px 14px;
+      display: grid;
+      grid-template-columns: 38px 38px 1fr 38px 38px 38px;
+      gap: 7px;
+      align-items: center;
+      border-top: 1px solid var(--wire-soft);
+      background: #fff;
+    }
+
+    .tool {
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fafafa;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .chat-input {
+      height: 36px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 999px;
+      background: #fafafa;
+      color: #777;
+      font-size: 11px;
+    }
+
+    .sheet-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 110;
+      display: none;
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .sheet-mask.show {
+      display: block;
+    }
+
+    .country-search-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 118;
+      display: none;
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .country-search-mask.show {
+      display: block;
+    }
+
+    .country-search-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: 390px;
+      padding: 16px;
+      border-top: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .country-search-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .country-search-input {
+      height: 40px;
+      margin-bottom: 12px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .country-result-title {
+      margin: 8px 0;
+      color: #555;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .country-hot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .country-hot-grid button {
+      min-height: 32px;
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bottom-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: 365px;
+      padding: 16px 16px 22px;
+      border-top: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .sheet-head {
+      height: 34px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .sheet-tabs {
+      height: 38px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .sheet-tab {
+      border: 1px solid var(--wire-soft);
+      background: #fafafa;
+      font-size: 12px;
+    }
+
+    .sheet-tab.active {
+      border-color: #111;
+      font-weight: 700;
+    }
+
+    .sheet-page {
+      display: none;
+    }
+
+    .sheet-page.active {
+      display: block;
+    }
+
+    .current-game-box {
+      display: none;
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      font-size: 12px;
+    }
+
+    .current-game-box.show {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+    }
+
+    .sheet-game {
+      position: relative;
+      min-height: 58px;
+      padding: 6px 4px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: center;
+      font-size: 10px;
+    }
+
+    .sheet-game::before,
+    .event-mini::before,
+    .emoji-cell::before,
+    .placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #d1d1d1, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #d1d1d1, transparent calc(50% + 1px));
+      pointer-events: none;
+    }
+
+    .sheet-game span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .event-mini {
+      position: relative;
+      min-height: 76px;
+      margin-bottom: 9px;
+      padding: 10px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .event-mini b,
+    .event-mini small {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .emoji-cell {
+      position: relative;
+      min-height: 52px;
+      border: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .setting-screen {
+      z-index: 70;
+      padding-top: 36px;
+      background:
+        linear-gradient(to bottom right, transparent calc(50% - 1px), #d8d8d8, transparent calc(50% + 1px)),
+        linear-gradient(to top right, transparent calc(50% - 1px), #d8d8d8, transparent calc(50% + 1px)),
+        #f8f8f8;
+    }
+
+    .setting-top {
+      height: 118px;
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--wire-soft);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .setting-brand {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .setting-seats {
+      margin-top: 16px;
+      display: flex;
+      gap: 9px;
+    }
+
+    .setting-seats i {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .setting-panel {
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      top: 210px;
+      min-height: 320px;
+      padding: 18px;
+      border: 1px solid var(--wire);
+      background: #fff;
+    }
+
+    .setting-coin {
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      transform: translateX(-50%);
+      min-height: 32px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--wire);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .setting-logo {
+      margin: 14px 0 18px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .setting-row {
+      min-height: 44px;
+      margin-bottom: 10px;
+      padding: 0 10px;
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .segments {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .segment {
+      min-height: 40px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      font-size: 13px;
+    }
+
+    .segment.active {
+      border-color: #111;
+      font-weight: 700;
+    }
+
+    .seat-dots {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0 20px;
+    }
+
+    .seat-dot {
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--wire);
+      border-radius: 50%;
+      background: #fafafa;
+      font-size: 20px;
+    }
+
+    .setting-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid var(--wire);
+      background: #fafafa;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      border-color: #111;
+      background: #fff;
+    }
+
+    .setting-chat-note {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 70px;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--wire-soft);
+      background: #fff;
+      color: #555;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .insufficient-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.34);
+    }
+
+    .insufficient-mask.show {
+      display: grid;
+    }
+
+    .insufficient-card {
+      width: 300px;
+      padding: 22px 18px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: center;
+    }
+
+    .insufficient-card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .insufficient-card p {
+      margin: 0 0 18px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .exchange-screen {
+      z-index: 90;
+      background: #f5f5f7;
+      color: #151515;
+    }
+
+    .exchange-status {
+      height: 40px;
+      padding: 8px 34px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #0f0f13;
+      font-size: 13px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    .exchange-nav {
+      height: 56px;
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .exchange-back,
+    .exchange-record {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #101014;
+      font-size: 24px;
+      font-weight: 800;
+      background: transparent;
+    }
+
+    .exchange-record {
+      border-radius: 10px;
+      border: 2px solid #151515;
+      font-size: 16px;
+      color: #79c23a;
+    }
+
+    .exchange-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      color: #9a9aa3;
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .exchange-tabs span.active {
+      color: #111;
+    }
+
+    .exchange-body {
+      padding: 18px 12px 26px;
+    }
+
+    .exchange-hero {
+      position: relative;
+      min-height: 112px;
+      padding: 22px 24px;
+      overflow: hidden;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 84% 30%, #fff27f 0 22%, transparent 23%),
+        linear-gradient(135deg, #19c94e, #a8fa4b);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(34, 198, 82, 0.22);
+    }
+
+    .exchange-hero span {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .exchange-hero strong {
+      display: block;
+      margin-top: 20px;
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 1000;
+    }
+
+    .exchange-hero .controller {
+      position: absolute;
+      right: 22px;
+      top: 24px;
+      font-size: 64px;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.18));
+      transform: rotate(-12deg);
+    }
+
+    .exchange-card {
+      margin-top: 18px;
+      padding: 22px 18px 20px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.04);
+    }
+
+    .exchange-card h3 {
+      margin: 0 0 22px;
+      color: #17171a;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .exchange-card label {
+      display: block;
+      margin-bottom: 12px;
+      color: #1f1f23;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .exchange-input {
+      width: 100%;
+      height: 48px;
+      margin-bottom: 12px;
+      border: 0;
+      border-radius: 12px;
+      padding: 0 16px;
+      background: #f1f1f4;
+      color: #111;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .exchange-quick {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .exchange-quick button {
+      height: 34px;
+      border-radius: 999px;
+      background: #eef8ed;
+      color: #1b9d46;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .exchange-meta {
+      display: grid;
+      gap: 10px;
+      color: #262629;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .exchange-meta b {
+      color: #ff8b1d;
+    }
+
+    .exchange-warning {
+      margin: 14px 0 20px;
+      color: #ff4b52;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 850;
+    }
+
+    .exchange-submit {
+      width: 100%;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffb23f, #ff7f19);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .exchange-submit:disabled {
+      background: #d7d7d7;
+    }
+
+    .h5-screen {
+      z-index: 95;
+      background: #050505;
+    }
+
+    .h5-game {
+      position: absolute;
+      inset: 0;
+      background-image: url("outputs/game-prototype-assets/ludo-game.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+    }
+
+    .h5-game.uno {
+      background-image: url("outputs/game-prototype-assets/uno-game.png");
+    }
+
+    .h5-game.ball {
+      background-image: url("outputs/game-prototype-assets/8ball-game.png");
+    }
+
+    .h5-game.snake {
+      background-image: url("outputs/game-prototype-assets/snake-game.png");
+    }
+
+    .h5-actions {
+      position: absolute;
+      right: 12px;
+      top: 48px;
+      z-index: 4;
+      display: flex;
+      gap: 7px;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .h5-action {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.44);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .game-tools {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 19px;
+      z-index: 5;
+      min-height: 62px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 6px;
+      align-items: center;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 210, 108, 0.24), transparent 40%),
+        rgba(0, 0, 0, 0.72);
+      color: #fff;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.38);
+    }
+
+    .game-tool-btn {
+      position: relative;
+      width: min(40px, 100%);
+      aspect-ratio: 1;
+      justify-self: center;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff8ec;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .game-tool-badge {
+      position: absolute;
+      right: -5px;
+      top: -7px;
+      min-width: 20px;
+      height: 18px;
+      padding: 0 5px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #ff4261;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .loading-overlay,
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 130;
+      display: none;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.32);
+    }
+
+    .loading-overlay.show,
+    .result-overlay.show {
+      display: grid;
+    }
+
+    .overlay-card {
+      width: 300px;
+      padding: 22px 18px;
+      border: 1px solid var(--wire);
+      background: #fff;
+      text-align: center;
+    }
+
+    .overlay-card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .overlay-card p {
+      margin: 0 0 16px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 100px;
+      z-index: 150;
+      min-width: 210px;
+      max-width: 310px;
+      padding: 10px 14px;
+      transform: translateX(-50%) translateY(18px);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.78);
+      color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hotspot {
+      outline: 2px solid transparent;
+      outline-offset: 1px;
+    }
+
+    .hotspot:hover,
+    .hotspot.active-hotspot {
+      outline-color: var(--blue);
+    }
+
+    @media (max-width: 860px) {
+      body {
+        display: block;
+        background: #111;
+      }
+
+      .wrap {
+        width: 100vw;
+        min-height: 100vh;
+        display: block;
+        padding: 0;
+      }
+
+      .side,
+      .inspector {
+        display: none;
+      }
+
+      .phone {
+        width: min(100vw, var(--phone-w));
+        height: min(100vh, var(--phone-h));
+        margin: 0 auto;
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  .static-wrap{grid-template-columns:260px var(--phone-w);justify-content:center}.static-wrap .side{min-height:180px}.static-wrap button,.static-wrap input{pointer-events:none;cursor:default}.static-wrap .inspector{display:none}@media (max-width:860px){.static-wrap{display:block}.static-wrap .side{display:none}}</style></head><body><div class="wrap static-wrap"><aside class="side"><h1>10 Country Search Popup</h1><p>国家搜索静态页：固定搜索按钮触发的搜索弹窗示例。</p><p>静态单页，无点击交互。</p></aside><main class="phone" id="phone">
+      <div class="status"><span>5:25</span><span>171KB/s · Wi-Fi · 95</span></div>
+
+      <section class="screen wire-screen show" id="discoverScreen">
+        <header class="wire-header" id="discoverHeader">
+          <div class="tab-row">
+            <button class="tab active" type="button" data-discover-tab="games">Games</button>
+            <button class="tab" type="button" data-discover-tab="activity">Activity</button>
+          </div>
+          <div class="top-icons">
+            <button class="icon-btn hotspot task-btn" type="button" data-note="任务入口：展示游戏任务、活动激励、运营奖励。">TASK</button>
+            <span class="avatar top-avatar"></span>
+            <button class="icon-btn hotspot" type="button" data-note="搜索入口：支持搜索房间 ID / 用户 ID。">SEARCH</button>
+          </div>
+        </header>
+
+        <div class="discover-page active" id="gamesPage">
+          <div class="asset-line">
+            <button class="coin-pill hotspot" type="button" data-open-exchange data-note="游戏币余额：点击加号进入 Game coins 兑换页。">
+              <span class="avatar" style="width:24px;height:24px;"></span>
+              <span class="coin-dot">G</span>
+              <span id="walletValue">300</span>
+              <span class="plus-dot">+</span>
+            </button>
+            <button class="private-room hotspot" type="button" data-open-room data-note="Private room：创建或进入私密语聊房，本期不新增游戏房类型。">Private room <span class="plus-dot">+</span></button>
+          </div>
+
+          <div class="game-grid">
+            <button class="game-card hotspot" type="button" data-open-setting="8 Ball" data-note="8 Ball：点击进入对应设置页。"><b>8 Ball</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="UNO" data-note="UNO：点击进入设置页，默认门票 500 游戏币用于演示不足流程。"><b>ONO</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="Bingo" data-note="Bingo：占位，三方返回后可进入设置页。"><b>Bingo</b></button>
+            <button class="game-card hotspot" type="button" data-open-setting="Domino" data-note="Domino：占位。"><b>Domino 50</b></button>
+            <button class="game-card hotspot" type="button" data-note="Golden Slot：合规审核账号隐藏或禁用。"><b>Golden Slot<br>Machine</b><span class="status-tag">Hot</span></button>
+            <button class="game-card hotspot" type="button" data-open-sheet="moreGames" data-note="More Games：打开更多游戏半屏列表。"><b>More Games</b></button>
+          </div>
+
+          <div class="section-title">
+            <span>Game Rooms</span>
+            <button class="country-search-btn hotspot" type="button" data-open-country-search data-note="国家搜索：点击后展示国家搜索弹窗；下方国家列表为整行横向滑动。">SEARCH</button>
+          </div>
+
+          <div class="country-filter" aria-label="国家筛选">
+            <div class="country-scroll">
+              <button class="country-chip active" type="button" data-country="全部">全部</button>
+              <button class="country-chip" type="button" data-country="沙特">🇸🇦 沙特</button>
+              <button class="country-chip" type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+              <button class="country-chip" type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+              <button class="country-chip" type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+              <button class="country-chip" type="button" data-country="埃及">🇪🇬 埃及</button>
+              <button class="country-chip" type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+            </div>
+          </div>
+
+          <div class="room-list">
+            <button class="room-card hotspot" type="button" data-open-room data-room-mode="waiting" data-note="房间列表项：展示封面、房名、语言、游戏状态、在线人数。">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">ترحيب مستخدمين الجدد والدا</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> Ludo · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">818</span>
+            </button>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">GAME OVER</span><span class="tag-line">🇦🇪 <i class="tag">Arabic</i> UNO · Playing</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">3167</span>
+            </button>
+            <button class="room-card" type="button" data-open-room>
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">وكاله آزلزالTop1</span><span class="tag-line">🇮🇶 <i class="tag">Arabic</i> 8 Ball · Watch</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">2686</span>
+            </button>
+            <button class="room-card" type="button" data-open-room>
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">√enüs مملكة</span><span class="tag-line">🇱🇧 <i class="tag">French</i> Domino · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">3376</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="discover-page activity-page" id="activityPage">
+          <div class="activity-sort"><span>Hot Events</span><span>Sorted by count</span></div>
+          <div class="activity-list">
+            <button class="activity-card hotspot" type="button" data-note="活动列表占位：点击进入活动详情或跳指定房间/指定游戏。"><i class="rank">NEW · 01</i><b>2026 وكالات العالم HAWA</b><span>2026/01/01 - 2027/01/01</span></button>
+            <button class="activity-card" type="button"><i class="rank">NEW · 02</i><b>2026 تحدي قلاع الوكالات</b><span>2026/05/01 05:00 - 2027/02/01 05:00</span></button>
+            <button class="activity-card" type="button"><i class="rank">03</i><b>hawa MISS</b><span>2026/01/01 - 2026/12/31</span></button>
+            <button class="activity-card" type="button"><i class="rank">04</i><b>الأيدي الديناميكي بجائزة جديدة</b><span>Long-term activity banner</span></button>
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <button class="nav-item hotspot" type="button" data-open-room data-note="Party：进入语聊房。">Party</button>
+          <button class="nav-item active" type="button" data-jump="discover">Discover</button>
+          <button class="nav-item" type="button" data-note="Community 占位。">Community</button>
+          <button class="nav-item" type="button" data-note="Messages 占位。">Messages</button>
+          <button class="nav-item" type="button" data-note="Mine 占位，可从钱包进入 Game coins。">Mine</button>
+        </nav>
+      </section>
+
+      <section class="screen room-screen" id="roomScreen">
+        <div class="room-top">
+          <div class="room-title-box">
+            <span class="avatar"></span>
+            <span>房间名称房间...<br><small>ID 1234567 · 25 online</small></span>
+          </div>
+          <div class="room-actions">
+            <button class="icon-btn" type="button" data-show-discover>BACK</button>
+            <button class="icon-btn" type="button" data-note="分享房间">SHR</button>
+          </div>
+        </div>
+        <div class="seat-area">
+          <div class="seat-grid">
+            <span class="seat"><i></i>1号麦</span><span class="seat"><i></i>2号麦</span><span class="seat"><i></i>3号麦</span><span class="seat"><i></i>4号麦</span><span class="seat"><i></i>5号麦</span>
+            <span class="seat"><i></i>6号麦</span><span class="seat"><i></i>7号麦</span><span class="seat"><i></i>8号麦</span><span class="seat"><i></i>9号麦</span><span class="seat"><i></i>10号麦</span>
+          </div>
+          <button class="room-current-game hotspot" id="roomCurrentGame" type="button" data-open-current-game data-note="当前游戏浮窗：游戏最小化或房间已有游戏时展示，点击恢复 H5。">Current Game · <span id="roomCurrentName">UNO</span><br><small id="roomCurrentState">Playing · Open</small></button>
+        </div>
+        <div class="chat-lines">
+          <div class="chat-line">公屏消息：欢迎来到聊天室</div>
+          <div class="chat-line">系统：当前房间支持休闲游戏</div>
+        </div>
+        <div class="room-toolbar">
+          <button class="tool hotspot" type="button" data-note="麦克风：进入游戏后仍保留。">MIC</button>
+          <button class="tool hotspot" type="button" data-note="扬声器：H5 可查询 sound 状态。">SPK</button>
+          <span class="chat-input">Say something</span>
+          <button class="tool" type="button">EMO</button>
+          <button class="tool hotspot" type="button" data-open-room-sheet data-note="游戏入口：打开房内游戏半屏面板。">GAME</button>
+          <button class="tool" type="button">MORE</button>
+        </div>
+      </section>
+
+      <div class="sheet-mask" id="moreGamesSheet">
+        <section class="bottom-sheet">
+          <div class="sheet-head"><span>Game</span><button class="icon-btn" type="button" data-close-sheets>X</button></div>
+          <div class="sheet-grid">
+            <button class="sheet-game" type="button" data-note="Jackpot 审核隐藏占位。"><span>Jackpot</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Dragon Tiger"><span>Dragon Tiger</span></button>
+            <button class="sheet-game" type="button" data-open-setting="CrazyFruit"><span>CrazyFruit</span></button>
+            <button class="sheet-game" type="button" data-open-setting="ShootGoal"><span>ShootGoal</span></button>
+            <button class="sheet-game" type="button" data-open-setting="UnderOrOver"><span>UnderOrOver</span></button>
+            <button class="sheet-game" type="button" data-note="Slot777 审核隐藏。"><span>Slot777</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Teen Patti"><span>Teen Patti</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Wise Kingdoms"><span>Wise Kingdoms</span></button>
+            <button class="sheet-game" type="button" data-open-setting="Lucky77"><span>Lucky77</span></button>
+            <button class="sheet-game" type="button" data-open-setting="GreedyCatKing"><span>GreedyCatKing</span></button>
+            <button class="sheet-game" type="button" data-open-setting="LampOfInfinity"><span>LampOfInfinity</span></button>
+            <button class="sheet-game" type="button" data-open-room-sheet><span>Room Games</span></button>
+          </div>
+        </section>
+      </div>
+
+      <div class="country-search-mask show" id="countrySearchMask">
+        <section class="country-search-panel">
+          <div class="country-search-head">
+            <span>国家搜索</span>
+            <button class="icon-btn" type="button" id="closeCountrySearch">X</button>
+          </div>
+          <div class="country-search-input">搜索国家 / 房间 ID / 房间名称</div>
+          <div class="country-result-title">热门国家</div>
+          <div class="country-hot-grid">
+            <button type="button" data-country="全部">全部</button>
+            <button type="button" data-country="沙特">🇸🇦 沙特</button>
+            <button type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+            <button type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+            <button type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
+            <button type="button" data-country="埃及">🇪🇬 埃及</button>
+            <button type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+            <button type="button" data-country="约旦">🇯🇴 约旦</button>
+          </div>
+          <div class="country-result-title">示例搜索结果 · 沙特</div>
+          <div class="room-list">
+            <button class="room-card" type="button" data-open-room data-room-mode="waiting">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">Saudi Ludo Room</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> Ludo · Waiting</span><span class="mini-avatars"><i></i><i></i><i></i></span></span>
+              <span class="online">818</span>
+            </button>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover"></span>
+              <span class="room-main"><span class="room-name">Riyadh UNO Night</span><span class="tag-line">🇸🇦 <i class="tag">Arabic</i> UNO · Playing</span><span class="mini-avatars"><i></i><i></i><i></i><i></i></span></span>
+              <span class="online">1466</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div class="sheet-mask" id="roomGamesSheet">
+        <section class="bottom-sheet">
+          <div class="sheet-head"><span>休闲游戏</span><button class="icon-btn" type="button" data-close-sheets>X</button></div>
+          <div class="sheet-tabs">
+            <button class="sheet-tab active" type="button" data-room-tab="casual">休闲游戏</button>
+            <button class="sheet-tab" type="button" data-room-tab="events">游戏</button>
+            <button class="sheet-tab" type="button" data-room-tab="emoji">动态表情</button>
+          </div>
+          <div class="current-game-box" id="currentGameBox">
+            <span>Current Game · <b id="currentGameName">UNO</b><br><small id="currentGameState">Waiting</small></span>
+            <button class="btn" type="button" data-open-current-game>Open</button>
+          </div>
+          <div class="sheet-page active" id="roomTabCasual">
+            <div class="sheet-grid">
+              <button class="sheet-game" type="button" data-open-setting="Black Jack"><span>Black Jack</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Ludo"><span>Ludo</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Rocket"><span>Rocket</span></button>
+              <button class="sheet-game" type="button" data-open-setting="UNO"><span>UNO</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Domino"><span>Domino</span></button>
+              <button class="sheet-game" type="button" data-open-setting="8 Ball"><span>8 Ball</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Snake & Ladder"><span>Snake</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Carrom"><span>Carrom</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Bingo"><span>Bingo</span></button>
+              <button class="sheet-game" type="button" data-open-setting="Draw Guess"><span>Draw</span></button>
+              <button class="sheet-game" type="button" data-note="更多游戏加载态。"><span>More</span></button>
+              <button class="sheet-game" type="button" data-note="规则说明。"><span>Help</span></button>
+            </div>
+          </div>
+          <div class="sheet-page" id="roomTabEvents">
+            <button class="event-mini" type="button"><b>2026 HAWA</b><small>活动入口占位：可跳活动详情 / 指定游戏 / 指定房间</small></button>
+            <button class="event-mini" type="button"><b>Domino Weekly</b><small>活动入口占位</small></button>
+            <button class="event-mini" type="button"><b>Room Challenge</b><small>活动入口占位</small></button>
+          </div>
+          <div class="sheet-page" id="roomTabEmoji">
+            <div class="emoji-grid">
+              <button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button>
+              <button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button><button class="emoji-cell" type="button"></button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="screen setting-screen" id="settingScreen">
+        <div class="setting-top">
+          <div class="setting-brand">BIGBOSS · ID:10002063</div>
+          <div class="setting-seats"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <section class="setting-panel">
+          <button class="setting-coin hotspot" type="button" data-open-exchange data-note="设置页游戏币余额：点击可进入兑换页。"><span class="coin-dot">G</span><span id="settingBalance">300</span> Game coins</button>
+          <div class="setting-logo" id="settingTitle">UNO</div>
+          <div class="segments">
+            <button class="segment active" type="button">1 V 1</button>
+            <button class="segment" type="button">4 Player</button>
+          </div>
+          <div class="setting-row">
+            <button type="button" id="ticketMinus">-</button>
+            <span id="ticketValue">500</span>
+            <button type="button" id="ticketPlus">+</button>
+          </div>
+          <div class="setting-row"><span></span><span>Magic / Rule</span><span>?</span></div>
+          <div class="seat-dots"><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button><button class="seat-dot" type="button">+</button></div>
+          <div class="setting-actions">
+            <button class="btn" type="button" id="quitSetting">Quit</button>
+            <button class="btn primary hotspot" type="button" id="startGame" data-note="Start：校验座位、权限、游戏币余额。余额不足进入兑换页。">Start</button>
+          </div>
+        </section>
+        <div class="setting-chat-note">房间语音、聊天、礼物能力保留；门票、下注、结算统一使用游戏币。</div>
+      </section>
+
+      <section class="screen exchange-screen" id="exchangeScreen">
+        <div class="exchange-status"><span>20:33</span><span>•••• Wi-Fi 100</span></div>
+        <header class="exchange-nav">
+          <button class="exchange-back" type="button" id="exchangeBack">‹</button>
+          <div class="exchange-tabs"><span>Gold coins</span><span>Diamonds</span><span class="active">Game coins</span></div>
+          <button class="exchange-record" type="button" data-note="兑换记录">▤</button>
+        </header>
+        <div class="exchange-body">
+          <div class="exchange-hero">
+            <span>我的游戏币余额</span>
+            <strong id="exchangeBalance">300</strong>
+            <i class="controller">🎮</i>
+          </div>
+          <section class="exchange-card">
+            <h3>兑换游戏币</h3>
+            <label for="exchangeInput">输入兑换的游戏币数量</label>
+            <input class="exchange-input" id="exchangeInput" inputmode="numeric" placeholder="请输入">
+            <div class="exchange-quick">
+              <button type="button" data-exchange-amount="200">+200</button>
+              <button type="button" data-exchange-amount="500">+500</button>
+              <button type="button" data-exchange-amount="1000">+1000</button>
+            </div>
+            <div class="exchange-meta">
+              <span>我的金币余额：<b id="goldBalance">384,397,340</b></span>
+              <span>扣除金币数量：<b id="goldCost">0</b></span>
+              <span>兑换比例：100金币 = 1000游戏币</span>
+            </div>
+            <p class="exchange-warning">注意：游戏币仅供游戏内使用，不得提现及兑换金币</p>
+            <button class="exchange-submit" type="button" id="exchangeSubmit" disabled>立即兑换</button>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen h5-screen" id="h5Screen">
+        <div class="h5-game uno" id="h5Game"></div>
+        <div class="h5-actions">
+          <button class="h5-action" type="button" id="minimizeGame">—</button>
+          <button class="h5-action" type="button" id="finishGame">✓</button>
+          <button class="h5-action" type="button" id="closeGame">×</button>
+        </div>
+        <div class="game-tools">
+          <button class="game-tool-btn" type="button" data-note="公屏聊天">CHAT</button>
+          <button class="game-tool-btn" type="button" data-note="扬声器">SPK</button>
+          <button class="game-tool-btn" type="button" data-note="麦克风">MIC</button>
+          <button class="game-tool-btn" type="button" data-note="表情">EMO</button>
+          <button class="game-tool-btn" type="button" data-note="消息">MSG<span class="game-tool-badge">78</span></button>
+          <button class="game-tool-btn" type="button" data-open-room-sheet>GAME</button>
+          <button class="game-tool-btn" type="button" data-note="礼物">GIFT</button>
+          <button class="game-tool-btn" type="button" data-note="更多">MORE</button>
+        </div>
+      </section>
+
+      <div class="insufficient-mask" id="insufficientMask">
+        <section class="insufficient-card">
+          <h3>游戏币不足</h3>
+          <p id="insufficientText">本局门票需要 500 游戏币，当前余额 300，还差 200。</p>
+          <div class="setting-actions">
+            <button class="btn" type="button" id="insufficientCancel">取消</button>
+            <button class="btn primary" type="button" id="insufficientExchange">去兑换</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="loading-overlay" id="loadingOverlay">
+        <section class="overlay-card"><h3 id="loadingTitle">Loading UNO</h3><p>getConfig 已返回，等待 gameLoaded 回调。</p></section>
+      </div>
+
+      <div class="result-overlay" id="resultOverlay">
+        <section class="overlay-card">
+          <h3>Game ended</h3>
+          <p>Winner: Ahmed · Reward: 1,200 Game coins</p>
+          <div class="setting-actions">
+            <button class="btn primary" type="button" id="playAgain">Play Again</button>
+            <button class="btn" type="button" id="backToRoom">Room</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </main></div></body></html>

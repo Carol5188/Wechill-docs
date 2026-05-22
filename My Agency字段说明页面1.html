@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面1｜My Agency 字段直接标注说明</title>
+  <style>
+    :root {
+      --black: #000000;
+      --phone-dark: #1b130f;
+      --white: #ffffff;
+      --text: #151922;
+      --muted: #6c7280;
+      --red: #ff4d4f;
+      --blue-card: #eefbff;
+      --blue-cell: #e8f1f5;
+      --salary-card: #fbf5ef;
+      --salary-cell: #f4eee8;
+      --purple-card: #f6eafe;
+      --purple-cell: #efe6f7;
+      --wallet-card: #fff8c9;
+      --wallet-cell: #f8efbc;
+      --yellow: #ffef64;
+      --orange: #ff8a00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--black);
+      color: var(--white);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .stage {
+      position: relative;
+      width: 1600px;
+      max-width: 100%;
+      min-height: 2250px;
+      margin: 0 auto;
+      padding: 0 0 80px;
+      overflow: hidden;
+    }
+
+    .page-title {
+      position: absolute;
+      left: 54px;
+      top: 34px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .phone {
+      position: relative;
+      width: 430px;
+      margin: 0 auto;
+      background: #fff;
+      color: var(--text);
+      min-height: 2140px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .status {
+      height: 32px;
+      padding: 6px 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: var(--phone-dark);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .topbar {
+      height: 56px;
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      align-items: center;
+      background: var(--phone-dark);
+      color: #fff;
+    }
+
+    .back {
+      font-size: 36px;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .cover {
+      position: relative;
+      height: 345px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 43% 33%, #2c1b10 0 3%, transparent 4%),
+        radial-gradient(circle at 61% 33%, #2c1b10 0 3%, transparent 4%),
+        radial-gradient(circle at 51% 52%, #d58c62 0 5%, transparent 6%),
+        radial-gradient(circle at 37% 47%, #d78963 0 6%, transparent 7%),
+        radial-gradient(circle at 63% 47%, #d78963 0 6%, transparent 7%),
+        linear-gradient(135deg, #6f96a4 0%, #d8bf64 52%, #c68a3b 100%);
+    }
+
+    .cover::before,
+    .cover::after {
+      content: "";
+      position: absolute;
+      top: -24px;
+      width: 82px;
+      height: 190px;
+      border-radius: 90% 20% 90% 20%;
+      background: linear-gradient(100deg, #2b2117 0 18%, #f0d689 19% 100%);
+    }
+
+    .cover::before {
+      left: 48px;
+      transform: rotate(-34deg);
+    }
+
+    .cover::after {
+      right: 42px;
+      transform: rotate(34deg) scaleX(-1);
+    }
+
+    .invite {
+      position: absolute;
+      right: -2px;
+      top: 92px;
+      padding: 14px 18px;
+      border-radius: 999px 0 0 999px;
+      background: var(--yellow);
+      color: #2a2100;
+      font-size: 16px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .cover-explain {
+      display: block;
+      margin-top: 4px;
+      color: var(--red);
+      font-size: 10px;
+      line-height: 1.25;
+      font-weight: 900;
+      text-shadow: none;
+    }
+
+    .invite .cover-explain {
+      color: #c42325;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    .agency-profile {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 20px;
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      align-items: end;
+      z-index: 2;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .avatar {
+      height: 92px;
+      border-radius: 12px;
+      border: 3px solid #fff;
+      background:
+        radial-gradient(circle at 50% 52%, #f1d46f 0 31%, transparent 32%),
+        linear-gradient(135deg, #dceeff, #f3cb58);
+    }
+
+    .name {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .idline,
+    .owner {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .owner {
+      width: fit-content;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(8px);
+    }
+
+    .content {
+      position: relative;
+      margin-top: -18px;
+      padding: 18px 12px 34px;
+      border-radius: 18px 18px 0 0;
+      background: #fff;
+      z-index: 3;
+    }
+
+    .shortcut-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .shortcut {
+      min-height: 64px;
+      padding: 10px 8px;
+      border-radius: 8px;
+      background: #f4f3f6;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 12px;
+      color: #242936;
+      position: relative;
+    }
+
+    .shortcut .icon {
+      width: 26px;
+      height: 26px;
+      margin-bottom: 4px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      font-size: 15px;
+    }
+
+    .section {
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .section-icon {
+      position: absolute;
+      right: 14px;
+      top: 12px;
+      font-size: 20px;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+
+    .section-icon:hover {
+      transform: translateY(-1px) scale(1.06);
+      opacity: 0.78;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      position: relative;
+      min-height: 102px;
+      padding: 12px 10px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .field.wide {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      color: #1f2430;
+      min-height: 34px;
+    }
+
+    .label.yellow-label {
+      display: inline-block;
+      min-height: 0;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255, 239, 100, 0.82);
+      color: #8a5d00;
+      font-weight: 900;
+    }
+
+    .value {
+      display: block;
+      margin-top: 10px;
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 500;
+      color: #10141e;
+    }
+
+    .value.orange {
+      color: var(--orange);
+    }
+
+    .explain {
+      display: block;
+      margin-top: 8px;
+      padding-top: 7px;
+      border-top: 1px dashed rgba(255, 77, 79, 0.42);
+      color: var(--red);
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .explain.yellow-note {
+      color: #d59600;
+      border-top-color: rgba(245, 174, 0, 0.58);
+    }
+
+    .deprecated-group {
+      position: relative;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .deprecated-group::before {
+      content: "×";
+      position: absolute;
+      inset: -24px 0 -14px;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      color: rgba(255, 77, 79, 0.9);
+      font-size: 132px;
+      line-height: 1;
+      font-weight: 900;
+      text-shadow: 0 8px 24px rgba(255, 77, 79, 0.28);
+      pointer-events: none;
+    }
+
+    .deprecated-group::after {
+      content: "字段废弃：这两个字段不要了";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 6;
+      transform: translate(-50%, -50%);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 77, 79, 0.94);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(255, 77, 79, 0.24);
+      pointer-events: none;
+    }
+
+    .deprecated-group .field {
+      border: 2px dashed rgba(255, 77, 79, 0.52);
+      opacity: 0.72;
+    }
+
+    .marker {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(255, 77, 79, 0.35);
+    }
+
+    .diamond {
+      background: var(--blue-card);
+    }
+
+    .diamond .field {
+      background: var(--blue-cell);
+    }
+
+    .salary {
+      background: var(--salary-card);
+    }
+
+    .salary .field {
+      background: var(--salary-cell);
+    }
+
+    .agent-host {
+      background: var(--purple-card);
+    }
+
+    .agent-host .field {
+      background: var(--purple-cell);
+    }
+
+    .wallet {
+      background: var(--wallet-card);
+    }
+
+    .wallet .field {
+      background: var(--wallet-cell);
+    }
+
+    .withdraw-btn {
+      height: 58px;
+      margin: 18px 8px 0;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 18px;
+      background: linear-gradient(90deg, #ef5a28, #f8c72e);
+    }
+
+    .home-indicator {
+      width: 156px;
+      height: 4px;
+      margin: 28px auto 0;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .legend {
+      position: absolute;
+      right: 46px;
+      top: 52px;
+      width: 400px;
+      padding: 18px;
+      border: 2px solid rgba(255, 77, 79, 0.72);
+      border-radius: 18px;
+      color: #fff;
+      background: rgba(255, 77, 79, 0.08);
+    }
+
+    .legend h3 {
+      margin: 0 0 10px;
+      color: var(--red);
+      font-size: 24px;
+    }
+
+    .legend p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1200px) {
+      .stage {
+        width: 100%;
+        min-height: 0;
+        padding: 12px 10px 40px;
+      }
+
+      .page-title,
+      .legend {
+        position: static;
+        width: auto;
+        margin: 14px auto;
+        max-width: 430px;
+        font-size: 22px;
+      }
+
+      .phone {
+        width: min(430px, 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="page-title">Page 1 · My Agency 字段直接标注说明</div>
+
+    <aside class="legend">
+      <h3>说明方式</h3>
+      <p>红色小字直接贴在对应字段下方，说明该字段的统计口径。金额单位为美元，钻石字段单位为钻石。</p>
+    </aside>
+
+    <section class="phone" aria-label="My Agency 字段直接说明页面">
+      <div class="status">
+        <span>10:30</span>
+        <span>1.84 KB/s  ·  67</span>
+      </div>
+      <div class="topbar">
+        <div class="back">‹</div>
+        <h1>My Agency</h1>
+        <div></div>
+      </div>
+
+      <div class="cover">
+        <div class="invite">Invite Members<span class="cover-explain">邀请成员入口</span></div>
+        <div class="agency-profile">
+          <div class="avatar"></div>
+          <div>
+            <div class="name">Coooool<span class="cover-explain">公会名称：实时展示当前公会资料</span></div>
+            <div class="idline">ID: 1087 | ♀ 4 / 100<span class="cover-explain">公会ID + 当前成员数 / 成员上限</span></div>
+            <div class="owner">u135846 · ID: 8562354<span class="cover-explain">公会长昵称 + 公会长ID</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="shortcut-row">
+          <div class="shortcut"><span class="icon">👥</span>Member Manage<span class="explain">成员管理入口：查看、移除、管理公会成员</span></div>
+          <div class="shortcut"><span class="icon">📋</span>Member Apply<span class="explain">成员申请入口：审核加入公会申请</span></div>
+          <div class="shortcut"><span class="icon">💬</span>Agency Group<span class="explain">公会群入口：进入公会群或群管理</span></div>
+        </div>
+
+        <section class="section diamond">
+          <h2>Diamond</h2>
+          <a class="section-icon" href="My Agency数据中心字段说明页面.html" title="进入 Data Center 字段说明页">▤</a>
+          <div class="grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency Diamond Target</span>
+              <span class="value">💎 525009</span>
+              <span class="explain">本期公会钻石流水 = 公会长钻石流水 + 主播钻石流水</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency Diamond Balance</span>
+              <span class="value">💎 15009</span>
+              <span class="explain">实时公会钻石余额 = 主播钻石余额 + 公会长钻石余额</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section salary">
+          <h2>Agency current salary</h2>
+          <a class="section-icon" href="My Agency数据中心字段说明页面.html" title="进入 Data Center 字段说明页">▤</a>
+          <div class="grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency total Salary</span>
+              <span class="value">$ 8.71</span>
+              <span class="explain">本期公会总工资 = 主播工资 + 主播TG + 公会长工资 + 公会长TG</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency total Salary Balance</span>
+              <span class="value">$ 8.71</span>
+              <span class="explain">公会工资余额 = 公会总工资 - 公会预支欠款 - 公会长借支欠款</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">All host's Salary</span>
+              <span class="value">$ 0.6</span>
+              <span class="explain yellow-note">所有主播薪资 = 主播工资 + 主播TG奖励，包含公会长作为主播的工资跟tg奖励</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label yellow-label">Agent Commission</span>
+              <span class="value">$ 8.25</span>
+              <span class="explain yellow-note">公会长工资 = 公会长薪资 + 公会长TG奖励（不包含公会长作为主播的工资跟tg奖）</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency Advance Salary</span>
+              <span class="value">$ 0</span>
+              <span class="explain">实时公会预支欠款 = 公会长已预支欠款 + 主播已预支欠款</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent borrowed amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">实时公会长已借支欠款金额，仅统计公会长借支</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent borrowable amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">实时可借支金额 = 公会长借支额度 - 已借支欠款金额</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section agent-host">
+          <h2>Agent as host Salary</h2>
+          <a class="section-icon" href="My Agency数据中心字段说明页面.html" title="进入 Data Center 字段说明页">▤</a>
+          <div class="grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent total salary</span>
+              <span class="value">$ 8.25</span>
+              <span class="explain">公会长总工资 = 公会长工资 + 公会长TG + 公会长作为主播工资 + 作为主播TG</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent as host Salary</span>
+              <span class="value">$ 0.14</span>
+              <span class="explain">公会长作为主播收入 = 作为主播工资 + 作为主播TG奖励</span>
+            </div>
+            <div class="deprecated-group" aria-label="废弃字段：Diamond salary level 和 Effective days">
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Diamond salary level</span>
+                <span class="value orange">LV 0</span>
+                <span class="explain">该字段不要了，不再在此模块展示</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Effective days  ›</span>
+                <span class="value">0 Days</span>
+                <span class="explain">该字段不要了，不再在此模块展示</span>
+              </div>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent borrowed amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长实时已借支欠款金额，和上方借支字段同口径</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent as host Advance Salary  ›</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长作为主播当前未抵扣的预支欠款，可点进预支记录</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label yellow-label">Agent Salary Balance</span>
+              <span class="value">$ 0</span>
+              <span class="explain yellow-note">公会长工资余额 = 公会长总工资（公会长工资 + 公会长TG + 公会长作为主播工资 + 作为主播TG）- 公会长借支 - 公会长预支</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section wallet">
+          <h2>Wallet</h2>
+          <div class="field wide">
+            <span class="label">Withdrawable balance</span>
+            <span class="value">$ 43.45</span>
+            <span class="explain">实时可提现金额 = 往期已结算工资余额 + 往期已结算TG余额 + 其他可提现余额</span>
+          </div>
+        </section>
+
+        <div class="withdraw-btn">Withdraw</div>
+        <span class="explain" style="display:block;margin:8px 10px 0;">提现入口：提现金额上限不能超过 Withdrawable balance；余额为 0 或风控受限时应置灰</span>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

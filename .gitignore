@@ -1,0 +1,7 @@
+node_modules/
+outputs/
+.DS_Store
+terms_render/
+*.docx
+build_*.mjs
+update_terms_email.py
