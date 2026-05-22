@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红包后台 - 风控明细</title>
+  <link rel="stylesheet" href="hongbao-console-redesign.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>WeChill后台</div>
+    </div>
+
+    <div class="nav-scroll">
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◔</span><span>统计</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">▣</span><span>红包玩法</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+        <div class="nav-children">
+          <a class="nav-subitem" href="../hongbao-config-redesign.html">红包配置</a>
+          <a class="nav-subitem" href="06-packets.html">红包数据查询</a>
+          <a class="nav-subitem" href="09-claim-records.html">红包领取记录</a>
+          <a class="nav-subitem is-active" href="04-risk.html">红包风控明细</a>
+          <a class="nav-subitem" href="07-rebates.html">红包返奖记录</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◎</span><span>用户</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◌</span><span>房间</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="breadcrumb">红包玩法 / 红包管理 / <strong>红包风控明细</strong></div>
+      <div class="topbar-right">
+        <span>运营后台</span>
+        <div class="avatar">LX</div>
+      </div>
+    </div>
+
+    <div class="page">
+      <section class="summary-grid">
+        <article class="summary-card">
+          <div class="summary-label">今日新增黑名单</div>
+          <div class="summary-value" id="blacklist-count">18</div>
+          <div class="summary-foot">危险级 3 个，限制级 15 个；关联设备/IP 同步限制 42 个账号。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">飞书预警</div>
+          <div class="summary-value">7</div>
+          <div class="summary-foot">观察 5 条，强风险 2 条；强风险均已进入审核。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">平台预算使用</div>
+          <div class="summary-value">0.38%</div>
+          <div class="summary-foot">今日返奖 7,683 金币，距离 2,000,000 金币上限仍有空间。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">&lt; 500ms 可疑领取</div>
+          <div class="summary-value">26</div>
+          <div class="summary-foot">6 个账号已触发验证码或临时冷却，2 个命中模拟器特征。</div>
+        </article>
+      </section>
+
+      <section class="card filter-card">
+        <div class="filter-row">
+          <div class="field compact">
+            <label>时间范围</label>
+            <input class="control" value="2026-04-16 00:00 ~ 2026-04-16 23:59">
+          </div>
+          <div class="field compact">
+            <label>用户 UID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>房间 ID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>命中规则</label>
+            <select class="control">
+              <option selected>全部规则</option>
+              <option>同设备 / 同 IP 互抢</option>
+              <option>高频大额红包</option>
+              <option>B档房间聚集</option>
+              <option>高风险房间</option>
+              <option>模拟器 / 自动化</option>
+              <option>毫秒级领取</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>风控状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>危险级：禁发禁领</option>
+              <option>限制级：不参与返奖</option>
+              <option>观察名单</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>审核状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>待审核</option>
+              <option>已风控</option>
+            </select>
+          </div>
+          <div class="action-row">
+            <button class="btn secondary">重置</button>
+            <button class="btn primary">查询</button>
+            <button class="btn light">导出</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-toolbar">
+          <div>
+            <div class="table-title">风控命中明细</div>
+            <div class="table-subtitle">覆盖黑名单、飞书预警、预算熔断、生产模拟器限制和防脚本抢红包。</div>
+          </div>
+          <div class="table-tools">
+            <button class="btn primary" id="open-blacklist-modal">＋ 手动加黑</button>
+            <button class="icon-btn" title="刷新">↻</button>
+            <button class="icon-btn" title="列设置">☷</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>风险单号</th>
+                <th>用户 / 房间</th>
+                <th>关联红包</th>
+                <th>命中规则</th>
+                <th>证据摘要</th>
+                <th>风控状态</th>
+                <th>飞书消息提醒</th>
+                <th>审核状态</th>
+                <th>时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="risk-table-body">
+              <tr class="risk-row-added is-danger">
+                <td class="main-cell"><strong>RISK-10434</strong><div class="sub">手动添加</div></td>
+                <td>
+                  <div class="blacklist-user-card">
+                    <strong>UID 983211</strong>
+                    <div class="sub">房间 880321</div>
+                    <div class="sub">有效期：7天 / 30天 / 永久，按运营选择展示</div>
+                  </div>
+                </td>
+                <td class="main-cell"><strong>手动加黑</strong><div class="sub">无关联红包</div></td>
+                <td><span class="tag red">手动加入黑名单</span></td>
+                <td>运营选填加黑原因：巡房发现固定小号互抢，房间自然礼物低但红包领完率异常高。</td>
+                <td><span class="tag red">危险级：禁发禁领</span></td>
+                <td><span class="tag neutral">未发送</span></td>
+                <td><span class="tag green">已风控</span></td>
+                <td>2026-04-16 11:18</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10434">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10434">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10434">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>RISK-10429</strong><div class="sub">自动命中</div></td>
+                <td class="main-cell"><strong>UID 883102</strong><div class="sub">房间 991200</div></td>
+                <td class="main-cell"><strong>HB202604160042</strong><div class="sub">B档礼物红包 50,000</div></td>
+                <td><span class="tag red">生产模拟器</span></td>
+                <td>设备指纹命中模拟器，领取接口绕过客户端行为 token。</td>
+                <td><span class="tag red">危险级：禁发禁领</span></td>
+                <td><span class="tag neutral">未发送</span></td>
+                <td><span class="tag green">已风控</span></td>
+                <td>2026-04-16 10:18</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10429">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10429">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10429">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>RISK-10430</strong><div class="sub">自动命中</div></td>
+                <td class="main-cell"><strong>UID 600818</strong><div class="sub">房间 880654</div></td>
+                <td class="main-cell"><strong>HB202604160051</strong><div class="sub">金币红包 20,000</div></td>
+                <td><span class="tag yellow">高频大额</span></td>
+                <td>1 小时内发送达标红包 31 次，累计 3,120,000 金币。</td>
+                <td><span class="tag yellow">限制级：不参与返奖</span></td>
+                <td><span class="tag green">已发送</span></td>
+                <td><span class="tag yellow">待审核</span></td>
+                <td>2026-04-16 10:24</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10430">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10430">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10430">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>RISK-10431</strong><div class="sub">飞书强风险</div></td>
+                <td class="main-cell"><strong>UID 501662</strong><div class="sub">房间 991200</div></td>
+                <td class="main-cell"><strong>ALERT-1021</strong><div class="sub">10 分钟 22 笔 B档</div></td>
+                <td><span class="tag purple">B档房间聚集</span></td>
+                <td>自然礼物/语音互动偏低，红包领完率 96%，互动比 2:8。</td>
+                <td><span class="tag yellow">限制级：不参与返奖</span></td>
+                <td><span class="tag green">已发送</span></td>
+                <td><span class="tag yellow">待审核</span></td>
+                <td>2026-04-16 10:31</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10431">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10431">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10431">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>RISK-10432</strong><div class="sub">关联命中</div></td>
+                <td class="main-cell"><strong>UID 771020</strong><div class="sub">设备 DEV-89F2</div></td>
+                <td class="main-cell"><strong>HB202604160063</strong><div class="sub">金币红包 50,000</div></td>
+                <td><span class="tag blue">同设备互抢</span></td>
+                <td>同一红包有效领取用户中 4 个账号来自同一设备。</td>
+                <td><span class="tag yellow">限制级：不参与返奖</span></td>
+                <td><span class="tag neutral">未发送</span></td>
+                <td><span class="tag green">已风控</span></td>
+                <td>2026-04-16 10:42</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10432">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10432">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10432">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>RISK-10433</strong><div class="sub">领取监控</div></td>
+                <td class="main-cell"><strong>UID 190245</strong><div class="sub">房间 880321</div></td>
+                <td class="main-cell"><strong>HB202604160071</strong><div class="sub">响应 286ms</div></td>
+                <td><span class="tag red">毫秒级领取</span></td>
+                <td>连续 3 个红包领取响应时间均小于 1 秒。</td>
+                <td><span class="tag blue">观察名单</span></td>
+                <td><span class="tag neutral">未发送</span></td>
+                <td><span class="tag green">已风控</span></td>
+                <td>2026-04-16 11:02</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn success" data-action="release" data-risk="RISK-10433">解除</button>
+                    <button class="link-btn" data-action="keep" data-risk="RISK-10433">维持</button>
+                    <button class="link-btn primary" data-action="adjust" data-risk="RISK-10433">调整等级</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span id="risk-table-total">第 1-5 条 / 总共 86 条</span>
+          <div class="pager"><div class="page-btn">‹</div><div class="page-btn is-active">1</div><div class="page-btn">2</div><div class="page-btn">›</div></div>
+        </div>
+
+        <div class="tips-bar">
+          <span>危险级：不展示红包入口，禁发禁领；限制级：可发可领，但发出的达标红包不参与概率返奖。</span>
+          <span>同设备 / 高风险 IP 命中后，关联账号同步限制返奖资格。</span>
+        </div>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">规则阈值配置</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <thead>
+                <tr><th>规则</th><th>阈值</th><th>命中动作</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>高频大额</td><td>单用户 1 小时 &gt; 30 次或 &gt; 3,000,000 金币</td><td>飞书预警，强风险进入限制级</td></tr>
+                <tr><td>B档聚集观察</td><td>同房间 10 分钟 ≥ 10 笔 B档红包</td><td>观察名单，只告警不拦截</td></tr>
+                <tr><td>B档聚集强风险</td><td>同房间 10 分钟 ≥ 20 笔且互动比 ≤ 3:7</td><td>发送人进入限制级</td></tr>
+                <tr><td>预算熔断</td><td>全站每日返奖预算 2,000,000 金币</td><td>触顶后自动关闭返奖</td></tr>
+                <tr><td>抢红包脚本</td><td>领取响应 &lt; 500ms；连续 3 次 &lt; 1s</td><td>验证码或临时冷却</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">操作详情与最近流转</div>
+          <div class="panel-body">
+            <div class="detail-note" id="action-detail">
+              <strong>尚未选择风险记录</strong>
+              点击“解除、维持、调整等级”等操作后，这里会展示对应动作的处理说明。
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-time">11:02</div>
+                <div class="timeline-content"><strong>UID 190245 触发验证码</strong>连续 3 次领取响应 &lt; 1s，已临时冷却 10 分钟。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:31</div>
+                <div class="timeline-content"><strong>ALERT-1021 飞书预警发送成功</strong>房间 991200 B档红包聚集达到强风险阈值。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:18</div>
+                <div class="timeline-content"><strong>UID 883102 升级危险级</strong>生产模拟器特征命中，已禁发禁领。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">09:55</div>
+                <div class="timeline-content"><strong>预算巡检正常</strong>今日返奖预算使用 0.38%，未触发熔断。</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-mask" id="blacklist-modal-mask" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="blacklist-modal-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="blacklist-modal-title">手动加黑名单</div>
+          <div class="modal-subtitle">适用于运营巡房、客服投诉确认、或人工复核后需要立即限制红包返奖资格的用户。</div>
+        </div>
+        <button class="modal-close" id="close-blacklist-modal" type="button">×</button>
+      </div>
+
+      <form id="blacklist-form">
+        <div class="modal-body">
+          <div class="form-error" id="blacklist-form-error">请填写用户 UID。</div>
+          <div class="inline-help">危险级会隐藏红包入口并禁发禁领；限制级可发可领但不参与概率返奖；观察名单仅监控预警，不直接拦截。提交后会按操作时间插入风控命中明细列表。</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>用户 UID（必填）</label>
+              <input class="control" id="blacklist-user-id" placeholder="例如：983211">
+            </div>
+            <div class="field">
+              <label>黑名单等级</label>
+              <select class="control" id="blacklist-level">
+                <option>危险级</option>
+                <option selected>限制级</option>
+                <option>观察名单</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>来源</label>
+              <select class="control" id="blacklist-source">
+                <option selected>运营巡房</option>
+                <option>用户投诉</option>
+                <option>人工复核</option>
+                <option>关联设备/IP</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>关联房间 ID</label>
+              <input class="control" id="blacklist-room-id" placeholder="选填">
+            </div>
+            <div class="field">
+              <label>关联红包 ID</label>
+              <input class="control" id="blacklist-packet-id" placeholder="选填">
+            </div>
+            <div class="field">
+              <label>有效期</label>
+              <select class="control" id="blacklist-duration">
+                <option selected>7 天</option>
+                <option>30 天</option>
+                <option>永久</option>
+              </select>
+            </div>
+            <div class="field wide">
+              <label>加黑原因</label>
+              <textarea class="textarea-control" id="blacklist-reason" placeholder="例如：巡房发现固定团伙互抢，房间自然礼物低但红包领完率异常高。"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn secondary" type="button" id="cancel-blacklist-modal">取消</button>
+          <button class="btn primary" type="submit">确认加黑</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="risk-operation-mask" aria-hidden="true">
+    <section class="modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="operation-modal-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="operation-modal-title">风险操作确认</div>
+          <div class="modal-subtitle" id="operation-modal-subtitle">请选择本次处理方式。</div>
+        </div>
+        <button class="modal-close" id="close-operation-modal" type="button">×</button>
+      </div>
+      <div class="modal-body" id="operation-modal-body"></div>
+      <div class="modal-footer" id="operation-modal-footer"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="risk-toast"></div>
+
+  <script>
+    const modalMask = document.querySelector("#blacklist-modal-mask");
+    const openModalBtn = document.querySelector("#open-blacklist-modal");
+    const closeModalBtn = document.querySelector("#close-blacklist-modal");
+    const cancelModalBtn = document.querySelector("#cancel-blacklist-modal");
+    const blacklistForm = document.querySelector("#blacklist-form");
+    const formError = document.querySelector("#blacklist-form-error");
+    const userIdInput = document.querySelector("#blacklist-user-id");
+    const riskTableBody = document.querySelector("#risk-table-body");
+    const blacklistCount = document.querySelector("#blacklist-count");
+    const tableTotal = document.querySelector("#risk-table-total");
+    const actionDetail = document.querySelector("#action-detail");
+    const toast = document.querySelector("#risk-toast");
+    const operationMask = document.querySelector("#risk-operation-mask");
+    const operationTitle = document.querySelector("#operation-modal-title");
+    const operationSubtitle = document.querySelector("#operation-modal-subtitle");
+    const operationBody = document.querySelector("#operation-modal-body");
+    const operationFooter = document.querySelector("#operation-modal-footer");
+    const closeOperationBtn = document.querySelector("#close-operation-modal");
+
+    let manualIndex = 10434;
+    let totalCount = 86;
+    let currentOperation = null;
+
+    function openModal() {
+      modalMask.classList.add("is-open");
+      modalMask.setAttribute("aria-hidden", "false");
+      formError.classList.remove("is-visible");
+      setTimeout(() => userIdInput.focus(), 0);
+    }
+
+    function closeModal() {
+      modalMask.classList.remove("is-open");
+      modalMask.setAttribute("aria-hidden", "true");
+    }
+
+    function openBlacklistFromLink() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("openBlacklist") !== "1" && window.location.hash !== "#manual-blacklist") return;
+      const packetId = params.get("packetId") || "";
+      const claimId = params.get("claimId") || "";
+      const uid = params.get("uid") || "";
+      const roomId = params.get("roomId") || "";
+      const source = params.get("source") || "人工复核";
+      if (uid) userIdInput.value = uid;
+      if (roomId) document.querySelector("#blacklist-room-id").value = roomId;
+      if (packetId) document.querySelector("#blacklist-packet-id").value = packetId;
+      const sourceSelect = document.querySelector("#blacklist-source");
+      if ([...sourceSelect.options].some((option) => option.value === source || option.textContent === source)) {
+        sourceSelect.value = source;
+      }
+      if (packetId || claimId) {
+        const reasonSource = claimId
+          ? `从红包领取记录页发起风控处理，关联领取单 ${claimId}，红包 ${packetId}。`
+          : `从红包数据查询页发起风控处理，关联红包 ${packetId}。`;
+        document.querySelector("#blacklist-reason").value = reasonSource;
+      }
+      openModal();
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("is-visible");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("is-visible"), 2400);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatNow() {
+      const now = new Date();
+      const pad = (num) => String(num).padStart(2, "0");
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function levelTag(level) {
+      if (level === "危险级") return '<span class="tag red">危险级：禁发禁领</span>';
+      if (level === "观察名单") return '<span class="tag blue">观察名单</span>';
+      return '<span class="tag yellow">限制级：不参与返奖</span>';
+    }
+
+    function levelRuleTag(level) {
+      if (level === "危险级") return '<span class="tag red">手动加黑</span>';
+      if (level === "观察名单") return '<span class="tag blue">手动加黑</span>';
+      return '<span class="tag yellow">手动加黑</span>';
+    }
+
+    function levelMiniBadge(level) {
+      if (level === "危险级") return '<span class="mini-badge red">危险级</span>';
+      if (level === "观察名单") return '<span class="mini-badge blue">观察名单</span>';
+      return '<span class="mini-badge yellow">限制级</span>';
+    }
+
+    function levelDisplayName(level) {
+      return level === "观察名单" ? "观察名单" : `${level}黑名单`;
+    }
+
+    function rowClassForLevel(level) {
+      if (level === "危险级") return "risk-row-added is-danger";
+      if (level === "观察名单") return "risk-row-added is-observe";
+      return "risk-row-added is-limit";
+    }
+
+    function actionButtons(riskId) {
+      return `
+        <div class="op-row">
+          <button class="link-btn success" data-action="release" data-risk="${riskId}">解除</button>
+          <button class="link-btn" data-action="keep" data-risk="${riskId}">维持</button>
+          <button class="link-btn primary" data-action="adjust" data-risk="${riskId}">调整等级</button>
+        </div>
+      `;
+    }
+
+    function rowTimeValue(row) {
+      const rawTime = row?.children[8]?.textContent.trim() || "";
+      const timestamp = Date.parse(rawTime.replace(" ", "T"));
+      return Number.isNaN(timestamp) ? 0 : timestamp;
+    }
+
+    function sortRiskRowsByTime() {
+      [...riskTableBody.querySelectorAll("tr")]
+        .sort((left, right) => rowTimeValue(right) - rowTimeValue(left))
+        .forEach((row) => riskTableBody.appendChild(row));
+    }
+
+    function insertRiskRowByOperationTime(row) {
+      const operationTime = rowTimeValue(row);
+      const nextRow = [...riskTableBody.querySelectorAll("tr")]
+        .find((item) => rowTimeValue(item) < operationTime);
+      if (nextRow) {
+        riskTableBody.insertBefore(row, nextRow);
+        return;
+      }
+      riskTableBody.appendChild(row);
+    }
+
+    function getRowUser(row) {
+      return row?.children[1]?.innerText.split("\n")[0] || "当前用户";
+    }
+
+    function openOperationModal(config) {
+      operationTitle.textContent = config.title;
+      operationSubtitle.textContent = config.subtitle;
+      operationBody.innerHTML = config.body;
+      operationFooter.innerHTML = config.footer || '<button class="btn secondary" type="button" data-operation-cancel>取消</button>';
+      operationMask.classList.add("is-open");
+      operationMask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeOperationModal() {
+      operationMask.classList.remove("is-open");
+      operationMask.setAttribute("aria-hidden", "true");
+      currentOperation = null;
+    }
+
+    function levelStatusCell(level) {
+      return levelTag(level);
+    }
+
+    function updateRowLevel(row, level, statusSub) {
+      row.classList.remove("is-danger", "is-limit", "is-observe", "risk-row-released");
+      row.classList.add("risk-row-added");
+      if (level === "危险级") row.classList.add("is-danger");
+      if (level === "限制级") row.classList.add("is-limit");
+      if (level === "观察名单") row.classList.add("is-observe");
+      updateLevelBadge(row, level);
+      row.children[5].innerHTML = levelStatusCell(level, statusSub);
+      row.children[7].innerHTML = '<span class="tag green">已风控</span>';
+      row.children[8].textContent = formatNow();
+    }
+
+    function updateLevelBadge(row, level) {
+      const badge = row.querySelector(".blacklist-meta .mini-badge.red, .blacklist-meta .mini-badge.yellow, .blacklist-meta .mini-badge.blue");
+      if (!badge) return;
+      badge.className = "mini-badge";
+      if (level === "危险级") badge.classList.add("red");
+      if (level === "限制级") badge.classList.add("yellow");
+      if (level === "观察名单") badge.classList.add("blue");
+      badge.textContent = level;
+    }
+
+    function updateDurationBadge(row, duration) {
+      const metaBadges = row.querySelectorAll(".blacklist-meta .mini-badge");
+      if (metaBadges.length >= 3) metaBadges[2].textContent = duration;
+      row.querySelectorAll(".sub").forEach((item) => {
+        if (item.textContent.includes("有效期")) item.textContent = `有效期：${duration}`;
+      });
+    }
+
+    function confirmRelease() {
+      const { riskId, row, user } = currentOperation;
+      row.classList.remove("is-danger", "is-limit", "is-observe");
+      row.classList.add("risk-row-released");
+      row.children[7].innerHTML = '<span class="tag green">已风控</span>';
+      row.children[8].textContent = formatNow();
+      actionDetail.innerHTML = `<strong>${riskId}｜解除成功</strong>${escapeHtml(user)} 已从黑名单移除，恢复红包入口、发放和领取资格；本次操作已写入风控日志。`;
+      closeOperationModal();
+      showToast(`${riskId}：已从黑名单移除`);
+    }
+
+    function confirmKeep(duration) {
+      const { riskId, row, user } = currentOperation;
+      updateDurationBadge(row, duration);
+      row.children[7].innerHTML = '<span class="tag green">已风控</span>';
+      row.children[8].textContent = formatNow();
+      actionDetail.innerHTML = `<strong>${riskId}｜维持限制</strong>${escapeHtml(user)} 当前黑名单状态维持，生效时长更新为 ${escapeHtml(duration)}。`;
+      closeOperationModal();
+      showToast(`${riskId}：已维持 ${duration}`);
+    }
+
+    function confirmAdjust(level) {
+      const { riskId, row, user } = currentOperation;
+      updateRowLevel(row, level, "运营手动调整等级");
+      actionDetail.innerHTML = `<strong>${riskId}｜调整等级</strong>${escapeHtml(user)} 已调整为${escapeHtml(level)}。危险级禁发禁领，限制级限制返奖，观察名单仅监控预警。`;
+      closeOperationModal();
+      showToast(`${riskId}：已调整为${level}`);
+    }
+
+    function openReleaseModal(riskId, row, user) {
+      currentOperation = { riskId, row, user };
+      openOperationModal({
+        title: "确认解除黑名单？",
+        subtitle: `${riskId}｜${user}`,
+        body: '<div class="inline-help">确认后该用户将从黑名单移除，恢复红包入口、发放、领取及返奖资格；取消则关闭弹窗，不做任何修改。</div>',
+        footer: '<button class="btn secondary" type="button" data-operation-cancel>取消</button><button class="btn primary" type="button" data-operation-release>确认解除</button>'
+      });
+    }
+
+    function openKeepModal(riskId, row, user) {
+      currentOperation = { riskId, row, user };
+      openOperationModal({
+        title: "选择维持时间",
+        subtitle: `${riskId}｜${user}`,
+        body: `
+          <div class="inline-help">选择后即确认维持当前风控状态，并更新该风险单的有效期展示。</div>
+          <div class="choice-grid">
+            <button class="choice-btn" type="button" data-operation-keep="7 天"><strong>7 天</strong><span>短期观察，适合首次命中或证据较轻。</span></button>
+            <button class="choice-btn yellow" type="button" data-operation-keep="30 天"><strong>30 天</strong><span>中期限制，适合高频异常或团伙嫌疑。</span></button>
+            <button class="choice-btn red" type="button" data-operation-keep="永久"><strong>永久</strong><span>长期拦截，适合模拟器或明确作弊证据。</span></button>
+          </div>
+        `
+      });
+    }
+
+    function openAdjustModal(riskId, row, user) {
+      currentOperation = { riskId, row, user };
+      openOperationModal({
+        title: "调整黑名单等级",
+        subtitle: `${riskId}｜${user}`,
+        body: `
+          <div class="inline-help">选择等级后立即确认。危险级隐藏红包入口并禁发禁领；限制级可发可领但不参与高额红包概率返奖；观察名单仅监控和预警。</div>
+          <div class="choice-grid">
+            <button class="choice-btn red" type="button" data-operation-level="危险级"><strong>危险级</strong><span>不展示入口，禁发禁领。</span></button>
+            <button class="choice-btn yellow" type="button" data-operation-level="限制级"><strong>限制级</strong><span>可发可领，但限制返奖资格。</span></button>
+            <button class="choice-btn blue" type="button" data-operation-level="观察名单"><strong>观察名单</strong><span>只告警和观察，不直接拦截。</span></button>
+          </div>
+        `
+      });
+    }
+
+    function addManualBlacklistRow(data) {
+      const riskId = `RISK-MANUAL-${manualIndex++}`;
+      const level = escapeHtml(data.level);
+      const userId = escapeHtml(data.userId);
+      const roomId = data.roomId ? `房间 ${escapeHtml(data.roomId)}` : "未绑定房间";
+      const packetId = data.packetId ? escapeHtml(data.packetId) : "手动加黑";
+      const packetSub = data.packetId ? "人工关联红包" : "无关联红包";
+      const source = escapeHtml(data.source);
+      const duration = escapeHtml(data.duration);
+      const reason = escapeHtml(data.reason || `${data.source}添加，${level}黑名单，有效期${data.duration}`);
+      const row = document.createElement("tr");
+      row.className = rowClassForLevel(data.level);
+      row.innerHTML = `
+        <td class="main-cell"><strong>${riskId}</strong><div class="sub">手动添加</div></td>
+        <td>
+          <div class="blacklist-user-card">
+            <strong>UID ${userId}</strong>
+            <div class="blacklist-meta">
+              ${levelMiniBadge(data.level)}
+              <span class="mini-badge blue">${source}</span>
+              <span class="mini-badge">${duration}</span>
+            </div>
+            <div class="sub">${roomId}</div>
+          </div>
+        </td>
+        <td class="main-cell"><strong>${packetId}</strong><div class="sub">${packetSub}</div></td>
+        <td>${levelRuleTag(data.level)}</td>
+        <td>${reason}</td>
+        <td>${levelStatusCell(data.level, "手动加黑已生效")}</td>
+        <td><span class="tag neutral">未发送</span></td>
+        <td><span class="tag green">已风控</span></td>
+        <td>${formatNow()}</td>
+        <td>${actionButtons(riskId)}</td>
+      `;
+      insertRiskRowByOperationTime(row);
+      blacklistCount.textContent = String(Number(blacklistCount.textContent || "0") + 1);
+      totalCount += 1;
+      tableTotal.textContent = `第 1-5 条 / 总共 ${totalCount} 条`;
+      actionDetail.innerHTML = `<strong>${riskId} 已加入${levelDisplayName(data.level)}</strong>UID ${userId} 已由${escapeHtml(data.source)}手动加黑，有效期${escapeHtml(data.duration)}。该记录已按操作时间插入风控命中明细列表。`;
+      showToast(`UID ${userId} 已加入${levelDisplayName(data.level)}`);
+    }
+
+    function handleRiskAction(button) {
+      const action = button.dataset.action;
+      const riskId = button.dataset.risk;
+      const row = button.closest("tr");
+      const user = getRowUser(row);
+      if (action === "release") openReleaseModal(riskId, row, user);
+      if (action === "keep") openKeepModal(riskId, row, user);
+      if (action === "adjust") openAdjustModal(riskId, row, user);
+    }
+
+    openModalBtn.addEventListener("click", openModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    cancelModalBtn.addEventListener("click", closeModal);
+    modalMask.addEventListener("click", (event) => {
+      if (event.target === modalMask) closeModal();
+    });
+    closeOperationBtn.addEventListener("click", closeOperationModal);
+    operationMask.addEventListener("click", (event) => {
+      if (event.target === operationMask) {
+        closeOperationModal();
+        return;
+      }
+      if (event.target.closest("[data-operation-cancel]")) {
+        closeOperationModal();
+        return;
+      }
+      if (event.target.closest("[data-operation-release]")) {
+        confirmRelease();
+        return;
+      }
+      const keepButton = event.target.closest("[data-operation-keep]");
+      if (keepButton) {
+        confirmKeep(keepButton.dataset.operationKeep);
+        return;
+      }
+      const levelButton = event.target.closest("[data-operation-level]");
+      if (levelButton) confirmAdjust(levelButton.dataset.operationLevel);
+    });
+
+    blacklistForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const userId = userIdInput.value.trim();
+      if (!userId) {
+        formError.classList.add("is-visible");
+        userIdInput.focus();
+        return;
+      }
+      addManualBlacklistRow({
+        userId,
+        level: document.querySelector("#blacklist-level").value,
+        source: document.querySelector("#blacklist-source").value,
+        roomId: document.querySelector("#blacklist-room-id").value.trim(),
+        packetId: document.querySelector("#blacklist-packet-id").value.trim(),
+        duration: document.querySelector("#blacklist-duration").value,
+        reason: document.querySelector("#blacklist-reason").value.trim()
+      });
+      blacklistForm.reset();
+      document.querySelector("#blacklist-level").value = "限制级";
+      document.querySelector("#blacklist-source").value = "运营巡房";
+      document.querySelector("#blacklist-duration").value = "7 天";
+      closeModal();
+    });
+
+    riskTableBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+      handleRiskAction(button);
+    });
+
+    openBlacklistFromLink();
+    sortRiskRowsByTime();
+  </script>
+</body>
+</html>

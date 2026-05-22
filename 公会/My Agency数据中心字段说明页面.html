@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面2｜Data Center 字段直接标注说明</title>
+  <style>
+    :root {
+      --black: #000;
+      --phone-dark: #1b130f;
+      --white: #fff;
+      --text: #121722;
+      --muted: #697180;
+      --red: #ff4d4f;
+      --blue-bg: #edf7ff;
+      --blue-card: #dceeff;
+      --blue-cell: #d3e5f4;
+      --salary-bg: #fbf5ef;
+      --salary-cell: #f4eee8;
+      --purple-bg: #f5e9fb;
+      --purple-cell: #ede4f4;
+      --line: rgba(18, 23, 34, 0.08);
+      --orange: #ff8a00;
+      --pink: #c92ce8;
+      --free: #3c8df7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--black);
+      color: var(--white);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .stage {
+      position: relative;
+      width: 1180px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 0 80px;
+    }
+
+    .page-title {
+      position: absolute;
+      left: 42px;
+      top: 28px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .legend {
+      position: absolute;
+      right: 42px;
+      top: 52px;
+      width: 360px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 2px solid rgba(255, 77, 79, 0.7);
+      background: rgba(255, 77, 79, 0.08);
+    }
+
+    .legend h3 {
+      margin: 0 0 8px;
+      color: var(--red);
+      font-size: 24px;
+    }
+
+    .legend p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .phone {
+      width: 430px;
+      min-height: 2710px;
+      margin: 0 auto;
+      background: #eef8ff;
+      color: var(--text);
+    }
+
+    .status {
+      height: 32px;
+      padding: 6px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: var(--phone-dark);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .topbar {
+      height: 56px;
+      display: grid;
+      grid-template-columns: 56px 1fr 56px;
+      align-items: center;
+      background: var(--phone-dark);
+      color: #fff;
+    }
+
+    .back {
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .content {
+      padding: 8px 10px 34px;
+    }
+
+    .block {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(20, 49, 85, 0.06);
+    }
+
+    .block.blue {
+      background: var(--blue-bg);
+    }
+
+    .block.salary {
+      background: var(--salary-bg);
+    }
+
+    .block.purple {
+      background: var(--purple-bg);
+    }
+
+    .block.deprecated-section {
+      overflow: hidden;
+      border: 2px dashed rgba(255, 77, 79, 0.58);
+    }
+
+    .block.deprecated-section::before {
+      content: "×";
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: grid;
+      place-items: center;
+      color: rgba(255, 77, 79, 0.9);
+      font-size: 220px;
+      line-height: 1;
+      font-weight: 900;
+      text-shadow: 0 10px 28px rgba(255, 77, 79, 0.28);
+      pointer-events: none;
+    }
+
+    .block.deprecated-section::after {
+      content: "整段不要：Agent as host Salary 模块废弃";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 9;
+      transform: translate(-50%, -50%);
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255, 77, 79, 0.94);
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 0 10px 24px rgba(255, 77, 79, 0.26);
+      pointer-events: none;
+    }
+
+    .block.deprecated-section .field {
+      opacity: 0.58;
+    }
+
+    .block h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .section-icon {
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      font-size: 18px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .field {
+      position: relative;
+      min-height: 88px;
+      padding: 9px 8px 8px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .blue .field,
+    .streamer-card .field {
+      background: var(--blue-cell);
+    }
+
+    .salary .field {
+      background: var(--salary-cell);
+    }
+
+    .purple .field {
+      background: var(--purple-cell);
+    }
+
+    .field.wide {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      min-height: 30px;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .label.yellow-label {
+      display: inline-block;
+      min-height: 0;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255, 239, 100, 0.82);
+      color: #8a5d00;
+      font-weight: 900;
+    }
+
+    .value {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+      line-height: 1.15;
+      color: #000;
+    }
+
+    .value.orange {
+      color: var(--orange);
+    }
+
+    .explain {
+      display: block;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(255, 77, 79, 0.46);
+      color: var(--red);
+      font-size: 9px;
+      line-height: 1.32;
+      font-weight: 900;
+    }
+
+    .explain.yellow-note {
+      color: #d59600;
+      border-top-color: rgba(245, 174, 0, 0.58);
+    }
+
+    .marker {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 4px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .summary-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .level {
+      color: #4d5562;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .target {
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 6px;
+      border-radius: 999px;
+      background: #cfd9e5;
+      overflow: hidden;
+      margin: 8px 0 12px;
+    }
+
+    .progress span {
+      display: block;
+      width: 28%;
+      height: 100%;
+      background: linear-gradient(90deg, #13c4ff, #245bff);
+    }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .time-row strong {
+      color: #2377ff;
+      font-weight: 800;
+    }
+
+    .search {
+      height: 32px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      background: #d2dde7;
+      color: #747b86;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .streamer-card {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 12px 10px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #dff0ff, #f1fbff);
+      box-shadow: 0 3px 10px rgba(26, 77, 132, 0.08);
+    }
+
+    .streamer-head {
+      display: grid;
+      grid-template-columns: 34px 72px 1fr 28px;
+      gap: 8px;
+      align-items: center;
+      min-height: 72px;
+    }
+
+    .rank {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #44f0e5, #7ba2ff);
+    }
+
+    .avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 54%, #f4d272 0 30%, transparent 31%),
+        linear-gradient(135deg, #dceffd, #f4c552);
+    }
+
+    .avatar.placeholder {
+      background:
+        radial-gradient(circle at 50% 55%, #f4d272 0 28%, transparent 29%),
+        linear-gradient(135deg, #f8e9c5, #fff4d8);
+    }
+
+    .avatar.pink {
+      background: linear-gradient(135deg, #f8cdf4, #b8ec9c);
+    }
+
+    .streamer-name {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .policy {
+      width: fit-content;
+      margin-top: 4px;
+      padding: 5px 18px;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .policy.weekly {
+      background: var(--pink);
+    }
+
+    .policy.free {
+      background: var(--free);
+    }
+
+    .toggle {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #111827;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .sub-title {
+      margin: 10px 0 8px;
+      font-size: 14px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      padding-top: 8px;
+    }
+
+    .no-more {
+      text-align: center;
+      color: #9aa2ad;
+      font-size: 12px;
+      margin: 20px 0 12px;
+    }
+
+    .home-indicator {
+      width: 136px;
+      height: 4px;
+      margin: 12px auto 0;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    @media (max-width: 980px) {
+      .stage {
+        width: 100%;
+        padding: 12px 10px 40px;
+      }
+
+      .page-title,
+      .legend {
+        position: static;
+        max-width: 430px;
+        margin: 12px auto;
+      }
+
+      .phone {
+        width: min(430px, 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="page-title">Page 2 · Data Center 字段直接标注说明</div>
+
+    <aside class="legend">
+      <h3>交互说明</h3>
+      <p>从 My Agency 页面点击模块右上角小图标进入本页。红色小字直接贴在数据字段下方，说明对应字段统计口径。</p>
+    </aside>
+
+    <section class="phone" aria-label="Data Center 字段直接说明页面">
+      <div class="status">
+        <span>10:53</span>
+        <span>4G · 42</span>
+      </div>
+      <div class="topbar">
+        <a class="back" href="My Agency字段说明页面1.html">‹</a>
+        <h1>Data Center</h1>
+        <div></div>
+      </div>
+
+      <div class="content">
+        <section class="block blue">
+          <h2>My Diamonds received</h2>
+          <div class="section-icon">▤</div>
+          <div class="summary-head">
+            <div class="level">LV0（$0.14）<span class="explain">当前钻石薪资等级和该等级对应薪资</span></div>
+            <div class="target">💎 5009 / 300000<span class="explain">当前本期钻石流水 / 下一档目标钻石流水</span></div>
+          </div>
+          <div class="progress"><span></span></div>
+          <div class="field-grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Current Diamond target</span>
+              <span class="value">💎 5009</span>
+              <span class="explain">本期钻石流水，按当前结算周期统计</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Diamond Balance</span>
+              <span class="value">💎 5009</span>
+              <span class="explain">当前钻石余额，实时统计</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="time-row">
+          <span>Time</span>
+          <strong>📅 2026/05/01 - 2026/05/15</strong>
+          <span class="explain" style="grid-column:1 / -1;">当前数据中心查询周期；本期字段按该周期统计，余额/欠款类字段实时展示</span>
+        </div>
+
+        <section class="block salary">
+          <h2>Agency current salary</h2>
+          <div class="field-grid">
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency total Salary</span>
+              <span class="value">$ 8.71</span>
+              <span class="explain">公会总工资 = 主播工资 + 主播TG + 公会长工资 + 公会长TG</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agency total Salary Balance</span>
+              <span class="value">$ 8.71</span>
+              <span class="explain">公会工资余额 = 公会总工资 - 公会预支欠款 - 公会长借支欠款</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">All host's Salary</span>
+              <span class="value">$ 0.6</span>
+              <span class="explain yellow-note">所有主播薪资 = 主播工资 + 主播TG奖励，包含公会长作为主播的工资跟tg奖励</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label yellow-label">Agent Commission</span>
+              <span class="value">$ 8.25</span>
+              <span class="explain yellow-note">公会长工资 = 公会长薪资 + 公会长TG奖励（不包含公会长作为主播的工资跟tg奖）</span>
+            </div>
+            <div class="field wide">
+              <span class="marker">?</span>
+              <span class="label">Agency Advance Salary</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会已预支欠款金额 = 公会长预支欠款 + 主播预支欠款</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent borrowed amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长已借支欠款金额，实时展示</span>
+            </div>
+            <div class="field">
+              <span class="marker">?</span>
+              <span class="label">Agent borrowable amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长可借支金额 = 借支额度 - 已借支欠款</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block purple deprecated-section">
+          <h2>Agent as host Salary</h2>
+          <div class="field-grid">
+            <div class="field">
+              <span class="label">Agent as host Salary</span>
+              <span class="value">$ 0.14</span>
+              <span class="explain">公会长作为主播工资 + 公会长作为主播TG奖励</span>
+            </div>
+            <div class="field">
+              <span class="label">Agent As host Total Salary</span>
+              <span class="value">$ 0.14</span>
+              <span class="explain">公会长作为主播总工资，含当前主播身份工资和TG</span>
+            </div>
+            <div class="field">
+              <span class="label">Diamond salary level</span>
+              <span class="value orange">LV 0</span>
+              <span class="explain">本期钻石流水匹配到的薪资档位</span>
+            </div>
+            <div class="field">
+              <span class="label">Effective days  ›</span>
+              <span class="value">0 Days</span>
+              <span class="explain">本期有效天数，可点击查看有效天明细</span>
+            </div>
+            <div class="field">
+              <span class="label">Agent borrowed amount</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长已借支欠款金额，实时展示</span>
+            </div>
+            <div class="field">
+              <span class="label">Current TG Reward</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长作为主播当前周期 TG 奖励</span>
+            </div>
+            <div class="field wide">
+              <span class="label">Agent as host Advance Salary</span>
+              <span class="value">$ 0</span>
+              <span class="explain">公会长作为主播当前未抵扣预支欠款</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block blue">
+          <h2>Streamer Details</h2>
+          <div class="search">🔍 Please Enter User ID<span class="explain" style="margin-left:8px;padding-top:0;border:0;">按主播 ID 搜索明细</span></div>
+
+          <article class="streamer-card">
+            <div class="streamer-head">
+              <div class="rank">1</div>
+              <div class="avatar"></div>
+              <div class="streamer-name">u1358466<br>ID: 8562354<div class="policy weekly">Weekly</div><span class="explain">主播昵称、用户ID、薪资政策</span></div>
+              <div class="toggle">⌄</div>
+            </div>
+          </article>
+
+          <article class="streamer-card">
+            <div class="streamer-head">
+              <div class="rank">2</div>
+              <div class="avatar placeholder"></div>
+              <div class="streamer-name">koilko<br>ID: 8510510<div class="policy free">Free</div><span class="explain">Free 表示自由政策主播</span></div>
+              <div class="toggle">⌃</div>
+            </div>
+            <div class="sub-title">Diamond</div>
+            <div class="field-grid">
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Current Diamond target</span>
+                <span class="value">💎 520000</span>
+                <span class="explain">本周期主播钻石流水</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Diamond Balance</span>
+                <span class="value">💎 10000</span>
+                <span class="explain">当前主播钻石余额，实时展示</span>
+              </div>
+            </div>
+            <div class="sub-title">Salary</div>
+            <div class="field-grid">
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Host Salary</span>
+                <span class="value">$ 0.46</span>
+                <span class="explain">主播实时工资或当前周期主播工资</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Host total Salary</span>
+                <span class="value">$ 0.46</span>
+                <span class="explain">主播总工资 = 主播工资 + 主播TG奖励</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Diamond salary level</span>
+                <span class="value orange">LV 0</span>
+                <span class="explain">本期钻石流水匹配的主播薪资档位</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Effective days  ›</span>
+                <span class="value">0 Days</span>
+                <span class="explain">本期有效天数，可点击进入明细</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">Salary balance</span>
+                <span class="value">$ 0.46</span>
+                <span class="explain">主播工资余额 = 主播工资 + 主播TG - 已预支欠款</span>
+              </div>
+              <div class="field">
+                <span class="marker">?</span>
+                <span class="label">TG Reward</span>
+                <span class="value">$ 0</span>
+                <span class="explain">本周期主播 TG 奖励</span>
+              </div>
+              <div class="field wide">
+                <span class="marker">?</span>
+                <span class="label">Host Advance Salary</span>
+                <span class="value">$ 0</span>
+                <span class="explain">当前主播预支欠款金额，实时展示</span>
+              </div>
+              <div class="field wide">
+                <span class="marker">?</span>
+                <span class="label">Agent shared salary</span>
+                <span class="value">$ 8.11</span>
+                <span class="explain">公会长从该主播收入中获得的分成 / 共享薪资</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="streamer-card">
+            <div class="streamer-head">
+              <div class="rank">3</div>
+              <div class="avatar placeholder"></div>
+              <div class="streamer-name">u1360235<br>ID: 8529465<div class="policy free">Free</div><span class="explain">主播基础信息和薪资政策</span></div>
+              <div class="toggle">⌃</div>
+            </div>
+            <div class="sub-title">Diamond</div>
+            <div class="field-grid">
+              <div class="field">
+                <span class="label">Current Diamond target</span>
+                <span class="value">💎 0</span>
+                <span class="explain">该主播本周期钻石流水为 0</span>
+              </div>
+              <div class="field">
+                <span class="label">Diamond Balance</span>
+                <span class="value">💎 0</span>
+                <span class="explain">当前钻石余额为 0</span>
+              </div>
+              <div class="field">
+                <span class="label">Host Salary</span>
+                <span class="value">$ 0</span>
+                <span class="explain">无流水时工资为 0</span>
+              </div>
+              <div class="field">
+                <span class="label">Host total Salary</span>
+                <span class="value">$ 0</span>
+                <span class="explain">主播工资 + TG 奖励合计为 0</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="streamer-card">
+            <div class="streamer-head">
+              <div class="rank">4</div>
+              <div class="avatar pink"></div>
+              <div class="streamer-name">u1358467<br>ID: 8503767<div class="policy free">Free</div><span class="explain">收起状态仅展示基础身份信息</span></div>
+              <div class="toggle">⌄</div>
+            </div>
+          </article>
+
+          <div class="no-more">- No more -</div>
+        </section>
+
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

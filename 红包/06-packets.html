@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红包后台 - 红包数据查询</title>
+  <link rel="stylesheet" href="hongbao-console-redesign.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>WeChill后台</div>
+    </div>
+
+    <div class="nav-scroll">
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◔</span><span>统计</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">▣</span><span>红包玩法</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+        <div class="nav-children">
+          <a class="nav-subitem" href="../hongbao-config-redesign.html">红包配置</a>
+          <a class="nav-subitem is-active" href="06-packets.html">红包数据查询</a>
+          <a class="nav-subitem" href="09-claim-records.html">红包领取记录</a>
+          <a class="nav-subitem" href="04-risk.html">红包风控明细</a>
+          <a class="nav-subitem" href="07-rebates.html">红包返奖记录</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◎</span><span>用户</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◌</span><span>房间</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="breadcrumb">红包玩法 / 红包管理 / <strong>红包数据查询</strong></div>
+      <div class="topbar-right">
+        <span>运营后台</span>
+        <div class="avatar">LX</div>
+      </div>
+    </div>
+
+    <div class="page">
+      <section class="summary-grid five-col">
+        <article class="summary-card">
+          <div class="summary-label">今日红包 GMV</div>
+          <div class="summary-value">2.46M</div>
+          <div class="summary-foot">金币红包 78%，礼物红包 22%；只统计发送成功红包。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">达标红包数</div>
+          <div class="summary-value">1,259</div>
+          <div class="summary-foot">A档 846，B档 413；礼物红包按总价值命中分档。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">今日返奖金额</div>
+          <div class="summary-value">7,683</div>
+          <div class="summary-foot">A档 1,019 金币，B档 6,664 金币；与返奖记录页口径一致。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">红包领完率</div>
+          <div class="summary-value">78.1%</div>
+          <div class="summary-foot">领完后才可进入返奖开奖；过期未领完返还剩余金额。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">风控拦截</div>
+          <div class="summary-value">14</div>
+          <div class="summary-foot">命中黑名单、同设备/IP、B档聚集或预算熔断时不参与返奖。</div>
+        </article>
+      </section>
+
+      <section class="card filter-card">
+        <div class="filter-row">
+          <div class="field compact">
+            <label>发送时间</label>
+            <input class="control" value="2026-04-16 00:00 ~ 2026-04-16 23:59">
+          </div>
+          <div class="field compact">
+            <label>红包 ID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>发送人 UID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>房间 ID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>红包类型</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>金币红包</option>
+              <option>礼物红包</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>返奖档位</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>未达标</option>
+              <option>A档：20k - 49,999</option>
+              <option>B档：≥ 50k</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>红包状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>待领取</option>
+              <option>已领完</option>
+              <option>过期部分领取</option>
+              <option>过期无人领取</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>返奖状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>未触发</option>
+              <option>未达到返奖条件</option>
+              <option>待开奖</option>
+              <option>已中奖</option>
+              <option>未中奖</option>
+              <option>风控拦截</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>风控状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>危险级：禁发禁领</option>
+              <option>限制级：不参与返奖</option>
+              <option>观察名单</option>
+              <option>正常</option>
+            </select>
+          </div>
+          <div class="action-row">
+            <button class="btn secondary">重置</button>
+            <button class="btn primary">查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-toolbar">
+          <div>
+            <div class="table-title">红包数据列表</div>
+            <div class="table-subtitle">同时查看红包基础信息、领取进度、返奖状态、风控状态和预算影响。</div>
+          </div>
+          <div class="table-tools">
+            <button class="btn light">导出</button>
+            <button class="icon-btn" title="刷新">↻</button>
+            <button class="icon-btn" title="列设置">☷</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>红包 ID</th>
+                <th>发送人 / 房间</th>
+                <th>红包类型</th>
+                <th>金额 / 礼物</th>
+                <th>领取配置</th>
+                <th>领取进度</th>
+                <th>返奖资格</th>
+                <th>返奖状态</th>
+                <th>风控状态</th>
+                <th>预算影响</th>
+                <th>发送时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="packet-table-body">
+              <tr>
+                <td class="main-cell"><strong>HB202604160012</strong><div class="sub">开奖主键</div></td>
+                <td class="main-cell"><strong>UID 983211</strong><div class="sub">房间 880321</div></td>
+                <td><span class="tag blue">金币红包</span></td>
+                <td class="main-cell"><strong>20,000 金币</strong><div class="sub">A档金额</div></td>
+                <td class="main-cell"><strong>10 份 / 随机</strong><div class="sub">在房用户可领</div></td>
+                <td><span class="tag green">10 / 10 已领完</span></td>
+                <td><span class="tag yellow">A档：3%返5%</span></td>
+                <td><span class="tag green">已中奖 / 返 1,000</span></td>
+                <td><span class="tag neutral">正常</span></td>
+                <td>+1,000 金币</td>
+                <td>2026-04-16 10:08</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-packet-action="detail" data-packet-id="HB202604160012">详情</button>
+                    <button class="link-btn" data-packet-action="claims" data-packet-id="HB202604160012">领取记录</button>
+                    <button class="link-btn danger" data-packet-action="risk" data-packet-id="HB202604160012">风控</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>HB202604160016</strong><div class="sub">礼物总价值</div></td>
+                <td class="main-cell"><strong>UID 320988</strong><div class="sub">房间 991200</div></td>
+                <td><span class="tag purple">礼物红包</span></td>
+                <td class="main-cell"><strong>66,640 金币</strong><div class="sub">星光 × 40，领取得钻石</div></td>
+                <td class="main-cell"><strong>20 份 / 随机</strong><div class="sub">在麦用户可领</div></td>
+                <td><span class="tag green">20 / 20 已领完</span></td>
+                <td><span class="tag red">B档：5%返10%</span></td>
+                <td><span class="tag green">已中奖 / 返 6,664</span></td>
+                <td><span class="tag blue">观察名单</span></td>
+                <td>+6,664 金币</td>
+                <td>2026-04-16 10:14</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-packet-action="detail" data-packet-id="HB202604160016">详情</button>
+                    <button class="link-btn" data-packet-action="claims" data-packet-id="HB202604160016">领取记录</button>
+                    <button class="link-btn danger" data-packet-action="risk" data-packet-id="HB202604160016">风控</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>HB202604160021</strong><div class="sub">B档金币</div></td>
+                <td class="main-cell"><strong>UID 601225</strong><div class="sub">房间 880654</div></td>
+                <td><span class="tag blue">金币红包</span></td>
+                <td class="main-cell"><strong>50,000 金币</strong><div class="sub">B档金额</div></td>
+                <td class="main-cell"><strong>20 份 / 均分</strong><div class="sub">在麦用户可领</div></td>
+                <td><span class="tag yellow">18 / 20 已过期</span></td>
+                <td><span class="tag red">B档：5%返10%</span></td>
+                <td><span class="tag neutral">未触发：未领完</span></td>
+                <td><span class="tag neutral">正常</span></td>
+                <td>0</td>
+                <td>2026-04-16 10:22</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-packet-action="detail" data-packet-id="HB202604160021">详情</button>
+                    <button class="link-btn" data-packet-action="claims" data-packet-id="HB202604160021">领取记录</button>
+                    <button class="link-btn danger" data-packet-action="risk" data-packet-id="HB202604160021">风控</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>HB202604160042</strong><div class="sub">blocked_by_risk</div></td>
+                <td class="main-cell"><strong>UID 883102</strong><div class="sub">房间 991200</div></td>
+                <td><span class="tag purple">礼物红包</span></td>
+                <td class="main-cell"><strong>50,000 金币</strong><div class="sub">礼物总价值命中 B档</div></td>
+                <td class="main-cell"><strong>15 份 / 随机</strong><div class="sub">在房用户可领</div></td>
+                <td><span class="tag green">15 / 15 已领完</span></td>
+                <td><span class="tag red">B档：5%返10%</span></td>
+                <td><span class="tag red">风控拦截</span></td>
+                <td><span class="tag red">危险级：禁发禁领</span></td>
+                <td>0</td>
+                <td>2026-04-16 10:31</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-packet-action="detail" data-packet-id="HB202604160042">详情</button>
+                    <button class="link-btn" data-packet-action="claims" data-packet-id="HB202604160042">领取记录</button>
+                    <button class="link-btn danger" data-packet-action="risk" data-packet-id="HB202604160042">风控</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>HB202604160071</strong><div class="sub">claim too fast</div></td>
+                <td class="main-cell"><strong>UID 778821</strong><div class="sub">房间 880321</div></td>
+                <td><span class="tag blue">金币红包</span></td>
+                <td class="main-cell"><strong>50,000 金币</strong><div class="sub">B档金额</div></td>
+                <td class="main-cell"><strong>10 份 / 随机</strong><div class="sub">在房用户可领</div></td>
+                <td><span class="tag green">10 / 10 已领完</span></td>
+                <td><span class="tag red">B档：5%返10%</span></td>
+                <td><span class="tag yellow">待人工复核</span></td>
+                <td><span class="tag yellow">限制级：不参与返奖</span></td>
+                <td>冻结</td>
+                <td>2026-04-16 11:02</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-packet-action="detail" data-packet-id="HB202604160071">详情</button>
+                    <button class="link-btn" data-packet-action="claims" data-packet-id="HB202604160071">领取记录</button>
+                    <button class="link-btn danger" data-packet-action="risk" data-packet-id="HB202604160071">风控</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>第 1-5 条 / 总共 9,182 条</span>
+          <div class="pager"><div class="page-btn">‹</div><div class="page-btn is-active">1</div><div class="page-btn">2</div><div class="page-btn">3</div><div class="page-btn">›</div></div>
+        </div>
+
+        <div class="tips-bar">
+          <span>金币红包领取人获得金币；礼物红包领取人获得等价钻石，发送方返奖获得金币。</span>
+          <span>红包 ID 是唯一开奖主键，重试不会重复开奖；发奖失败进入补发队列。</span>
+        </div>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">红包详情概览</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <tbody>
+                <tr><th>红包 ID</th><td>HB202604160012</td><th>发送人</th><td>UID 983211</td></tr>
+                <tr><th>红包类型</th><td>金币红包</td><th>发送房间</th><td>880321</td></tr>
+                <tr><th>总金额</th><td>20,000 金币</td><th>份数</th><td>10 份</td></tr>
+                <tr><th>领取条件</th><td>在房用户</td><th>发放类型</th><td>随机</td></tr>
+                <tr><th>倒计时</th><td>3 分钟</td><th>悬浮窗状态</th><td>已消失：已领完</td></tr>
+                <tr><th>返奖资格</th><td colspan="3">A档，领完后 3% 概率返还总金额的 5%，本次中奖返 1,000 金币。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">选中返奖详情</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <tbody>
+                <tr><th>返奖记录 ID</th><td>REBATE-20260416-0012</td><th>红包 ID</th><td>HB202604160012</td></tr>
+                <tr><th>发送人</th><td>UID 983211</td><th>房间</th><td>880321</td></tr>
+                <tr><th>红包金额</th><td>20,000 金币</td><th>返奖档位</th><td>A档</td></tr>
+                <tr><th>返奖概率</th><td>3%</td><th>返奖比例</th><td>5%</td></tr>
+                <tr><th>返奖金额</th><td>1,000 金币</td><th>取整方式</th><td>向下取整</td></tr>
+                <tr><th>钱包事务</th><td colspan="3">TXN-20260416-884521，已写入发送人金币账户。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">房间与风控指标</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <thead>
+                <tr><th>指标</th><th>当前值</th><th>判定</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>10 分钟 B档红包数</td><td>4</td><td><span class="tag green">正常</span></td></tr>
+                <tr><td>自然礼物 / 语音互动</td><td>活跃</td><td><span class="tag green">正常</span></td></tr>
+                <tr><td>红包领完率</td><td>82%</td><td><span class="tag neutral">观察</span></td></tr>
+                <tr><td>房间中奖率</td><td>4.7%</td><td><span class="tag green">区间内</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">预算扣减明细</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <thead>
+                <tr><th>预算项</th><th>金币</th><th>说明</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>全站每日预算上限</td><td>2,000,000</td><td>约 200 美金</td></tr>
+                <tr><td>今日已发放返奖</td><td>7,683</td><td>发放成功 + 已补发成功</td></tr>
+                <tr><td>今日预占返奖</td><td>6,664</td><td>待补发记录暂不释放预算</td></tr>
+                <tr><td>剩余可用预算</td><td>1,985,653</td><td>触顶后新红包记录为 blocked_by_budget</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-mask" id="packet-detail-mask" aria-hidden="true">
+    <section class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="packet-detail-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="packet-detail-title">红包详情</div>
+          <div class="modal-subtitle" id="packet-detail-subtitle">红包 ID 维度完整明细</div>
+        </div>
+        <button class="modal-close" type="button" data-close-modal>×</button>
+      </div>
+      <div class="modal-body" id="packet-detail-body"></div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" data-close-modal>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="packet-claim-mask" aria-hidden="true">
+    <section class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="packet-claim-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="packet-claim-title">领取记录列表</div>
+          <div class="modal-subtitle" id="packet-claim-subtitle">红包领取明细</div>
+        </div>
+        <button class="modal-close" type="button" data-close-modal>×</button>
+      </div>
+      <div class="modal-body" id="packet-claim-body"></div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" data-close-modal>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="single-claim-mask" aria-hidden="true">
+    <section class="modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="single-claim-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="single-claim-title">领取记录详情</div>
+          <div class="modal-subtitle" id="single-claim-subtitle">单条领取明细</div>
+        </div>
+        <button class="modal-close" type="button" data-close-modal>×</button>
+      </div>
+      <div class="modal-body" id="single-claim-body"></div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" data-close-modal>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const packetTableBody = document.querySelector("#packet-table-body");
+    const packetDetailMask = document.querySelector("#packet-detail-mask");
+    const packetClaimMask = document.querySelector("#packet-claim-mask");
+    const singleClaimMask = document.querySelector("#single-claim-mask");
+    const packetDetailTitle = document.querySelector("#packet-detail-title");
+    const packetDetailSubtitle = document.querySelector("#packet-detail-subtitle");
+    const packetDetailBody = document.querySelector("#packet-detail-body");
+    const packetClaimTitle = document.querySelector("#packet-claim-title");
+    const packetClaimSubtitle = document.querySelector("#packet-claim-subtitle");
+    const packetClaimBody = document.querySelector("#packet-claim-body");
+    const singleClaimTitle = document.querySelector("#single-claim-title");
+    const singleClaimSubtitle = document.querySelector("#single-claim-subtitle");
+    const singleClaimBody = document.querySelector("#single-claim-body");
+
+    const packetClaimRecords = {
+      HB202604160012: [
+        ["CLAIM-771901", "UID 112345", "2,456 金币", "领取成功", "2.4s", "正常", "2026-04-16 10:08:45", "iOS / DEV-21A7 / 103.61.1.18"],
+        ["CLAIM-771902", "UID 983211", "1,036 金币", "领取成功", "4.1s", "发送人自领", "2026-04-16 10:10:02", "Android / DEV-93B1 / 103.61.1.21"],
+        ["CLAIM-771903", "UID 443012", "3,188 金币", "领取成功", "2.8s", "正常", "2026-04-16 10:09:11", "iOS / DEV-7710 / 103.61.1.36"]
+      ],
+      HB202604160016: [
+        ["CLAIM-771944", "UID 223456", "星光 × 1 / 999 钻石", "领取成功", "3.3s", "高风险房间", "2026-04-16 10:18:20", "Android / DEV-68F2 / 45.19.82.10"],
+        ["CLAIM-771945", "UID 229901", "星光 × 2 / 1,998 钻石", "领取成功", "2.6s", "正常", "2026-04-16 10:18:28", "iOS / DEV-88C0 / 45.19.82.11"],
+        ["CLAIM-771946", "UID 223456", "星光 × 1 / 999 钻石", "领取成功", "2.1s", "固定用户组", "2026-04-16 10:18:41", "Android / DEV-68F2 / 45.19.82.10"]
+      ],
+      HB202604160021: [
+        ["CLAIM-771976", "UID 601922", "2,500 金币", "领取成功", "2.7s", "正常", "2026-04-16 10:22:19", "iOS / DEV-2FC1 / 18.92.10.44"],
+        ["CLAIM-771977", "UID 601934", "2,500 金币", "领取成功", "3.1s", "正常", "2026-04-16 10:22:31", "Android / DEV-551A / 18.92.10.46"],
+        ["CLAIM-771978", "UID 778821", "-", "不满足领取条件", "2.9s", "正常", "2026-04-16 10:24:13", "Android / DEV-98B4 / 18.92.10.51"]
+      ],
+      HB202604160042: [
+        ["CLAIM-771990", "UID 883102", "礼物折算 3,333 钻石", "领取成功", "680ms", "危险级黑名单", "2026-04-16 10:31:14", "模拟器 / DEV-EMU1 / 103.20.81.9"],
+        ["CLAIM-771991", "UID 883903", "礼物折算 3,333 钻石", "领取成功", "711ms", "同设备关联", "2026-04-16 10:31:18", "模拟器 / DEV-EMU1 / 103.20.81.9"],
+        ["CLAIM-771992", "UID 884120", "礼物折算 3,333 钻石", "领取成功", "754ms", "同 IP 关联", "2026-04-16 10:31:21", "Android / DEV-339A / 103.20.81.9"]
+      ],
+      HB202604160071: [
+        ["CLAIM-772006", "UID 190245", "3,028 金币", "领取成功", "286ms", "< 500ms 可疑", "2026-04-16 11:02:04", "Android / DEV-7C12 / 59.18.70.21"],
+        ["CLAIM-772007", "UID 190245", "4,129 金币", "领取成功", "412ms", "连续快速领取", "2026-04-16 11:02:10", "Android / DEV-7C12 / 59.18.70.21"],
+        ["CLAIM-772008", "UID 558120", "2,618 金币", "领取成功", "2.5s", "正常", "2026-04-16 11:02:19", "iOS / DEV-312A / 59.18.70.31"]
+      ]
+    };
+
+    const packetRebateDetails = {
+      HB202604160012: {
+        recordId: "REBATE-20260416-0012",
+        tier: "A档",
+        probability: "3%",
+        ratio: "5%",
+        amount: "1,000 金币",
+        rounding: "向下取整",
+        wallet: "TXN-20260416-884521，已写入发送人金币账户。"
+      },
+      HB202604160016: {
+        recordId: "REBATE-20260416-0016",
+        tier: "B档",
+        probability: "5%",
+        ratio: "10%",
+        amount: "6,664 金币",
+        rounding: "向下取整",
+        wallet: "钱包服务超时，待补发后写入发送人金币账户。"
+      }
+    };
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function openMask(mask) {
+      mask.classList.add("is-open");
+      mask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeMask(mask) {
+      mask.classList.remove("is-open");
+      mask.setAttribute("aria-hidden", "true");
+    }
+
+    function toneFor(text) {
+      if (text.includes("危险") || text.includes("可疑") || text.includes("模拟器") || text.includes("拦截")) return "red";
+      if (text.includes("风险") || text.includes("关联") || text.includes("快速") || text.includes("待") || text.includes("不满足")) return "yellow";
+      if (text.includes("成功") || text.includes("正常") || text.includes("中奖")) return "green";
+      if (text.includes("礼物")) return "purple";
+      return "neutral";
+    }
+
+    function tag(text) {
+      return `<span class="tag ${toneFor(text)}">${escapeHTML(text)}</span>`;
+    }
+
+    function getPacketRow(button) {
+      const row = button.closest("tr");
+      const cells = row.querySelectorAll("td");
+      return {
+        packetId: button.dataset.packetId,
+        senderRoom: cells[1].innerText,
+        type: cells[2].innerText,
+        amount: cells[3].innerText,
+        config: cells[4].innerText,
+        progress: cells[5].innerText,
+        qualification: cells[6].innerText,
+        rebate: cells[7].innerText,
+        risk: cells[8].innerText,
+        budget: cells[9].innerText,
+        sendTime: cells[10].innerText
+      };
+    }
+
+    function matchText(value, pattern) {
+      const matched = value.match(pattern);
+      return matched ? matched[1] : "";
+    }
+
+    function textLines(value) {
+      return String(value)
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function primaryText(value) {
+      return textLines(value)[0] || "-";
+    }
+
+    function secondaryText(value) {
+      return textLines(value)[1] || "-";
+    }
+
+    function parseSenderRoom(value) {
+      return {
+        sender: primaryText(value),
+        room: secondaryText(value).replace(/^房间\s*/, "") || "-"
+      };
+    }
+
+    function parseConfig(value) {
+      const primary = primaryText(value);
+      const secondary = secondaryText(value);
+      const [count = "-", mode = "-"] = primary.split("/").map((item) => item.trim());
+      return {
+        count,
+        mode,
+        condition: secondary.replace(/可领$/, "") || "-"
+      };
+    }
+
+    function parseQualification(value) {
+      const primary = primaryText(value);
+      const matched = primary.match(/^(.档)[：:]\s*([^返]+)返(.+)$/);
+      return {
+        tier: matched ? matched[1] : primary,
+        probability: matched ? matched[2] : "-",
+        ratio: matched ? matched[3] : "-"
+      };
+    }
+
+    function renderPacketOverview(data) {
+      const senderRoom = parseSenderRoom(data.senderRoom);
+      const config = parseConfig(data.config);
+      return `
+        <div class="modal-section-stack">
+          <div class="modal-section-title">红包详情概览</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>红包 ID</th><td>${escapeHTML(data.packetId)}</td><th>发送人</th><td>${escapeHTML(senderRoom.sender)}</td></tr>
+              <tr><th>红包类型</th><td>${tag(primaryText(data.type))}</td><th>发送房间</th><td>${escapeHTML(senderRoom.room)}</td></tr>
+              <tr><th>总金额</th><td>${escapeHTML(primaryText(data.amount))}</td><th>金额说明</th><td>${escapeHTML(secondaryText(data.amount))}</td></tr>
+              <tr><th>领取条件</th><td>${escapeHTML(config.condition)}</td><th>发放类型</th><td>${escapeHTML(config.mode)}</td></tr>
+              <tr><th>领取份数</th><td>${escapeHTML(config.count)}</td><th>领取进度</th><td>${tag(primaryText(data.progress))}</td></tr>
+              <tr><th>风控状态</th><td>${tag(primaryText(data.risk))}</td><th>预算影响</th><td>${escapeHTML(data.budget)}</td></tr>
+              <tr><th>发送时间</th><td>${escapeHTML(data.sendTime)}</td><th>开奖主键</th><td>${escapeHTML(data.packetId)}</td></tr>
+              <tr><th>返奖资格</th><td colspan="3">${escapeHTML(`${primaryText(data.qualification)}，${primaryText(data.rebate)}`)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function hasUnmetRebateCondition(data) {
+      const rebate = primaryText(data.rebate);
+      const qualification = primaryText(data.qualification);
+      const progress = primaryText(data.progress);
+      return rebate.includes("未触发")
+        || rebate.includes("未达到返奖条件")
+        || qualification.includes("未达标")
+        || (!progress.includes("已领完") && !rebate.includes("风控拦截") && !rebate.includes("待人工复核"));
+    }
+
+    function unmetRebateReason(data) {
+      const rebate = primaryText(data.rebate);
+      const qualification = primaryText(data.qualification);
+      const progress = primaryText(data.progress);
+      if (qualification.includes("未达标")) return "红包金额或礼物总价值未命中 A/B 返奖档位。";
+      if (rebate.includes("未领完") || progress.includes("已过期")) return "红包未在有效期内全部领完，未进入返奖开奖链路。";
+      if (!progress.includes("已领完")) return "红包领取进度未满足开奖条件。";
+      return "当前红包未满足返奖开奖条件。";
+    }
+
+    function renderClaimSituation(data) {
+      const senderRoom = parseSenderRoom(data.senderRoom);
+      const config = parseConfig(data.config);
+      return `
+        <div class="modal-section-stack">
+          <div class="modal-section-title">领取情况</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>红包 ID</th><td>${escapeHTML(data.packetId)}</td><th>发送房间</th><td>${escapeHTML(senderRoom.room)}</td></tr>
+              <tr><th>领取条件</th><td>${escapeHTML(config.condition)}</td><th>发放类型</th><td>${escapeHTML(config.mode)}</td></tr>
+              <tr><th>领取份数</th><td>${escapeHTML(config.count)}</td><th>领取进度</th><td>${tag(primaryText(data.progress))}</td></tr>
+              <tr><th>返奖状态</th><td>${tag(primaryText(data.rebate))}</td><th>风控状态</th><td>${tag(primaryText(data.risk))}</td></tr>
+              <tr><th>预算影响</th><td>${escapeHTML(data.budget)}</td><th>发送时间</th><td>${escapeHTML(data.sendTime)}</td></tr>
+              <tr><th>未达原因</th><td colspan="3">${escapeHTML(unmetRebateReason(data))}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderSelectedRebate(data) {
+      const isWinner = primaryText(data.rebate).includes("已中奖");
+      if (hasUnmetRebateCondition(data)) {
+        return `
+          <div class="modal-section-stack">
+            <div class="modal-section-title">选中返奖详情</div>
+            <div class="detail-note"><strong>未达到返奖条件</strong></div>
+          </div>
+        `;
+      }
+
+      if (!isWinner) {
+        return `
+          <div class="modal-section-stack">
+            <div class="modal-section-title">选中返奖详情</div>
+            <div class="detail-note"><strong>未中奖</strong></div>
+          </div>
+        `;
+      }
+
+      const senderRoom = parseSenderRoom(data.senderRoom);
+      const qualification = parseQualification(data.qualification);
+      const fallbackAmount = matchText(primaryText(data.rebate), /返\s*([\d,]+)/);
+      const rebate = packetRebateDetails[data.packetId] || {
+        recordId: `REBATE-${data.packetId.replace("HB", "")}`,
+        tier: qualification.tier,
+        probability: qualification.probability,
+        ratio: qualification.ratio,
+        amount: fallbackAmount ? `${fallbackAmount} 金币` : primaryText(data.rebate),
+        rounding: "向下取整",
+        wallet: "已写入发送人金币账户。"
+      };
+
+      return `
+        <div class="modal-section-stack">
+          <div class="modal-section-title">选中返奖详情</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>返奖记录 ID</th><td>${escapeHTML(rebate.recordId)}</td><th>红包 ID</th><td>${escapeHTML(data.packetId)}</td></tr>
+              <tr><th>发送人</th><td>${escapeHTML(senderRoom.sender)}</td><th>房间</th><td>${escapeHTML(senderRoom.room)}</td></tr>
+              <tr><th>红包金额</th><td>${escapeHTML(primaryText(data.amount))}</td><th>返奖档位</th><td>${escapeHTML(rebate.tier)}</td></tr>
+              <tr><th>返奖概率</th><td>${escapeHTML(rebate.probability)}</td><th>返奖比例</th><td>${escapeHTML(rebate.ratio)}</td></tr>
+              <tr><th>返奖金额</th><td>${escapeHTML(rebate.amount)}</td><th>取整方式</th><td>${escapeHTML(rebate.rounding)}</td></tr>
+              <tr><th>钱包事务</th><td colspan="3">${escapeHTML(rebate.wallet)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function openRiskBlacklist(data) {
+      const uid = matchText(data.senderRoom, /UID\s*(\d+)/);
+      const roomId = matchText(data.senderRoom, /房间\s*(\d+)/);
+      const params = new URLSearchParams({
+        openBlacklist: "1",
+        packetId: data.packetId,
+        uid,
+        roomId,
+        source: "人工复核"
+      });
+      window.location.href = `04-risk.html?${params.toString()}#manual-blacklist`;
+    }
+
+    function renderPacketDetail(data) {
+      packetDetailTitle.textContent = "红包详情";
+      packetDetailSubtitle.textContent = `${data.packetId}｜${data.senderRoom.replaceAll("\n", " / ")}`;
+      packetDetailBody.innerHTML = `
+        <div class="modal-section-stack">
+          ${hasUnmetRebateCondition(data) ? renderClaimSituation(data) : renderPacketOverview(data)}
+          ${renderSelectedRebate(data)}
+        </div>
+      `;
+      openMask(packetDetailMask);
+    }
+
+    function renderRiskDetail(data) {
+      packetDetailTitle.textContent = "风控详情";
+      packetDetailSubtitle.textContent = `${data.packetId}｜${data.risk}`;
+      packetDetailBody.innerHTML = `
+        <div class="modal-section-stack">
+          <div class="modal-section-title">风控处理</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>红包 ID</th><td>${escapeHTML(data.packetId)}</td><th>发送人 / 房间</th><td>${escapeHTML(data.senderRoom)}</td></tr>
+              <tr><th>命中状态</th><td>${tag(data.risk)}</td><th>返奖处理</th><td>${tag(data.rebate)}</td></tr>
+              <tr><th>证据摘要</th><td colspan="3">${escapeHTML(data.risk.includes("危险") ? "设备指纹命中模拟器，领取接口疑似绕过客户端行为验证。" : "领取响应时间低于正常用户操作区间，已进入人工复核。")}</td></tr>
+              <tr><th>预算影响</th><td>${escapeHTML(data.budget)}</td><th>处理时间</th><td>${escapeHTML(data.sendTime)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+      openMask(packetDetailMask);
+    }
+
+    function renderClaimList(packetId) {
+      const records = packetClaimRecords[packetId] || [];
+      packetClaimTitle.textContent = "领取记录列表";
+      packetClaimSubtitle.textContent = `${packetId}｜共展示 ${records.length} 条样例记录`;
+      packetClaimBody.innerHTML = `
+        <div class="modal-section-stack">
+          <div class="claim-list-note"><span>红包 ID：${escapeHTML(packetId)}</span><span>领取流水按领取时间倒序展示</span></div>
+          <div class="table-wrap">
+            <table class="mini-table claim-table">
+              <thead>
+                <tr><th>领取单号</th><th>领取人</th><th>领取内容</th><th>风险标记</th><th>领取时间</th></tr>
+              </thead>
+              <tbody>
+                ${records.map((record) => `
+                  <tr class="clickable-row" data-packet-id="${escapeHTML(packetId)}" data-claim-id="${escapeHTML(record[0])}">
+                    <td class="main-cell"><strong>${escapeHTML(record[0])}</strong><div class="sub">${escapeHTML(record[7])}</div></td>
+                    <td>${escapeHTML(record[1])}</td>
+                    <td>${escapeHTML(record[2])}</td>
+                    <td>${tag(record[5])}</td>
+                    <td>${escapeHTML(record[6])}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      openMask(packetClaimMask);
+    }
+
+    function renderSingleClaim(packetId, claimId) {
+      const record = (packetClaimRecords[packetId] || []).find((item) => item[0] === claimId);
+      if (!record) return;
+      singleClaimTitle.textContent = "领取记录详情";
+      singleClaimSubtitle.textContent = `${packetId}｜${claimId}`;
+      singleClaimBody.innerHTML = `
+        <table class="mini-table">
+          <tbody>
+            <tr><th>领取单号</th><td>${escapeHTML(record[0])}</td></tr>
+            <tr><th>红包 ID</th><td>${escapeHTML(packetId)}</td></tr>
+            <tr><th>领取人</th><td>${escapeHTML(record[1])}</td></tr>
+            <tr><th>领取内容</th><td>${escapeHTML(record[2])}</td></tr>
+            <tr><th>风险标记</th><td>${tag(record[5])}</td></tr>
+            <tr><th>领取时间</th><td>${escapeHTML(record[6])}</td></tr>
+            <tr><th>设备 / IP</th><td>${escapeHTML(record[7])}</td></tr>
+          </tbody>
+        </table>
+      `;
+      openMask(singleClaimMask);
+    }
+
+    packetTableBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-packet-action]");
+      if (!button) return;
+      const data = getPacketRow(button);
+      if (button.dataset.packetAction === "claims") renderClaimList(data.packetId);
+      if (button.dataset.packetAction === "detail") renderPacketDetail(data);
+      if (button.dataset.packetAction === "risk") openRiskBlacklist(data);
+    });
+
+    packetClaimMask.addEventListener("click", (event) => {
+      const claimRow = event.target.closest("[data-claim-id]");
+      if (claimRow) {
+        renderSingleClaim(claimRow.dataset.packetId, claimRow.dataset.claimId);
+        return;
+      }
+      if (event.target === packetClaimMask || event.target.closest("[data-close-modal]")) closeMask(packetClaimMask);
+    });
+
+    [packetDetailMask, singleClaimMask].forEach((mask) => {
+      mask.addEventListener("click", (event) => {
+        if (event.target === mask || event.target.closest("[data-close-modal]")) closeMask(mask);
+      });
+    });
+  </script>
+</body>
+</html>
