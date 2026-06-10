@@ -485,12 +485,29 @@
       min-height: 78px;
       padding: 8px;
       border-radius: 12px;
+      position: relative;
       display: grid;
       grid-template-columns: 70px 1fr 42px;
       gap: 8px;
       align-items: center;
       background: linear-gradient(90deg, rgba(82, 72, 66, 0.92), rgba(57, 49, 46, 0.92));
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    }
+
+    .room-card::after {
+      content: "🎮";
+      position: absolute;
+      top: 10px;
+      right: 13px;
+      z-index: 2;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 236, 174, 0.95), rgba(224, 126, 50, 0.95));
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+      font-size: 13px;
     }
 
     .room-cover {
@@ -537,6 +554,13 @@
       font-weight: 800;
     }
 
+    .country-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: rgba(255, 248, 236, 0.76);
+    }
+
     .pill {
       padding: 2px 7px;
       border-radius: 999px;
@@ -545,12 +569,37 @@
       font-weight: 900;
     }
 
+    .wealth-tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 230, 143, 0.35);
+      background: linear-gradient(135deg, #6e4319, #f1bd54);
+      color: #fff5ca;
+      font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
     .game-state {
       padding: 2px 6px;
       border-radius: 999px;
       background: rgba(243, 195, 95, 0.18);
       color: var(--gold-2);
       font-weight: 900;
+    }
+
+    .game-state.waiting {
+      background: rgba(41, 215, 123, 0.18);
+      color: #9dffc8;
+    }
+
+    .game-state.playing {
+      background: rgba(67, 202, 246, 0.18);
+      color: #aeefff;
+    }
+
+    .game-state.ended {
+      background: rgba(255, 255, 255, 0.11);
+      color: rgba(255, 248, 236, 0.72);
     }
 
     .avatars {
@@ -766,6 +815,104 @@
       font-weight: 900;
     }
 
+    .room-close-action {
+      font-size: 18px;
+      background: rgba(0, 0, 0, 0.48);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .room-exit-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 118;
+      display: none;
+      place-items: center;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.82)),
+        radial-gradient(circle at 50% 35%, rgba(243, 195, 95, 0.13), transparent 38%);
+      color: #fff;
+    }
+
+    .room-exit-mask.show {
+      display: grid;
+    }
+
+    .room-exit-panel {
+      width: 100%;
+      min-height: 470px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 58px;
+    }
+
+    .room-exit-choice {
+      display: grid;
+      justify-items: center;
+      gap: 13px;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 500;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.42);
+    }
+
+    .room-exit-icon {
+      width: 88px;
+      height: 88px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.72), transparent 30%),
+        linear-gradient(135deg, #fff0b9, #d4a34c 74%, #8b5c19);
+      color: #6e430d;
+      font-size: 45px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+    }
+
+    .room-exit-icon.minimize::before {
+      content: "↙";
+      position: absolute;
+      left: 23px;
+      top: 21px;
+      transform: rotate(2deg);
+      font-size: 34px;
+      font-weight: 1000;
+    }
+
+    .room-exit-icon.minimize::after {
+      content: "↗";
+      position: absolute;
+      right: 22px;
+      bottom: 20px;
+      font-size: 34px;
+      font-weight: 1000;
+    }
+
+    .room-exit-icon.exit {
+      font-size: 58px;
+      font-weight: 900;
+    }
+
+    .room-exit-plus {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      width: 68px;
+      height: 68px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff5a22;
+      color: #fff;
+      font-size: 38px;
+      font-weight: 400;
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.34);
+    }
+
     .seat-ring {
       position: absolute;
       left: 16px;
@@ -964,6 +1111,247 @@
       color: var(--gold);
       font-size: 10px;
       font-weight: 900;
+    }
+
+    .party-minimized-screen {
+      padding: 0 12px 92px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(73, 45, 25, 0.34), rgba(21, 10, 5, 0.96) 34%),
+        radial-gradient(circle at 64% 8%, rgba(255, 215, 126, 0.26), transparent 26%),
+        #1a0d07;
+    }
+
+    .party-hero {
+      height: 182px;
+      margin: -2px -12px 10px;
+      padding: 18px 14px 0;
+      background:
+        linear-gradient(180deg, rgba(8, 4, 2, 0.28), rgba(22, 10, 5, 0.86)),
+        radial-gradient(circle at 74% 54%, rgba(249, 196, 95, 0.34), transparent 20%),
+        linear-gradient(135deg, #4b2d19, #18100b 58%, #110805);
+    }
+
+    .party-tabs {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 46px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .party-tabs .active {
+      position: relative;
+      color: var(--gold);
+      font-size: 28px;
+      font-weight: 1000;
+    }
+
+    .party-tabs .active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      width: 32px;
+      height: 4px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: var(--gold);
+    }
+
+    .party-top-actions {
+      position: absolute;
+      right: 16px;
+      top: 58px;
+      display: flex;
+      gap: 18px;
+      font-size: 28px;
+      color: var(--gold-2);
+    }
+
+    .party-banner {
+      height: 96px;
+      margin-top: 34px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 20% 48%, rgba(255, 255, 255, 0.78), transparent 15%),
+        linear-gradient(135deg, #123823, #c18b37 72%, #1b0e08);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .party-category-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .party-category {
+      height: 96px;
+      border-radius: 8px;
+      border: 1px solid rgba(243, 195, 95, 0.34);
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.72), transparent 24%),
+        linear-gradient(135deg, rgba(65, 41, 20, 0.96), rgba(21, 10, 6, 0.96));
+      color: #fff4da;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .party-category:nth-child(2) {
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.72), transparent 24%),
+        linear-gradient(135deg, rgba(19, 78, 35, 0.92), rgba(23, 12, 7, 0.96));
+    }
+
+    .party-category:nth-child(3) {
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.62), transparent 24%),
+        linear-gradient(135deg, rgba(83, 23, 85, 0.92), rgba(23, 12, 7, 0.96));
+    }
+
+    .party-filter-row {
+      display: grid;
+      grid-template-columns: 92px 112px 1fr 42px;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 13px;
+    }
+
+    .party-filter {
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.72);
+      display: grid;
+      place-items: center;
+      color: var(--gold-2);
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .party-filter.muted {
+      border-color: transparent;
+      background: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .party-list-button {
+      width: 40px;
+      height: 40px;
+      justify-self: end;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #a5762e, #f2c96c);
+      color: #2b1606;
+      font-size: 22px;
+      font-weight: 1000;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .party-room-card {
+      width: 196px;
+      height: 174px;
+      position: relative;
+      padding: 112px 12px 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: block;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(17, 10, 6, 0.86)),
+        linear-gradient(135deg, #f9f0d9, #1d130b);
+      color: #fff;
+      text-align: left;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+    }
+
+    .party-room-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.86), transparent 18%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 60%);
+    }
+
+    .party-room-card b,
+    .party-room-card span {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .party-room-card b {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .party-room-card span {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .minimized-room-bubble {
+      position: absolute;
+      right: 28px;
+      top: 470px;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 5px solid rgba(255, 241, 181, 0.42);
+      background:
+        radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.86), transparent 26%),
+        linear-gradient(135deg, #5e4a2d, #d8ba6e);
+      color: #fff;
+      font-size: 28px;
+      box-shadow:
+        0 0 0 8px rgba(243, 195, 95, 0.1),
+        0 12px 26px rgba(0, 0, 0, 0.42);
+    }
+
+    .minimized-room-bubble.has-game::after {
+      content: "Ludo · Waiting";
+      position: absolute;
+      left: 50%;
+      top: 82px;
+      min-width: 96px;
+      padding: 4px 7px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .party-create {
+      position: absolute;
+      left: 50%;
+      bottom: 172px;
+      width: 72px;
+      height: 72px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff5a22;
+      color: #fff;
+      font-size: 34px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .party-minimized-screen .bottom-nav {
+      background:
+        linear-gradient(180deg, rgba(37, 19, 8, 0.86), rgba(12, 6, 3, 0.98)),
+        radial-gradient(circle at 16% 0%, rgba(244, 197, 99, 0.2), transparent 36%);
     }
 
     .sheet-mask {
@@ -1839,6 +2227,53 @@
       gap: 10px;
     }
 
+    .confirm-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 128;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.46);
+    }
+
+    .confirm-mask.show {
+      display: grid;
+    }
+
+    .confirm-card {
+      width: 100%;
+      max-width: 326px;
+      padding: 23px 20px 18px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% -8%, rgba(243, 195, 95, 0.3), transparent 44%),
+        rgba(23, 15, 10, 0.98);
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+    }
+
+    .confirm-card h3 {
+      margin: 0 0 9px;
+      font-size: 21px;
+      font-weight: 1000;
+    }
+
+    .confirm-card p {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
     .h5-screen {
       position: absolute;
       inset: 0;
@@ -2088,35 +2523,35 @@
     }
 
     .h5-game {
-      background-image: url("outputs/game-prototype-assets/ludo-game.png");
+      background-image: url("../outputs/game-prototype-assets/ludo-game.png");
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
     }
 
     .h5-game.uno {
-      background-image: url("outputs/game-prototype-assets/uno-game.png");
+      background-image: url("../outputs/game-prototype-assets/uno-game.png");
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
     }
 
     .h5-game.ludo {
-      background-image: url("outputs/game-prototype-assets/ludo-game.png");
+      background-image: url("../outputs/game-prototype-assets/ludo-game.png");
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
     }
 
     .h5-game.ball {
-      background-image: url("outputs/game-prototype-assets/8ball-game.png");
+      background-image: url("../outputs/game-prototype-assets/8ball-game.png");
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
     }
 
     .h5-game.snake {
-      background-image: url("outputs/game-prototype-assets/snake-game.png");
+      background-image: url("../outputs/game-prototype-assets/snake-game.png");
       background-size: 100% 100%;
       background-position: center;
       background-repeat: no-repeat;
@@ -2597,17 +3032,17 @@
                 <span id="walletValue">1466</span>
                 <button class="plus-mini" type="button" data-open-exchange>+</button>
               </div>
-              <button class="private-room" type="button" data-open-room>
+              <button class="private-room" type="button" data-private-room>
                 <span>Private room</span>
                 <span class="plus-mini">+</span>
               </button>
             </div>
 
             <div class="games-grid">
-              <button class="game-card g-8ball" type="button" data-open-setting="8 Ball"><span>8 Ball</span></button>
-              <button class="game-card g-uno" type="button" data-open-setting="UNO"><span>UNO</span></button>
-              <button class="game-card g-bingo" type="button" data-toast="Bingo is available from the room panel"><span>Bingo</span></button>
-              <button class="game-card g-domino" type="button" data-open-setting="Domino"><span>Domino 50</span></button>
+              <button class="game-card g-8ball" type="button" data-recommend-game="8 Ball"><span>8 Ball</span></button>
+              <button class="game-card g-uno" type="button" data-recommend-game="UNO"><span>UNO</span></button>
+              <button class="game-card g-bingo" type="button" data-recommend-game="Bingo"><span>Bingo</span></button>
+              <button class="game-card g-domino" type="button" data-recommend-game="Domino"><span>Domino 50</span></button>
               <button class="game-card g-slot" type="button" data-toast="Slots require compliance review"><span>Golden Slot<br>Machine</span><b class="hot-badge">Hot</b></button>
               <button class="game-card g-more" type="button" data-open-sheet="moreGames"><span>More Games</span></button>
             </div>
@@ -2621,11 +3056,12 @@
               <div class="country-scroll">
                 <button class="country-chip active" type="button" data-country="全部">全部</button>
                 <button class="country-chip" type="button" data-country="沙特">🇸🇦 沙特</button>
+                <button class="country-chip" type="button" data-country="叙利亚">🇸🇾 叙利亚</button>
+                <button class="country-chip" type="button" data-country="土耳其">🇹🇷 土耳其</button>
                 <button class="country-chip" type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
                 <button class="country-chip" type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
-                <button class="country-chip" type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
                 <button class="country-chip" type="button" data-country="埃及">🇪🇬 埃及</button>
-                <button class="country-chip" type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
+                <button class="country-chip" type="button" data-country="也门">🇾🇪 也门</button>
               </div>
             </div>
 
@@ -2634,7 +3070,7 @@
                 <span class="room-cover"></span>
                 <span>
                   <span class="room-name">ترحيب مستخدمين الجدد والدا</span>
-                  <span class="room-meta"><span>🇸🇦</span><span class="pill">Arabic</span><span class="game-state">Ludo · Waiting</span></span>
+                  <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.18</span><span class="game-state waiting">Ludo · Waiting</span></span>
                   <span class="avatars"><i></i><i></i><i></i></span>
                 </span>
                 <span class="online">818 ▮</span>
@@ -2644,17 +3080,17 @@
                 <span class="room-cover pink"></span>
                 <span>
                   <span class="room-name">GAME OVER</span>
-                  <span class="room-meta"><span>🇦🇪</span><span class="pill">Arabic</span><span class="game-state">UNO · Playing</span></span>
+                  <span class="room-meta"><span class="country-label">🇦🇪 阿联酋</span><span class="wealth-tag">财富 Lv.22</span><span class="game-state playing">UNO · Playing</span></span>
                   <span class="avatars"><i></i><i></i><i></i><i></i></span>
                 </span>
                 <span class="online">3167 ▮</span>
               </button>
 
-              <button class="room-card" type="button" data-open-room>
+              <button class="room-card" type="button" data-open-room data-room-mode="ended">
                 <span class="room-cover brown"></span>
                 <span>
                   <span class="room-name">وكاله آزلزالTop1</span>
-                  <span class="room-meta"><span>🇮🇶</span><span class="pill">Arabic</span><span class="game-state">8 Ball · Watch</span></span>
+                  <span class="room-meta"><span class="country-label">🇮🇶 伊拉克</span><span class="wealth-tag">财富 Lv.15</span><span class="game-state ended">8 Ball · Ended</span></span>
                   <span class="avatars"><i></i><i></i><i></i><i></i><i></i></span>
                 </span>
                 <span class="online">2686 ▮</span>
@@ -2664,7 +3100,7 @@
                 <span class="room-cover gold"></span>
                 <span>
                   <span class="room-name">√enüs مملكة</span>
-                  <span class="room-meta"><span>🇱🇧</span><span class="pill">French</span><span class="game-state">Domino · Waiting</span></span>
+                  <span class="room-meta"><span class="country-label">🇱🇧 黎巴嫩</span><span class="wealth-tag">财富 Lv.27</span><span class="game-state waiting">Domino · Waiting</span></span>
                   <span class="avatars"><i></i><i></i><i></i><i></i></span>
                 </span>
                 <span class="online">3376 ▮</span>
@@ -2703,8 +3139,52 @@
         </div>
 
         <nav class="bottom-nav" aria-label="Bottom navigation">
-          <a class="nav-item" href="#" data-open-room><span class="icon">🏰</span>Party</a>
+          <a class="nav-item" href="#" data-open-party><span class="icon">🏰</span>Party</a>
           <a class="nav-item active" href="#"><span class="icon">🧭</span>Discover</a>
+          <a class="nav-item" href="#" data-toast="Community opened"><span class="icon">🌴</span>Community</a>
+          <a class="nav-item" href="#" data-toast="Messages opened"><span class="icon">✉️</span>Messages</a>
+          <a class="nav-item" href="#" data-toast="Mine opened"><span class="icon">🦁</span>Mine</a>
+        </nav>
+
+      </section>
+
+      <section class="screen party-minimized-screen" id="partyMinimizedScreen">
+        <div class="party-hero">
+          <div class="party-tabs">
+            <span>Mine</span>
+            <span class="active">Party</span>
+          </div>
+          <div class="party-top-actions">
+            <button class="icon-btn" type="button" data-open-discover-from-minimized>⌕</button>
+            <button class="icon-btn" type="button" data-toast="Room dress-up opened">🕌</button>
+          </div>
+          <div class="party-banner"></div>
+        </div>
+
+        <div class="party-category-row">
+          <button class="party-category" type="button" data-toast="Wealth rooms opened">Wealth</button>
+          <button class="party-category" type="button" data-toast="Charm rooms opened">Charm</button>
+          <button class="party-category" type="button" data-toast="Room ranking opened">Room</button>
+        </div>
+
+        <div class="party-filter-row">
+          <button class="party-filter" type="button">Hot</button>
+          <button class="party-filter muted" type="button">Latest</button>
+          <span></span>
+          <button class="party-list-button" type="button" data-open-discover-from-minimized>▦</button>
+        </div>
+
+        <button class="party-room-card" type="button" data-restore-minimized-room>
+          <b>u15728</b>
+          <span>当前语聊房 · 点击恢复</span>
+        </button>
+
+        <button class="minimized-room-bubble has-game" type="button" data-restore-minimized-room>🏛</button>
+        <button class="party-create" type="button" data-private-room>+</button>
+
+        <nav class="bottom-nav" aria-label="Bottom navigation">
+          <a class="nav-item active" href="#"><span class="icon">🏰</span>Party</a>
+          <a class="nav-item" href="#" data-open-discover-from-minimized><span class="icon">🧭</span>Discover</a>
           <a class="nav-item" href="#" data-toast="Community opened"><span class="icon">🌴</span>Community</a>
           <a class="nav-item" href="#" data-toast="Messages opened"><span class="icon">✉️</span>Messages</a>
           <a class="nav-item" href="#" data-toast="Mine opened"><span class="icon">🦁</span>Mine</a>
@@ -2721,9 +3201,8 @@
               <span class="room-title">嗨嗨摸鱼局<br><span class="room-id">ID 1020304</span></span>
             </div>
             <div class="room-actions">
-              <button class="room-action" type="button" data-show-screen="discoverScreen">←</button>
               <span class="room-action">25</span>
-              <button class="room-action" type="button" data-toast="Room share card opened">↗</button>
+              <button class="room-action room-close-action" type="button" data-open-room-exit>×</button>
             </div>
           </div>
 
@@ -2770,21 +3249,20 @@
         <section class="bottom-sheet" role="dialog" aria-label="More Games">
           <div class="sheet-head">
             <h2 class="sheet-title">Game</h2>
-            <button class="help-btn" type="button" data-toast="Game status: normal / loading / downloaded">?</button>
           </div>
           <div class="all-games-grid">
             <button class="all-game" type="button" data-toast="Jackpot requires compliance review"><span class="all-game-icon i1">🍒</span>Jackpot</button>
-            <button class="all-game" type="button" data-open-setting="Dragon Tiger"><span class="all-game-icon i2">🐉</span>Dragon Tiger</button>
-            <button class="all-game" type="button" data-open-setting="CrazyFruit"><span class="all-game-icon i3">🍉</span>CrazyFruit</button>
-            <button class="all-game" type="button" data-open-setting="ShootGoal"><span class="all-game-icon i4">⚽</span>ShootGoal</button>
-            <button class="all-game" type="button" data-open-setting="UnderOrOver"><span class="all-game-icon i5">🎲</span>UnderOrOver</button>
+            <button class="all-game" type="button" data-recommend-game="Dragon Tiger"><span class="all-game-icon i2">🐉</span>Dragon Tiger</button>
+            <button class="all-game" type="button" data-recommend-game="CrazyFruit"><span class="all-game-icon i3">🍉</span>CrazyFruit</button>
+            <button class="all-game" type="button" data-recommend-game="ShootGoal"><span class="all-game-icon i4">⚽</span>ShootGoal</button>
+            <button class="all-game" type="button" data-recommend-game="UnderOrOver"><span class="all-game-icon i5">🎲</span>UnderOrOver</button>
             <button class="all-game" type="button" data-toast="Slot777 is hidden for review accounts"><span class="all-game-icon i6">777</span>Slot777</button>
-            <button class="all-game" type="button" data-open-setting="Captains Bounty"><span class="all-game-icon i7">🏴‍☠️</span>Captains Bounty</button>
-            <button class="all-game" type="button" data-open-setting="Teen Patti"><span class="all-game-icon i8">🃏</span>Teen Patti</button>
-            <button class="all-game" type="button" data-open-setting="Lucky77"><span class="all-game-icon i9">💍</span>Lucky77</button>
-            <button class="all-game" type="button" data-open-setting="GreedyCatKing"><span class="all-game-icon i10">🍰</span>GreedyCatKing</button>
-            <button class="all-game" type="button" data-open-setting="LampOfInfinity"><span class="all-game-icon i11">🧞</span>LampOfInfinity</button>
-            <button class="all-game" type="button" data-open-setting="Wise Kingdoms"><span class="all-game-icon i12">👸</span>Wise Kingdoms</button>
+            <button class="all-game" type="button" data-recommend-game="Captains Bounty"><span class="all-game-icon i7">🏴‍☠️</span>Captains Bounty</button>
+            <button class="all-game" type="button" data-recommend-game="Teen Patti"><span class="all-game-icon i8">🃏</span>Teen Patti</button>
+            <button class="all-game" type="button" data-recommend-game="Lucky77"><span class="all-game-icon i9">💍</span>Lucky77</button>
+            <button class="all-game" type="button" data-recommend-game="GreedyCatKing"><span class="all-game-icon i10">🍰</span>GreedyCatKing</button>
+            <button class="all-game" type="button" data-recommend-game="LampOfInfinity"><span class="all-game-icon i11">🧞</span>LampOfInfinity</button>
+            <button class="all-game" type="button" data-recommend-game="Wise Kingdoms"><span class="all-game-icon i12">👸</span>Wise Kingdoms</button>
           </div>
         </section>
       </div>
@@ -2800,12 +3278,12 @@
           <div class="country-hot-grid">
             <button type="button" data-country="全部">全部</button>
             <button type="button" data-country="沙特">🇸🇦 沙特</button>
+            <button type="button" data-country="叙利亚">🇸🇾 叙利亚</button>
+            <button type="button" data-country="土耳其">🇹🇷 土耳其</button>
             <button type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
             <button type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
-            <button type="button" data-country="黎巴嫩">🇱🇧 黎巴嫩</button>
             <button type="button" data-country="埃及">🇪🇬 埃及</button>
-            <button type="button" data-country="摩洛哥">🇲🇦 摩洛哥</button>
-            <button type="button" data-country="约旦">🇯🇴 约旦</button>
+            <button type="button" data-country="也门">🇾🇪 也门</button>
           </div>
           <h3 class="country-search-subtitle">示例搜索结果 · 沙特</h3>
           <div class="country-result-list">
@@ -2813,7 +3291,7 @@
               <span class="room-cover gold"></span>
               <span>
                 <span class="room-name">Saudi Ludo Room</span>
-                <span class="room-meta"><span>🇸🇦</span><span class="pill">Arabic</span><span class="game-state">Ludo · Waiting</span></span>
+                <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.19</span><span class="game-state waiting">Ludo · Waiting</span></span>
                 <span class="avatars"><i></i><i></i><i></i></span>
               </span>
               <span class="online">818 ▮</span>
@@ -2822,7 +3300,7 @@
               <span class="room-cover pink"></span>
               <span>
                 <span class="room-name">Riyadh UNO Night</span>
-                <span class="room-meta"><span>🇸🇦</span><span class="pill">Arabic</span><span class="game-state">UNO · Playing</span></span>
+                <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.31</span><span class="game-state playing">UNO · Playing</span></span>
                 <span class="avatars"><i></i><i></i><i></i><i></i></span>
               </span>
               <span class="online">1466 ▮</span>
@@ -2893,6 +3371,32 @@
               <button class="emoji-cell" type="button" data-toast="Emoji sent">⚡</button>
               <button class="emoji-cell" type="button" data-toast="Emoji sent">🌟</button>
             </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="sheet-mask" id="privateGamesSheet" aria-hidden="true">
+        <section class="bottom-sheet" role="dialog" aria-label="Private Room Games">
+          <div class="sheet-head">
+            <h2 class="sheet-title">Games</h2>
+            <button class="sheet-close" type="button" data-close-sheets>×</button>
+          </div>
+          <div class="room-game-tabs">
+            <button class="room-game-tab active" type="button">休闲游戏</button>
+          </div>
+          <div class="sheet-grid">
+            <button class="sheet-game" type="button" data-private-game="Black Jack"><span class="sheet-icon i8">🃏</span>Black Jack</button>
+            <button class="sheet-game" type="button" data-private-game="Ludo"><span class="sheet-icon g-ludo">🎲</span>Ludo</button>
+            <button class="sheet-game" type="button" data-private-game="Rocket"><span class="sheet-icon i11">🚀</span>Rocket</button>
+            <button class="sheet-game" type="button" data-private-game="UNO"><span class="sheet-icon g-uno">🃏</span>UNO</button>
+            <button class="sheet-game" type="button" data-private-game="Domino"><span class="sheet-icon g-domino">◼</span>Domino</button>
+            <button class="sheet-game" type="button" data-private-game="8 Ball"><span class="sheet-icon g-8ball">🎱</span>8 Ball</button>
+            <button class="sheet-game" type="button" data-private-game="Snake & Ladder"><span class="sheet-icon g-snake">🪜</span>Snake</button>
+            <button class="sheet-game" type="button" data-private-game="Carrom"><span class="sheet-icon i2">◎</span>Carrom</button>
+            <button class="sheet-game" type="button" data-private-game="Bingo"><span class="sheet-icon g-bingo">🔵</span>Bingo</button>
+            <button class="sheet-game" type="button" data-private-game="Draw Guess"><span class="sheet-icon i3">🎨</span>Draw</button>
+            <button class="sheet-game" type="button" data-toast="More games loaded"><span class="sheet-icon i12">＋</span>More</button>
+            <button class="sheet-game" type="button" data-toast="Game rules opened"><span class="sheet-icon i5">?</span>Help</button>
           </div>
         </section>
       </div>
@@ -2998,6 +3502,31 @@
         </section>
       </div>
 
+      <div class="confirm-mask" id="confirmMask" aria-hidden="true">
+        <section class="confirm-card" role="dialog" aria-label="确认离开当前房间">
+          <h3>确认离开当前房间么？</h3>
+          <p id="confirmText">离开后将退出当前语聊房，并按当前游戏状态处理。</p>
+          <div class="confirm-actions">
+            <button class="btn dark" type="button" id="confirmCancel">取消</button>
+            <button class="btn" type="button" id="confirmOk">确认离开</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="room-exit-mask" id="roomExitMask" aria-hidden="true">
+        <div class="room-exit-panel" role="dialog" aria-label="房间关闭操作">
+          <button class="room-exit-choice" type="button" data-room-exit-minimize>
+            <span class="room-exit-icon minimize"></span>
+            <span>Minimize</span>
+          </button>
+          <button class="room-exit-choice" type="button" data-room-exit-leave>
+            <span class="room-exit-icon exit">⏻</span>
+            <span>Exit room</span>
+          </button>
+          <button class="room-exit-plus" type="button" data-toast="Invite friends">+</button>
+        </div>
+      </div>
+
       <section class="h5-screen" id="h5Screen" aria-hidden="true">
         <div class="h5-game ludo" id="h5GameArt">
           <div class="game-board"></div>
@@ -3068,7 +3597,7 @@
       <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-card">
           <h3 id="loadingTitle">Loading Ludo</h3>
-          <p>getConfig 已返回，等待 gameLoaded 回调。</p>
+          <p id="loadingSubtitle">getConfig 已返回，等待 gameLoaded 回调。</p>
           <div class="progress"><span></span></div>
         </div>
       </div>
@@ -3093,7 +3622,7 @@
 
     <aside class="side-note">
       <h1>可交互节点</h1>
-      <p>点击 More Games、Game Rooms、房内紫色游戏按钮、任意游戏图标、Start、最小化、结算和再来一局，可查看完整状态切换。</p>
+      <p>点击推荐游戏会先进入 Matching；点击 Private room 会进入自己的房间并立即弹出休闲游戏选择；语聊房最小化后从 Party 页再进游戏列表会先确认离开。</p>
     </aside>
   </div>
 
@@ -3104,6 +3633,12 @@
       ticketIndex: 0,
       tickets: ["Free", "100", "500", "10.0B"],
       gameMode: "waiting",
+      roomPresence: "none",
+      roomMinimized: false,
+      roomReturnScreen: "discoverScreen",
+      entrySource: null,
+      privateWaitingCreated: false,
+      readyToStart: false,
       gameCoins: 300,
       goldCoins: 384397340,
       exchangeRateGold: 100,
@@ -3133,6 +3668,7 @@
     const discoverActivity = document.querySelector("#discoverActivity");
     const moreGamesSheet = document.querySelector("#moreGamesSheet");
     const roomGamesSheet = document.querySelector("#roomGamesSheet");
+    const privateGamesSheet = document.querySelector("#privateGamesSheet");
     const countrySearchMask = document.querySelector("#countrySearchMask");
     const settingScreen = document.querySelector("#settingScreen");
     const phone = document.querySelector("#phone");
@@ -3142,6 +3678,7 @@
     const resultOverlay = document.querySelector("#resultOverlay");
     const settingGameLogo = document.querySelector("#settingGameLogo");
     const loadingTitle = document.querySelector("#loadingTitle");
+    const loadingSubtitle = document.querySelector("#loadingSubtitle");
     const resultTitle = document.querySelector("#resultTitle");
     const ticketValue = document.querySelector("#ticketValue");
     const currentGameBox = document.querySelector("#currentGameBox");
@@ -3151,6 +3688,9 @@
     const floatTitle = document.querySelector("#floatTitle");
     const floatSub = document.querySelector("#floatSub");
     const floatIcon = document.querySelector("#floatIcon");
+    const discoverMinimizedEntry = document.querySelector("#discoverMinimizedEntry");
+    const discoverMinimizedTitle = document.querySelector("#discoverMinimizedTitle");
+    const discoverMinimizedSub = document.querySelector("#discoverMinimizedSub");
     const walletValue = document.querySelector("#walletValue");
     const settingCoinBalance = document.querySelector("#settingCoinBalance");
     const exchangeScreen = document.querySelector("#exchangeScreen");
@@ -3161,6 +3701,12 @@
     const exchangeSubmit = document.querySelector("#exchangeSubmit");
     const insufficientMask = document.querySelector("#insufficientMask");
     const insufficientText = document.querySelector("#insufficientText");
+    const confirmMask = document.querySelector("#confirmMask");
+    const confirmText = document.querySelector("#confirmText");
+    const confirmCancel = document.querySelector("#confirmCancel");
+    const confirmOk = document.querySelector("#confirmOk");
+    const roomExitMask = document.querySelector("#roomExitMask");
+    let pendingConfirmAction = null;
 
     function showToast(message) {
       toast.textContent = message;
@@ -3254,13 +3800,78 @@
       }
     }
 
+    function closeConfirm() {
+      pendingConfirmAction = null;
+      confirmMask.classList.remove("show");
+      confirmMask.setAttribute("aria-hidden", "true");
+    }
+
+    function showConfirm(message, onConfirm) {
+      confirmText.textContent = message || "离开后将退出当前语聊房，并按当前游戏状态处理。";
+      pendingConfirmAction = onConfirm;
+      confirmMask.classList.add("show");
+      confirmMask.setAttribute("aria-hidden", "false");
+    }
+
+    function openRoomExitSheet() {
+      closeSheets();
+      closeCountrySearch();
+      roomExitMask.classList.add("show");
+      roomExitMask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRoomExitSheet() {
+      roomExitMask.classList.remove("show");
+      roomExitMask.setAttribute("aria-hidden", "true");
+    }
+
+    function getActiveScreenId() {
+      const active = document.querySelector(".screen.active");
+      return active ? active.id : "";
+    }
+
+    function clearRoomState() {
+      state.roomPresence = "none";
+      state.roomMinimized = false;
+      state.roomReturnScreen = "discoverScreen";
+      state.activeGame = null;
+      state.hasCurrentGame = false;
+      state.gameMode = "waiting";
+      state.entrySource = null;
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
+      updateCurrentGameUI();
+    }
+
+    function needsLeaveCurrentRoomConfirm() {
+      if (state.roomPresence === "none") return false;
+      if (state.gameMode === "settling") {
+        showToast("结算中，请稍候");
+        return "blocked";
+      }
+      return state.roomMinimized;
+    }
+
+    function withExternalEntryGuard(next) {
+      const guard = needsLeaveCurrentRoomConfirm();
+      if (guard === "blocked") return;
+      if (!guard) {
+        next();
+        return;
+      }
+      showConfirm("你当前有一个最小化语聊房。确认离开当前房间么？", () => {
+        clearRoomState();
+        next();
+      });
+    }
+
     function showScreen(id) {
       screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
       closeCountrySearch();
     }
 
     function closeSheets() {
-      [moreGamesSheet, roomGamesSheet].forEach((sheet) => {
+      [moreGamesSheet, roomGamesSheet, privateGamesSheet].forEach((sheet) => {
         sheet.classList.remove("open");
         sheet.setAttribute("aria-hidden", "true");
       });
@@ -3276,14 +3887,59 @@
     function openSheet(name) {
       closeSheets();
       closeCountrySearch();
-      const sheet = name === "roomGames" ? roomGamesSheet : moreGamesSheet;
+      const sheet = name === "roomGames" ? roomGamesSheet : name === "privateGames" ? privateGamesSheet : moreGamesSheet;
       if (name === "roomGames") activateRoomTab("casual");
       sheet.classList.add("open");
       sheet.setAttribute("aria-hidden", "false");
       updateCurrentGameUI();
     }
 
-    function openRoom(mode) {
+    function openPartyPage() {
+      showScreen("partyMinimizedScreen");
+      showToast(state.roomMinimized ? "语聊房已最小化，点击右侧浮窗可恢复" : "Party opened");
+    }
+
+    function minimizeRoom() {
+      closeRoomExitSheet();
+      state.roomMinimized = true;
+      showScreen(state.roomReturnScreen || "discoverScreen");
+      closeSheets();
+      updateMinimizedRoomUI();
+      showToast("语聊房已最小化");
+    }
+
+    function exitRoomFromSheet() {
+      if (state.gameMode === "settling") {
+        closeRoomExitSheet();
+        showToast("结算中，请稍候");
+        return;
+      }
+      const hadGame = state.hasCurrentGame;
+      closeRoomExitSheet();
+      closeSetting();
+      h5Screen.classList.remove("show");
+      h5Screen.setAttribute("aria-hidden", "true");
+      resultOverlay.classList.remove("show");
+      clearRoomState();
+      showScreen("discoverScreen");
+      showToast(hadGame ? "已离开房间，当前游戏态已按规则退出" : "已离开房间");
+    }
+
+    function restoreMinimizedRoom() {
+      state.roomMinimized = false;
+      showScreen("roomScreen");
+      updateCurrentGameUI();
+      updateMinimizedRoomUI();
+      showToast("已恢复语聊房");
+    }
+
+    function openRoom(mode, context, returnScreen) {
+      state.roomPresence = context || "other";
+      state.roomMinimized = false;
+      state.roomReturnScreen = returnScreen || "discoverScreen";
+      state.entrySource = context === "own" ? "private_room" : "game_room";
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
       showScreen("roomScreen");
       state.gameMode = mode || state.gameMode;
       if (mode === "playing") {
@@ -3294,11 +3950,83 @@
         state.activeGame = "Ludo";
         state.hasCurrentGame = true;
         state.gameMode = "waiting";
+      } else if (mode === "ended") {
+        state.activeGame = "8 Ball";
+        state.hasCurrentGame = true;
+        state.gameMode = "ended";
       }
       updateCurrentGameUI();
     }
 
+    function openTargetRoom(mode) {
+      withExternalEntryGuard(() => {
+        closeCountrySearch();
+        openRoom(mode, "other", "discoverScreen");
+        const roomToastMap = {
+          playing: "已进入游戏中房间，可观战或打开游戏",
+          ended: "已进入已结束游戏房，可查看结算态",
+          waiting: "已进入等待中游戏房"
+        };
+        showToast(roomToastMap[mode] || roomToastMap.waiting);
+      });
+    }
+
+    function openPrivateRoomFlow() {
+      withExternalEntryGuard(() => {
+        state.roomPresence = "own";
+        state.roomMinimized = false;
+        state.roomReturnScreen = "discoverScreen";
+        state.entrySource = "private_room";
+        state.privateWaitingCreated = false;
+        state.readyToStart = false;
+        state.activeGame = null;
+        state.hasCurrentGame = false;
+        state.gameMode = "waiting";
+        closeCountrySearch();
+        showScreen("roomScreen");
+        updateCurrentGameUI();
+        window.setTimeout(() => openSheet("privateGames"), 160);
+      });
+    }
+
+    function startRecommendMatch(gameName) {
+      withExternalEntryGuard(() => {
+        closeSheets();
+        closeCountrySearch();
+        loadingTitle.textContent = "Matching " + gameName;
+        loadingSubtitle.textContent = "正在匹配同类型 waiting / ready 未开局房，最多 15s。";
+        loadingOverlay.classList.add("show");
+        window.clearTimeout(startRecommendMatch.timer);
+        startRecommendMatch.timer = window.setTimeout(() => {
+          loadingOverlay.classList.remove("show");
+          if (gameName === "Bingo") {
+            showToast("暂无同类型等待房，可通过 Private room 创建");
+            return;
+          }
+          openRoom("waiting", "other", "discoverScreen");
+          state.activeGame = gameName;
+          state.hasCurrentGame = true;
+          state.gameMode = "waiting";
+          updateCurrentGameUI();
+          showToast("匹配成功，已进入同类型 waiting 游戏房");
+        }, 1200);
+      });
+    }
+
+    function openPrivateGameSetting(gameName) {
+      state.roomPresence = "own";
+      state.entrySource = "private_room";
+      closeSheets();
+      openSetting(gameName);
+      showToast("已进入自己的房间，请确认游戏配置");
+    }
+
     function openSetting(gameName) {
+      if (state.hasCurrentGame && state.activeGame && state.gameMode !== "ended" && state.activeGame !== gameName) {
+        closeSheets();
+        showToast("当前游戏进行中，不允许切换");
+        return;
+      }
       closeSheets();
       const meta = gameMeta[gameName] || gameMeta.Ludo;
       state.activeGame = gameName;
@@ -3330,13 +4058,27 @@
 
     function startGame() {
       const required = parseTicketAmount(ticketValue.textContent);
-      if (required > state.gameCoins) {
+      const followUpPrivateStart = state.entrySource === "private_room" && state.privateWaitingCreated;
+      if (!followUpPrivateStart && required > state.gameCoins) {
         state.pendingStartAfterExchange = true;
         openInsufficient(required);
         return;
       }
-      state.gameCoins -= required;
-      updateCurrencyUI();
+      if (!followUpPrivateStart) {
+        state.gameCoins -= required;
+        updateCurrencyUI();
+      }
+      if (state.entrySource === "private_room" && !state.privateWaitingCreated) {
+        state.hasCurrentGame = true;
+        state.gameMode = "waiting";
+        state.privateWaitingCreated = true;
+        state.readyToStart = false;
+        closeSetting();
+        showScreen("roomScreen");
+        updateCurrentGameUI();
+        showToast("已创建游戏等待房，可最小化等待或分享邀请");
+        return;
+      }
       beginGame();
     }
 
@@ -3349,6 +4091,7 @@
       h5GameArt.className = "h5-game " + meta.art;
       const title = gameMeta[gameName] ? meta.logo : gameName;
       loadingTitle.textContent = "Loading " + title;
+      loadingSubtitle.textContent = "getConfig 已返回，等待 gameLoaded 回调。";
       resultTitle.textContent = title + " game ended";
       loadingOverlay.classList.add("show");
       state.hasCurrentGame = true;
@@ -3367,9 +4110,8 @@
       h5Screen.classList.remove("show");
       h5Screen.setAttribute("aria-hidden", "true");
       showScreen("roomScreen");
-      state.gameMode = "playing";
       updateCurrentGameUI();
-      showToast("Game minimized");
+      showToast("游戏已最小化，返回所属语聊房");
     }
 
     function openCurrentGame() {
@@ -3397,6 +4139,8 @@
       resultOverlay.classList.remove("show");
       state.gameMode = "ended";
       state.hasCurrentGame = false;
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
       updateCurrentGameUI();
       showScreen("roomScreen");
     }
@@ -3406,11 +4150,15 @@
       const meta = gameMeta[state.activeGame] || gameMeta.Ludo;
       currentGameBox.classList.toggle("show", Boolean(hasGame));
       roomGameFloat.classList.toggle("show", Boolean(hasGame));
-      if (!hasGame) return;
+      if (!hasGame) {
+        updateMinimizedRoomUI();
+        return;
+      }
       const labelMap = {
         playing: "Playing",
         settling: "Settling",
         ended: "Ended",
+        ready: "Ready",
         waiting: "Waiting"
       };
       const label = labelMap[state.gameMode] || "Waiting";
@@ -3419,6 +4167,20 @@
       floatTitle.textContent = state.activeGame + " · " + label;
       floatSub.textContent = label === "Playing" ? "Open · 4/4" : "Join · 2/4";
       floatIcon.textContent = meta.icon;
+      const joinBtn = document.querySelector("#joinCurrentGame");
+      const openBtn = document.querySelector("#openCurrentGame");
+      if (joinBtn) joinBtn.textContent = state.roomPresence === "own" && state.gameMode === "waiting" ? "Config" : "Join";
+      if (openBtn) openBtn.textContent = state.gameMode === "playing" ? "Open" : "Watch";
+      updateMinimizedRoomUI();
+    }
+
+    function updateMinimizedRoomUI() {
+      const isMinimized = state.roomMinimized && state.roomPresence !== "none";
+      if (discoverMinimizedEntry) discoverMinimizedEntry.classList.toggle("show", Boolean(isMinimized));
+      if (!isMinimized) return;
+      const title = state.activeGame ? state.activeGame + " · " + (state.gameMode === "playing" ? "Playing" : "Waiting") : "当前语聊房";
+      if (discoverMinimizedTitle) discoverMinimizedTitle.textContent = title;
+      if (discoverMinimizedSub) discoverMinimizedSub.textContent = "点击恢复房间";
     }
 
     discoverTabs.forEach((tab) => {
@@ -3477,6 +4239,61 @@
         showToast("已筛选：" + countryTarget.dataset.country);
       }
 
+      const privateTarget = event.target.closest("[data-private-room]");
+      if (privateTarget) {
+        event.preventDefault();
+        openPrivateRoomFlow();
+      }
+
+      const recommendTarget = event.target.closest("[data-recommend-game]");
+      if (recommendTarget) {
+        event.preventDefault();
+        startRecommendMatch(recommendTarget.dataset.recommendGame);
+      }
+
+      const partyTarget = event.target.closest("[data-open-party]");
+      if (partyTarget) {
+        event.preventDefault();
+        openPartyPage();
+      }
+
+      const restoreTarget = event.target.closest("[data-restore-minimized-room]");
+      if (restoreTarget) {
+        event.preventDefault();
+        restoreMinimizedRoom();
+      }
+
+      const discoverFromMinimized = event.target.closest("[data-open-discover-from-minimized]");
+      if (discoverFromMinimized) {
+        event.preventDefault();
+        showScreen("discoverScreen");
+        updateMinimizedRoomUI();
+      }
+
+      const roomExitTarget = event.target.closest("[data-open-room-exit]");
+      if (roomExitTarget) {
+        event.preventDefault();
+        openRoomExitSheet();
+      }
+
+      const roomExitMinimize = event.target.closest("[data-room-exit-minimize]");
+      if (roomExitMinimize) {
+        event.preventDefault();
+        minimizeRoom();
+      }
+
+      const roomExitLeave = event.target.closest("[data-room-exit-leave]");
+      if (roomExitLeave) {
+        event.preventDefault();
+        exitRoomFromSheet();
+      }
+
+      const minimizeRoomTarget = event.target.closest("[data-minimize-room]");
+      if (minimizeRoomTarget) {
+        event.preventDefault();
+        minimizeRoom();
+      }
+
       const screenTarget = event.target.closest("[data-show-screen]");
       if (screenTarget) {
         event.preventDefault();
@@ -3486,13 +4303,20 @@
       const roomTarget = event.target.closest("[data-open-room]");
       if (roomTarget) {
         event.preventDefault();
-        openRoom(roomTarget.dataset.roomMode);
+        openTargetRoom(roomTarget.dataset.roomMode);
       }
 
       const sheetTarget = event.target.closest("[data-open-sheet]");
       if (sheetTarget) {
         event.preventDefault();
-        openSheet(sheetTarget.dataset.openSheet);
+        const sheetName = sheetTarget.dataset.openSheet;
+        openSheet(sheetName);
+      }
+
+      const privateGameTarget = event.target.closest("[data-private-game]");
+      if (privateGameTarget) {
+        event.preventDefault();
+        openPrivateGameSetting(privateGameTarget.dataset.privateGame);
       }
 
       const gameTarget = event.target.closest("[data-open-setting]");
@@ -3511,6 +4335,10 @@
 
       if (event.target.classList.contains("country-search-mask")) {
         closeCountrySearch();
+      }
+
+      if (event.target.classList.contains("room-exit-mask")) {
+        closeRoomExitSheet();
       }
     });
 
@@ -3556,6 +4384,12 @@
       closeInsufficient();
     });
     document.querySelector("#insufficientExchange").addEventListener("click", () => openExchange(state.exchangeRequired));
+    confirmCancel.addEventListener("click", closeConfirm);
+    confirmOk.addEventListener("click", () => {
+      const action = pendingConfirmAction;
+      closeConfirm();
+      if (typeof action === "function") action();
+    });
     exchangeInput.addEventListener("input", updateExchangePreview);
     document.querySelectorAll("[data-exchange-amount]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -3570,7 +4404,15 @@
       updateCurrentGameUI();
       openSetting(state.activeGame || "Ludo");
     });
-    document.querySelector("#joinCurrentGame").addEventListener("click", startGame);
+    document.querySelector("#joinCurrentGame").addEventListener("click", () => {
+      if (state.roomPresence === "own" && state.gameMode === "waiting") {
+        state.readyToStart = true;
+        openSetting(state.activeGame || "Ludo");
+        showToast("有人加入游戏，请确认配置后开始");
+        return;
+      }
+      startGame();
+    });
     document.querySelector("#openCurrentGame").addEventListener("click", openCurrentGame);
     roomGameFloat.addEventListener("click", openCurrentGame);
     updateCurrencyUI();

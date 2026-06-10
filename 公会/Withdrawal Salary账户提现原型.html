@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Withdrawal Salary 账户提现原型</title>
+  <style>
+    :root {
+      --bg: #0d0705;
+      --top: #1b100c;
+      --panel: #27231b;
+      --field: #454238;
+      --field-dark: #322c25;
+      --tab-bg: #2a1e00;
+      --gold: #f6c24a;
+      --gold-deep: #d49827;
+      --gold-soft: #f4d687;
+      --text: #fffaf2;
+      --muted: rgba(255, 250, 242, 0.66);
+      --danger: #ff304b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(236, 182, 66, 0.18), transparent 32%),
+        linear-gradient(180deg, #1d130f 0%, #090504 100%);
+      color: var(--text);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .phone {
+      width: min(100%, 690px);
+      min-height: 1510px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      background: var(--bg);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+      outline: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .statusbar {
+      height: 56px;
+      padding: 16px 38px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: var(--top);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 900;
+      opacity: 0.95;
+    }
+
+    .header {
+      height: 154px;
+      padding: 40px 26px 28px;
+      display: grid;
+      grid-template-columns: 58px 1fr 58px;
+      align-items: center;
+      background: var(--top);
+    }
+
+    .icon-btn {
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .back-icon {
+      width: 26px;
+      height: 26px;
+      border-left: 5px solid currentColor;
+      border-bottom: 5px solid currentColor;
+      transform: rotate(45deg);
+    }
+
+    .record-icon {
+      width: 35px;
+      height: 43px;
+      border: 5px solid currentColor;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .record-icon::before,
+    .record-icon::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .record-icon::before {
+      top: 10px;
+      box-shadow: 0 10px 0 currentColor;
+    }
+
+    .record-icon::after {
+      bottom: 7px;
+      right: 14px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .page {
+      min-height: 1298px;
+      display: flex;
+      flex-direction: column;
+      padding: 22px 22px 32px;
+    }
+
+    .tabs {
+      width: 372px;
+      height: 84px;
+      margin: 0 auto 30px;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--tab-bg);
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #d6b478;
+      font-size: 28px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: linear-gradient(180deg, #ffdf62 0%, #f7b12b 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .view {
+      display: none;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .view.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel {
+      border-radius: 22px;
+      padding: 26px 22px 24px;
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .panel + .panel {
+      margin-top: 28px;
+    }
+
+    .section-title {
+      margin: 0 0 28px;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 700;
+    }
+
+    .balance-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .balance-box {
+      min-height: 112px;
+      width: 100%;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 18px 16px;
+      background: var(--field);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .balance-box.active {
+      border-color: #f0a22b;
+      box-shadow: 0 0 0 3px rgba(240, 162, 43, 0.14);
+    }
+
+    .balance-label {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .balance-value {
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 760;
+      letter-spacing: 0.01em;
+    }
+
+    .input-card {
+      min-height: 149px;
+      border-radius: 14px;
+      padding: 26px 14px 24px;
+      position: relative;
+      background: var(--field);
+    }
+
+    .input-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 34px;
+      color: var(--text);
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .currency-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text);
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .amount-entry {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .amount-input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      line-height: 1;
+    }
+
+    .amount-input::placeholder {
+      color: rgba(255, 250, 242, 0.44);
+    }
+
+    .edit-icon {
+      width: 26px;
+      height: 26px;
+      border: 3px solid rgba(38, 39, 42, 0.75);
+      border-radius: 4px;
+      position: relative;
+      opacity: 0.72;
+    }
+
+    .edit-icon::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 4px;
+      right: -5px;
+      top: -2px;
+      border-radius: 999px;
+      background: rgba(38, 39, 42, 0.75);
+      transform: rotate(-45deg);
+    }
+
+    .exchange-mark {
+      width: 36px;
+      height: 62px;
+      margin: 20px 0 18px;
+      position: relative;
+      color: rgba(86, 91, 104, 0.64);
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .coin-exchange {
+      min-height: 180px;
+      border-radius: 14px;
+      padding: 27px 14px 26px;
+      background: var(--field);
+    }
+
+    .exchange-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      color: var(--text);
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .coin-line {
+      margin-top: 42px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255, 250, 242, 0.48);
+      font-size: 36px;
+    }
+
+    .coin {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 50%, #fff6a8 0 28%, #f7a722 30% 58%, #b75d0d 60% 100%);
+      box-shadow: inset 0 0 0 3px #ffe46c, 0 2px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    .coin::before {
+      content: "";
+      width: 17px;
+      height: 17px;
+      background: linear-gradient(135deg, #fff6a8, #d67611);
+      transform: rotate(45deg);
+      border: 2px solid #fff5a3;
+    }
+
+    .method-title,
+    .account-title {
+      margin: 30px 0 28px;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .method-box {
+      border-radius: 14px;
+      padding: 22px 15px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      background: var(--field);
+    }
+
+    .method {
+      min-width: 147px;
+      height: 76px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 8px 11px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: #302923;
+      color: #f6dda2;
+      font-size: 23px;
+      cursor: pointer;
+    }
+
+    .method.active {
+      border-color: #f19a27;
+    }
+
+    .brand-icon {
+      width: 57px;
+      height: 57px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #2a7c5d;
+      font-size: 14px;
+      font-weight: 900;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .brand-icon.bank {
+      color: #ef8b21;
+    }
+
+    .brand-icon.voda {
+      color: #d82223;
+    }
+
+    .brand-icon.geo {
+      color: #579d92;
+    }
+
+    .brand-icon.easy {
+      color: #312d3d;
+      font-size: 9px;
+      line-height: 1.05;
+    }
+
+    .brand-icon.jazz {
+      color: #d82d31;
+      font-size: 10px;
+    }
+
+    .account-field {
+      height: 84px;
+      border-radius: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--field);
+      color: var(--text);
+      font-size: 35px;
+    }
+
+    .tips {
+      margin-top: 14px;
+      color: var(--danger);
+      font-size: 22px;
+      line-height: 1.55;
+    }
+
+    .bottom-space {
+      flex: 1;
+      min-height: 132px;
+    }
+
+    .withdraw-btn {
+      width: calc(100% - 30px);
+      height: 95px;
+      margin: 0 auto 20px;
+      border: 0;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #eebd4b 0%, #d1962c 100%);
+      color: #17100b;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .withdraw-btn:disabled {
+      opacity: 0.46;
+      cursor: not-allowed;
+      filter: grayscale(0.35);
+    }
+
+    .home-indicator {
+      width: 260px;
+      height: 6px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .confirm-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 48px 52px;
+      background: rgba(0, 0, 0, 0.72);
+    }
+
+    .confirm-overlay[hidden] {
+      display: none;
+    }
+
+    .confirm-dialog {
+      width: 100%;
+      max-width: 584px;
+      border-radius: 28px;
+      padding: 40px 20px 36px;
+      background: #cfc2b2;
+      color: #151515;
+      text-align: center;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+    }
+
+    .confirm-title {
+      font-size: 30px;
+      font-weight: 760;
+      line-height: 1.15;
+    }
+
+    .confirm-amount {
+      margin-top: 42px;
+      font-size: 50px;
+      line-height: 1;
+      font-weight: 520;
+    }
+
+    .confirm-subtitle {
+      margin-top: 26px;
+      font-size: 27px;
+      line-height: 1.48;
+    }
+
+    #confirm-mode-label[hidden],
+    #confirm-coins-row[hidden],
+    .confirm-dialog.cash-confirm #confirm-mode-label,
+    .confirm-dialog.cash-confirm #confirm-coins-row {
+      display: none;
+    }
+
+    .confirm-dialog.cash-confirm .confirm-subtitle {
+      line-height: 1.25;
+    }
+
+    .confirm-info {
+      margin: 24px 0 24px;
+      border-radius: 20px;
+      padding: 26px 44px;
+      background: rgba(255, 255, 255, 0.58);
+      display: grid;
+      gap: 30px;
+      text-align: left;
+    }
+
+    .confirm-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 22px;
+      font-size: 27px;
+      line-height: 1.2;
+    }
+
+    .confirm-row span:first-child {
+      min-width: 0;
+    }
+
+    .confirm-value {
+      flex: 0 0 auto;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .confirm-coin {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+      vertical-align: -5px;
+    }
+
+    .confirm-warning {
+      margin: 0 28px 40px;
+      font-size: 22px;
+      line-height: 1.45;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .confirm-action {
+      height: 92px;
+      border: 0;
+      border-radius: 22px;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .confirm-action.cancel {
+      background: #ada69b;
+    }
+
+    .confirm-action.confirm {
+      background: #d19a35;
+    }
+
+    .record-page {
+      position: absolute;
+      inset: 0;
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .record-page[hidden] {
+      display: none;
+    }
+
+    .record-page .header {
+      height: 78px;
+      padding: 16px 14px 14px;
+      grid-template-columns: 46px 1fr 46px;
+    }
+
+    .record-page .icon-btn {
+      width: 42px;
+      height: 42px;
+    }
+
+    .record-page .back-icon {
+      width: 18px;
+      height: 18px;
+      border-width: 3px;
+    }
+
+    .record-page .title {
+      font-size: 18px;
+      font-weight: 820;
+    }
+
+    .review-tabs {
+      width: min(74%, 507px);
+      height: 84px;
+      margin: 22px auto 26px;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--tab-bg);
+    }
+
+    .review-tab {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #d6b478;
+      font-size: 26px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .review-tab.active {
+      color: #fff;
+      background: linear-gradient(180deg, #ffdf62 0%, #f7b12b 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .record-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 0 8px 18px;
+      scrollbar-width: none;
+    }
+
+    .record-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .review-panel[hidden] {
+      display: none;
+    }
+
+    .empty-state {
+      min-height: 1020px;
+      display: grid;
+      place-items: center;
+      padding-bottom: 120px;
+      text-align: center;
+      color: rgba(255, 250, 242, 0.58);
+      font-size: 28px;
+    }
+
+    .empty-box {
+      width: 190px;
+      height: 142px;
+      margin: 0 auto 20px;
+      position: relative;
+      border-radius: 8px 8px 18px 18px;
+      background:
+        linear-gradient(135deg, rgba(255, 243, 196, 0.34), transparent 34%),
+        linear-gradient(180deg, #c58a37 0%, #8b5420 100%);
+      box-shadow:
+        inset 0 0 0 4px rgba(80, 43, 13, 0.3),
+        inset 0 -16px 0 rgba(87, 48, 17, 0.36),
+        0 16px 28px rgba(0, 0, 0, 0.35);
+      transform: perspective(300px) rotateX(5deg);
+    }
+
+    .empty-box::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: -48px;
+      height: 64px;
+      border-radius: 54px 54px 8px 8px;
+      background:
+        linear-gradient(110deg, transparent 0 34%, rgba(255, 232, 151, 0.4) 35% 48%, transparent 49%),
+        linear-gradient(180deg, #b6792a 0%, #714018 100%);
+      box-shadow:
+        inset 0 0 0 4px rgba(80, 43, 13, 0.34),
+        0 8px 10px rgba(0, 0, 0, 0.18);
+      transform: rotate(-8deg);
+      transform-origin: left bottom;
+    }
+
+    .empty-box::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 38px;
+      height: 24px;
+      border-top: 4px solid rgba(255, 212, 111, 0.72);
+      border-bottom: 4px solid rgba(77, 39, 13, 0.42);
+      background:
+        linear-gradient(90deg, transparent 0 21%, rgba(78, 42, 16, 0.55) 22% 27%, transparent 28% 72%, rgba(78, 42, 16, 0.55) 73% 78%, transparent 79%);
+    }
+
+    .withdraw-record {
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .record-order {
+      min-height: 22px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 4px;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 12px;
+      line-height: 1.1;
+      word-break: break-all;
+    }
+
+    .copy-mark {
+      width: 13px;
+      height: 13px;
+      position: relative;
+      flex: 0 0 auto;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .copy-mark::before {
+      content: "";
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      left: -3px;
+      top: -3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .record-card {
+      min-height: 92px;
+      border-radius: 6px;
+      padding: 11px 7px 10px;
+      position: relative;
+      background: #3d3935;
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .record-status {
+      position: absolute;
+      top: 12px;
+      right: 8px;
+      font-size: 15px;
+      font-weight: 760;
+      line-height: 1;
+    }
+
+    .record-status.approved {
+      color: #ffc43d;
+    }
+
+    .record-status.rejected {
+      color: #ff304b;
+    }
+
+    .record-status.waiting {
+      color: #ffc43d;
+    }
+
+    .withdraw-record.pending {
+      margin: 0 16px 12px;
+      padding: 12px 15px 15px;
+      border-radius: 18px;
+      background: #27231f;
+    }
+
+    .withdraw-record.pending .record-order {
+      padding: 0 0 14px;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .withdraw-record.pending .copy-mark {
+      width: 18px;
+      height: 18px;
+      margin-left: 6px;
+    }
+
+    .withdraw-record.pending .copy-mark::before {
+      width: 15px;
+      height: 15px;
+      left: 5px;
+      top: 5px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .withdraw-record.pending .record-card {
+      min-height: 0;
+      border-radius: 12px;
+      padding: 18px 14px 14px;
+    }
+
+    .withdraw-record.pending .record-status {
+      top: 22px;
+      right: 14px;
+      font-size: 19px;
+    }
+
+    .withdraw-record.pending .record-lines {
+      gap: 12px;
+      padding-right: 80px;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .record-accent {
+      color: #f0cf84;
+    }
+
+    .withdraw-record.pending .record-time {
+      margin-top: 18px;
+      font-size: 15px;
+    }
+
+    .record-lines {
+      display: grid;
+      gap: 6px;
+      padding-right: 84px;
+      font-size: 11px;
+      line-height: 1.15;
+    }
+
+    .record-time {
+      margin-top: 8px;
+      text-align: right;
+      color: #fff;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .record-remark {
+      max-width: none;
+      margin-left: 0;
+      text-align: left;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 0;
+        background: var(--bg);
+      }
+
+      .phone {
+        width: 100vw;
+        min-height: 100vh;
+        border-radius: 0;
+        outline: 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .phone {
+        min-height: 980px;
+      }
+
+      .statusbar {
+        height: 38px;
+        padding: 10px 22px 0;
+        font-size: 16px;
+      }
+
+      .status-icons {
+        font-size: 11px;
+        gap: 5px;
+      }
+
+      .header {
+        height: 95px;
+        padding: 22px 15px 16px;
+        grid-template-columns: 42px 1fr 42px;
+      }
+
+      .icon-btn {
+        width: 42px;
+        height: 42px;
+      }
+
+      .title {
+        font-size: 22px;
+      }
+
+      .back-icon {
+        width: 18px;
+        height: 18px;
+        border-width: 3px;
+      }
+
+      .record-icon {
+        width: 25px;
+        height: 31px;
+        border-width: 3px;
+      }
+
+      .record-icon::before,
+      .record-icon::after {
+        left: 6px;
+        right: 6px;
+        height: 2px;
+      }
+
+      .record-icon::before {
+        top: 7px;
+        box-shadow: 0 7px 0 currentColor;
+      }
+
+      .record-icon::after {
+        bottom: 6px;
+        right: 11px;
+      }
+
+      .page {
+        min-height: calc(100vh - 133px);
+        padding: 20px 14px 18px;
+      }
+
+      .tabs {
+        width: 270px;
+        height: 62px;
+        margin-bottom: 22px;
+      }
+
+      .tab {
+        font-size: 20px;
+      }
+
+      .panel {
+        border-radius: 16px;
+        padding: 18px 14px 16px;
+      }
+
+      .panel + .panel {
+        margin-top: 18px;
+      }
+
+      .section-title,
+      .method-title,
+      .account-title {
+        margin-bottom: 18px;
+        font-size: 20px;
+      }
+
+      .balance-grid {
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .balance-box {
+        min-height: 80px;
+        border-radius: 10px;
+        padding: 12px 10px;
+      }
+
+      .balance-label {
+        margin-bottom: 16px;
+        font-size: 13px;
+      }
+
+      .balance-value {
+        font-size: 25px;
+      }
+
+      .input-card {
+        min-height: 110px;
+        border-radius: 10px;
+        padding: 20px 10px 16px;
+      }
+
+      .input-title-row {
+        margin-bottom: 24px;
+        font-size: 19px;
+      }
+
+      .currency-line {
+        font-size: 30px;
+      }
+
+      .coin-exchange {
+        min-height: 128px;
+        border-radius: 10px;
+        padding: 21px 10px 18px;
+      }
+
+      .exchange-head {
+        font-size: 20px;
+      }
+
+      .coin-line {
+        margin-top: 28px;
+        font-size: 25px;
+      }
+
+      .method-box {
+        padding: 16px 12px 12px;
+        gap: 11px;
+      }
+
+      .method {
+        min-width: 114px;
+        height: 58px;
+        border-radius: 10px;
+        font-size: 17px;
+      }
+
+      .brand-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+      }
+
+      .account-field {
+        height: 62px;
+        border-radius: 10px;
+        font-size: 26px;
+      }
+
+      .tips {
+        font-size: 16px;
+      }
+
+      .bottom-space {
+        min-height: 80px;
+      }
+
+      .withdraw-btn {
+        height: 68px;
+        border-radius: 14px;
+        font-size: 18px;
+      }
+
+      .home-indicator {
+        width: 220px;
+      }
+
+      .confirm-overlay {
+        padding: 32px 32px;
+      }
+
+      .confirm-dialog {
+        border-radius: 24px;
+        padding: 32px 20px 28px;
+      }
+
+      .confirm-title {
+        font-size: 24px;
+      }
+
+      .confirm-amount {
+        margin-top: 34px;
+        font-size: 42px;
+      }
+
+      .confirm-subtitle {
+        margin-top: 22px;
+        font-size: 22px;
+      }
+
+      .confirm-info {
+        padding: 22px 28px;
+        gap: 24px;
+      }
+
+      .confirm-row {
+        font-size: 21px;
+      }
+
+      .confirm-warning {
+        margin: 0 14px 32px;
+        font-size: 17px;
+      }
+
+      .confirm-action {
+        height: 72px;
+        border-radius: 18px;
+        font-size: 23px;
+      }
+
+      .record-page .statusbar {
+        height: 38px;
+        padding: 10px 12px 0;
+        font-size: 12px;
+      }
+
+      .record-page .status-icons {
+        font-size: 9px;
+      }
+
+      .record-page .header {
+        height: 36px;
+        padding: 0 6px 5px;
+      }
+
+      .record-page .title {
+        font-size: 12px;
+      }
+
+      .review-tabs {
+        width: 506px;
+        max-width: calc(100% - 92px);
+        height: 84px;
+        margin: 22px auto 24px;
+      }
+
+      .review-tab {
+        font-size: 28px;
+      }
+
+      .empty-state {
+        min-height: calc(100vh - 210px);
+        padding-bottom: 90px;
+        font-size: 28px;
+      }
+
+      .empty-box {
+        width: 174px;
+        height: 130px;
+      }
+
+      .record-page .icon-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .record-scroll {
+        padding: 2px 7px 14px;
+      }
+    }
+
+    .phone {
+      width: min(100%, 432px);
+      min-height: 936px;
+    }
+
+    .statusbar {
+      height: 38px;
+      padding: 10px 22px 0;
+      font-size: 16px;
+    }
+
+    .status-icons {
+      font-size: 11px;
+      gap: 5px;
+    }
+
+    .header,
+    .record-page .header {
+      height: 95px;
+      padding: 22px 15px 16px;
+      grid-template-columns: 42px 1fr 42px;
+    }
+
+    .icon-btn,
+    .record-page .icon-btn {
+      width: 42px;
+      height: 42px;
+    }
+
+    .title,
+    .record-page .title {
+      font-size: 22px;
+    }
+
+    .back-icon,
+    .record-page .back-icon {
+      width: 18px;
+      height: 18px;
+      border-width: 3px;
+    }
+
+    .record-icon {
+      width: 25px;
+      height: 31px;
+      border-width: 3px;
+    }
+
+    .record-icon::before,
+    .record-icon::after {
+      left: 6px;
+      right: 6px;
+      height: 2px;
+    }
+
+    .record-icon::before {
+      top: 7px;
+      box-shadow: 0 7px 0 currentColor;
+    }
+
+    .record-icon::after {
+      bottom: 6px;
+      right: 11px;
+    }
+
+    .page {
+      min-height: calc(936px - 133px);
+      padding: 20px 14px 18px;
+    }
+
+    .tabs {
+      width: 270px;
+      height: 62px;
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      font-size: 20px;
+    }
+
+    .panel {
+      border-radius: 16px;
+      padding: 18px 14px 16px;
+    }
+
+    .panel + .panel {
+      margin-top: 18px;
+    }
+
+    .section-title,
+    .method-title,
+    .account-title {
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    .balance-grid {
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .balance-box {
+      min-height: 80px;
+      border-radius: 10px;
+      padding: 12px 10px;
+    }
+
+    .balance-label {
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .balance-value {
+      font-size: 25px;
+    }
+
+    .input-card {
+      min-height: 110px;
+      border-radius: 10px;
+      padding: 20px 10px 16px;
+    }
+
+    .input-title-row {
+      margin-bottom: 24px;
+      font-size: 19px;
+    }
+
+    .currency-line {
+      font-size: 30px;
+    }
+
+    .coin-exchange {
+      min-height: 128px;
+      border-radius: 10px;
+      padding: 21px 10px 18px;
+    }
+
+    .exchange-head {
+      font-size: 20px;
+    }
+
+    .coin-line {
+      margin-top: 28px;
+      font-size: 25px;
+    }
+
+    .method-box {
+      padding: 16px 12px 12px;
+      gap: 11px;
+    }
+
+    .method {
+      min-width: 114px;
+      height: 58px;
+      border-radius: 10px;
+      font-size: 17px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+    }
+
+    .account-field {
+      height: 62px;
+      border-radius: 10px;
+      font-size: 26px;
+    }
+
+    .tips {
+      font-size: 16px;
+    }
+
+    .bottom-space {
+      min-height: 80px;
+    }
+
+    .withdraw-btn {
+      height: 68px;
+      border-radius: 14px;
+      font-size: 18px;
+    }
+
+    .review-tabs {
+      width: min(74%, 340px);
+      height: 62px;
+      margin: 22px auto 24px;
+    }
+
+    .review-tab {
+      font-size: 20px;
+    }
+
+    .record-scroll {
+      padding: 0 7px 14px;
+    }
+
+    .empty-state {
+      min-height: calc(936px - 219px);
+      padding-bottom: 90px;
+      font-size: 20px;
+    }
+
+    .empty-box {
+      width: 150px;
+      height: 112px;
+    }
+
+    .withdraw-record {
+      margin-bottom: 10px;
+    }
+
+    .record-card {
+      padding: 10px 7px;
+    }
+
+    .record-status {
+      font-size: 13px;
+    }
+
+    .record-lines {
+      padding-right: 78px;
+      gap: 5px;
+      font-size: 10px;
+      line-height: 1.22;
+    }
+
+    .record-time {
+      font-size: 10px;
+    }
+
+    .withdraw-record.pending {
+      margin: 0 16px 12px;
+      padding: 12px 15px 15px;
+      border-radius: 18px;
+    }
+
+    .withdraw-record.pending .record-order {
+      font-size: 16px;
+    }
+
+    .withdraw-record.pending .record-status {
+      font-size: 19px;
+    }
+
+    .withdraw-record.pending .record-lines {
+      gap: 12px;
+      padding-right: 80px;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .withdraw-record.pending .record-time {
+      font-size: 15px;
+    }
+
+    .confirm-overlay {
+      align-items: center;
+      justify-items: center;
+      padding: 0 36px;
+    }
+
+    .confirm-dialog {
+      width: min(100%, 336px);
+      border-radius: 20px;
+      padding: 28px 16px 24px;
+      transform: translateY(-8px);
+    }
+
+    .confirm-title {
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .confirm-amount {
+      margin-top: 28px;
+      font-size: 42px;
+      font-weight: 600;
+    }
+
+    .confirm-subtitle {
+      margin-top: 20px;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .confirm-info {
+      margin: 20px 0 20px;
+      border-radius: 16px;
+      padding: 18px 22px;
+      gap: 20px;
+    }
+
+    .confirm-row {
+      gap: 16px;
+      font-size: 19px;
+      line-height: 1.22;
+    }
+
+    .confirm-row span:first-child {
+      max-width: 156px;
+    }
+
+    .confirm-warning {
+      margin: 0 18px 28px;
+      font-size: 16px;
+      line-height: 1.42;
+    }
+
+    .confirm-actions {
+      gap: 12px;
+    }
+
+    .confirm-action {
+      height: 68px;
+      border-radius: 16px;
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" aria-label="Withdrawal Salary 账户提现原型">
+    <div class="statusbar">
+      <span id="clock">8:00</span>
+      <span class="status-icons">1.86 KB/s ▣ WiFi 98% ⚡</span>
+    </div>
+
+    <header class="header">
+      <button class="icon-btn" type="button" aria-label="返回">
+        <span class="back-icon" aria-hidden="true"></span>
+      </button>
+      <div class="title">Withdrawal Salary</div>
+      <button class="icon-btn" id="record-entry" type="button" aria-label="历史记录">
+        <span class="record-icon" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <main class="page">
+      <div class="tabs" role="tablist" aria-label="Withdrawal type">
+        <button class="tab active" type="button" role="tab" aria-selected="true" data-view="coins">Coins</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-view="cash">Cash</button>
+      </div>
+
+      <section class="view active" id="coins-view" aria-label="Coins withdrawal">
+        <section class="panel">
+          <h2 class="section-title">Withdrawal Balance</h2>
+          <div class="balance-grid">
+            <button class="balance-box active" type="button" data-view-source="coins" data-value="personal">
+              <div class="balance-label">个人账户余额:</div>
+              <div class="balance-value">$55.82</div>
+            </button>
+            <button class="balance-box" type="button" data-view-source="coins" data-value="host">
+              <div class="balance-label">主播转入:</div>
+              <div class="balance-value">$20.00</div>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2 class="section-title">Withdraw Amount</h2>
+          <div class="input-card">
+            <div class="input-title-row">
+              <span>Please Enter The Amount</span>
+            </div>
+            <div class="currency-line">
+              <label class="amount-entry">
+                <span>$</span>
+                <input class="amount-input" id="coins-amount" type="text" inputmode="decimal" placeholder="0.00" aria-label="Coins withdraw amount">
+              </label>
+              <span class="edit-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="exchange-mark">⇅</div>
+          <div class="coin-exchange">
+            <div class="exchange-head">
+              <span>Exchange Coins</span>
+              <span>1$ = 11000 Coins</span>
+            </div>
+            <div class="coin-line">
+              <span class="coin" aria-hidden="true"></span>
+              <span id="coins-output">0</span>
+            </div>
+          </div>
+          <div class="tips">Tips: Minimum withdraw amount is $1</div>
+        </section>
+
+        <div class="bottom-space"></div>
+        <button class="withdraw-btn" id="coins-submit" type="button">Withdrawal Amount</button>
+        <div class="home-indicator"></div>
+      </section>
+
+      <section class="view" id="cash-view" aria-label="Cash withdrawal">
+        <section class="panel">
+          <h2 class="section-title">Withdrawal Balance</h2>
+          <div class="balance-grid">
+            <button class="balance-box" type="button" data-view-source="cash" data-value="personal">
+              <div class="balance-label">个人账户余额:</div>
+              <div class="balance-value">$55.82</div>
+            </button>
+            <button class="balance-box" type="button" data-view-source="cash" data-value="host">
+              <div class="balance-label">主播转入:</div>
+              <div class="balance-value">$20.00</div>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2 class="section-title">Withdraw Amount</h2>
+          <div class="input-card">
+            <div class="input-title-row">
+              <span>Please Enter The Amount</span>
+            </div>
+            <div class="currency-line">
+              <label class="amount-entry">
+                <span>$</span>
+                <input class="amount-input" id="cash-amount" type="text" inputmode="decimal" placeholder="0.00" aria-label="Cash withdraw amount">
+              </label>
+              <span class="edit-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <h2 class="method-title">Withdrawal Method</h2>
+          <div class="method-box">
+            <button class="method active" type="button">
+              <span class="brand-icon">USDT</span>
+              <span>Usdt</span>
+            </button>
+            <button class="method" type="button">
+              <span class="brand-icon bank">BANK</span>
+              <span>Bank</span>
+            </button>
+            <button class="method" type="button">
+              <span class="brand-icon voda">vodafone</span>
+              <span>Vodafone</span>
+            </button>
+            <button class="method" type="button">
+              <span class="brand-icon geo">▰▰</span>
+              <span>Shamcash</span>
+            </button>
+            <button class="method" type="button">
+              <span class="brand-icon easy">easypaisa</span>
+              <span>Easypaisa</span>
+            </button>
+            <button class="method" type="button">
+              <span class="brand-icon jazz">JazzCash</span>
+              <span>JazzCash</span>
+            </button>
+          </div>
+
+          <h2 class="account-title">Account</h2>
+          <div class="account-field">
+            <span>76468484879</span>
+            <span class="edit-icon" aria-hidden="true"></span>
+          </div>
+          <div class="tips">Tips: If you choose to receive USDT, the maximum fee is $1 per transaction.</div>
+        </section>
+
+        <div class="bottom-space"></div>
+        <button class="withdraw-btn" id="cash-submit" type="button" disabled>Withdrawal Amount</button>
+        <div class="home-indicator"></div>
+      </section>
+    </main>
+
+    <section class="record-page" id="withdrawal-record-page" hidden aria-label="Withdrawal Record">
+      <div class="statusbar">
+        <span>10:29</span>
+        <span class="status-icons">⌁ ▣ WiFi 98% ⚡</span>
+      </div>
+
+      <header class="header">
+        <button class="icon-btn" id="record-back" type="button" aria-label="返回提现页">
+          <span class="back-icon" aria-hidden="true"></span>
+        </button>
+        <div class="title">Withdrawal Record</div>
+        <span></span>
+      </header>
+
+      <div class="review-tabs" role="tablist" aria-label="Withdrawal record status">
+        <button class="review-tab active" data-review-tab="under" type="button" role="tab" aria-selected="true">Under Review</button>
+        <button class="review-tab" data-review-tab="reviewed" type="button" role="tab" aria-selected="false">Reviewed</button>
+      </div>
+
+      <main class="record-scroll">
+        <section class="review-panel" data-review-panel="under">
+          <article class="withdraw-record pending">
+            <div class="record-order">00202606040000000026 <span class="copy-mark" aria-hidden="true"></span></div>
+            <div class="record-card">
+              <div class="record-status waiting">Waiting</div>
+              <div class="record-lines">
+                <div>UserId: 1358466</div>
+                <div>Withdrawal Channel: <span class="record-accent">USDT</span></div>
+                <div>Withdrawal Type: <span class="record-accent">主播转入余额</span></div>
+                <div>Withdrawal Amount: <span class="record-accent">20</span></div>
+                <div>Withdrawal Method: <span class="record-accent">cash</span></div>
+                <div>Withdrawal Account: test</div>
+              </div>
+              <div class="record-time">2026-06-04 10:51:19</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="review-panel" data-review-panel="reviewed" hidden>
+        <article class="withdraw-record">
+          <div class="record-order">002026052300C00000005 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status approved">Approved</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Type: 个人账户余额</div>
+              <div>Withdrawal Amount: 5</div>
+              <div>Withdrawal Method: coins</div>
+            </div>
+            <div class="record-time">2026-05-23 11:49:51</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026052100C00000008 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status approved">Approved</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Type: 主播转入余额</div>
+              <div>Withdrawal Amount: 5</div>
+              <div>Withdrawal Method: coins</div>
+            </div>
+            <div class="record-time">2026-05-23 11:49:51</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026052100C00000008 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status approved">Approved</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Type: 个人账户余额</div>
+              <div>Withdrawal Amount: 5</div>
+              <div>Withdrawal Method: coins</div>
+            </div>
+            <div class="record-time">2026-05-23 11:49:51</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026052100C00000008 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status approved">Approved</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Type: 主播转入余额</div>
+              <div>Withdrawal Amount: 1</div>
+              <div>Withdrawal Method: coins</div>
+            </div>
+            <div class="record-time">2026-05-21 16:11:39</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026032000C00000001 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status rejected">Rejected</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Channel: USDT</div>
+              <div>Withdrawal Type: 个人账户余额</div>
+              <div>Withdrawal Amount: 10</div>
+              <div>Withdrawal Method: cash</div>
+              <div>Withdrawal Account: 76468484879</div>
+              <div class="record-remark">Withdrawal Remark: Sorry, your account is incorrect. Please verify and submit again.</div>
+            </div>
+            <div class="record-time">2026-03-20 10:55:06</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026031900C00000006 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status rejected">Rejected</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Channel: USDT</div>
+              <div>Withdrawal Type: 主播转入余额</div>
+              <div>Withdrawal Amount: 10</div>
+              <div>Withdrawal Method: cash</div>
+              <div>Withdrawal Account: 76468484879</div>
+              <div class="record-remark">Withdrawal Remark: Sorry, your account is incorrect. Please verify and submit again.</div>
+            </div>
+            <div class="record-time">2026-03-20 10:55:06</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026031900C00000006 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status rejected">Rejected</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Channel: USDT</div>
+              <div>Withdrawal Type: 个人账户余额</div>
+              <div>Withdrawal Amount: 10</div>
+              <div>Withdrawal Method: cash</div>
+              <div>Withdrawal Account: 76468484879</div>
+              <div class="record-remark">Withdrawal Remark: Sorry, your account is incorrect. Please verify and submit again.</div>
+            </div>
+            <div class="record-time">2026-03-20 10:55:06</div>
+          </div>
+        </article>
+
+        <article class="withdraw-record">
+          <div class="record-order">002026031900C00000006 <span class="copy-mark" aria-hidden="true"></span></div>
+          <div class="record-card">
+            <div class="record-status rejected">Rejected</div>
+            <div class="record-lines">
+              <div>UserId: 1358466</div>
+              <div>Withdrawal Channel: USDT</div>
+              <div>Withdrawal Type: 主播转入余额</div>
+              <div>Withdrawal Amount: 10</div>
+              <div>Withdrawal Method: cash</div>
+              <div>Withdrawal Account: 76468484879</div>
+              <div class="record-remark">Withdrawal Remark: Sorry, your account is incorrect. Please verify and submit again.</div>
+            </div>
+            <div class="record-time">2026-03-19 19:23:38</div>
+          </div>
+        </article>
+        </section>
+      </main>
+    </section>
+
+    <div class="confirm-overlay" id="confirm-overlay" hidden>
+      <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-title" id="confirm-title">Settlement Confirm</div>
+        <div class="confirm-amount" id="confirm-amount">$ 5</div>
+        <div class="confirm-subtitle">
+          <div id="confirm-account-label">Withdraw Account</div>
+          <div id="confirm-mode-label">Convert to coins</div>
+        </div>
+
+        <div class="confirm-info" id="confirm-info">
+          <div class="confirm-row">
+            <span>Available Balance:</span>
+            <span class="confirm-value" id="confirm-available">$ 55.82</span>
+          </div>
+          <div class="confirm-row">
+            <span>Current Withdrawal:</span>
+            <span class="confirm-value" id="confirm-current">$ 5</span>
+          </div>
+          <div class="confirm-row">
+            <span>Withdrawal Balance:</span>
+            <span class="confirm-value" id="confirm-remaining">$ 50.82</span>
+          </div>
+          <div class="confirm-row" id="confirm-coins-row">
+            <span>Withdrawal Coins:</span>
+            <span class="confirm-value"><span class="coin confirm-coin" aria-hidden="true"></span><span id="confirm-coins">55000</span></span>
+          </div>
+        </div>
+
+        <div class="confirm-warning">
+          Please ensure the above information is correct.<br>
+          The withdrawal cannot be reversed.
+        </div>
+
+        <div class="confirm-actions">
+          <button class="confirm-action cancel" id="confirm-cancel" type="button">Cancel</button>
+          <button class="confirm-action confirm" id="confirm-submit" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const recordPage = document.getElementById("withdrawal-record-page");
+    const recordScroll = recordPage.querySelector(".record-scroll");
+    const reviewTabs = Array.from(document.querySelectorAll("[data-review-tab]"));
+    const reviewPanels = Array.from(document.querySelectorAll("[data-review-panel]"));
+    const views = {
+      coins: document.getElementById("coins-view"),
+      cash: document.getElementById("cash-view")
+    };
+    const balances = {
+      personal: 55.82,
+      host: 20
+    };
+    const coinRate = 11000;
+    const controls = {
+      coins: {
+        amount: document.getElementById("coins-amount"),
+        output: document.getElementById("coins-output"),
+        submit: document.getElementById("coins-submit")
+      },
+      cash: {
+        amount: document.getElementById("cash-amount"),
+        submit: document.getElementById("cash-submit")
+      }
+    };
+    const confirmModal = {
+      dialog: document.querySelector(".confirm-dialog"),
+      overlay: document.getElementById("confirm-overlay"),
+      amount: document.getElementById("confirm-amount"),
+      accountLabel: document.getElementById("confirm-account-label"),
+      modeLabel: document.getElementById("confirm-mode-label"),
+      available: document.getElementById("confirm-available"),
+      current: document.getElementById("confirm-current"),
+      remaining: document.getElementById("confirm-remaining"),
+      coinsRow: document.getElementById("confirm-coins-row"),
+      coins: document.getElementById("confirm-coins")
+    };
+    const coinsConfirmLabels = {
+      personal: ["个人账户提现", "转金币"],
+      host: ["主播转入账户提现", "转金币"]
+    };
+    const cashConfirmPrefixes = {
+      personal: "个人账户提现到",
+      host: "主播转入账户提现到"
+    };
+
+    function formatAmount(value) {
+      return value.toFixed(2);
+    }
+
+    function amountNumber(input) {
+      const value = Number(input.value);
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function updateCoinsOutput() {
+      const coins = Math.round(amountNumber(controls.coins.amount) * coinRate);
+      controls.coins.output.textContent = coins > 0 ? coins.toLocaleString("en-US") : "0";
+    }
+
+    function selectedSource(viewName) {
+      return document.querySelector(`[data-view-source="${viewName}"].active`)?.dataset.value || "";
+    }
+
+    function availableForSource(source) {
+      if (source === "personal") {
+        return balances.personal;
+      }
+      if (source === "host") {
+        return balances.host;
+      }
+      return 0;
+    }
+
+    function activeMethodName() {
+      const methodText = document.querySelector(".method.active span:last-child")?.textContent?.trim() || "Usdt";
+      return methodText.toLowerCase() === "usdt" ? "USDT" : methodText;
+    }
+
+    function ensureDemoAmount(viewName, available) {
+      const input = controls[viewName].amount;
+      let value = amountNumber(input);
+      if (value > 0) {
+        return value;
+      }
+      value = Math.min(5, available);
+      input.value = value > 0 ? formatAmount(value) : "0.00";
+      if (viewName === "coins") {
+        updateCoinsOutput();
+      }
+      return value;
+    }
+
+    function showConfirm(viewName) {
+      const source = selectedSource(viewName);
+      if (!source) {
+        return;
+      }
+      const available = availableForSource(source);
+      const amount = Math.min(ensureDemoAmount(viewName, available), available);
+      const remaining = Math.max(available - amount, 0);
+      const isCoins = viewName === "coins";
+      const coins = Math.round(amount * coinRate);
+
+      controls[viewName].amount.value = formatAmount(amount);
+      if (isCoins) {
+        updateCoinsOutput();
+      }
+
+      confirmModal.dialog.classList.toggle("coins-confirm", isCoins);
+      confirmModal.dialog.classList.toggle("cash-confirm", !isCoins);
+      confirmModal.amount.textContent = `$ ${formatAmount(amount).replace(/\.00$/, "")}`;
+      if (isCoins) {
+        confirmModal.accountLabel.textContent = coinsConfirmLabels[source][0];
+        confirmModal.modeLabel.textContent = coinsConfirmLabels[source][1];
+        confirmModal.modeLabel.hidden = false;
+      } else {
+        confirmModal.accountLabel.textContent = `${cashConfirmPrefixes[source]} ${activeMethodName()}`;
+        confirmModal.modeLabel.textContent = "";
+        confirmModal.modeLabel.hidden = true;
+      }
+      confirmModal.available.textContent = `$ ${formatAmount(available)}`;
+      confirmModal.current.textContent = `$ ${formatAmount(amount).replace(/\.00$/, "")}`;
+      confirmModal.remaining.textContent = `$ ${formatAmount(remaining)}`;
+      confirmModal.coinsRow.hidden = !isCoins;
+      confirmModal.coins.textContent = isCoins ? coins.toLocaleString("en-US") : "";
+      confirmModal.overlay.hidden = false;
+    }
+
+    function sanitizeAmountInput(input) {
+      const cleaned = input.value
+        .replace(/[^\d.]/g, "")
+        .replace(/(\..*)\./g, "$1");
+      input.value = cleaned;
+      input.dataset.autoFilled = "false";
+    }
+
+    function applySourceSelection(viewName, row) {
+      const amountInput = controls[viewName].amount;
+
+      document.querySelectorAll(`[data-view-source="${viewName}"]`).forEach((item) => item.classList.remove("active"));
+      row.classList.add("active");
+
+      if (amountInput.dataset.autoFilled === "true") {
+        amountInput.value = "";
+        amountInput.dataset.autoFilled = "false";
+      }
+
+      if (viewName === "coins") {
+        updateCoinsOutput();
+      } else {
+        controls.cash.submit.disabled = false;
+      }
+    }
+
+    function applyReviewTab(tabName) {
+      reviewTabs.forEach((tab) => {
+        const isActive = tab.dataset.reviewTab === tabName;
+        tab.classList.toggle("active", isActive);
+        tab.setAttribute("aria-selected", String(isActive));
+      });
+      reviewPanels.forEach((panel) => {
+        panel.hidden = panel.dataset.reviewPanel !== tabName;
+      });
+      recordScroll.scrollTop = 0;
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const viewName = tab.dataset.view;
+        tabs.forEach((item) => {
+          const isActive = item === tab;
+          item.classList.toggle("active", isActive);
+          item.setAttribute("aria-selected", String(isActive));
+        });
+        Object.entries(views).forEach(([name, view]) => {
+          view.classList.toggle("active", name === viewName);
+        });
+        document.getElementById("clock").textContent = viewName === "coins" ? "8:00" : "8:05";
+      });
+    });
+
+    document.querySelectorAll("[data-view-source]").forEach((row) => {
+      row.addEventListener("click", () => {
+        applySourceSelection(row.dataset.viewSource, row);
+      });
+    });
+
+    controls.coins.amount.addEventListener("input", () => {
+      sanitizeAmountInput(controls.coins.amount);
+      updateCoinsOutput();
+    });
+
+    controls.cash.amount.addEventListener("input", () => {
+      sanitizeAmountInput(controls.cash.amount);
+    });
+
+    document.querySelectorAll(".method").forEach((method) => {
+      method.addEventListener("click", () => {
+        document.querySelectorAll(".method").forEach((item) => item.classList.remove("active"));
+        method.classList.add("active");
+      });
+    });
+
+    controls.coins.submit.addEventListener("click", () => showConfirm("coins"));
+    controls.cash.submit.addEventListener("click", () => showConfirm("cash"));
+
+    document.getElementById("record-entry").addEventListener("click", () => {
+      confirmModal.overlay.hidden = true;
+      recordPage.hidden = false;
+      applyReviewTab("under");
+      document.getElementById("clock").textContent = "10:29";
+    });
+
+    document.getElementById("record-back").addEventListener("click", () => {
+      recordPage.hidden = true;
+      const activeView = document.querySelector(".tab.active")?.dataset.view || "coins";
+      document.getElementById("clock").textContent = activeView === "coins" ? "8:00" : "8:05";
+    });
+
+    reviewTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        applyReviewTab(tab.dataset.reviewTab);
+      });
+    });
+
+    document.getElementById("confirm-cancel").addEventListener("click", () => {
+      confirmModal.overlay.hidden = true;
+    });
+
+    document.getElementById("confirm-submit").addEventListener("click", () => {
+      confirmModal.overlay.hidden = true;
+    });
+
+    confirmModal.overlay.addEventListener("click", (event) => {
+      if (event.target === confirmModal.overlay) {
+        confirmModal.overlay.hidden = true;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -272,6 +272,11 @@
       color: var(--rose);
     }
 
+    .table-badge.borrow {
+      background: var(--rose-soft);
+      color: var(--rose);
+    }
+
     .scroll-hint {
       margin: 0 14px 10px;
       padding: 8px 10px;
@@ -325,12 +330,14 @@
       min-width: 620px;
     }
 
-    table.agent-amount {
-      min-width: 760px;
+    table.agent-amount,
+    table.borrow-amount {
+      min-width: 640px;
     }
 
-    table.agent-deduct {
-      min-width: 760px;
+    table.agent-deduct,
+    table.borrow-deduct {
+      min-width: 620px;
     }
 
     th,
@@ -462,54 +469,37 @@
 
     <div class="header">
       <button class="nav-icon" type="button">‹</button>
-      <div class="title">预支记录</div>
+      <div class="title" id="page-title">预支记录</div>
       <button class="nav-icon" type="button">×</button>
     </div>
 
     <main class="page">
       <section class="intro-card">
         <div class="intro-top">
-          <div class="intro-title">预支 / 借支明细</div>
-          <div class="identity-pill" id="identity-pill">公会长身份</div>
+          <div class="intro-title" id="intro-title">预支明细</div>
+          <div class="identity-pill" id="identity-pill">预支</div>
         </div>
-        <div class="intro-text">
-          页面按用户身份展示不同记录表。所有表格按时间倒序展示；当字段宽度超出屏幕时，表格区域支持左右滑动查看完整字段。
+        <div class="intro-text" id="intro-text">
+          预支记录仅展示预支金额与预支抵扣两张表。所有表格按时间倒序展示；字段超出屏幕时支持左右滑动查看。
         </div>
       </section>
 
-      <div class="segment">
-        <button class="segment-btn" data-view="host">主播身份</button>
-        <button class="segment-btn active" data-view="agent">公会长身份</button>
+      <div class="record-tabs active" id="record-tabs">
+        <button class="tab-btn active" id="mode-tab">预支</button>
       </div>
 
-      <div class="rule-note" id="rule-note">
-        公会长身份展示“预支/借支金额”和“预支/借支抵扣”两张表；类型字段区分预支或借支，原因字段分为 A 官方手动扣除、B 薪资结算扣除。
-      </div>
-
-      <div class="record-tabs" id="host-tabs">
-        <button class="tab-btn active" data-view-tab="host" data-filter="all">全部</button>
-        <button class="tab-btn" data-view-tab="host" data-filter="advance">预支</button>
-        <button class="tab-btn" data-view-tab="host" data-filter="deduct">预支抵扣</button>
-      </div>
-
-      <div class="record-tabs active" id="agent-tabs">
-        <button class="tab-btn active" data-view-tab="agent" data-filter="all">全部</button>
-        <button class="tab-btn" data-view-tab="agent" data-filter="amount">借支预支</button>
-        <button class="tab-btn" data-view-tab="agent" data-filter="deduct">借支预支抵扣</button>
-      </div>
-
-      <section class="view" id="host-view">
-        <article class="table-panel" data-tab-group="host" data-tab-type="advance">
+      <section class="view active" id="advance-view" data-record-view="advance">
+        <article class="table-panel" data-tab-type="amount">
           <div class="panel-head">
             <div>
-              <div class="panel-title">预支金额</div>
-              <div class="panel-subtitle">主播身份仅展示预支收款流水。</div>
+              <div class="panel-title">预支</div>
+              <div class="panel-subtitle">展示预支收款流水。</div>
             </div>
             <div class="table-badge">Advance</div>
           </div>
           <div class="scroll-hint">左右滑动查看：时间 / 收款id / 金额 / 金币 / 账单id</div>
           <div class="table-scroll">
-            <table class="host-advance">
+            <table class="agent-amount">
               <thead>
                 <tr>
                   <th>时间</th>
@@ -534,12 +524,19 @@
                   <td class="coin">320</td>
                   <td class="bill">ADV-20260316-185505</td>
                 </tr>
+                <tr>
+                  <td>2026-03-15 12:20:33</td>
+                  <td>5508457</td>
+                  <td class="amount">$12.00</td>
+                  <td class="coin">192</td>
+                  <td class="bill">ADV-20260315-122033</td>
+                </tr>
               </tbody>
             </table>
           </div>
         </article>
 
-        <article class="table-panel" data-tab-group="host" data-tab-type="deduct">
+        <article class="table-panel" data-tab-type="deduct">
           <div class="panel-head">
             <div>
               <div class="panel-title">预支抵扣</div>
@@ -549,7 +546,7 @@
           </div>
           <div class="scroll-hint">左右滑动查看：时间 / 金额 / 原因 / 账单id</div>
           <div class="table-scroll">
-            <table class="host-deduct">
+            <table class="agent-deduct">
               <thead>
                 <tr>
                   <th>时间</th>
@@ -577,25 +574,23 @@
         </article>
       </section>
 
-      <section class="view active" id="agent-view">
-        <article class="table-panel" data-tab-group="agent" data-tab-type="amount">
+      <section class="view" id="borrow-view" data-record-view="borrow">
+        <article class="table-panel" data-tab-type="amount">
           <div class="panel-head">
             <div>
-              <div class="panel-title">预支/借支金额</div>
-              <div class="panel-subtitle">公会长身份合并展示预支与借支收款流水。</div>
+              <div class="panel-title">借支</div>
+              <div class="panel-subtitle">展示借支收款流水。</div>
             </div>
-            <div class="table-badge mix">Advance / Loan</div>
+            <div class="table-badge borrow">Borrow</div>
           </div>
-          <div class="scroll-hint">左右滑动查看：时间 / 收款id / 金额 / 金币 / 类型 / 账单id</div>
+          <div class="scroll-hint">左右滑动查看：时间 / 收款id / 金额 / 账单id</div>
           <div class="table-scroll">
-            <table class="agent-amount">
+            <table class="borrow-amount">
               <thead>
                 <tr>
                   <th>时间</th>
                   <th>收款id</th>
                   <th>金额</th>
-                  <th>金币</th>
-                  <th>类型</th>
                   <th>账单id</th>
                 </tr>
               </thead>
@@ -604,47 +599,34 @@
                   <td>2026-03-18 09:12:08</td>
                   <td>8531008</td>
                   <td class="amount">$100.00</td>
-                  <td class="coin">-</td>
-                  <td><span class="type-chip loan">借支</span></td>
                   <td class="bill">LOAN-20260318-091208</td>
                 </tr>
                 <tr>
-                  <td>2026-03-16 19:08:43</td>
-                  <td>5508457</td>
-                  <td class="amount">$9.00</td>
-                  <td class="coin">144</td>
-                  <td><span class="type-chip advance">预支</span></td>
-                  <td class="bill">ADV-20260316-190843</td>
-                </tr>
-                <tr>
-                  <td>2026-03-16 18:55:05</td>
-                  <td>5724425</td>
-                  <td class="amount">$20.00</td>
-                  <td class="coin">320</td>
-                  <td><span class="type-chip advance">预支</span></td>
-                  <td class="bill">ADV-20260316-185505</td>
+                  <td>2026-03-15 20:31:42</td>
+                  <td>8531008</td>
+                  <td class="amount">$50.00</td>
+                  <td class="bill">LOAN-20260315-203142</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </article>
 
-        <article class="table-panel" data-tab-group="agent" data-tab-type="deduct">
+        <article class="table-panel" data-tab-type="deduct">
           <div class="panel-head">
             <div>
-              <div class="panel-title">预支/借支抵扣</div>
-              <div class="panel-subtitle">类型区分预支或借支；原因 A/B 对应不同扣除来源。</div>
+              <div class="panel-title">借支抵扣</div>
+              <div class="panel-subtitle">原因 A 为官方手动扣除，原因 B 为薪资结算扣除。</div>
             </div>
             <div class="table-badge deduct">Deduction</div>
           </div>
-          <div class="scroll-hint">左右滑动查看：时间 / 金额 / 类型 / 原因 / 账单id</div>
+          <div class="scroll-hint">左右滑动查看：时间 / 金额 / 原因 / 账单id</div>
           <div class="table-scroll">
-            <table class="agent-deduct">
+            <table class="borrow-deduct">
               <thead>
                 <tr>
                   <th>时间</th>
                   <th>金额</th>
-                  <th>类型</th>
                   <th>原因</th>
                   <th>账单id</th>
                 </tr>
@@ -653,30 +635,14 @@
                 <tr>
                   <td>2026-03-31 23:59:59</td>
                   <td class="amount">$65.00</td>
-                  <td><span class="type-chip loan">借支</span></td>
                   <td><span class="reason-chip payroll">B 薪资结算扣除</span></td>
                   <td class="bill">LOAN-D-20260331-235959</td>
                 </tr>
                 <tr>
                   <td>2026-03-21 14:02:51</td>
                   <td class="amount">$35.00</td>
-                  <td><span class="type-chip loan">借支</span></td>
                   <td><span class="reason-chip manual">A 官方手动扣除</span></td>
                   <td class="bill">LOAN-D-20260321-140251</td>
-                </tr>
-                <tr>
-                  <td>2026-03-17 11:36:20</td>
-                  <td class="amount">$4.00</td>
-                  <td><span class="type-chip advance">预支</span></td>
-                  <td><span class="reason-chip manual">A 官方手动扣除</span></td>
-                  <td class="bill">AD-D-20260317-113620</td>
-                </tr>
-                <tr>
-                  <td>2026-03-31 23:59:59</td>
-                  <td class="amount">$5.00</td>
-                  <td><span class="type-chip advance">预支</span></td>
-                  <td><span class="reason-chip payroll">B 薪资结算扣除</span></td>
-                  <td class="bill">AD-D-20260331-235959</td>
                 </tr>
               </tbody>
             </table>
@@ -690,59 +656,52 @@
   </div>
 
   <script>
-    const buttons = document.querySelectorAll(".segment-btn");
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode") === "borrow" ? "borrow" : "advance";
     const views = {
-      host: document.getElementById("host-view"),
-      agent: document.getElementById("agent-view")
+      advance: document.getElementById("advance-view"),
+      borrow: document.getElementById("borrow-view")
     };
-    const pill = document.getElementById("identity-pill");
-    const note = document.getElementById("rule-note");
-    const tabGroups = {
-      host: document.getElementById("host-tabs"),
-      agent: document.getElementById("agent-tabs")
+    const copy = {
+      advance: {
+        title: "预支记录",
+        intro: "预支明细",
+        pill: "预支",
+        text: "预支记录仅展示预支金额与预支抵扣两张表。所有表格按时间倒序展示；字段超出屏幕时支持左右滑动查看。",
+        tab: "预支"
+      },
+      borrow: {
+        title: "借支记录",
+        intro: "借支明细",
+        pill: "借支",
+        text: "借支记录仅展示借支金额与借支抵扣两张表。所有表格按时间倒序展示；字段超出屏幕时支持左右滑动查看。",
+        tab: "借支"
+      }
     };
 
-    const noteText = {
-      host: "主播身份展示“预支金额”和“预支抵扣”两张表；预支抵扣原因分为 A 官方手动扣除、B 薪资结算扣除。",
-      agent: "公会长身份展示“预支/借支金额”和“预支/借支抵扣”两张表；类型字段区分预支或借支，原因字段分为 A 官方手动扣除、B 薪资结算扣除。"
-    };
+    function applyMode() {
+      const activeCopy = copy[mode];
+      document.title = activeCopy.title;
+      document.getElementById("page-title").textContent = activeCopy.title;
+      document.getElementById("intro-title").textContent = activeCopy.intro;
+      document.getElementById("identity-pill").textContent = activeCopy.pill;
+      document.getElementById("intro-text").textContent = activeCopy.text;
+      document.getElementById("mode-tab").textContent = activeCopy.tab;
 
-    function applyTab(view, filter) {
-      document.querySelectorAll(`[data-tab-group="${view}"]`).forEach((panel) => {
-        const shouldShow = filter === "all" || panel.dataset.tabType === filter;
-        panel.style.display = shouldShow ? "" : "none";
+      Object.entries(views).forEach(([key, view]) => {
+        view.classList.toggle("active", key === mode);
       });
     }
 
-    document.querySelectorAll(".tab-btn").forEach((button) => {
+    document.querySelectorAll(".nav-icon").forEach((button) => {
       button.addEventListener("click", () => {
-        const view = button.dataset.viewTab;
-        tabGroups[view].querySelectorAll(".tab-btn").forEach((item) => {
-          item.classList.toggle("active", item === button);
-        });
-        applyTab(view, button.dataset.filter);
+        if (window.history.length > 1) {
+          window.history.back();
+        }
       });
     });
 
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const view = button.dataset.view;
-        buttons.forEach((item) => item.classList.toggle("active", item === button));
-        Object.entries(views).forEach(([key, element]) => {
-          element.classList.toggle("active", key === view);
-        });
-        Object.entries(tabGroups).forEach(([key, element]) => {
-          element.classList.toggle("active", key === view);
-          const allTab = element.querySelector('[data-filter="all"]');
-          element.querySelectorAll(".tab-btn").forEach((item) => {
-            item.classList.toggle("active", item === allTab);
-          });
-          applyTab(key, "all");
-        });
-        pill.textContent = view === "agent" ? "公会长身份" : "主播身份";
-        note.textContent = noteText[view];
-      });
-    });
+    applyMode();
   </script>
 </body>
 </html>

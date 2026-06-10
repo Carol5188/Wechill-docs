@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WeChill First Recharge Prototype</title>
+  <style>
+    :root {
+      --purple: #4c11b8;
+      --purple-2: #741df1;
+      --violet: #8c45ff;
+      --gold: #ffe56d;
+      --orange: #ff7a24;
+      --pink: #ee1a8f;
+      --cream: #fff8df;
+      --brown: #7b2a16;
+      --ink: #16110c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #eceef3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+      color: #fff;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+    }
+
+    .phone {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: #151111;
+      box-shadow: 0 18px 44px rgba(20, 24, 35, 0.32);
+      isolation: isolate;
+    }
+
+    .status {
+      position: absolute;
+      z-index: 30;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      font-size: 15px;
+      font-weight: 760;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+
+    .status .right {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .battery {
+      width: 24px;
+      height: 12px;
+      border: 1.5px solid currentColor;
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 5px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      width: 17px;
+      border-radius: 2px;
+      background: #7ce957;
+    }
+
+    .wallet {
+      position: absolute;
+      inset: 0;
+      padding: 68px 20px 24px;
+      color: #1c1714;
+      background:
+        radial-gradient(circle at 76% 12%, rgba(255, 221, 72, 0.28), transparent 24%),
+        linear-gradient(180deg, #fffdfa, #f4f1eb);
+    }
+
+    .wallet-top {
+      display: grid;
+      grid-template-columns: 40px 1fr 74px;
+      align-items: center;
+      font-size: 20px;
+      font-weight: 760;
+    }
+
+    .back {
+      width: 24px;
+      height: 24px;
+      border-left: 3px solid #17120f;
+      border-bottom: 3px solid #17120f;
+      transform: rotate(45deg);
+    }
+
+    .tools {
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      color: #17120f;
+      font-size: 24px;
+    }
+
+    .wallet-banner {
+      margin-top: 28px;
+      height: 54px;
+      border-radius: 13px;
+      background: #fff;
+      color: #31241d;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      gap: 12px;
+      box-shadow: 0 10px 24px rgba(80, 69, 52, 0.08);
+    }
+
+    .badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      border: 2px solid #d4d0c6;
+      background: linear-gradient(135deg, #2b2b31, #888);
+    }
+
+    .coin-line {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .coin-dot {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-right: 9px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff2a2, #ffd335 54%, #bd7a11);
+      color: #a15d08;
+      font-size: 16px;
+    }
+
+    .wallet-cards {
+      margin-top: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .wallet-card {
+      height: 122px;
+      border: 1px solid #eee2ce;
+      border-radius: 15px;
+      background: linear-gradient(180deg, #fff, #fff8ec);
+      position: relative;
+      box-shadow: 0 8px 18px rgba(127, 94, 43, 0.09);
+    }
+
+    .wallet-card::before {
+      content: "5%OFF";
+      position: absolute;
+      top: 18px;
+      left: 120px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #c2114d;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .overlay {
+      position: absolute;
+      z-index: 40;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.68);
+      padding: 0 20px;
+    }
+
+    .phone[data-screen="popup"] .overlay {
+      display: flex;
+    }
+
+    .popup {
+      position: relative;
+      width: 340px;
+      min-height: 572px;
+      padding: 0 18px 22px;
+      border-radius: 20px;
+      color: var(--brown);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 223, 0.92) 52%, #fff4cf),
+        #fff6d7;
+      box-shadow: 0 24px 54px rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      overflow: visible;
+    }
+
+    .popup-hero {
+      position: relative;
+      height: 150px;
+      margin: 0 -18px 0;
+      padding: 26px 20px;
+      border-radius: 20px 20px 38px 38px;
+      background:
+        radial-gradient(circle at 73% 54%, rgba(255, 237, 110, 0.9), transparent 32%),
+        linear-gradient(135deg, #ff6e76, #ffc85e 64%, #ffe57b);
+      overflow: hidden;
+    }
+
+    .popup-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.45;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0 1px, transparent 1px 30px),
+        linear-gradient(rgba(255, 255, 255, 0.3) 0 1px, transparent 1px 30px);
+    }
+
+    .popup-title {
+      position: relative;
+      z-index: 2;
+      width: 170px;
+      font-size: 27px;
+      line-height: 1.2;
+      font-weight: 500;
+      font-style: italic;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(150, 62, 24, 0.35);
+    }
+
+    .mascot {
+      position: absolute;
+      z-index: 3;
+      right: 27px;
+      top: 22px;
+      width: 92px;
+      height: 112px;
+      border: 4px solid rgba(255, 255, 255, 0.85);
+      border-radius: 52px 52px 35px 35px;
+      background: #fff;
+      box-shadow: 0 12px 24px rgba(133, 76, 12, 0.22);
+    }
+
+    .mascot::before,
+    .mascot::after {
+      content: "";
+      position: absolute;
+      top: 35px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #3c3455;
+    }
+
+    .mascot::before {
+      left: 26px;
+    }
+
+    .mascot::after {
+      right: 26px;
+    }
+
+    .gift {
+      position: absolute;
+      z-index: 4;
+      right: 92px;
+      top: 42px;
+      width: 50px;
+      height: 44px;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, transparent 42%, rgba(255, 239, 127, 0.9) 42% 58%, transparent 58%),
+        linear-gradient(135deg, #ff3f84, #ffba45);
+      transform: rotate(-9deg);
+      box-shadow: 0 9px 15px rgba(139, 57, 23, 0.22);
+    }
+
+    .popup-sub {
+      position: relative;
+      margin-top: -8px;
+      text-align: center;
+      color: #702919;
+      font-size: 15px;
+    }
+
+    .popup-sub strong {
+      color: #f75b13;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .tiers {
+      margin: 14px auto 22px;
+      width: 256px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid #f2d0ad;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      overflow: hidden;
+      color: #e84e14;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .tier {
+      display: grid;
+      place-items: center;
+    }
+
+    .tier.active {
+      color: #fff;
+      background: linear-gradient(180deg, #ffcf58, #ff3b62);
+    }
+
+    .gift-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 1fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .reward {
+      position: relative;
+      min-height: 96px;
+      border-radius: 14px;
+      border: 1.5px solid #ffe48f;
+      background: linear-gradient(180deg, #fffacd, #ffe8a6);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px 7px;
+    }
+
+    .reward.big {
+      grid-row: span 2;
+      min-height: 204px;
+    }
+
+    .tag {
+      position: absolute;
+      top: -8px;
+      left: -1px;
+      min-width: 48px;
+      height: 22px;
+      padding: 0 8px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(90deg, #ef4151, #ffc44a);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .placeholder {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      border: 2px dashed rgba(156, 95, 22, 0.4);
+      background: rgba(255, 255, 255, 0.34);
+      display: grid;
+      place-items: center;
+      color: #c78318;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .reward.big .placeholder {
+      width: 92px;
+      height: 84px;
+      border-radius: 50%;
+    }
+
+    .reward-name {
+      margin-top: 7px;
+      color: #8e2c16;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .reward-value {
+      color: #ff6418;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .buy {
+      position: relative;
+      height: 56px;
+      margin: 26px 42px 0;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ffe950, #ff8233 34%, #e6168e);
+      color: #fff;
+      font-size: 21px;
+      font-weight: 850;
+      box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.36), 0 11px 18px rgba(232, 61, 98, 0.22);
+    }
+
+    .discount {
+      position: absolute;
+      right: -8px;
+      top: -18px;
+      height: 24px;
+      padding: 0 10px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #ff6a34;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .close {
+      position: absolute;
+      left: 50%;
+      bottom: 52px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .close::before,
+    .close::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 21px;
+      width: 24px;
+      height: 3px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .close::before {
+      transform: rotate(45deg);
+    }
+
+    .close::after {
+      transform: rotate(-45deg);
+    }
+
+    .h5 {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 64px 16px 0;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 24% 13%, rgba(255, 220, 79, 0.24), transparent 20%),
+        radial-gradient(circle at 88% 60%, rgba(255, 75, 183, 0.2), transparent 26%),
+        linear-gradient(180deg, #4511b6, #6612df 48%, #4705b6);
+    }
+
+    .phone[data-screen="h5"] .wallet,
+    .phone[data-screen="h5"] .overlay {
+      display: none;
+    }
+
+    .phone[data-screen="h5"] .h5 {
+      display: block;
+    }
+
+    .phone[data-screen="h5"][data-capture="full"] {
+      height: 1320px;
+    }
+
+    .phone[data-screen="h5"][data-capture="full"] .h5 {
+      overflow: visible;
+    }
+
+    .phone[data-screen="h5"][data-capture="full"] .h5-buy {
+      position: relative;
+      bottom: auto;
+    }
+
+    .round-back {
+      position: absolute;
+      top: 76px;
+      left: 20px;
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #fb91ff, #8a31e9);
+      box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.22);
+      color: #fff;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .h5-title {
+      margin: 92px 0 18px;
+      text-align: center;
+      color: var(--gold);
+      font-size: 31px;
+      line-height: 1.15;
+      font-weight: 950;
+      text-shadow: 0 4px 0 #9b4b08, 0 0 22px rgba(255, 232, 94, 0.34);
+    }
+
+    .rules {
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: rgba(143, 74, 255, 0.75);
+      color: #f9eaff;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .h5-tabs {
+      margin: 22px -2px 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .h5-tab {
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .h5-tab.active {
+      color: #fff64e;
+      background: linear-gradient(180deg, #fe40ef, #8b2bff);
+    }
+
+    .h5-card {
+      position: relative;
+      margin: 0 -6px;
+      padding: 18px 14px 22px;
+      border-radius: 18px;
+      background: rgba(142, 54, 247, 0.84);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .h5-rewards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .h5-reward {
+      position: relative;
+      min-height: 138px;
+      padding: 9px 8px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 237, 83, 0.86);
+      background: linear-gradient(180deg, rgba(95, 20, 154, 0.92), rgba(143, 54, 234, 0.9));
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    .h5-reward .placeholder {
+      border-color: rgba(255, 236, 93, 0.5);
+      color: #ffe95f;
+      background: rgba(58, 15, 109, 0.6);
+    }
+
+    .h5-reward-name {
+      margin-top: 9px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .h5-reward-value {
+      color: #ffec4c;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .off-ribbon {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 76px;
+      height: 30px;
+      transform: rotate(45deg);
+      display: grid;
+      place-items: center;
+      background: #ffc24c;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .section-title {
+      margin: 32px 0 10px;
+      text-align: center;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 950;
+      text-shadow: 0 4px 0 rgba(38, 16, 86, 0.55);
+    }
+
+    .section-title strong {
+      display: block;
+      color: var(--gold);
+      font-size: 32px;
+    }
+
+    .monthly {
+      margin: 0 -6px 24px;
+      padding: 18px 18px 26px;
+      border-radius: 18px;
+      background: rgba(148, 68, 255, 0.86);
+      color: #f8e9ff;
+      line-height: 1.45;
+    }
+
+    .calendar {
+      margin-top: 24px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #a63dff, #531fc5);
+      border: 2px solid rgba(255, 255, 255, 0.26);
+      padding: 18px 14px 14px;
+      box-shadow: 0 12px 24px rgba(41, 10, 103, 0.36);
+    }
+
+    .month {
+      width: 148px;
+      height: 40px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffc6ff, #c36cff);
+      color: #5c249b;
+      font-weight: 850;
+    }
+
+    .bonus-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .bonus-cell {
+      min-height: 142px;
+      border-radius: 13px;
+      border: 2px solid rgba(255, 230, 95, 0.76);
+      background: linear-gradient(180deg, #c4832e, #815014);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #ffe85e;
+      font-size: 38px;
+      font-weight: 950;
+    }
+
+    .bonus-cell:nth-child(2) {
+      border-color: rgba(230, 203, 255, 0.7);
+      background: linear-gradient(180deg, #7355df, #382381);
+      color: #fff;
+    }
+
+    .bonus-cell span {
+      display: block;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .h5-buy {
+      position: sticky;
+      bottom: 16px;
+      height: 55px;
+      margin: 12px 50px 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fff36d, #ffae32);
+      color: #aa3a16;
+      font-size: 21px;
+      font-weight: 950;
+      box-shadow: 0 8px 0 #b95418, 0 14px 28px rgba(29, 5, 76, 0.32);
+    }
+
+    .home-indicator {
+      position: absolute;
+      z-index: 60;
+      left: 50%;
+      bottom: 7px;
+      width: 134px;
+      height: 5px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    @media (max-width: 430px) {
+      body {
+        padding: 0;
+        background: #151111;
+      }
+
+      .phone {
+        width: 100vw;
+        min-height: 844px;
+        height: 100vh;
+        border-radius: 0;
+      }
+    }
+
+    .phone[data-wireframe="true"] {
+      background: #f8fafc;
+      border: 1px solid #d8dee8;
+      box-shadow: 0 16px 36px rgba(20, 34, 58, 0.16);
+    }
+
+    .phone[data-wireframe="true"] .status {
+      color: #5e6673;
+      text-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .wallet {
+      background: #f5f7fb;
+      color: #202733;
+    }
+
+    .phone[data-wireframe="true"] .wallet-banner,
+    .phone[data-wireframe="true"] .wallet-card {
+      border: 1px solid #d8dee8;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .wallet-card::before {
+      color: #687384;
+      background: #eef1f6;
+    }
+
+    .phone[data-wireframe="true"] .badge,
+    .phone[data-wireframe="true"] .coin-dot {
+      border: 1px dashed #aeb7c6;
+      background: #eef1f6;
+      color: #687384;
+    }
+
+    .phone[data-wireframe="true"] .overlay {
+      background: rgba(20, 25, 33, 0.5);
+    }
+
+    .phone[data-wireframe="true"] .popup {
+      color: #202733;
+      background: #fff;
+      border: 1px solid #d8dee8;
+      border-radius: 18px;
+      box-shadow: 0 18px 42px rgba(20, 34, 58, 0.22);
+    }
+
+    .phone[data-wireframe="true"] .popup-hero {
+      height: 126px;
+      border-radius: 18px 18px 0 0;
+      background: #f2f5f9;
+      border-bottom: 1px solid #d8dee8;
+    }
+
+    .phone[data-wireframe="true"] .popup-hero::before {
+      opacity: 1;
+      background:
+        linear-gradient(90deg, transparent 0 14px, rgba(116, 126, 143, 0.13) 14px 15px, transparent 15px 30px),
+        linear-gradient(transparent 0 14px, rgba(116, 126, 143, 0.13) 14px 15px, transparent 15px 30px);
+    }
+
+    .phone[data-wireframe="true"] .popup-title {
+      color: #202733;
+      font-style: normal;
+      font-weight: 800;
+      text-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .gift {
+      right: 111px;
+      top: 44px;
+      width: 58px;
+      height: 42px;
+      border: 1px dashed #9aa5b5;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .phone[data-wireframe="true"] .gift::after {
+      content: "gift";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #687384;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .phone[data-wireframe="true"] .mascot {
+      right: 24px;
+      top: 28px;
+      width: 84px;
+      height: 74px;
+      border: 1px dashed #9aa5b5;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .mascot::before,
+    .phone[data-wireframe="true"] .mascot::after {
+      content: none;
+    }
+
+    .phone[data-wireframe="true"] .mascot {
+      display: grid;
+      place-items: center;
+    }
+
+    .phone[data-wireframe="true"] .mascot::after {
+      content: "hero";
+      display: grid;
+      position: static;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
+      color: #687384;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .phone[data-wireframe="true"] .popup-sub {
+      color: #4a5568;
+      font-size: 14px;
+    }
+
+    .phone[data-wireframe="true"] .popup-sub strong {
+      color: #202733;
+      font-size: 24px;
+    }
+
+    .phone[data-wireframe="true"] .tiers,
+    .phone[data-wireframe="true"] .h5-tabs {
+      border: 1px solid #cdd5e2;
+      background: #fff;
+      color: #4a5568;
+    }
+
+    .phone[data-wireframe="true"] .tier,
+    .phone[data-wireframe="true"] .h5-tab {
+      background: #fff;
+      color: #4a5568;
+      border-right: 1px solid #e1e6ef;
+    }
+
+    .phone[data-wireframe="true"] .tier.active,
+    .phone[data-wireframe="true"] .h5-tab.active {
+      background: #e9eef7;
+      color: #202733;
+    }
+
+    .phone[data-wireframe="true"] .reward,
+    .phone[data-wireframe="true"] .h5-reward,
+    .phone[data-wireframe="true"] .monthly,
+    .phone[data-wireframe="true"] .calendar,
+    .phone[data-wireframe="true"] .bonus-cell {
+      border: 1px solid #d8dee8;
+      background: #fff;
+      box-shadow: none;
+      color: #202733;
+    }
+
+    .phone[data-wireframe="true"] .tag,
+    .phone[data-wireframe="true"] .discount,
+    .phone[data-wireframe="true"] .off-ribbon {
+      background: #eef1f6;
+      color: #4a5568;
+      border: 1px solid #d8dee8;
+    }
+
+    .phone[data-wireframe="true"] .placeholder,
+    .phone[data-wireframe="true"] .h5-reward .placeholder {
+      border-color: #aeb7c6;
+      background: #f8fafc;
+      color: #687384;
+    }
+
+    .phone[data-wireframe="true"] .reward-name,
+    .phone[data-wireframe="true"] .h5-reward-name,
+    .phone[data-wireframe="true"] .reward-value,
+    .phone[data-wireframe="true"] .h5-reward-value {
+      color: #202733;
+    }
+
+    .phone[data-wireframe="true"] .buy,
+    .phone[data-wireframe="true"] .h5-buy {
+      background: #202733;
+      color: #fff;
+      box-shadow: none;
+      border: 1px solid #202733;
+    }
+
+    .phone[data-wireframe="true"] .close {
+      background: #fff;
+      color: #4a5568;
+      border-color: #d8dee8;
+    }
+
+    .phone[data-wireframe="true"][data-screen="h5"] {
+      background: #fff;
+    }
+
+    .phone[data-wireframe="true"] .h5 {
+      background: #fff;
+      color: #202733;
+    }
+
+    .phone[data-wireframe="true"] .round-back {
+      background: #fff;
+      color: #202733;
+      border: 1px solid #d8dee8;
+      box-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .h5-title,
+    .phone[data-wireframe="true"] .section-title,
+    .phone[data-wireframe="true"] .section-title strong {
+      color: #202733;
+      text-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .rules,
+    .phone[data-wireframe="true"] .h5-card {
+      background: #f8fafc;
+      color: #4a5568;
+      border: 1px solid #d8dee8;
+      box-shadow: none;
+    }
+
+    .phone[data-wireframe="true"] .monthly {
+      color: #4a5568;
+    }
+
+    .phone[data-wireframe="true"] .month {
+      background: #eef1f6;
+      color: #202733;
+      border: 1px solid #d8dee8;
+    }
+
+    .phone[data-wireframe="true"] .bonus-cell span {
+      color: #687384;
+    }
+
+    .phone[data-wireframe="true"] .home-indicator {
+      background: #cbd3df;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" id="phone" data-screen="popup" data-wireframe="true">
+    <div class="status">
+      <div>8:10</div>
+      <div class="right"><span>0.46 KB/s</span><span>WiFi</span><span class="battery"></span></div>
+    </div>
+
+    <main class="wallet">
+      <div class="wallet-top">
+        <div class="back"></div>
+        <div style="text-align:center">My wallet</div>
+        <div class="tools"><span>☎</span><span>▣</span></div>
+      </div>
+      <div class="wallet-banner">
+        <span class="badge"></span>
+        <span>Requires <strong style="color:#bd1745">500</strong> EXP to level up</span>
+      </div>
+      <div class="coin-line">
+        <div><span class="coin-dot">$</span>80</div>
+        <div style="font-size:18px">🇺🇸 ⚙</div>
+      </div>
+      <section class="wallet-cards">
+        <div class="wallet-card"></div>
+        <div class="wallet-card"></div>
+        <div class="wallet-card"></div>
+      </section>
+    </main>
+
+    <div class="overlay">
+      <section class="popup">
+        <div class="popup-hero">
+          <div class="popup-title">First charge package</div>
+          <div class="gift"></div>
+          <div class="mascot"></div>
+        </div>
+        <div class="popup-sub">Get the gift worth up to <strong>$500</strong></div>
+        <div class="tiers">
+          <div class="tier active">$0.29</div>
+          <div class="tier">$0.99</div>
+          <div class="tier">$4.99</div>
+        </div>
+        <div class="gift-grid">
+          <div class="reward big">
+            <span class="tag">x1500</span>
+            <div>
+              <div class="placeholder">coins</div>
+              <div class="reward-name">Coins</div>
+              <div class="reward-value">1500</div>
+            </div>
+          </div>
+          <div class="reward">
+            <span class="tag">x7 days</span>
+            <div>
+              <div class="placeholder">bubble</div>
+              <div class="reward-name">Chat Bubble</div>
+              <div class="reward-value">1820</div>
+            </div>
+          </div>
+          <div class="reward">
+            <span class="tag">x10</span>
+            <div>
+              <div class="placeholder">gift</div>
+              <div class="reward-name">Rare Gifts</div>
+              <div class="reward-value">1190</div>
+            </div>
+          </div>
+          <div class="reward">
+            <span class="tag">x7 days</span>
+            <div>
+              <div class="placeholder">frame</div>
+              <div class="reward-name">Head Frame</div>
+              <div class="reward-value">27300</div>
+            </div>
+          </div>
+          <div class="reward">
+            <span class="tag">x5 days</span>
+            <div>
+              <div class="placeholder">car</div>
+              <div class="reward-name">Rare Car</div>
+              <div class="reward-value">65000</div>
+            </div>
+          </div>
+        </div>
+        <button class="buy"><span class="discount">99% off</span>$0.29 <span style="margin-left:7px;text-decoration:line-through;opacity:.55">$29.99</span></button>
+      </section>
+      <button class="close" aria-label="close"></button>
+    </div>
+
+    <main class="h5">
+      <div class="round-back">‹</div>
+      <h1 class="h5-title">First Recharge to<br />Get Rewards</h1>
+      <div class="rules">Recharge for the first time at each amount level to get the first recharge rewards. <span style="color:#8bdcff">Rules&gt;</span></div>
+      <div class="h5-tabs">
+        <div class="h5-tab active">$0.99</div>
+        <div class="h5-tab">$8.99</div>
+        <div class="h5-tab">$43.99</div>
+        <div class="h5-tab">$99.99</div>
+      </div>
+      <section class="h5-card">
+        <div class="off-ribbon">84% off</div>
+        <div class="h5-rewards">
+          <div class="h5-reward"><div class="placeholder">gold</div><div class="h5-reward-name">Golds</div><div class="h5-reward-value">*20</div></div>
+          <div class="h5-reward"><div class="placeholder">gift</div><div class="h5-reward-name">Backpack Gift</div><div class="h5-reward-value">*30</div></div>
+          <div class="h5-reward"><div class="placeholder">frame</div><div class="h5-reward-name">Profile Frame</div><div class="h5-reward-value">*1</div></div>
+          <div class="h5-reward"><div class="placeholder">hat</div><div class="h5-reward-name">Hat</div><div class="h5-reward-value">*1</div></div>
+          <div class="h5-reward"><div class="placeholder">hat</div><div class="h5-reward-name">Hat</div><div class="h5-reward-value">*1</div></div>
+          <div class="h5-reward"><div class="placeholder">theme</div><div class="h5-reward-name">Theme</div><div class="h5-reward-value">*3 days</div></div>
+        </div>
+      </section>
+      <h2 class="section-title"><strong>Monthly</strong>First Recharge Bonus</h2>
+      <section class="monthly">
+        For the first recharge of each month (GMT+3), VIP users receive 10% extra coins, and non-VIP users receive 8% extra coins. <span style="color:#8bdcff">Rules&gt;</span>
+        <div class="calendar">
+          <div class="month">June</div>
+          <div class="bonus-box">
+            <div class="bonus-cell"><div><span>VIP Users</span>×10%</div></div>
+            <div class="bonus-cell"><div><span>Non-VIP Users</span>×8%</div></div>
+          </div>
+        </div>
+      </section>
+      <button class="h5-buy">Recharge Now</button>
+    </main>
+
+    <div class="home-indicator"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const screen = params.get("screen") || "popup";
+    const phone = document.getElementById("phone");
+    phone.dataset.screen = screen === "h5" ? "h5" : "popup";
+    if (params.get("capture") === "full") {
+      phone.dataset.capture = "full";
+    }
+  </script>
+</body>
+</html>

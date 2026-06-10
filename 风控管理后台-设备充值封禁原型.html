@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeChill 风控后台 - 设备充值封禁与全链路风控管理</title>
+  <style>
+    :root {
+      --bg: #f5f8fc;
+      --panel: #ffffff;
+      --panel-soft: #f9fbff;
+      --line: #e8eef7;
+      --line-strong: #dbe5f2;
+      --text: #243044;
+      --muted: #8a96a9;
+      --brand: #3b82f6;
+      --brand-deep: #2563eb;
+      --brand-soft: #eaf3ff;
+      --success: #19a974;
+      --success-soft: #eafaf2;
+      --warning: #d98716;
+      --warning-soft: #fff7e8;
+      --danger: #ef5261;
+      --danger-soft: #fff0f2;
+      --purple: #7257e8;
+      --purple-soft: #f2efff;
+      --shadow: 0 12px 28px rgba(32, 49, 76, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .sidebar {
+      width: 224px;
+      flex: 0 0 auto;
+      background: #fff;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      height: 64px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--brand-deep);
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #62b4ff, #3b82f6);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .nav {
+      padding: 12px 10px;
+      overflow: auto;
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-title {
+      margin: 8px 10px 2px;
+      color: #a0acbf;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .nav-item,
+    .nav-subitem {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #516076;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .nav-item {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-subgroup {
+      margin-left: 20px;
+      padding-left: 10px;
+      border-left: 1px dashed var(--line);
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav-subitem {
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    .nav-subitem.is-active {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      font-weight: 800;
+      box-shadow: inset 3px 0 0 var(--brand);
+    }
+
+    .main {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .breadcrumb {
+      color: #6f7b91;
+      font-size: 14px;
+    }
+
+    .breadcrumb strong { color: var(--text); }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #7a879b;
+      font-size: 13px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #70b8ff, #3b82f6);
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .page {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card,
+    .summary-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .intro {
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .intro h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .intro p {
+      margin: 8px 0 0;
+      max-width: 900px;
+      color: #6b778d;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .tag,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .blue { background: var(--brand-soft); color: var(--brand-deep); }
+    .green { background: var(--success-soft); color: var(--success); }
+    .yellow { background: var(--warning-soft); color: #b66f00; }
+    .red { background: var(--danger-soft); color: #c9384a; }
+    .purple { background: var(--purple-soft); color: var(--purple); }
+    .neutral { background: #f5f7fa; color: #7d889b; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .summary-card {
+      min-height: 108px;
+      padding: 14px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .summary-value {
+      margin-top: 8px;
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .summary-foot {
+      margin-top: 8px;
+      color: #6f7b91;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .filters {
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .field {
+      min-width: 160px;
+      flex: 1 1 160px;
+    }
+
+    .field.wide { min-width: 260px; flex-basis: 260px; }
+    .field.short { min-width: 130px; flex-basis: 130px; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .control,
+    .textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .control {
+      height: 38px;
+      padding: 0 12px;
+    }
+
+    .textarea {
+      min-height: 84px;
+      padding: 10px 12px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+
+    .btn,
+    .link-btn,
+    .icon-btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 13px;
+    }
+
+    .btn.primary { background: var(--brand); color: #fff; box-shadow: 0 8px 18px rgba(59, 130, 246, 0.18); }
+    .btn.secondary { background: #fff; color: #5d6880; border-color: var(--line-strong); }
+    .btn.light { background: var(--brand-soft); color: var(--brand-deep); }
+    .btn.danger { background: var(--danger); color: #fff; }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      background: #fff;
+      color: #8793a8;
+      border-color: var(--line);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f3f8;
+      background: linear-gradient(180deg, #fbfdff, #f6f9ff);
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: #647188;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .tab.is-active {
+      background: var(--brand-soft);
+      border-color: #cfe1ff;
+      color: var(--brand-deep);
+    }
+
+    .toolbar {
+      min-height: 58px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #f0f3f8;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .table-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      min-width: 1260px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f4f8;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    th {
+      color: #7d899c;
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    tbody tr:hover { background: #fbfcff; }
+
+    .main-cell strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .money {
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+    }
+
+    .limit-field {
+      border: 0;
+      background: transparent;
+      color: var(--brand-deep);
+      font-weight: 900;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .op-row {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .link-btn {
+      height: 28px;
+      padding: 0 10px;
+      border-color: var(--line-strong);
+      background: #fff;
+      color: #59667b;
+      font-size: 12px;
+    }
+
+    .link-btn.primary { color: var(--brand-deep); background: var(--brand-soft); border-color: #cfe1ff; }
+    .link-btn.success { color: var(--success); background: var(--success-soft); border-color: #c9f4df; }
+    .link-btn.danger { color: var(--danger); background: var(--danger-soft); border-color: #ffd7dd; }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+    }
+
+    .panel-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f3f8;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .info-box {
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+    }
+
+    .info-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .info-value {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 10px;
+      font-size: 13px;
+      color: #607086;
+      line-height: 1.6;
+    }
+
+    .timeline-time {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timeline-content {
+      padding-left: 12px;
+      border-left: 3px solid #d8e7fb;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(25, 36, 55, 0.36);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+    }
+
+    .modal-backdrop.is-open { display: flex; }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(20, 31, 50, 0.2);
+    }
+
+    .modal-head,
+    .modal-foot {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-head { border-bottom: 1px solid var(--line); }
+    .modal-foot { border-top: 1px solid var(--line); background: #fcfdff; justify-content: flex-end; }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-subtitle {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: #8390a5;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .inline-note {
+      padding: 12px;
+      border: 1px solid #d7e8ff;
+      border-radius: 10px;
+      background: #f4f9ff;
+      color: #4d6484;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .module-card {
+      min-height: 168px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .module-card h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .module-card p {
+      margin: 8px 0 0;
+      color: #6b778d;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .flow-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .flow-chip {
+      min-height: 28px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .rule-list {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .rule-list li {
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: #f7faff;
+      border: 1px solid var(--line);
+      color: #506077;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .compact-table {
+      width: 100%;
+      min-width: 0;
+      border-collapse: collapse;
+    }
+
+    .compact-table th,
+    .compact-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #f1f4f8;
+      font-size: 12px;
+    }
+
+    .compact-table th {
+      background: #fbfdff;
+      color: #7d899c;
+    }
+
+    .risk-lane {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .risk-level-card {
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .risk-level-card b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .risk-level-card span {
+      color: #6b778d;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .approval-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .evidence-card {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    .evidence-card h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .evidence-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #5f6f86;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .matrix-table {
+      min-width: 980px;
+    }
+
+    .danger-text { color: #c9384a; font-weight: 900; }
+    .ok-text { color: var(--success); font-weight: 900; }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #1f2a3c;
+      color: #fff;
+      font-size: 13px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: 0.2s ease;
+    }
+
+    .toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1280px) {
+      .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .split-grid, .detail-grid { grid-template-columns: 1fr; }
+      .section-grid { grid-template-columns: 1fr; }
+      .risk-lane { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+      body { display: block; }
+      .sidebar { width: 100%; border-right: 0; border-bottom: 1px solid var(--line); }
+      .summary-grid { grid-template-columns: 1fr; }
+      .intro, .topbar { height: auto; align-items: flex-start; flex-direction: column; }
+      .field, .field.wide, .field.short { min-width: 100%; flex-basis: 100%; }
+      .actions { margin-left: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+      .risk-lane, .approval-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>WeChill 后台</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-title">风控中心</div>
+      <button class="nav-item">概览 <span>⌄</span></button>
+      <div class="nav-subgroup">
+        <button class="nav-subitem">风控概览</button>
+        <button class="nav-subitem">用户风险管理</button>
+        <button class="nav-subitem">设备风险管理</button>
+        <button class="nav-subitem is-active">设备充值封禁</button>
+        <button class="nav-subitem">IP 风险管理</button>
+        <button class="nav-subitem">公会风险管理</button>
+        <button class="nav-subitem">同设备账号处理</button>
+        <button class="nav-subitem">封禁与解封</button>
+        <button class="nav-subitem">申诉管理</button>
+        <button class="nav-subitem">白名单管理</button>
+        <button class="nav-subitem">充值白名单管理</button>
+      </div>
+      <div class="nav-title">财务与结算</div>
+      <button class="nav-item">主播收益审核 <span>⌄</span></button>
+      <button class="nav-item">提现风控 <span>⌄</span></button>
+      <div class="nav-title">系统</div>
+      <button class="nav-item">操作审计 <span>⌄</span></button>
+      <button class="nav-item">风控配置 <span>⌄</span></button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="breadcrumb">风控中心 / 设备风险管理 / <strong>设备充值封禁与全链路风控</strong></div>
+      <div class="top-right">
+        <span>高级风控</span>
+        <div class="avatar">RC</div>
+      </div>
+    </header>
+
+    <div class="page">
+      <section class="card intro">
+        <div>
+          <h1>设备充值封禁与全链路风控管理</h1>
+          <p>将原账号维度充值封禁升级为设备维度：同一设备下所有账号充值金额合并统计，达到 200 美金 / 1000 美金 / 全面限制档位后，当前设备下账号继续充值将被拦截。本页同步补充 v1.2 文档中的设备生命周期、主播设备占用、IP 风险、公会处罚、收益冻结、白名单边界、申诉证据链、规则优先级和异常兜底。</p>
+        </div>
+        <div class="badge-row">
+          <span class="badge blue">统计维度：risk_device_hash</span>
+          <span class="badge yellow">解封观察期：7 天</span>
+          <span class="badge red">高危操作需审批</span>
+        </div>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <div class="summary-label">今日充值拦截</div>
+          <div class="summary-value">128</div>
+          <div class="summary-foot">200 美金档 91，1000 美金档 29，全面限制 8。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">当前受限设备</div>
+          <div class="summary-value">2,846</div>
+          <div class="summary-foot">较昨日 +4.7%，主要来自同设备多账号充值。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">待审批解封</div>
+          <div class="summary-value">36</div>
+          <div class="summary-foot">其中 L4 关联设备 9 个，需要二审。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">白名单设备</div>
+          <div class="summary-value">74</div>
+          <div class="summary-foot">内部测试 42，客服误伤恢复 21，合作账号 11。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">观察期复触发</div>
+          <div class="summary-value">6.2%</div>
+          <div class="summary-foot">解封 7 天内再次触发充值限制的占比。</div>
+        </article>
+      </section>
+
+      <section class="card filters">
+        <div class="field wide">
+          <label>设备 ID / 指纹</label>
+          <input class="control" value="全部">
+        </div>
+        <div class="field">
+          <label>用户 ID</label>
+          <input class="control" value="全部">
+        </div>
+        <div class="field">
+          <label>充值状态</label>
+          <select class="control">
+            <option selected>全部状态</option>
+            <option>未限制充值</option>
+            <option>充值上限 200 美金</option>
+            <option>充值上限 1000 美金</option>
+            <option>全面限制充值</option>
+          </select>
+        </div>
+        <div class="field short">
+          <label>渠道</label>
+          <select class="control">
+            <option selected>全部</option>
+            <option>Apple</option>
+            <option>Google</option>
+            <option>三方支付</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>累计充值</label>
+          <select class="control">
+            <option selected>全部区间</option>
+            <option>0-200 美金</option>
+            <option>200-1000 美金</option>
+            <option>1000 美金以上</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="btn secondary">重置</button>
+          <button class="btn primary">查询</button>
+          <button class="btn light">导出</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="tabs">
+          <button class="tab is-active" data-tab="devices">设备充值封禁</button>
+          <button class="tab" data-tab="accounts">关联账号</button>
+          <button class="tab" data-tab="appeals">解封审批</button>
+          <button class="tab" data-tab="whitelist">充值白名单</button>
+          <button class="tab" data-tab="logs">操作审计</button>
+        </div>
+
+        <div class="toolbar">
+          <div>
+            <div class="title" id="tableTitle">设备充值封禁列表</div>
+            <div class="subtitle" id="tableSubtitle">蓝色充值状态字段可点击调整；解封不会自动解除账号封禁、提现限制或收益冻结。</div>
+          </div>
+          <div class="table-tools">
+            <button class="btn light" data-open-modal="whitelist">加入白名单</button>
+            <button class="btn primary" data-open-modal="adjust">调整充值封禁</button>
+            <button class="icon-btn" title="刷新">↻</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>设备</th>
+                <th>设备信息</th>
+                <th>关联账号</th>
+                <th>累计充值</th>
+                <th>充值状态</th>
+                <th>最近充值</th>
+                <th>触发原因</th>
+                <th>处理状态</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="main-cell"><strong>DEV-89F2A1</strong><div class="sub">hash: RDH-a91***33e</div></td>
+                <td>iPhone 14 / iOS 17.4<div class="sub">SAU · v6.8.2</div></td>
+                <td class="main-cell"><strong>8 个账号</strong><div class="sub">主播 2 · 封禁 1</div></td>
+                <td class="money">$1,284.66</td>
+                <td><button class="limit-field" data-open-modal="adjust">充值上限 1000 美金</button></td>
+                <td>UID 771020<div class="sub">2026-05-27 11:42</div></td>
+                <td><span class="tag red">自动超限</span></td>
+                <td><span class="tag yellow">待复核</span></td>
+                <td>2026-05-27 12:10</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-open-modal="detail">详情</button>
+                    <button class="link-btn success" data-open-modal="unban">解封</button>
+                    <button class="link-btn" data-open-modal="log">日志</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>DEV-31C8D0</strong><div class="sub">hash: RDH-f20***7bb</div></td>
+                <td>Android / Xiaomi<div class="sub">EGY · v6.8.0</div></td>
+                <td class="main-cell"><strong>4 个账号</strong><div class="sub">主播 0 · 封禁 0</div></td>
+                <td class="money">$236.18</td>
+                <td><button class="limit-field" data-open-modal="adjust">充值上限 200 美金</button></td>
+                <td>UID 420918<div class="sub">2026-05-27 10:08</div></td>
+                <td><span class="tag yellow">接近风险</span></td>
+                <td><span class="tag green">已限制</span></td>
+                <td>2026-05-27 10:09</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-open-modal="detail">详情</button>
+                    <button class="link-btn success" data-open-modal="unban">解封</button>
+                    <button class="link-btn" data-open-modal="log">日志</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>DEV-77B120</strong><div class="sub">hash: RDH-c89***4ad</div></td>
+                <td>Samsung A54<div class="sub">IRQ · v6.7.9</div></td>
+                <td class="main-cell"><strong>12 个账号</strong><div class="sub">主播 3 · 封禁 5</div></td>
+                <td class="money">$4,906.02</td>
+                <td><button class="limit-field" data-open-modal="adjust">全面限制充值</button></td>
+                <td>UID 880672<div class="sub">2026-05-26 22:14</div></td>
+                <td><span class="tag red">人工确认</span></td>
+                <td><span class="tag red">高危限制</span></td>
+                <td>2026-05-27 09:21</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-open-modal="detail">详情</button>
+                    <button class="link-btn success" data-open-modal="unban">解封</button>
+                    <button class="link-btn" data-open-modal="log">日志</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>DEV-TEST09</strong><div class="sub">hash: RDH-test***009</div></td>
+                <td>iPhone 13<div class="sub">Office · v6.9.0</div></td>
+                <td class="main-cell"><strong>3 个账号</strong><div class="sub">官方测试</div></td>
+                <td class="money">$2,240.00</td>
+                <td><button class="limit-field" data-open-modal="adjust">未限制充值</button></td>
+                <td>UID 100086<div class="sub">2026-05-27 08:52</div></td>
+                <td><span class="tag blue">设备白名单</span></td>
+                <td><span class="tag green">已豁免</span></td>
+                <td>2026-05-27 08:55</td>
+                <td>
+                  <div class="op-row">
+                    <button class="link-btn primary" data-open-modal="detail">详情</button>
+                    <button class="link-btn danger" data-open-modal="whitelist">移出白名单</button>
+                    <button class="link-btn" data-open-modal="log">日志</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">设备详情摘要</div>
+          <div class="panel-body">
+            <div class="detail-grid">
+              <div class="info-box"><div class="info-label">当前设备累计充值</div><div class="info-value">$1,284.66</div></div>
+              <div class="info-box"><div class="info-label">Apple / Google / 三方</div><div class="info-value">$824 / $360 / $100</div></div>
+              <div class="info-box"><div class="info-label">观察期</div><div class="info-value">剩余 5 天</div></div>
+              <div class="info-box"><div class="info-label">关联账号</div><div class="info-value">8</div></div>
+              <div class="info-box"><div class="info-label">关联主播</div><div class="info-value">2</div></div>
+              <div class="info-box"><div class="info-label">强关联设备</div><div class="info-value">1</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">最近流转</div>
+          <div class="panel-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-time">12:10</div>
+                <div class="timeline-content"><strong>自动限制</strong><br>设备累计充值达到 1000 美金档，继续充值被拦截。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">11:42</div>
+                <div class="timeline-content"><strong>充值成功</strong><br>UID 771020 通过 Apple 成功充值 $99.99，计入设备累计。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:34</div>
+                <div class="timeline-content"><strong>关联账号登录</strong><br>同设备第 8 个账号登录，设备风险等级升为 L3。</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">v1.2 全链路风控规则补充</div>
+        <div class="panel-body">
+          <div class="risk-lane">
+            <div class="risk-level-card"><b>L0 正常</b><span>注册、登录、充值、加入公会、收益结算均按常规链路放行。</span></div>
+            <div class="risk-level-card"><b>L1 观察</b><span>仅记录证据和风险分，不影响核心能力；观察期无复犯可自动降级。</span></div>
+            <div class="risk-level-card"><b>L2 审核</b><span>注册、加入公会、提现、收益进入审核，充值可按设备档位处理。</span></div>
+            <div class="risk-level-card"><b>L3 危险</b><span>限制主播、公会、提现能力，冻结风险链路收益，充值按设备限额拦截。</span></div>
+            <div class="risk-level-card"><b>L4 封禁</b><span>账号/设备/严重欺诈优先生效；白名单不可覆盖法务、合规和严重欺诈封禁。</span></div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-chip">注册校验</span>
+            <span class="flow-chip">登录补判</span>
+            <span class="flow-chip">主播/公会校验</span>
+            <span class="flow-chip">设备充值累计</span>
+            <span class="flow-chip">收益冻结</span>
+            <span class="flow-chip">申诉解封</span>
+            <span class="flow-chip">审计复盘</span>
+          </div>
+          <ul class="rule-list">
+            <li>单设备最多 3 个有效账号；同设备第 4 个注册拦截或进入人工审核，卸载重装、清缓存、广告 ID 变化均不重置统计。</li>
+            <li>单设备只允许 1 个有效主播占用；主播退出公会、封禁、注销、未结算收益期间默认不立即释放名额。</li>
+            <li>单 IP 24 小时最多 5 个注册账号；公共网络只作为辅助证据，VPN / 机房 IP 降低阈值或强验证。</li>
+            <li>充值封禁以 risk_device_hash 为主口径，Apple、Google、三方支付按 USD 折算后合并累计。</li>
+            <li>高危封禁、设备充值解封、收益解冻、批量删除、白名单变更必须记录审批、证据链和操作审计。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-grid">
+        <article class="module-card">
+          <h3>设备生命周期与绕过处理</h3>
+          <p>覆盖卸载重装、清缓存、广告 ID 重置、游客转正、注销重注册、二手设备、维修换机、模拟器和 Root / 越狱设备等绕过场景。</p>
+          <ul class="rule-list">
+            <li>risk_device_hash 稳定命中时，不因客户端字段变化重置账号数与充值累计。</li>
+            <li>二手设备、维修换机只允许通过申诉和审批释放设备占用。</li>
+          </ul>
+          <div class="flow-row"><button class="btn light" data-open-modal="lifecycle">查看处理规则</button></div>
+        </article>
+        <article class="module-card">
+          <h3>主播设备占用与释放</h3>
+          <p>主播身份以“加入公会并具备主播能力”为占用起点，退出公会、封禁、注销、未结算收益、提现或申诉中均进入保留或冷却状态。</p>
+          <ul class="rule-list">
+            <li>默认冷却期 7 天；确认误判、二手设备或永久清退且无财务纠纷时可人工释放。</li>
+            <li>同一主播 24h 登录多设备会标记账号共享风险。</li>
+          </ul>
+          <div class="flow-row"><button class="btn light" data-open-modal="hostDevice">查看占用详情</button></div>
+        </article>
+        <article class="module-card">
+          <h3>公共 IP / VPN / 代理网络</h3>
+          <p>IP 风险不单独作为永久封禁依据，公共 Wi-Fi、移动运营商 NAT、公会办公网络以强验证、观察和白名单为主，仍需联动设备证据。</p>
+          <ul class="rule-list">
+            <li>IP 白名单只豁免 IP 限制，不豁免设备、账号、公会、收益、充值风控。</li>
+            <li>机房 IP、VPN / Proxy 触发注册拦截、短信限制或提现审核。</li>
+          </ul>
+          <div class="flow-row"><button class="btn light" data-open-modal="ipRisk">查看 IP 规则</button></div>
+        </article>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">同设备账号批量处理</div>
+          <div class="panel-body">
+            <table class="compact-table">
+              <thead>
+                <tr><th>对象</th><th>当前风险</th><th>推荐动作</th><th>审批</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>同设备 8 账号</td><td>主播 2 / 封禁 1 / 同公会 3</td><td>批量标记审核 + 冻结风险收益</td><td>一审</td></tr>
+                <tr><td>同设备 12 账号</td><td>L4 账号 5 / 拒付 2</td><td>批量封禁 + 设备充值全面限制</td><td>二审</td></tr>
+                <tr><td>注销/删除请求</td><td>存在申诉或收益冻结</td><td>不允许删除，先完成申诉/财务复核</td><td>高危</td></tr>
+              </tbody>
+            </table>
+            <div class="flow-row">
+              <button class="btn secondary" data-open-modal="batch">批量处理</button>
+              <button class="btn light" data-open-modal="detail">查看证据链</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">收益冻结与公会处罚梯度</div>
+          <div class="panel-body">
+            <table class="compact-table">
+              <thead>
+                <tr><th>公会等级</th><th>触发条件</th><th>公会处理</th><th>公会长处理</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>A1 观察</td><td>少量疑似同设备主播</td><td>后台观察</td><td>提醒</td></tr>
+                <tr><td>A2 审核</td><td>多主播命中设备/IP/收益异常</td><td>新主播加入审核</td><td>提成进入审核</td></tr>
+                <tr><td>A3 高风险</td><td>收益集中、互刷明显</td><td>暂停新增主播</td><td>冻结部分提成</td></tr>
+                <tr><td>A4 封禁</td><td>组织套利或严重违规</td><td>停止结算、清退风险主播</td><td>封禁并扣回异常收益</td></tr>
+              </tbody>
+            </table>
+            <div class="inline-note">冻结金额口径：风险周期内主播工资 + 对应公会长提成 + 风险链路活动奖励 + 未提现余额中的风险收益；不默认冻结用户充值金币。</div>
+            <div class="flow-row"><button class="btn light" data-open-modal="salaryFreeze">查看冻结口径</button></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">申诉与证据链</div>
+          <div class="panel-body approval-grid">
+            <div class="evidence-card">
+              <h4>后台证据链</h4>
+              <ul>
+                <li>设备证据：同设备账号、主播、设备指纹变更。</li>
+                <li>IP 证据：同 IP 注册/登录、VPN、机房 IP。</li>
+                <li>收益证据：工资、提成、互刷链路、提现记录。</li>
+                <li>充值证据：设备累计、渠道拆分、退款/拒付。</li>
+              </ul>
+            </div>
+            <div class="evidence-card">
+              <h4>用户申诉材料</h4>
+              <ul>
+                <li>设备充值封禁：支付订单截图、支付凭证、充值账号说明。</li>
+                <li>设备封禁：设备截图、登录账号说明、二手/维修证明。</li>
+                <li>收益冻结：收益来源、公会证明、房间/活动说明。</li>
+                <li>处理时效：普通 1-3 个工作日，收益/公会 3-7 个工作日。</li>
+              </ul>
+            </div>
+            <div class="flow-row" style="grid-column:1 / -1;">
+              <button class="btn primary" data-open-modal="appeal">查看申诉审核</button>
+              <button class="btn light" data-open-modal="log">查看审计日志</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">白名单边界与防滥用</div>
+          <div class="panel-body">
+            <table class="compact-table">
+              <thead>
+                <tr><th>白名单类型</th><th>默认有效期</th><th>豁免边界</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>账号白名单</td><td>30 天</td><td>仅豁免指定账号和指定规则</td></tr>
+                <tr><td>设备白名单</td><td>30 天</td><td>可绑定账号范围，不豁免账号封禁</td></tr>
+                <tr><td>IP 白名单</td><td>30 天</td><td>只豁免 IP 限制，不豁免设备规则</td></tr>
+                <tr><td>充值白名单</td><td>30 天</td><td>只影响充值限制，收益仍进入审计</td></tr>
+              </tbody>
+            </table>
+            <ul class="rule-list">
+              <li>白名单必须有原因、有效期、申请人、审批人和变更日志。</li>
+              <li>白名单账号产生充值、收益、提现异常时，仍进入审计看板。</li>
+              <li>再次严重违规时自动移出白名单并升级风险。</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">规则优先级、能力限制与异常兜底</div>
+        <div class="panel-body">
+          <div class="table-wrap">
+            <table class="matrix-table compact-table">
+              <thead>
+                <tr>
+                  <th>状态</th><th>登录</th><th>注册新号</th><th>加入公会</th><th>主播/开播</th><th>收益结算</th><th>提现</th><th>充值</th><th>申诉</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>normal / L0</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td><td class="ok-text">可</td></tr>
+                <tr><td>L2 审核</td><td>可</td><td>受限</td><td>审核</td><td>可配置</td><td>待审核</td><td>审核</td><td>可</td><td>可</td></tr>
+                <tr><td>L3 危险</td><td>可配置</td><td class="danger-text">不可</td><td class="danger-text">不可</td><td>受限</td><td class="danger-text">冻结</td><td class="danger-text">不可</td><td>按设备档位</td><td>可</td></tr>
+                <tr><td>L4 封禁</td><td class="danger-text">不可</td><td class="danger-text">不可</td><td class="danger-text">不可</td><td class="danger-text">不可</td><td>停止</td><td class="danger-text">不可</td><td class="danger-text">不可</td><td>可</td></tr>
+                <tr><td>recharge_limited</td><td>可</td><td>按账号</td><td>按账号</td><td>按账号</td><td>可</td><td>可</td><td class="danger-text">不可</td><td>可</td></tr>
+                <tr><td>whitelist</td><td>可</td><td>按白名单</td><td>按白名单</td><td>按白名单</td><td>仍需审计</td><td>仍需审计</td><td>按白名单</td><td>可</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="section-grid">
+            <div class="evidence-card">
+              <h4>规则优先级</h4>
+              <ul>
+                <li>法务/合规强制封禁 &gt; 严重欺诈/拒付 &gt; 账号封禁。</li>
+                <li>账号封禁 &gt; 设备封禁 &gt; 设备充值封禁 &gt; 主播限制。</li>
+                <li>收益冻结 &gt; 提现限制 &gt; IP 限制 &gt; 观察规则 &gt; 白名单。</li>
+              </ul>
+            </div>
+            <div class="evidence-card">
+              <h4>恢复边界</h4>
+              <ul>
+                <li>设备充值解封只恢复充值能力，不解除账号封禁、提现限制、收益冻结。</li>
+                <li>账号解封不恢复主播身份；主播恢复不代表收益解冻。</li>
+                <li>IP 解封不代表设备和账号风险清零。</li>
+              </ul>
+            </div>
+            <div class="evidence-card">
+              <h4>降级兜底</h4>
+              <ul>
+                <li>低风险浏览 fail-open；资金、主播身份、提现、结算 fail-close。</li>
+                <li>充值风控超时不创建订单；收益冻结失败则结算暂停。</li>
+                <li>审批通过但执行失败保持待执行，并支持重试。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">风控配置与补充验收</div>
+        <div class="panel-body">
+          <table class="compact-table">
+            <thead>
+              <tr><th>配置项</th><th>默认值</th><th>说明</th><th>是否可配</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>单设备有效账号上限</td><td>3</td><td>第 4 个账号注册拦截或进入人工审核</td><td>是</td></tr>
+              <tr><td>单设备主播占用上限</td><td>1</td><td>加入公会并具备主播能力后占用</td><td>否</td></tr>
+              <tr><td>单 IP 24h 注册上限</td><td>5</td><td>公共网络需结合设备证据处理</td><td>是</td></tr>
+              <tr><td>设备充值限制档位</td><td>$200 / $1000 / 全面限制</td><td>按设备累计充值金额触发</td><td>是</td></tr>
+              <tr><td>设备充值解封观察期</td><td>7 天</td><td>观察期复触发恢复原限制档位</td><td>是</td></tr>
+              <tr><td>收益冻结阈值</td><td>L3</td><td>L3 及以上冻结风险链路收益</td><td>否</td></tr>
+              <tr><td>白名单默认有效期</td><td>30 天</td><td>测试白名单 7-30 天，均需审批</td><td>是</td></tr>
+            </tbody>
+          </table>
+          <div class="flow-row">
+            <span class="flow-chip">卸载重装不重置</span>
+            <span class="flow-chip">游客转正计入账号数</span>
+            <span class="flow-chip">退款成功可审批扣减</span>
+            <span class="flow-chip">拒付升级支付风险</span>
+            <span class="flow-chip">白名单到期自动失效</span>
+            <span class="flow-chip">批量处理展示成功/失败明细</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title" id="modalTitle">调整设备充值封禁</div>
+          <div class="modal-subtitle" id="modalSubtitle">修改后立即影响当前设备下所有账号的充值能力，高危操作需要审批。</div>
+        </div>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-foot" id="modalFoot"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const modalBackdrop = document.querySelector("#modalBackdrop");
+    const modalTitle = document.querySelector("#modalTitle");
+    const modalSubtitle = document.querySelector("#modalSubtitle");
+    const modalBody = document.querySelector("#modalBody");
+    const modalFoot = document.querySelector("#modalFoot");
+    const modalClose = document.querySelector("#modalClose");
+    const toast = document.querySelector("#toast");
+    const tableTitle = document.querySelector("#tableTitle");
+    const tableSubtitle = document.querySelector("#tableSubtitle");
+
+    const modalTemplates = {
+      adjust: {
+        title: "调整设备充值封禁",
+        subtitle: "单击蓝色充值状态字段后打开。该操作按设备生效，不按账号单独生效。",
+        body: `
+          <div class="inline-note">当前设备 DEV-89F2A1 累计充值 $1,284.66，关联 8 个账号。原账号维度充值限制已升级为设备维度统计。</div>
+          <div class="form-grid">
+            <div class="field"><label>封禁类型</label><select class="control"><option selected>设备充值封禁</option></select></div>
+            <div class="field"><label>充值封禁选项</label><select class="control"><option>未限制充值</option><option>充值上限 200 美金</option><option selected>充值上限 1000 美金</option><option>全面限制充值</option></select></div>
+            <div class="field"><label>封禁范围</label><select class="control"><option selected>仅当前设备</option><option>当前设备 + 强关联设备</option></select></div>
+            <div class="field"><label>处理原因</label><select class="control"><option selected>设备累计充值超限</option><option>人工确认风险</option><option>误封恢复</option><option>其他</option></select></div>
+            <div class="field full"><label>备注</label><textarea class="textarea" placeholder="请填写调整原因，便于后续审计和申诉复核。"></textarea></div>
+          </div>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="充值封禁已更新">确认调整</button>`
+      },
+      unban: {
+        title: "设备充值解封",
+        subtitle: "解封只恢复设备充值能力，不自动解除账号封禁、提现限制或收益冻结。",
+        body: `
+          <div class="inline-note">解封后进入 7 天观察期；观察期内再次触发设备充值风险，将自动恢复原限制档位。</div>
+          <div class="form-grid">
+            <div class="field"><label>解封对象</label><select class="control"><option selected>当前设备 DEV-89F2A1</option><option>当前设备 + 强关联设备</option></select></div>
+            <div class="field"><label>当前充值状态</label><input class="control" value="充值上限 1000 美金"></div>
+            <div class="field"><label>观察期</label><select class="control"><option selected>7 天</option><option>14 天</option><option>30 天</option></select></div>
+            <div class="field"><label>审批方式</label><select class="control"><option selected>一审</option><option>二审</option></select></div>
+            <div class="field full"><label>解封原因</label><textarea class="textarea" placeholder="例如：用户申诉通过，核实为家庭共用设备且无异常收益。"></textarea></div>
+          </div>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="设备充值限制已解除，进入观察期">确认解封</button>`
+      },
+      whitelist: {
+        title: "充值白名单管理",
+        subtitle: "白名单仅影响充值封禁，不影响注册、登录、公会、提现和收益风控。",
+        body: `
+          <div class="form-grid">
+            <div class="field"><label>白名单类型</label><select class="control"><option>账号白名单</option><option selected>设备白名单</option><option>渠道白名单</option></select></div>
+            <div class="field"><label>对象 ID</label><input class="control" value="RDH-a91***33e"></div>
+            <div class="field"><label>有效期</label><select class="control"><option>7 天</option><option selected>30 天</option><option>永久</option></select></div>
+            <div class="field"><label>审批人</label><input class="control" placeholder="请输入审批人"></div>
+            <div class="field full"><label>加入原因</label><textarea class="textarea" placeholder="如内部测试、误伤恢复、特殊合作账号等。"></textarea></div>
+          </div>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="充值白名单已更新">确认提交</button>`
+      },
+      detail: {
+        title: "设备充值详情",
+        subtitle: "展示设备累计充值、关联账号、渠道拆分和风控证据。",
+        body: `
+          <div class="detail-grid">
+            <div class="info-box"><div class="info-label">设备累计充值</div><div class="info-value">$1,284.66</div></div>
+            <div class="info-box"><div class="info-label">关联账号</div><div class="info-value">8</div></div>
+            <div class="info-box"><div class="info-label">关联主播</div><div class="info-value">2</div></div>
+          </div>
+          <div class="inline-note">Apple $824.68，Google $360.00，三方支付 $99.98。最近充值 UID 771020，最近命中原因：设备累计充值达到 1000 美金限制。</div>
+        `,
+        foot: `<button class="btn primary" data-close>知道了</button>`
+      },
+      log: {
+        title: "操作日志",
+        subtitle: "所有充值封禁、解封、白名单和金额调整均必须审计。",
+        body: `
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-time">12:10</div><div class="timeline-content"><strong>系统自动限制</strong><br>充值状态 normal → limit_1000。</div></div>
+            <div class="timeline-item"><div class="timeline-time">11:42</div><div class="timeline-content"><strong>充值成功</strong><br>UID 771020 Apple 订单计入设备累计。</div></div>
+            <div class="timeline-item"><div class="timeline-time">昨天</div><div class="timeline-content"><strong>人工备注</strong><br>设备下多个账号互相切换充值，进入观察。</div></div>
+          </div>
+        `,
+        foot: `<button class="btn primary" data-close>关闭</button>`
+      },
+      lifecycle: {
+        title: "设备生命周期与绕过处理",
+        subtitle: "设备规则以服务端稳定识别为准，不因客户端重装或弱标识变化重置统计。",
+        body: `
+          <table class="compact-table">
+            <thead><tr><th>场景</th><th>后台处理</th><th>是否重置账号数</th></tr></thead>
+            <tbody>
+              <tr><td>卸载重装 / 清缓存</td><td>risk_device_hash 一致，仍视为同一设备</td><td class="danger-text">否</td></tr>
+              <tr><td>更换广告 ID / SIM 卡</td><td>记录字段变化，增加风险参考</td><td class="danger-text">否</td></tr>
+              <tr><td>游客转正式账号</td><td>visitor_id 与 user_id 合并，计入设备有效账号数</td><td class="danger-text">否</td></tr>
+              <tr><td>注销后重新注册</td><td>保留期内仍计入设备账号数</td><td class="danger-text">否</td></tr>
+              <tr><td>二手设备 / 维修换机</td><td>用户申诉上传证明，后台审批释放部分占用</td><td>审批后可调整</td></tr>
+              <tr><td>模拟器 / 云手机 / Root</td><td>进入审核，限制主播、提现和高风险动作</td><td class="danger-text">否</td></tr>
+            </tbody>
+          </table>
+          <div class="inline-note">设备指纹缺失时，普通浏览可放行并记录异常；注册、加入公会、充值、提现等高风险动作按 fail-close 或人工审核处理。</div>
+        `,
+        foot: `<button class="btn secondary" data-close>关闭</button><button class="btn primary" data-submit="已生成设备生命周期审核任务">生成审核任务</button>`
+      },
+      hostDevice: {
+        title: "主播设备占用与释放",
+        subtitle: "一个设备只能占用一个主播名额，释放必须考虑冷却、封禁、收益和申诉状态。",
+        body: `
+          <table class="compact-table">
+            <thead><tr><th>场景</th><th>是否释放主播名额</th><th>处理说明</th></tr></thead>
+            <tbody>
+              <tr><td>主播仍在公会</td><td class="danger-text">不释放</td><td>正常占用</td></tr>
+              <tr><td>主动退出 / 被公会长移出</td><td>不立即释放</td><td>进入默认 7 天冷却期</td></tr>
+              <tr><td>主播被封禁 / 注销</td><td class="danger-text">不释放</td><td>保留期内防止换号继续做主播</td></tr>
+              <tr><td>未结算收益 / 提现 / 申诉中</td><td class="danger-text">不释放</td><td>先完成财务或申诉闭环</td></tr>
+              <tr><td>二手设备申诉通过</td><td class="ok-text">可释放</td><td>需证明材料、审批和备注</td></tr>
+              <tr><td>永久清退且无财务纠纷</td><td class="ok-text">可释放</td><td>高级风控审批</td></tr>
+            </tbody>
+          </table>
+          <div class="inline-note">同一主播账号 24h 登录 3 个以上设备、跨国家频繁登录或多个 IP/设备交替登录，将标记账号共享风险并限制提现。</div>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="主播设备占用已提交审批">提交释放审批</button>`
+      },
+      ipRisk: {
+        title: "公共 IP / VPN / 代理网络处理",
+        subtitle: "IP 风险是辅助证据，不单独作为永久封禁依据。",
+        body: `
+          <table class="compact-table">
+            <thead><tr><th>IP 类型</th><th>处理策略</th><th>联动规则</th></tr></thead>
+            <tbody>
+              <tr><td>移动运营商 NAT / 公共 Wi-Fi</td><td>不直接封号，触发强验证</td><td>结合设备和行为证据</td></tr>
+              <tr><td>公会办公网络</td><td>可加 IP 白名单</td><td>不豁免设备、收益、充值规则</td></tr>
+              <tr><td>VPN / Proxy</td><td>降低注册阈值，限制短信</td><td>主播登录时限制提现</td></tr>
+              <tr><td>机房 IP</td><td>默认拦截注册或人工审核</td><td>标记 IDC_IP_REGISTER</td></tr>
+              <tr><td>跨国频繁切换</td><td>标记账号共享风险</td><td>提现进入财务审核</td></tr>
+            </tbody>
+          </table>
+          <div class="inline-note">IP 白名单默认最长 30 天，必须填写适用原因；若白名单 IP 注册数、提现数、同设备数异常，自动进入复核。</div>
+        `,
+        foot: `<button class="btn secondary" data-close>关闭</button><button class="btn primary" data-submit="IP 白名单申请已创建">申请 IP 白名单</button>`
+      },
+      batch: {
+        title: "同设备账号批量处理",
+        subtitle: "批量操作需展示成功/失败明细；删除或注销前必须确认无申诉、无收益冻结、无未结算款项。",
+        body: `
+          <div class="inline-note">当前设备关联 8 个账号，主播 2 个，命中同公会 3 个，设备风险等级 L3。建议先批量标记审核并冻结风险链路收益。</div>
+          <div class="form-grid">
+            <div class="field"><label>处理动作</label><select class="control"><option selected>批量标记审核</option><option>批量封禁账号</option><option>冻结风险收益</option><option>批量解封账号</option></select></div>
+            <div class="field"><label>处理范围</label><select class="control"><option selected>当前设备关联账号</option><option>当前设备 + 强关联设备</option><option>仅选中账号</option></select></div>
+            <div class="field"><label>审批等级</label><select class="control"><option selected>一审</option><option>二审</option><option>高危审批</option></select></div>
+            <div class="field"><label>是否冻结收益</label><select class="control"><option selected>仅风险链路收益</option><option>本周期未结算收益</option><option>不冻结</option></select></div>
+            <div class="field full"><label>处理备注</label><textarea class="textarea" placeholder="请填写批量处理原因，删除/注销类操作需说明无申诉和无财务待处理。"></textarea></div>
+          </div>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="批量处理审批已提交">提交审批</button>`
+      },
+      salaryFreeze: {
+        title: "收益冻结金额计算口径",
+        subtitle: "优先冻结风险链路相关收益，不默认冻结用户全部资产或充值金币。",
+        body: `
+          <div class="inline-note">风险冻结金额 = 风险周期内主播工资 + 对应公会长提成 + 风险链路活动奖励 + 未提现余额中的风险收益部分。</div>
+          <table class="compact-table">
+            <thead><tr><th>风险场景</th><th>冻结范围</th><th>解冻规则</th></tr></thead>
+            <tbody>
+              <tr><td>单账号风险</td><td>该账号本周期未结算主播收益</td><td>申诉通过后全额或部分解冻</td></tr>
+              <tr><td>同设备多主播</td><td>同设备相关主播本周期收益</td><td>证据不足时延长审核</td></tr>
+              <tr><td>同公会批量小号</td><td>主播收益 + 公会长提成</td><td>公会长参与违规时分别处理</td></tr>
+              <tr><td>拒付 / 恶意退款</td><td>关联收益、提现单和支付风险金额</td><td>确认违规可扣回或不予发放</td></tr>
+            </tbody>
+          </table>
+        `,
+        foot: `<button class="btn secondary" data-close>取消</button><button class="btn primary" data-submit="收益冻结单已创建">创建冻结单</button>`
+      },
+      appeal: {
+        title: "申诉审核与证据链复核",
+        subtitle: "申诉通过只解除对应限制，不自动恢复其他能力。",
+        body: `
+          <div class="approval-grid">
+            <div class="evidence-card">
+              <h4>申诉材料校验</h4>
+              <ul>
+                <li>账号封禁：账号 ID、手机号、申诉说明、联系方式。</li>
+                <li>设备封禁：设备截图、登录账号说明、二手/维修证明。</li>
+                <li>设备充值封禁：支付订单截图、支付凭证、充值账号说明。</li>
+                <li>收益冻结：收益来源、公会证明、房间或活动说明。</li>
+              </ul>
+            </div>
+            <div class="evidence-card">
+              <h4>处理结论</h4>
+              <ul>
+                <li>通过：解除指定限制，进入观察期。</li>
+                <li>需补充：用户补材料后再次提交。</li>
+                <li>拒绝：维持限制，允许有新证据后重新申诉。</li>
+                <li>重复申诉：已有工单处理中时拦截重复提交。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="inline-note">设备充值解封后，账号封禁、设备登录封禁、提现限制、收益冻结不会自动解除；若设备下存在 L4 账号，需要二审。</div>
+        `,
+        foot: `<button class="btn secondary" data-close>拒绝</button><button class="btn light" data-submit="申诉已标记为需补充材料">需补充材料</button><button class="btn primary" data-submit="申诉通过，限制已按类型解除">审核通过</button>`
+      }
+    };
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("is-visible");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("is-visible"), 2200);
+    }
+
+    function openModal(type) {
+      const template = modalTemplates[type] || modalTemplates.detail;
+      modalTitle.textContent = template.title;
+      modalSubtitle.textContent = template.subtitle;
+      modalBody.innerHTML = template.body;
+      modalFoot.innerHTML = template.foot;
+      modalBackdrop.classList.add("is-open");
+      modalBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove("is-open");
+      modalBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    document.addEventListener("click", (event) => {
+      const modalTarget = event.target.closest("[data-open-modal]");
+      if (modalTarget) openModal(modalTarget.dataset.openModal);
+
+      const closeTarget = event.target.closest("[data-close]");
+      if (closeTarget || event.target === modalBackdrop || event.target === modalClose) closeModal();
+
+      const submitTarget = event.target.closest("[data-submit]");
+      if (submitTarget) {
+        closeModal();
+        showToast(submitTarget.dataset.submit);
+      }
+
+      const tab = event.target.closest("[data-tab]");
+      if (tab) {
+        document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("is-active", item === tab));
+        const map = {
+          devices: ["设备充值封禁列表", "蓝色充值状态字段可点击调整；解封不会自动解除账号封禁、提现限制或收益冻结。"],
+          accounts: ["关联账号视图", "按设备查看全部关联账号、主播、公会、充值贡献和账号状态。"],
+          appeals: ["设备充值解封审批", "集中处理用户申诉、客服工单和后台发起的设备充值解封。"],
+          whitelist: ["充值白名单管理", "管理账号白名单、设备白名单和渠道白名单，均需记录有效期和审批。"],
+          logs: ["设备充值操作审计", "展示封禁、解封、白名单、金额调整和审批流转记录。"]
+        };
+        const [title, subtitle] = map[tab.dataset.tab];
+        tableTitle.textContent = title;
+        tableSubtitle.textContent = subtitle;
+        showToast("已切换：" + title);
+      }
+    });
+  </script>
+</body>
+</html>

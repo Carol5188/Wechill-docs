@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公会长本期盈余交互原型</title>
+  <style>
+    :root {
+      --page-bg: #0d0705;
+      --top-bg: #16100d;
+      --section: #453d33;
+      --section-deep: #2f241d;
+      --tile: #302c23;
+      --tile-deep: #281b16;
+      --gold: #d8bd7d;
+      --gold-strong: #f0c47f;
+      --button: #e4ad3d;
+      --button-deep: #ce9229;
+      --text: #fffaf0;
+      --soft: #e5d9c8;
+      --muted: rgba(255, 250, 240, 0.72);
+      --line: rgba(255, 250, 240, 0.09);
+      --shadow: 0 18px 38px rgba(0, 0, 0, 0.36);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(238, 189, 101, 0.18), transparent 30%),
+        linear-gradient(180deg, #201610 0%, #090503 100%);
+      color: var(--text);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .phone {
+      width: min(100%, 432px);
+      height: 936px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 26px;
+      background: var(--page-bg);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52);
+      outline: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--page-bg);
+      transition: transform 280ms ease, opacity 220ms ease;
+    }
+
+    .screen[hidden] {
+      display: flex;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(24px);
+    }
+
+    .screen.is-active {
+      pointer-events: auto;
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .statusbar {
+      height: 36px;
+      padding: 10px 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--top-bg);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      opacity: 0.86;
+    }
+
+    .appbar {
+      height: 96px;
+      display: grid;
+      grid-template-columns: 54px 1fr 54px;
+      align-items: center;
+      padding: 20px 10px 16px;
+      background: var(--top-bg);
+      color: #fff;
+    }
+
+    .appbar.compact {
+      height: 88px;
+      padding-top: 16px;
+    }
+
+    .icon-action {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    .app-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .home-scroll,
+    .detail-scroll {
+      flex: 1;
+      overflow: auto;
+      scrollbar-width: none;
+      padding-bottom: 28px;
+    }
+
+    .home-scroll::-webkit-scrollbar,
+    .detail-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 370px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(24, 13, 7, 0.74)),
+        radial-gradient(circle at 52% 32%, #f2cf75 0 11%, #ddb55c 12% 18%, transparent 19%),
+        radial-gradient(circle at 34% 44%, rgba(255, 236, 168, 0.82) 0 12%, transparent 13%),
+        radial-gradient(circle at 68% 48%, rgba(255, 236, 168, 0.7) 0 13%, transparent 14%),
+        linear-gradient(135deg, #6b8b94 0%, #d9bb6e 60%, #6e3f19 100%);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      left: 92px;
+      top: 58px;
+      border-radius: 45% 45% 50% 50%;
+      background:
+        radial-gradient(circle at 38% 42%, #17100e 0 6%, #fff 7% 8%, transparent 9%),
+        radial-gradient(circle at 64% 42%, #17100e 0 6%, #fff 7% 8%, transparent 9%),
+        radial-gradient(circle at 35% 58%, rgba(204, 92, 68, 0.78) 0 9%, transparent 10%),
+        radial-gradient(circle at 67% 58%, rgba(204, 92, 68, 0.78) 0 9%, transparent 10%),
+        radial-gradient(circle at 51% 52%, #21140f 0 4%, transparent 5%),
+        #e7c16a;
+      filter: saturate(1.05);
+      box-shadow: 0 34px 58px rgba(64, 39, 15, 0.34);
+      opacity: 0.96;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, transparent 44%, rgba(20, 10, 5, 0.78) 100%),
+        radial-gradient(circle at 17% 12%, rgba(255, 238, 166, 0.85) 0 1.2%, transparent 1.4%),
+        radial-gradient(circle at 82% 22%, rgba(255, 238, 166, 0.7) 0 1%, transparent 1.2%),
+        radial-gradient(circle at 10% 62%, rgba(255, 238, 166, 0.68) 0 0.8%, transparent 1%);
+    }
+
+    .invite {
+      position: absolute;
+      right: -8px;
+      top: 92px;
+      z-index: 1;
+      border: 0;
+      border-radius: 32px 0 0 32px;
+      padding: 19px 27px 18px 22px;
+      background: #fff36b;
+      color: #2a2414;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .profile {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 48px;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 101px 1fr;
+      gap: 18px;
+      align-items: end;
+    }
+
+    .avatar-card {
+      width: 101px;
+      height: 101px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 52% 45%, #f4c86d 0 27%, transparent 28%),
+        linear-gradient(135deg, #a6d4e8, #f3cf75);
+      outline: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .avatar-card::after {
+      content: "";
+      position: absolute;
+      right: 5px;
+      bottom: 5px;
+      width: 28px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(39, 31, 21, 0.74);
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 850;
+      margin-bottom: 8px;
+    }
+
+    .profile-meta,
+    .profile-sub {
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.8;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.46);
+    }
+
+    .profile-sub {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-avatar {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f0c268 0 44%, #8b5b23 45%);
+      display: inline-block;
+    }
+
+    .quick-row {
+      position: absolute;
+      left: 17px;
+      right: 17px;
+      bottom: -42px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .quick-card {
+      height: 64px;
+      border-radius: 8px;
+      background: #3a3125;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    .quick-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(244, 204, 128, 0.16);
+      color: #f4d088;
+      font-size: 21px;
+    }
+
+    .content {
+      padding: 58px 12px 28px;
+      display: grid;
+      gap: 15px;
+    }
+
+    .section {
+      position: relative;
+      border-radius: 12px;
+      background: var(--section);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .section.dark {
+      background: var(--section-deep);
+    }
+
+    .section-title {
+      margin: 0 42px 14px 0;
+      font-size: 19px;
+      line-height: 1.25;
+      font-weight: 820;
+      color: var(--text);
+    }
+
+    .history-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 26px;
+      height: 26px;
+      border: 0;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: #ffe39a;
+      background: rgba(255, 225, 143, 0.08);
+      cursor: pointer;
+    }
+
+    .history-badge svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-grid.one {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+      min-height: 105px;
+      position: relative;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 10px 12px;
+      text-align: left;
+      background: var(--tile);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .metric-card.deep {
+      background: var(--tile-deep);
+    }
+
+    .metric-card.gold {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .metric-label {
+      min-height: 42px;
+      padding-right: 20px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: inherit;
+    }
+
+    .help {
+      position: absolute;
+      right: 10px;
+      top: 15px;
+      width: 17px;
+      height: 17px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      line-height: 1;
+      opacity: 0.94;
+    }
+
+    .metric-value {
+      margin-top: 14px;
+      font-size: 22px;
+      font-weight: 760;
+      letter-spacing: 0.01em;
+    }
+
+    .diamond {
+      width: 21px;
+      height: 17px;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: -2px;
+      background: linear-gradient(135deg, #b7f3ff 0%, #2d84ff 52%, #5b34d7 100%);
+      clip-path: polygon(50% 0, 100% 33%, 77% 100%, 23% 100%, 0 33%);
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.28));
+    }
+
+    .chevron {
+      position: absolute;
+      right: 12px;
+      bottom: 15px;
+      width: 12px;
+      height: 12px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg);
+      opacity: 0.9;
+    }
+
+    .balance-module {
+      background: var(--section);
+      color: var(--text);
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .balance-module:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 42px rgba(0, 0, 0, 0.42);
+    }
+
+    .balance-module .section-title {
+      margin: 0 42px 14px 0;
+      color: var(--text);
+      font-size: 19px;
+      font-weight: 820;
+    }
+
+    .balance-module .history-badge {
+      top: 14px;
+      right: 14px;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(255, 225, 143, 0.08);
+      color: #ffe39a;
+    }
+
+    .balance-module .metric-grid {
+      gap: 10px;
+      padding: 0;
+    }
+
+    .balance-module .metric-card {
+      min-height: 105px;
+      border-radius: 8px;
+      padding: 14px 10px 12px;
+      background: var(--tile);
+      color: var(--text);
+    }
+
+    .balance-module .metric-card.debt {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .balance-module .metric-label {
+      min-height: 42px;
+      padding-right: 20px;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .balance-module .metric-value {
+      margin-top: 14px;
+      font-size: 22px;
+      color: inherit;
+    }
+
+    .hint-bar {
+      margin-top: 10px;
+      color: rgba(255, 250, 240, 0.48);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .wallet .metric-card {
+      min-height: 104px;
+    }
+
+    .data-content {
+      padding: 14px 12px 28px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .data-diamond {
+      background: #2b2112;
+    }
+
+    .data-progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f05f28 0%, #ffe34f 100%);
+      margin-bottom: 26px;
+    }
+
+    .time-card {
+      height: 56px;
+      border-radius: 8px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #2b2220;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .time-value {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f0cc74;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .time-value svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .surplus-module {
+      background: #42391f;
+    }
+
+    .streamer-title {
+      margin: -2px 0 8px;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .search-field {
+      height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: #2f2818;
+      color: rgba(255, 250, 240, 0.35);
+      font-size: 16px;
+    }
+
+    .search-field svg {
+      width: 22px;
+      height: 22px;
+      stroke: #8c8b93;
+      stroke-width: 2.4;
+      fill: none;
+    }
+
+    .streamer-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .streamer-card {
+      min-height: 126px;
+      border-radius: 8px;
+      padding: 16px 14px 16px 20px;
+      display: grid;
+      grid-template-columns: 40px 86px 1fr 36px;
+      align-items: center;
+      gap: 10px;
+      background: #2f2818;
+      color: var(--text);
+    }
+
+    .rank {
+      width: 36px;
+      height: 30px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #ffbd4e, #ffd35c);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 860;
+    }
+
+    .streamer-avatar {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 42%, #f3cf76 0 28%, transparent 29%),
+        linear-gradient(135deg, #a7d6e9, #edc66d);
+    }
+
+    .streamer-avatar.alt {
+      background:
+        radial-gradient(circle at 50% 45%, #efe7d1 0 34%, transparent 35%),
+        linear-gradient(135deg, #d8c2ff, #8fd18c);
+    }
+
+    .streamer-name {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .streamer-name.hot {
+      color: #ff315c;
+    }
+
+    .streamer-id {
+      font-size: 16px;
+      margin-bottom: 9px;
+    }
+
+    .policy-pill {
+      width: 92px;
+      height: 35px;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(90deg, #f16925, #ffe138);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 760;
+    }
+
+    .policy-pill.free {
+      background: linear-gradient(90deg, #65164e, #a51c95);
+    }
+
+    .expand-circle {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #d9bd7d;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .expand-circle::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      left: 8px;
+      top: 7px;
+      border-right: 2px solid #d9bd7d;
+      border-bottom: 2px solid #d9bd7d;
+      transform: rotate(45deg);
+    }
+
+    .no-more {
+      text-align: center;
+      color: rgba(255, 250, 240, 0.48);
+      font-size: 16px;
+      padding: 10px 0 2px;
+    }
+
+    .withdraw {
+      height: 60px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(180deg, var(--button) 0%, var(--button-deep) 100%);
+      color: white;
+      font-size: 18px;
+      font-weight: 760;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(193, 126, 31, 0.24);
+    }
+
+    .detail-top {
+      padding: 14px 12px 0;
+    }
+
+    .detail-card {
+      position: relative;
+      min-height: auto;
+      border-radius: 12px;
+      background: var(--section);
+      color: var(--text);
+      padding: 16px 14px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .detail-card + .detail-card {
+      margin-top: 14px;
+    }
+
+    .detail-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 14px;
+      font-size: 14px;
+      color: var(--soft);
+      font-weight: 760;
+    }
+
+    .settlement-kind {
+      white-space: nowrap;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+    }
+
+    .detail-metric {
+      min-height: 105px;
+      position: relative;
+      border-radius: 8px;
+      padding: 14px 10px 12px;
+      background: var(--tile);
+      color: var(--text);
+    }
+
+    .detail-metric.debt {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .detail-label {
+      font-size: 14px;
+      line-height: 1.45;
+      min-height: 42px;
+    }
+
+    .detail-value {
+      margin-top: 14px;
+      font-size: 20px;
+      font-weight: 820;
+      color: inherit;
+    }
+
+    .record-content {
+      padding: 14px 12px 28px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .record-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 5px;
+      border-radius: 14px;
+      background: rgba(240, 196, 127, 0.12);
+    }
+
+    .record-tab {
+      min-width: 112px;
+      height: 42px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: rgba(255, 250, 240, 0.62);
+      font-size: 14px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .record-tab.active {
+      background: linear-gradient(180deg, var(--button) 0%, var(--button-deep) 100%);
+      color: #fff;
+    }
+
+    .record-panel {
+      border-radius: 12px;
+      background: var(--section);
+      color: var(--text);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .record-panel-head {
+      padding: 16px 14px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .record-panel-title {
+      font-size: 18px;
+      font-weight: 850;
+      line-height: 1.2;
+    }
+
+    .record-badge {
+      flex: 0 0 auto;
+      height: 32px;
+      min-width: 94px;
+      padding: 0 14px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: #402d13;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .record-badge.borrow {
+      background: #f0a24a;
+      color: #fff;
+    }
+
+    .record-hint {
+      margin: 0 14px 10px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.06);
+      color: rgba(255, 250, 240, 0.54);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .record-table-wrap {
+      overflow-x: auto;
+      padding: 0 14px 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(240, 196, 127, 0.45) transparent;
+    }
+
+    .record-table {
+      min-width: 620px;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 250, 240, 0.08);
+      border-radius: 10px;
+      background: var(--tile);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .record-table.compact {
+      min-width: 520px;
+    }
+
+    .record-table th,
+    .record-table td {
+      padding: 13px 12px;
+      white-space: nowrap;
+      text-align: left;
+      border-right: 1px solid rgba(255, 250, 240, 0.06);
+      border-bottom: 1px solid rgba(255, 250, 240, 0.06);
+    }
+
+    .record-table th {
+      color: #f2d99e;
+      background: rgba(0, 0, 0, 0.18);
+      font-weight: 850;
+    }
+
+    .record-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .record-table th:last-child,
+    .record-table td:last-child {
+      border-right: 0;
+    }
+
+    .record-amount {
+      color: #fff;
+      font-weight: 850;
+    }
+
+    .record-coin,
+    .record-bill {
+      color: var(--gold);
+      font-weight: 760;
+    }
+
+    .reason-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(240, 196, 127, 0.16);
+      color: #f2d99e;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.92);
+      color: #2b211a;
+      font-size: 12px;
+      font-weight: 820;
+      transform: translate(-50%, 18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 180ms ease;
+      white-space: nowrap;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 0;
+        background: var(--page-bg);
+      }
+
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        outline: 0;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .balance-module {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .balance-module .metric-grid,
+      .detail-grid {
+        gap: 10px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .detail-card {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" aria-label="公会长本期盈余交互原型">
+    <section class="screen is-active" id="home-screen">
+      <div class="statusbar">
+        <span>5:42</span>
+        <span class="status-icons">5G 82%</span>
+      </div>
+      <header class="appbar">
+        <button class="icon-action" type="button" aria-label="返回">‹</button>
+        <div class="app-title">My Agency</div>
+        <button class="icon-action" type="button" aria-label="关闭">×</button>
+      </header>
+
+      <main class="home-scroll">
+        <section class="hero">
+          <button class="invite" type="button">Invite Members</button>
+          <div class="profile">
+            <div class="avatar-card" aria-hidden="true"></div>
+            <div>
+              <div class="profile-name">Coooool</div>
+              <div class="profile-meta">ID: 1087&nbsp;&nbsp;|&nbsp;&nbsp;⚭ 5 / 200</div>
+              <div class="profile-sub"><span class="mini-avatar"></span> ID: 8562354</div>
+            </div>
+          </div>
+          <div class="quick-row" aria-hidden="true">
+            <div class="quick-card"><span class="quick-icon">♚</span></div>
+            <div class="quick-card"><span class="quick-icon">▣</span></div>
+            <div class="quick-card"><span class="quick-icon">▤</span></div>
+          </div>
+        </section>
+
+        <div class="content">
+          <section class="section dark">
+            <h2 class="section-title">Diamond</h2>
+            <button class="history-badge data-center-entry" type="button" aria-label="Diamond history">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">Agency Diamond Target</div>
+                <span class="help">?</span>
+                <div class="metric-value"><span class="diamond"></span>0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agency Diamond Balance</div>
+                <span class="help">?</span>
+                <div class="metric-value"><span class="diamond"></span>0</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Agency current salary</h2>
+            <button class="history-badge data-center-entry" type="button" aria-label="Agency current salary history">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">Agency total Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card gold">
+                <div class="metric-label">Agency total Salary Balance</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ -50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">All host's Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent Commission</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card" style="grid-column: 1 / -1;">
+                <div class="metric-label">Agency Advance Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent borrowed amount</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent borrowable amount</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 49</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section dark">
+            <h2 class="section-title">Agent as host Salary</h2>
+            <button class="history-badge" type="button" aria-label="Agent as host Salary history">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="metric-grid">
+              <div class="metric-card deep">
+                <div class="metric-label">Agent total salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card deep">
+                <div class="metric-label">Agent as host Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <button class="metric-card deep" type="button" id="agent-borrowed-entry">
+                <div class="metric-label">Agent borrowed amount</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 50</div>
+                <span class="chevron"></span>
+              </button>
+              <button class="metric-card deep" type="button" id="host-advance">
+                <div class="metric-label">Agent as host Advance Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+                <span class="chevron"></span>
+              </button>
+              <div class="metric-card gold" style="grid-column: 1 / -1;">
+                <div class="metric-label">Agent Salary Balance</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ -50</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section balance-module" id="balance-module" tabindex="0" role="button" aria-label="查看公会长本期盈余详情">
+            <h2 class="section-title">公会长本期盈余</h2>
+            <button class="history-badge" id="balance-history" type="button" aria-label="查看公会长本期盈余历史记录">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">本期薪资:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">本期借支:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">本期实际工资:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ -50</div>
+              </div>
+              <div class="metric-card debt">
+                <div class="metric-label">历史欠款:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 120</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section wallet">
+            <h2 class="section-title">Wallet</h2>
+            <div class="metric-grid one">
+              <div class="metric-card">
+                <div class="metric-label">Withdrawable balance</div>
+                <div class="metric-value">$ 55.82</div>
+              </div>
+            </div>
+          </section>
+
+          <button class="withdraw" type="button" id="withdraw">Withdraw</button>
+        </div>
+      </main>
+    </section>
+
+    <section class="screen" id="data-center-screen" hidden>
+      <div class="statusbar">
+        <span>6:48</span>
+        <span class="status-icons">5G 82%</span>
+      </div>
+      <header class="appbar compact">
+        <button class="icon-action" id="back-agency" type="button" aria-label="返回">‹</button>
+        <div class="app-title">Data Center</div>
+        <span></span>
+      </header>
+
+      <main class="detail-scroll">
+        <div class="data-content">
+          <section class="section data-diamond">
+            <h2 class="section-title">My Diamonds received</h2>
+            <button class="history-badge" type="button" aria-label="My Diamonds received history">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="data-progress-head">
+              <span>LV0（$0）</span>
+              <span><span class="diamond"></span>0 / 0</span>
+            </div>
+            <div class="progress-track" aria-hidden="true"></div>
+            <h2 class="section-title">Diamond</h2>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">Current Diamond target</div>
+                <span class="help">?</span>
+                <div class="metric-value"><span class="diamond"></span>0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Diamond Balance</div>
+                <span class="help">?</span>
+                <div class="metric-value"><span class="diamond"></span>0</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="time-card" aria-label="结算周期">
+            <span>Time</span>
+            <span class="time-value">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v4"></path><path d="M17 3v4"></path><path d="M4 8h16"></path><path d="M5 5h14v15H5z"></path><path d="M8 12h4"></path></svg>
+              2026/06/01-2026/06/15
+            </span>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Agency current salary</h2>
+            <button class="history-badge" type="button" aria-label="Agency current salary history">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l2 2v16H5V5l2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+            </button>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">Agency total Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card gold">
+                <div class="metric-label">Agency total Salary Balance</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ -50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">All host's Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent Commission</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card" style="grid-column: 1 / -1;">
+                <div class="metric-label">Agency Advance Salary</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent borrowed amount</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Agent borrowable amount</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 49</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section balance-module surplus-module" id="data-surplus-module" tabindex="0" role="button" aria-label="查看当期盈余历史数据">
+            <h2 class="section-title">当期盈余</h2>
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label">当期薪资:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">当期借支:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">当期实际工资:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ -50</div>
+              </div>
+              <div class="metric-card debt">
+                <div class="metric-label">历史欠款:</div>
+                <span class="help">?</span>
+                <div class="metric-value">$ 120</div>
+              </div>
+            </div>
+          </section>
+
+          <div class="streamer-title">Streamer Details</div>
+          <div class="search-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg>
+            <span>Please Enter User ID</span>
+          </div>
+          <div class="streamer-list">
+            <div class="streamer-card">
+              <div class="rank">1</div>
+              <div class="streamer-avatar"></div>
+              <div>
+                <div class="streamer-name hot">u1358466</div>
+                <div class="streamer-id">ID: 8562354</div>
+                <div class="policy-pill">Weekly</div>
+              </div>
+              <div class="expand-circle" aria-hidden="true"></div>
+            </div>
+            <div class="streamer-card">
+              <div class="rank">2</div>
+              <div class="streamer-avatar alt"></div>
+              <div>
+                <div class="streamer-name hot">leon</div>
+                <div class="streamer-id">ID: 8537572</div>
+                <div class="policy-pill">Weekly</div>
+              </div>
+              <div class="expand-circle" aria-hidden="true"></div>
+            </div>
+            <div class="streamer-card">
+              <div class="rank">3</div>
+              <div class="streamer-avatar alt"></div>
+              <div>
+                <div class="streamer-name">topppp</div>
+                <div class="streamer-id">ID: 8580152</div>
+                <div class="policy-pill free">Free</div>
+              </div>
+              <div class="expand-circle" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="no-more">- No more -</div>
+        </div>
+      </main>
+    </section>
+
+    <section class="screen" id="detail-screen" hidden>
+      <div class="statusbar">
+        <span>5:42</span>
+        <span class="status-icons">5G 82%</span>
+      </div>
+      <header class="appbar compact">
+        <button class="icon-action" id="back-home" type="button" aria-label="返回">‹</button>
+        <div class="app-title">盈余详情</div>
+        <span></span>
+      </header>
+
+      <main class="detail-scroll">
+        <div class="detail-top">
+          <section class="detail-card" aria-label="公会长本期盈余详情">
+            <div class="detail-card-head">
+              <span>2026-03-16 19:08:43</span>
+              <span class="settlement-kind">系统结算</span>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-metric">
+                <div class="detail-label">本期薪资:</div>
+                <div class="detail-value">$ 0</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-label">本期借支:</div>
+                <div class="detail-value">$ 50</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-label">本期实际工资:</div>
+                <div class="detail-value">$ -50</div>
+              </div>
+              <div class="detail-metric debt">
+                <div class="detail-label">历史欠款:</div>
+                <div class="detail-value">$ 120</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-card" aria-label="公会长本期盈余手动结算详情">
+            <div class="detail-card-head">
+              <span>2026-03-22 10:12:09</span>
+              <span class="settlement-kind">手动结算</span>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-metric">
+                <div class="detail-label">本期薪资:</div>
+                <div class="detail-value">$ 180</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-label">本期借支:</div>
+                <div class="detail-value">$ 20</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-label">本期实际工资:</div>
+                <div class="detail-value">$ 160</div>
+              </div>
+              <div class="detail-metric debt">
+                <div class="detail-label">历史欠款:</div>
+                <div class="detail-value">$ 0</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </section>
+
+    <section class="screen" id="record-screen" hidden>
+      <div class="statusbar">
+        <span>5:42</span>
+        <span class="status-icons">5G 82%</span>
+      </div>
+      <header class="appbar compact">
+        <button class="icon-action" id="back-record" type="button" aria-label="返回">‹</button>
+        <div class="app-title" id="record-title">Advance Salary Record</div>
+        <span></span>
+      </header>
+
+      <main class="detail-scroll">
+        <div class="record-content">
+          <div class="record-tabs">
+            <button class="record-tab active" data-record-tab="all" type="button">All</button>
+            <button class="record-tab" data-record-tab="amount" type="button">Advance</button>
+            <button class="record-tab" data-record-tab="deduct" type="button">Deduction</button>
+          </div>
+
+          <section class="record-view" id="advance-record-view">
+            <article class="record-panel" data-record-panel="amount">
+              <div class="record-panel-head">
+                <div class="record-panel-title">Advance</div>
+                <div class="record-badge">Advance</div>
+              </div>
+              <div class="record-hint">Swipe left/right to view: Time / Recipient ID / Amount / Coins / Bill ID</div>
+              <div class="record-table-wrap">
+                <table class="record-table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Recipient ID</th>
+                      <th>Amount</th>
+                      <th>Coins</th>
+                      <th>Bill ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>2026-05-28 19:40:14</td>
+                      <td>8562354</td>
+                      <td class="record-amount">$ 9</td>
+                      <td class="record-coin">81,000</td>
+                      <td class="record-bill">ADV-20260528-194014</td>
+                    </tr>
+                    <tr>
+                      <td>2026-05-28 19:35:12</td>
+                      <td>8562354</td>
+                      <td class="record-amount">$ 20</td>
+                      <td class="record-coin">180,000</td>
+                      <td class="record-bill">ADV-20260528-193512</td>
+                    </tr>
+                    <tr>
+                      <td>2026-05-23 11:44:07</td>
+                      <td>8562354</td>
+                      <td class="record-amount">$ 12</td>
+                      <td class="record-coin">108,000</td>
+                      <td class="record-bill">ADV-20260523-114407</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="record-panel" data-record-panel="deduct">
+              <div class="record-panel-head">
+                <div class="record-panel-title">Advance Deduction</div>
+                <div class="record-badge">Deduction</div>
+              </div>
+              <div class="record-hint">Swipe left/right to view: Time / Amount / Reason / Bill ID</div>
+              <div class="record-table-wrap">
+                <table class="record-table compact">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Amount</th>
+                      <th>Reason</th>
+                      <th>Bill ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>2026-06-01 19:56:36</td>
+                      <td class="record-amount">$ 5</td>
+                      <td><span class="reason-chip">Payroll settlement deduction</span></td>
+                      <td class="record-bill">AD-D-20260601-195636</td>
+                    </tr>
+                    <tr>
+                      <td>2026-06-01 06:00:42</td>
+                      <td class="record-amount">$ 0</td>
+                      <td><span class="reason-chip">Official manual deduction</span></td>
+                      <td class="record-bill">AD-D-20260601-060042</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+
+          <section class="record-view" id="borrow-record-view" hidden>
+            <article class="record-panel" data-record-panel="amount">
+              <div class="record-panel-head">
+                <div class="record-panel-title">Borrowed Amount</div>
+                <div class="record-badge borrow">Borrow</div>
+              </div>
+              <div class="record-hint">Swipe left/right to view: Time / Amount / Coins / Bill ID</div>
+              <div class="record-table-wrap">
+                <table class="record-table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Amount</th>
+                      <th>Coins</th>
+                      <th>Bill ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>2026-05-28 19:40:14</td>
+                      <td class="record-amount">$ 50</td>
+                      <td class="record-coin">450,000</td>
+                      <td class="record-bill">BRW-20260528-194014</td>
+                    </tr>
+                    <tr>
+                      <td>2026-05-23 11:45:20</td>
+                      <td class="record-amount">$ 100</td>
+                      <td class="record-coin">900,000</td>
+                      <td class="record-bill">BRW-20260523-114520</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="record-panel" data-record-panel="deduct">
+              <div class="record-panel-head">
+                <div class="record-panel-title">Borrow Deduction</div>
+                <div class="record-badge borrow">Deduction</div>
+              </div>
+              <div class="record-hint">Swipe left/right to view: Time / Amount / Reason / Bill ID</div>
+              <div class="record-table-wrap">
+                <table class="record-table compact">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Amount</th>
+                      <th>Reason</th>
+                      <th>Bill ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>2026-06-01 19:56:36</td>
+                      <td class="record-amount">$ 65</td>
+                      <td><span class="reason-chip">Payroll settlement deduction</span></td>
+                      <td class="record-bill">BRW-D-20260601-195636</td>
+                    </tr>
+                    <tr>
+                      <td>2026-05-29 16:22:18</td>
+                      <td class="record-amount">$ 35</td>
+                      <td><span class="reason-chip">Official manual deduction</span></td>
+                      <td class="record-bill">BRW-D-20260529-162218</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const homeScreen = document.getElementById("home-screen");
+    const dataCenterScreen = document.getElementById("data-center-screen");
+    const detailScreen = document.getElementById("detail-screen");
+    const recordScreen = document.getElementById("record-screen");
+    const balanceModule = document.getElementById("balance-module");
+    const balanceHistory = document.getElementById("balance-history");
+    const dataSurplusModule = document.getElementById("data-surplus-module");
+    const backAgency = document.getElementById("back-agency");
+    const backHome = document.getElementById("back-home");
+    const backRecord = document.getElementById("back-record");
+    const recordTitle = document.getElementById("record-title");
+    const recordTabs = Array.from(document.querySelectorAll("[data-record-tab]"));
+    const advanceRecordView = document.getElementById("advance-record-view");
+    const borrowRecordView = document.getElementById("borrow-record-view");
+    const toast = document.getElementById("toast");
+    const screens = [homeScreen, dataCenterScreen, detailScreen, recordScreen];
+    let detailReturnScreen = homeScreen;
+    let recordReturnScreen = homeScreen;
+    let currentRecordMode = "advance";
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function activateScreen(nextScreen) {
+      screens.forEach((screen) => {
+        const isNext = screen === nextScreen;
+        screen.hidden = !isNext;
+        screen.classList.toggle("is-active", isNext);
+      });
+    }
+
+    function showDetail(fromScreen = homeScreen) {
+      detailReturnScreen = fromScreen;
+      activateScreen(detailScreen);
+    }
+
+    function showHome() {
+      activateScreen(homeScreen);
+    }
+
+    function showDataCenter() {
+      activateScreen(dataCenterScreen);
+    }
+
+    function applyRecordTab(tabName) {
+      const activeView = currentRecordMode === "borrow" ? borrowRecordView : advanceRecordView;
+      recordTabs.forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.recordTab === tabName);
+      });
+      activeView.querySelectorAll("[data-record-panel]").forEach((panel) => {
+        panel.hidden = tabName !== "all" && panel.dataset.recordPanel !== tabName;
+      });
+    }
+
+    function showRecord(mode, fromScreen = homeScreen) {
+      const isBorrow = mode === "borrow";
+      currentRecordMode = isBorrow ? "borrow" : "advance";
+      recordReturnScreen = fromScreen;
+      recordTitle.textContent = isBorrow ? "Borrowed Amount Record" : "Advance Salary Record";
+      recordTabs[0].textContent = "All";
+      recordTabs[1].textContent = isBorrow ? "Borrow" : "Advance";
+      recordTabs[2].textContent = "Deduction";
+      advanceRecordView.hidden = isBorrow;
+      borrowRecordView.hidden = !isBorrow;
+      applyRecordTab("all");
+      activateScreen(recordScreen);
+    }
+
+    document.querySelectorAll(".data-center-entry").forEach((entry) => {
+      entry.addEventListener("click", showDataCenter);
+    });
+
+    balanceModule.addEventListener("click", () => showDetail(homeScreen));
+    balanceModule.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showDetail(homeScreen);
+      }
+    });
+    balanceHistory.addEventListener("click", (event) => {
+      event.stopPropagation();
+      showDetail(homeScreen);
+    });
+
+    dataSurplusModule.addEventListener("click", () => showDetail(dataCenterScreen));
+    dataSurplusModule.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showDetail(dataCenterScreen);
+      }
+    });
+    backAgency.addEventListener("click", showHome);
+    backHome.addEventListener("click", () => activateScreen(detailReturnScreen));
+
+    document.getElementById("withdraw").addEventListener("click", () => {
+      showToast("Withdraw 点击态示例");
+    });
+
+    recordTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        applyRecordTab(tab.dataset.recordTab);
+      });
+    });
+
+    document.getElementById("agent-borrowed-entry").addEventListener("click", () => {
+      showRecord("borrow", homeScreen);
+    });
+
+    document.getElementById("host-advance").addEventListener("click", () => {
+      showRecord("advance", homeScreen);
+    });
+
+    backRecord.addEventListener("click", () => activateScreen(recordReturnScreen));
+  </script>
+</body>
+</html>
