@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shipping Agent List UI Optimization</title>
+  <style>
+    :root {
+      --bg: #111315;
+      --panel: #1b1f23;
+      --panel-2: #22272d;
+      --surface: #17191c;
+      --line: #343a40;
+      --text: #f5f7fa;
+      --muted: #a9b0bb;
+      --faint: #757e8a;
+      --gold: #d9aa55;
+      --gold-2: #f1c879;
+      --pink: #e04c73;
+      --green: #41c77a;
+      --cyan: #4fb6df;
+      --blue: #5d8bff;
+      --card: #26211f;
+      --card-2: #312a25;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .36);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 16% 0%, rgba(79, 182, 223, .18), transparent 30%),
+        radial-gradient(circle at 84% 16%, rgba(217, 170, 85, .16), transparent 28%),
+        linear-gradient(145deg, #111315 0%, #151719 48%, #0c0e10 100%);
+    }
+
+    .page {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: var(--gold-2);
+      font-size: 13px;
+      letter-spacing: 0;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .header p {
+      max-width: 680px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      color: #dce2ea;
+      background: rgba(255,255,255,.06);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(65,199,122,.12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) minmax(360px, 480px) 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(27,31,35,.78);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-title {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .panel-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .screenshot-wrap {
+      position: relative;
+      background: #070707;
+      padding: 12px;
+    }
+
+    .screenshot-wrap img {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+      opacity: .88;
+    }
+
+    .callout {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(12,14,16,.86);
+      border: 1px solid rgba(224,76,115,.5);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+
+    .callout strong {
+      display: block;
+      color: #fff;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .callout span {
+      color: #cbd2dc;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .callout b {
+      width: 24px;
+      height: 24px;
+      border-radius: 99px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--pink);
+      color: white;
+      font-size: 12px;
+    }
+
+    .c1 { top: 120px; }
+    .c2 { top: 330px; border-color: rgba(217,170,85,.5); }
+    .c2 b { background: var(--gold); color: #1b1510; }
+    .c3 { top: 560px; border-color: rgba(79,182,223,.5); }
+    .c3 b { background: var(--cyan); }
+
+    .phone {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      background: #0b0908;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 26px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .screen {
+      min-height: 840px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #100d0c;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .status {
+      height: 28px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fafafa;
+      font-size: 11px;
+      background: #080706;
+    }
+
+    .appbar {
+      height: 54px;
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
+      align-items: center;
+      padding: 0 10px;
+      background: #140f0d;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background: transparent;
+      font-size: 20px;
+      cursor: default;
+    }
+
+    .appbar h3 {
+      margin: 0;
+      text-align: center;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .filters {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      background: #100d0c;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .search-line {
+      display: grid;
+      grid-template-columns: 1fr 82px;
+      gap: 8px;
+    }
+
+    .search-line input,
+    .region select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      color: #ebeef3;
+      background: #26201d;
+      padding: 0 12px;
+      outline: none;
+      font-size: 13px;
+    }
+
+    .search-line button {
+      height: 42px;
+      border: 0;
+      border-radius: 8px;
+      color: #21170c;
+      background: linear-gradient(180deg, #e4bb68, #c89744);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .region {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .region-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .list {
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .agent-card {
+      padding: 12px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #29231f, #231e1b);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 12px 28px rgba(0,0,0,.22);
+    }
+
+    .agent-head {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #231b10;
+      background: linear-gradient(145deg, #f1d9a0, #d9aa55);
+      border: 2px solid rgba(255,255,255,.7);
+      overflow: hidden;
+    }
+
+    .avatar.cool { background: linear-gradient(145deg, #8dd7ff, #5d8bff); color: #061123; }
+    .avatar.green { background: linear-gradient(145deg, #a8f0c3, #41c77a); color: #062313; }
+    .avatar.gray { background: linear-gradient(145deg, #f0f2f4, #aab3bd); color: #252a2f; }
+
+    .name {
+      min-width: 0;
+    }
+
+    .name strong {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .name strong span:first-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .verified {
+      flex: 0 0 auto;
+      height: 17px;
+      padding: 0 5px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      color: #0d1a10;
+      background: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .balance {
+      color: var(--gold-2);
+      font-weight: 800;
+    }
+
+    .rank {
+      min-width: 46px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      color: #21170c;
+      background: #dfb961;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .data-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-bottom: 12px;
+    }
+
+    .data-cell {
+      padding: 9px 10px;
+      background: #352d26;
+    }
+
+    .data-cell small {
+      display: block;
+      color: #9ea6af;
+      font-size: 10px;
+      margin-bottom: 3px;
+    }
+
+    .data-cell strong {
+      font-size: 13px;
+    }
+
+    .section-label {
+      color: #ff6b92;
+      font-weight: 800;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .payment-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .pay {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 9px;
+      border-radius: 8px;
+      background: #342d27;
+      color: #e8edf2;
+      border: 1px solid rgba(255,255,255,.06);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    button.pay {
+      font: inherit;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    button.pay:hover,
+    button.pay:focus-visible {
+      border-color: rgba(241,200,121,.55);
+      background: #40342a;
+      outline: none;
+    }
+
+    button.pay:active {
+      transform: translateY(1px);
+    }
+
+    .more-toggle {
+      width: 74px;
+      justify-content: space-between;
+      padding: 0 8px 0 10px;
+    }
+
+    .more-label {
+      min-width: 28px;
+      text-align: left;
+    }
+
+    .pay i {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      display: inline-grid;
+      place-items: center;
+      font-style: normal;
+      font-size: 10px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .pay .paypal { background: #2d79c7; }
+    .pay .usdt { background: #27a17b; }
+    .pay .bank { background: #e35b52; }
+    .pay .qnb { background: #de4b42; }
+    .pay .epay { background: #77a63b; }
+    .pay .more { background: #7f8792; }
+
+    .pay .arrow-icon {
+      position: relative;
+      border-radius: 50%;
+      background: rgba(127,135,146,.88);
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .pay .arrow-icon::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+
+    .pay-extra {
+      display: none;
+    }
+
+    .payment-row.expanded .pay-extra {
+      display: inline-flex;
+      animation: revealPay .18s ease both;
+    }
+
+    .payment-row.expanded .more-toggle {
+      background: #44382d;
+      border-color: rgba(241,200,121,.45);
+    }
+
+    .payment-row.expanded .arrow-icon {
+      transform: rotate(180deg);
+      background: rgba(241,200,121,.9);
+    }
+
+    @keyframes revealPay {
+      from {
+        opacity: 0;
+        transform: translateY(-3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .contact-title {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .contact-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .contact {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 0;
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 -8px 12px rgba(0,0,0,.12);
+    }
+
+    .tg { background: var(--cyan); }
+    .wa { background: #2fc065; }
+    .ln { background: #42d45a; }
+    .wx { background: #39b66b; }
+
+    .advice {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .clarifier {
+      margin: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(217,170,85,.16), rgba(255,255,255,.05));
+      border: 1px solid rgba(217,170,85,.28);
+    }
+
+    .clarifier strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--gold-2);
+      font-size: 13px;
+    }
+
+    .clarifier p {
+      margin: 0;
+      color: #cfd5dd;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .advice-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 13px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .advice-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #2d3b4a;
+      color: #bbdcff;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .advice-item h4 {
+      margin: 0 0 5px;
+      font-size: 14px;
+    }
+
+    .advice-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .comparison {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .mini {
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .mini span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1180px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .advice-panel {
+        grid-column: 1 / -1;
+      }
+      .comparison {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 780px) {
+      .page {
+        padding: 20px 14px;
+      }
+      .header {
+        display: block;
+      }
+      .pill-row {
+        justify-content: flex-start;
+        margin-top: 16px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+      .callout {
+        position: static;
+        margin: 10px 0;
+      }
+      .screenshot-wrap img {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <div>
+        <div class="eyebrow">运营反馈拆解 / Shipping Agent List</div>
+        <h1>把“乱糟糟”翻译成可执行的 UI 优化</h1>
+        <p>当前问题不是信息太多，而是所有信息都用了同样的视觉权重。新版方案把搜索、筛选、核心交易能力、支付方式和联系方式重新分层，让用户先判断可信度，再决定联系。</p>
+      </div>
+      <div class="pill-row">
+        <span class="pill"><i class="dot"></i>可直接给设计评审</span>
+        <span class="pill">移动端优先</span>
+        <span class="pill">保留深色业务氛围</span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="panel-title">
+          <h2>现状问题标注</h2>
+          <p>运营说“乱”通常是在说：用户扫不出重点、同类信息没有统一容器、重复内容占了屏幕。</p>
+        </div>
+        <div class="screenshot-wrap">
+          <img src="file:///Users/xinyintiaodong/Library/Metadata/CoreSpotlight/PasteboardHistory/2026-06-17_16-16-24.png" alt="Current Shipping Agent List screenshot">
+          <div class="callout c1">
+            <b>1</b>
+            <div>
+              <strong>顶部搜索和筛选割裂</strong>
+              <span>ID 搜索、地区筛选、提交按钮分散，用户不知道先搜 ID 还是先选地区。</span>
+            </div>
+          </div>
+          <div class="callout c2">
+            <b>2</b>
+            <div>
+              <strong>卡片信息没有主次</strong>
+              <span>昵称、余额、GMV、订单、支付、联系都在抢注意力，导致每张卡都像一堵文字墙。</span>
+            </div>
+          </div>
+          <div class="callout c3">
+            <b>3</b>
+            <div>
+              <strong>支付和联系入口噪音过高</strong>
+              <span>支付标签重复、图标大小不齐、联系入口散在底部，列表一长就显得脏乱。</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="phone" aria-label="Optimized mobile prototype">
+        <div class="screen">
+          <div class="status"><span>4:16</span><span>5G 83%</span></div>
+          <div class="appbar">
+            <button class="icon-btn" aria-label="Back">‹</button>
+            <h3>Shipping Agent List</h3>
+            <button class="icon-btn" aria-label="Filter">⌕</button>
+          </div>
+
+          <div class="filters">
+            <div class="search-line">
+              <input value="" placeholder="Merchant ID" aria-label="Merchant ID" />
+              <button>Submit</button>
+            </div>
+            <div class="region">
+              <div class="region-label">Region</div>
+              <select aria-label="Region">
+                <option>All regions</option>
+                <option>Turkey</option>
+                <option>Gulf</option>
+                <option>South Asia</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="list">
+            <article class="agent-card">
+              <div class="agent-head">
+                <div class="avatar">BR</div>
+                <div class="name">
+                  <strong><span>BRᵖᵞ¹³⁰</span><span class="verified">OK</span></strong>
+                  <div class="sub">Balance <span class="balance">&gt; 10M</span></div>
+                </div>
+                <div class="rank">Top</div>
+              </div>
+              <div class="data-row">
+                <div class="data-cell"><small>Total GMV</small><strong>&gt; 10M</strong></div>
+                <div class="data-cell"><small>Orders</small><strong>1,240</strong></div>
+              </div>
+              <div class="section-label">Payment method</div>
+              <div class="payment-row">
+                <span class="pay"><i class="paypal">P</i>Paypal</span>
+                <span class="pay"><i class="usdt">T</i>USDT</span>
+                <span class="pay"><i class="qnb">Q</i>QNB</span>
+                <button class="pay more-toggle" type="button" aria-expanded="false" aria-label="Show more payment methods"><span class="more-label">More</span><i class="more arrow-icon" aria-hidden="true"></i></button>
+                <span class="pay pay-extra"><i class="bank">B</i>Ziraat Bankasi</span>
+                <span class="pay pay-extra"><i class="epay">E</i>Epay</span>
+              </div>
+              <div class="card-bottom">
+                <div class="contact-title">Contact</div>
+                <div class="contact-actions">
+                  <button class="contact wx" aria-label="WeChat">WX</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="agent-card">
+              <div class="agent-head">
+                <div class="avatar cool">VS</div>
+                <div class="name">
+                  <strong><span>✓Sisa 🦚</span><span class="verified">OK</span></strong>
+                  <div class="sub">Balance <span class="balance">&lt; 100K</span></div>
+                </div>
+                <div class="rank">New</div>
+              </div>
+              <div class="data-row">
+                <div class="data-cell"><small>Total GMV</small><strong>&lt; 100K</strong></div>
+                <div class="data-cell"><small>Orders</small><strong>0</strong></div>
+              </div>
+              <div class="section-label">Payment method</div>
+              <div class="payment-row">
+                <span class="pay"><i class="usdt">T</i>USDT</span>
+                <span class="pay"><i class="bank">B</i>Payoneer</span>
+                <span class="pay"><i class="more">E</i>Epay</span>
+              </div>
+              <div class="card-bottom">
+                <div class="contact-title">Contact</div>
+                <div class="contact-actions">
+                  <button class="contact tg" aria-label="Telegram">TG</button>
+                  <button class="contact ln" aria-label="Line">LN</button>
+                  <button class="contact wx" aria-label="WeChat">WX</button>
+                  <button class="contact wa" aria-label="WhatsApp">WA</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="agent-card">
+              <div class="agent-head">
+                <div class="avatar green">SY</div>
+                <div class="name">
+                  <strong><span>S Y R I A⁽ʸ</span></strong>
+                  <div class="sub">Balance <span class="balance">&gt; 1M</span></div>
+                </div>
+                <div class="rank">Hot</div>
+              </div>
+              <div class="data-row">
+                <div class="data-cell"><small>Total GMV</small><strong>&gt; 10M</strong></div>
+                <div class="data-cell"><small>Orders</small><strong>4,445</strong></div>
+              </div>
+              <div class="section-label">Payment method</div>
+              <div class="payment-row">
+                <span class="pay"><i class="usdt">T</i>USDT</span>
+              </div>
+              <div class="card-bottom">
+                <div class="contact-title">Contact</div>
+                <div class="contact-actions">
+                  <button class="contact tg" aria-label="Telegram">TG</button>
+                  <button class="contact ln" aria-label="Line">LN</button>
+                  <button class="contact wx" aria-label="WeChat">WX</button>
+                  <button class="contact wa" aria-label="WhatsApp">WA</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="agent-card">
+              <div class="agent-head">
+                <div class="avatar gray">AG</div>
+                <div class="name">
+                  <strong><span>الوكيلة الوردية</span></strong>
+                  <div class="sub">Balance <span class="balance">&gt; 100K</span></div>
+                </div>
+                <div class="rank">#36</div>
+              </div>
+              <div class="data-row">
+                <div class="data-cell"><small>Total GMV</small><strong>&gt; 10M</strong></div>
+                <div class="data-cell"><small>Orders</small><strong>36</strong></div>
+              </div>
+              <div class="section-label">Payment method</div>
+              <div class="payment-row">
+                <span class="pay"><i class="paypal">P</i>Paypal</span>
+                <span class="pay"><i class="usdt">T</i>USDT</span>
+                <span class="pay"><i class="epay">E</i>Epay</span>
+              </div>
+              <div class="card-bottom">
+                <div class="contact-title">Contact</div>
+                <div class="contact-actions">
+                  <button class="contact tg" aria-label="Telegram">TG</button>
+                  <button class="contact ln" aria-label="Line">LN</button>
+                  <button class="contact wx" aria-label="WeChat">WX</button>
+                  <button class="contact wa" aria-label="WhatsApp">WA</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel advice-panel">
+        <div class="panel-title">
+          <h2>优化建议</h2>
+          <p>不用大改业务字段，先把展示规则收敛，混乱感会立刻下降。</p>
+        </div>
+        <div class="clarifier">
+          <strong>不是“放进表格就不乱”</strong>
+          <p>GMV 和 Orders 做成两列，只解决“横向比较难”的问题。真正让界面变清楚的是：身份信息、交易能力、支付方式、联系方式各自成组，并且每组只给一个明确视觉权重。</p>
+        </div>
+        <div class="advice">
+          <div class="advice-item">
+            <div class="advice-num">01</div>
+            <div>
+              <h4>搜索和筛选合并成一个任务区</h4>
+              <p>把 Merchant ID、Submit、Region 放在同一块顶部区域，下面加 3 个小指标，让用户进入页面先理解列表状态。</p>
+            </div>
+          </div>
+          <div class="advice-item">
+            <div class="advice-num">02</div>
+            <div>
+              <h4>卡片只保留一个主视觉焦点</h4>
+              <p>头像、名称、余额、可信标识放在第一行。GMV 和订单数变成固定两列，不再使用长条文字堆叠。</p>
+            </div>
+          </div>
+          <div class="advice-item">
+            <div class="advice-num">03</div>
+            <div>
+              <h4>支付方式最多展示 3 个，剩余折叠</h4>
+              <p>当前支付标签过多且重复，建议按优先级展示 Paypal、USDT、本地银行，其他用 +N More 承载。</p>
+            </div>
+          </div>
+          <div class="advice-item">
+            <div class="advice-num">04</div>
+            <div>
+              <h4>联系方式统一为圆形动作按钮</h4>
+              <p>Telegram、Line、微信、WhatsApp 使用同尺寸同位置，用户不需要在每张卡里重新寻找“联系入口”。</p>
+            </div>
+          </div>
+          <div class="advice-item">
+            <div class="advice-num">05</div>
+            <div>
+              <h4>重复代理和异常数据要在数据层处理</h4>
+              <p>截图里同名阿语代理重复出现，建议前端按 agent_id 去重；0 订单或低余额代理可降低排序权重。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="comparison">
+      <div class="mini">
+        <strong>信息层级</strong>
+        <span>从“所有字段平铺”改成“身份 → 能力 → 支付 → 联系”的阅读顺序。</span>
+      </div>
+      <div class="mini">
+        <strong>视觉密度</strong>
+        <span>卡片留白增加，但字段不减少；通过折叠和固定网格降低脏乱感。</span>
+      </div>
+      <div class="mini">
+        <strong>业务效率</strong>
+        <span>用户能更快比较 GMV、订单和支付方式，减少误点和反复滚动。</span>
+      </div>
+      <div class="mini">
+        <strong>落地成本</strong>
+        <span>主要是前端样式和数据去重排序改造，不依赖复杂新接口。</span>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('.more-toggle').forEach((button) => {
+      button.addEventListener('click', () => {
+        const row = button.closest('.payment-row');
+        const expanded = row.classList.toggle('expanded');
+        const label = button.querySelector('.more-label');
+
+        button.setAttribute('aria-expanded', String(expanded));
+        label.textContent = expanded ? 'Hide' : 'More';
+        button.setAttribute(
+          'aria-label',
+          expanded ? 'Hide extra payment methods' : 'Show more payment methods'
+        );
+      });
+    });
+  </script>
+</body>
+</html>
