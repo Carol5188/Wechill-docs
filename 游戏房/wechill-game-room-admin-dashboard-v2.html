@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>WeChill 游戏房后台管理 MVP v2.0</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#6366f1;--pl:#818cf8;--bg:#0f172a;--c:#1e293b;--h:#334155;--t:#f1f5f9;--m:#94a3b8;--b:#334155;--ok:#22c55e;--w:#f59e0b;--d:#ef4444}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.layout{display:flex;min-height:100vh}
+.sb{width:230px;background:var(--c);border-right:1px solid var(--b);padding:16px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto}
+.sb h1{font-size:16px;padding:0 16px 16px;border-bottom:1px solid var(--b);margin-bottom:8px}
+.ni{padding:11px 16px;cursor:pointer;font-size:13px;transition:background .2s}
+.ni:hover{background:var(--h)}.ni.on{background:var(--p);color:#fff}
+.main{flex:1;margin-left:230px;padding:28px}
+.pt{font-size:22px;font-weight:600;margin-bottom:24px}
+.cd{background:var(--c);border-radius:10px;padding:20px;margin-bottom:16px}
+.ct{font-size:15px;font-weight:600;margin-bottom:14px}
+.tb{width:100%;border-collapse:collapse}
+.tb th,.tb td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--b);font-size:13px}
+.tb th{color:var(--m);font-weight:500;font-size:12px}
+.tb tr:hover{background:var(--h)}
+.bg{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500}
+.bg-ok{background:rgba(34,197,94,.2);color:var(--ok)}
+.bg-w{background:rgba(245,158,11,.2);color:var(--w)}
+.bg-d{background:rgba(239,68,68,.2);color:var(--d)}
+.bg-i{background:rgba(99,102,241,.2);color:var(--pl)}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.sc{background:var(--c);border-radius:10px;padding:18px}
+.sc .l{color:var(--m);font-size:12px;margin-bottom:6px}
+.sc .v{font-size:28px;font-weight:700}
+.sc .ch{font-size:12px;margin-top:6px}
+.sc .ch.up{color:var(--ok)}.sc .ch.dn{color:var(--d)}
+.sc.hl{background:linear-gradient(135deg,var(--p),#8b5cf6)}
+.sc.hl .l,.sc.hl .ch{color:rgba(255,255,255,.8)}
+.sc.hl .v{color:#fff}
+.fg{margin-bottom:16px}
+.fl{display:block;color:var(--m);font-size:12px;margin-bottom:6px}
+.fi{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--b);border-radius:6px;color:var(--t);font-size:13px}
+.fi:focus{outline:none;border-color:var(--p)}
+.btn{padding:8px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--pl)}
+.btn-o{background:transparent;border:1px solid var(--b);color:var(--t)}.btn-o:hover{background:var(--h)}
+.fb{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.fb .fi{width:auto;min-width:140px}
+.tabs{display:inline-flex;gap:3px;margin-bottom:16px;background:var(--bg);padding:3px;border-radius:6px}
+.tab{padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;color:var(--m)}
+.tab.on{background:var(--p);color:#fff}
+.cp{height:260px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--m);font-size:14px}
+.ab{padding:3px 6px;font-size:12px;color:var(--pl);cursor:pointer}.ab:hover{text-decoration:underline}
+.ab.dr{color:var(--d)}
+.sw{position:relative;width:40px;height:22px;display:inline-block}
+.sw input{opacity:0;width:0;height:0}
+.sw-s{position:absolute;cursor:pointer;inset:0;background:var(--b);border-radius:11px;transition:.2s}
+.sw-s:before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.sw-s{background:var(--p)}
+.sw input:checked+.sw-s:before{transform:translateX(18px)}
+.pg{display:none}.pg.on{display:block}
+.pb{height:6px;background:var(--b);border-radius:3px;overflow:hidden;margin-top:6px}
+.pb-b{height:100%;border-radius:3px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="sb">
+<h1>WeChill Admin</h1>
+<div class="ni on" onclick="go('cfg',this)">游戏接入配置</div>
+<div class="ni" onclick="go('gm',this)">游戏配置列表</div>
+<div class="ni" onclick="go('rm',this)">游戏房管理</div>
+<div class="ni" onclick="go('rc',this)">游戏记录</div>
+<div class="ni" onclick="go('st',this)">结算记录</div>
+<div class="ni" onclick="go('db',this)">数据看板</div>
+<div class="ni" onclick="go('lg',this)">操作日志</div>
+</div>
+<div class="main">
+
+<div id="p-cfg" class="pg on">
+<h2 class="pt">游戏接入配置</h2>
+<div class="cd"><div class="ct">Bytesun 接入信息</div>
+<div class="g2">
+<div class="fg"><label class="fl">appChannel（渠道标识）</label><input class="fi" value="wechill"></div>
+<div class="fg"><label class="fl">appId（商户 ID）</label><input class="fi" value="88888888"></div>
+<div class="fg"><label class="fl">AppKey（签名密钥）</label><input type="password" class="fi" value="******"></div>
+<div class="fg"><label class="fl">默认 gsp 节点</label><select class="fi"><option selected>201 - MENA</option></select></div>
+<div class="fg"><label class="fl">测试 API 地址</label><input class="fi" value="https://test-api.bytesun.com"></div>
+<div class="fg"><label class="fl">正式 API 地址</label><input class="fi" value="https://api.bytesun.com"></div>
+</div></div>
+<div class="cd"><div class="ct">加载策略</div>
+<div class="g2">
+<div class="fg"><label class="fl">CDN 加速域名</label><input class="fi" value="https://cdn.wechill.com/games"></div>
+<div class="fg"><label class="fl">游戏包更新策略</label><select class="fi"><option selected>自动更新</option></select></div>
+<div class="fg"><label class="fl">首次加载超时（秒）</label><input type="number" class="fi" value="30"></div>
+<div class="fg"><label class="fl">重试次数上限</label><input type="number" class="fi" value="3"></div>
+</div></div>
+<div style="display:flex;gap:10px"><button class="btn btn-p">保存配置</button><button class="btn btn-o">测试连接</button></div>
+</div>
+
+<div id="p-gm" class="pg">
+<h2 class="pt">游戏配置列表</h2>
+<div class="fb">
+<input class="fi" placeholder="搜索游戏" style="width:180px">
+<select class="fi"><option>全部状态</option></select>
+<button class="btn btn-p">+ 新增游戏</button>
+</div>
+<div class="cd"><table class="tb"><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>版本</th><th>人数</th><th>语言</th><th>观战</th><th>状态</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>10001</td><td><b>Ludo</b></td><td>桌游</td><td>v2.1.0</td><td>2-4人</td><td>阿/英</td><td>是</td><td><span class="bg bg-ok">上架</span></td><td><span class="ab">编辑</span> <span class="ab dr">下架</span></td></tr>
+<tr><td>10002</td><td><b>UNO</b></td><td>卡牌</td><td>v3.0.5</td><td>2-6人</td><td>阿/英/土</td><td>是</td><td><span class="bg bg-ok">上架</span></td><td><span class="ab">编辑</span> <span class="ab dr">下架</span></td></tr>
+<tr><td>10003</td><td><b>Domino</b></td><td>桌游</td><td>v1.8.2</td><td>2-4人</td><td>阿</td><td>是</td><td><span class="bg bg-w">维护</span></td><td><span class="ab">编辑</span> <span class="ab">上架</span></td></tr>
+</tbody></table></div>
+</div>
+
+<div id="p-rm" class="pg">
+<h2 class="pt">游戏房管理</h2>
+<div class="fb">
+<input class="fi" placeholder="房间ID/UID" style="width:160px">
+<select class="fi"><option>全部游戏</option></select>
+<select class="fi"><option>全部状态</option></select>
+<button class="btn btn-o">导出</button>
+</div>
+<div class="cd"><table class="tb"><thead><tr><th>房间ID</th><th>游戏</th><th>房主</th><th>状态</th><th>玩家/观众</th><th>麦位</th><th>语言</th><th>创建</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td>GR_28A7F3</td><td>Ludo</td><td>5342062</td><td><span class="bg bg-ok">playing</span></td><td>4/12</td><td>15/8</td><td>阿语</td><td>01-15 14:30</td><td><span class="ab">查看</span> <span class="ab dr">强制结束</span></td></tr>
+<tr><td>GR_15B9E2</td><td>UNO</td><td>8921456</td><td><span class="bg bg-i">waiting</span></td><td>3/5</td><td>15/4</td><td>英语</td><td>01-15 14:25</td><td><span class="ab">查看</span> <span class="ab dr">强制结束</span></td></tr>
+<tr><td>GR_33C1D8</td><td>Ludo</td><td>6712345</td><td><span class="bg bg-w">loading</span></td><td>1/0</td><td>15/0</td><td>阿语</td><td>01-15 14:35</td><td><span class="ab">查看</span> <span class="ab dr">强制结束</span></td></tr>
+</tbody></table></div>
+</div>
+
+<div id="p-rc" class="pg">
+<h2 class="pt">游戏记录</h2>
+<div class="fb">
+<input type="date" class="fi"><input type="date" class="fi">
+<select class="fi"><option>全部游戏</option></select>
+<button class="btn btn-o">导出</button>
+</div>
+<div class="cd"><table class="tb"><thead><tr><th>局ID</th><th>房间</th><th>游戏</th><th>房主</th><th>人数</th><th>时长</th><th>状态</th><th>开始</th></tr></thead>
+<tbody>
+<tr><td>RND_A1B2</td><td>GR_28A7F3</td><td>Ludo</td><td>5342062</td><td>4</td><td>12m35s</td><td><span class="bg bg-ok">已结算</span></td><td>14:30</td></tr>
+<tr><td>RND_D4E5</td><td>GR_15B9E2</td><td>UNO</td><td>8921456</td><td>5</td><td>8m22s</td><td><span class="bg bg-ok">已结算</span></td><td>14:10</td></tr>
+<tr><td>RND_G7H8</td><td>GR_33C1D8</td><td>Ludo</td><td>6712345</td><td>3</td><td>5m10s</td><td><span class="bg bg-d">异常退款</span></td><td>13:50</td></tr>
+</tbody></table></div>
+</div>
+
+<div id="p-st" class="pg">
+<h2 class="pt">结算记录</h2>
+<div class="fb">
+<input type="date" class="fi"><input type="date" class="fi">
+<select class="fi"><option>全部类型</option></select>
+<select class="fi"><option>全部状态</option></select>
+<button class="btn btn-o">导出</button>
+</div>
+<div class="cd"><table class="tb"><thead><tr><th>订单ID</th><th>用户</th><th>游戏</th><th>类型</th><th>金额</th><th>变更前</th><th>变更后</th><th>状态</th><th>时间</th></tr></thead>
+<tbody>
+<tr><td>ORD_X1Y2</td><td>5342062</td><td>Ludo</td><td><span class="bg bg-i">bet</span></td><td style="color:var(--d)">-500</td><td>12,500</td><td>12,000</td><td><span class="bg bg-ok">成功</span></td><td>14:30:05</td></tr>
+<tr><td>ORD_A2B3</td><td>5342062</td><td>Ludo</td><td><span class="bg bg-ok">result</span></td><td style="color:var(--ok)">+2,000</td><td>12,000</td><td>14,000</td><td><span class="bg bg-ok">成功</span></td><td>14:42:38</td></tr>
+<tr><td>ORD_D5E6</td><td>8921456</td><td>UNO</td><td><span class="bg bg-w">refund</span></td><td style="color:var(--ok)">+300</td><td>5,200</td><td>5,500</td><td><span class="bg bg-ok">成功</span></td><td>14:05:12</td></tr>
+</tbody></table></div>
+</div>
+
+<div id="p-db" class="pg">
+<h2 class="pt">数据看板</h2>
+<div class="tabs"><div class="tab on" onclick="stab(this)">今日</div><div class="tab" onclick="stab(this)">昨日</div><div class="tab" onclick="stab(this)">近7天</div><div class="tab" onclick="stab(this)">近30天</div></div>
+<div class="sg">
+<div class="sc hl"><div class="l">游戏房创建数</div><div class="v">1,234</div><div class="ch up">^ 12.5% vs 昨日</div></div>
+<div class="sc"><div class="l">游戏开局数</div><div class="v">3,567</div><div class="ch up">^ 8.3%</div></div>
+<div class="sc"><div class="l">启动成功率</div><div class="v">98.5%</div><div class="ch up">^ 0.3%</div></div>
+<div class="sc"><div class="l">平均加载耗时</div><div class="v">2.3s</div><div class="ch dn">v 0.2s</div></div>
+</div>
+<div class="g2">
+<div class="cd"><div class="ct">核心指标趋势</div><div class="cp">折线图：创建数 / 开局数 / 在线房间数</div></div>
+<div class="cd"><div class="ct">游戏分布</div><div class="cp">饼图：Ludo 65% / UNO 35%</div></div>
+</div>
+<div class="cd"><div class="ct">异常监控</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+<div><div style="color:var(--m);font-size:12px">上座失败率</div><div style="font-size:22px;font-weight:600;color:var(--ok)">1.2%</div><div class="pb"><div class="pb-b" style="width:12%;background:var(--ok)"></div></div></div>
+<div><div style="color:var(--m);font-size:12px">余额不足率</div><div style="font-size:22px;font-weight:600;color:var(--w)">3.5%</div><div class="pb"><div class="pb-b" style="width:35%;background:var(--w)"></div></div></div>
+<div><div style="color:var(--m);font-size:12px">结算失败率</div><div style="font-size:22px;font-weight:600;color:var(--d)">0.8%</div><div class="pb"><div class="pb-b" style="width:8%;background:var(--d)"></div></div></div>
+<div><div style="color:var(--m);font-size:12px">H5白屏率</div><div style="font-size:22px;font-weight:600;color:var(--w)">2.1%</div><div class="pb"><div class="pb-b" style="width:21%;background:var(--w)"></div></div></div>
+</div></div>
+<div class="cd"><div class="ct">商业化 & 用户深度</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px">
+<div><div style="color:var(--m);font-size:12px">充值转化率</div><div style="font-size:24px;font-weight:600;margin-top:6px">15.8%</div></div>
+<div><div style="color:var(--m);font-size:12px">游戏消耗金币</div><div style="font-size:24px;font-weight:600;margin-top:6px">2.3M</div></div>
+<div><div style="color:var(--m);font-size:12px">人均局数</div><div style="font-size:24px;font-weight:600;margin-top:6px">3.2</div></div>
+<div><div style="color:var(--m);font-size:12px">人均停留</div><div style="font-size:24px;font-weight:600;margin-top:6px">28min</div></div>
+<div><div style="color:var(--m);font-size:12px">中途退出率</div><div style="font-size:24px;font-weight:600;margin-top:6px">4.7%</div></div>
+</div></div>
+</div>
+
+<div id="p-lg" class="pg">
+<h2 class="pt">操作日志</h2>
+<div class="fb">
+<input type="date" class="fi"><input type="date" class="fi">
+<select class="fi"><option>全部类型</option></select>
+<input class="fi" placeholder="操作人" style="width:100px">
+</div>
+<div class="cd"><table class="tb"><thead><tr><th>时间</th><th>操作人</th><th>类型</th><th>对象</th><th>结果</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>01-15 14:30</td><td>admin_张三</td><td><span class="bg bg-i">配置变更</span></td><td>游戏接入配置</td><td><span class="bg bg-ok">成功</span></td><td>更新CDN域名</td></tr>
+<tr><td>01-15 13:15</td><td>admin_李四</td><td><span class="bg bg-w">游戏下架</span></td><td>Ludo (10001)</td><td><span class="bg bg-ok">成功</span></td><td>版本更新维护</td></tr>
+<tr><td>01-15 11:42</td><td>admin_王五</td><td><span class="bg bg-d">强制结束</span></td><td>GR_28A7F3</td><td><span class="bg bg-ok">成功</span></td><td>用户投诉卡死</td></tr>
+<tr><td>01-15 10:05</td><td>admin_张三</td><td><span class="bg bg-w">游戏上架</span></td><td>Domino (10003)</td><td><span class="bg bg-d">失败</span></td><td>Bytesun同步超时</td></tr>
+</tbody></table></div>
+</div>
+
+</div>
+</div>
+<script>
+function go(id,el){document.querySelectorAll(".pg").forEach(p=>p.classList.remove("on"));document.querySelectorAll(".ni").forEach(n=>n.classList.remove("on"));document.getElementById("p-"+id).classList.add("on");el.classList.add("on")}
+function stab(el){el.parentElement.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));el.classList.add("on")}
+</script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeChill 游戏房配置页面 v2.0</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #e5e9f0;
+      --line-2: #d9e0eb;
+      --text: #1f2937;
+      --muted: #64748b;
+      --nav: #ffffff;
+      --nav-line: #edf1f7;
+      --accent: #4f7cff;
+      --green: #1fa971;
+      --amber: #d5922f;
+      --red: #db5a6b;
+      --shadow: 0 12px 32px rgba(26, 39, 68, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--nav);
+      border-right: 1px solid var(--nav-line);
+      padding: 14px 0;
+    }
+
+    .brand {
+      padding: 0 18px 16px;
+      border-bottom: 1px solid var(--nav-line);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-group { padding: 14px 10px 0; }
+    .nav-title {
+      padding: 8px 10px;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      margin: 2px 0;
+      text-decoration: none;
+    }
+
+    .nav-item.active {
+      background: #eef4ff;
+      color: var(--accent);
+    }
+
+    .content {
+      padding: 18px 20px 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 4px;
+      font-size: 24px;
+    }
+
+    .topbar p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ghost-btn, .primary-btn {
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid var(--line-2);
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .toolbar, .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .toolbar { padding: 14px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .input, .select, .toggle {
+      min-height: 36px;
+      border: 1px solid var(--line-2);
+      background: #fff;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head h2 {
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      margin-bottom: 0;
+      font-size: 12px;
+    }
+
+    .section-body { padding: 16px; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.2fr .95fr;
+      gap: 16px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: #fbfcff;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    th {
+      color: #5f6f85;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 900;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .chip.good { background: #e8f8f0; color: var(--green); }
+    .chip.warn { background: #fff5df; color: var(--amber); }
+    .chip.bad { background: #ffe9ed; color: var(--red); }
+    .chip.gray { background: #eef2f7; color: var(--muted); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 14px;
+    }
+
+    .form-card {
+      border: 1px solid var(--line);
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .form-card h3 {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .pair {
+      margin-bottom: 10px;
+    }
+
+    .pair:last-child { margin-bottom: 0; }
+
+    .pair label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .switch-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .switch {
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line-2);
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .switch.on {
+      color: var(--accent);
+      border-color: #bdd0ff;
+      background: #eef4ff;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .tip {
+      border-left: 4px solid var(--accent);
+      padding: 12px 14px;
+      background: #f7faff;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 1320px) {
+      .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .split { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 14px; }
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-grid { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <strong>WeChill Admin</strong>
+        <span>游戏房配置后台 · MVP v2.0</span>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">运营管理</div>
+        <a class="nav-item" href="/Users/xinyintiaodong/Documents/New project 5/游戏房/game-room-admin-dashboard-v2.html">数据看板</a>
+        <div class="nav-item active">游戏配置列表</div>
+        <div class="nav-item">游戏接入配置</div>
+        <div class="nav-item">游戏房管理</div>
+        <div class="nav-item">游戏记录</div>
+        <div class="nav-item">结算记录</div>
+        <div class="nav-item">操作日志</div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div>
+          <h1>游戏配置页面</h1>
+          <p>按 `游戏接入配置 + 游戏配置列表` 两层组织：左侧看游戏列表，右侧看当前游戏详情与编辑稿。</p>
+        </div>
+        <div class="top-actions">
+          <a class="ghost-btn" href="/Users/xinyintiaodong/Documents/New project 5/游戏房/game-room-admin-dashboard-v2.html" style="text-decoration:none;display:inline-flex;align-items:center;">返回看板</a>
+          <button class="ghost-btn">批量同步 Bytesun</button>
+          <button class="primary-btn">新增游戏配置</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><span>已上架游戏</span><strong>5</strong></div>
+        <div class="kpi"><span>维护中</span><strong style="color:var(--amber)">1</strong></div>
+        <div class="kpi"><span>待确认 game_id</span><strong style="color:var(--red)">2</strong></div>
+        <div class="kpi"><span>支持观战</span><strong style="color:var(--green)">4</strong></div>
+      </div>
+
+      <section class="toolbar">
+        <div class="filters">
+          <div class="field">
+            <label>游戏名称</label>
+            <div class="input"><span>Ludo / UNO / Domino</span><span>▾</span></div>
+          </div>
+          <div class="field">
+            <label>游戏分类</label>
+            <div class="input"><span>桌游 / 卡牌</span><span>▾</span></div>
+          </div>
+          <div class="field">
+            <label>上架状态</label>
+            <div class="input"><span>全部</span><span>▾</span></div>
+          </div>
+          <div class="field">
+            <label>支持地区</label>
+            <div class="input"><span>MENA</span><span>▾</span></div>
+          </div>
+          <div class="field">
+            <label>支持语言</label>
+            <div class="input"><span>Arabic / English</span><span>▾</span></div>
+          </div>
+          <div class="field">
+            <label>关键能力</label>
+            <div class="input"><span>观战 / 中途加入</span><span>▾</span></div>
+          </div>
+        </div>
+        <div class="toolbar-actions">
+          <button class="ghost-btn">重置</button>
+          <button class="primary-btn">查询</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>游戏配置列表</h2>
+            <p>字段对齐 v2.0 文档第 10.3 节，覆盖 game_id、版本、人数、观战、中途加入、hideLobby、安全区等核心能力。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>游戏ID</th>
+                <th>游戏名称</th>
+                <th>分类</th>
+                <th>Bytesun 名称</th>
+                <th>版本</th>
+                <th>上架状态</th>
+                <th>地区</th>
+                <th>语言</th>
+                <th>人数</th>
+                <th>观战</th>
+                <th>中途加入</th>
+                <th>hideLobby</th>
+                <th>默认 GSP</th>
+                <th>安全区</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>300101</td>
+                <td><strong>Ludo</strong></td>
+                <td>桌游</td>
+                <td>ludoPlus</td>
+                <td>1.0.7</td>
+                <td><span class="chip good">上架</span></td>
+                <td>MENA</td>
+                <td>AR / EN</td>
+                <td>2 - 4</td>
+                <td><span class="chip good">支持</span></td>
+                <td><span class="chip gray">关闭</span></td>
+                <td><span class="chip warn">待确认</span></td>
+                <td>201</td>
+                <td>Top / Bottom</td>
+                <td>2026-04-24 18:20</td>
+                <td>查看 · 编辑 · 下架</td>
+              </tr>
+              <tr>
+                <td>300102</td>
+                <td><strong>UNO</strong></td>
+                <td>卡牌</td>
+                <td>unoPlus</td>
+                <td>1.0.7</td>
+                <td><span class="chip good">上架</span></td>
+                <td>MENA</td>
+                <td>AR / EN</td>
+                <td>2 - 6</td>
+                <td><span class="chip good">支持</span></td>
+                <td><span class="chip gray">关闭</span></td>
+                <td><span class="chip warn">待确认</span></td>
+                <td>201</td>
+                <td>Bottom</td>
+                <td>2026-04-24 18:20</td>
+                <td>查看 · 编辑 · 下架</td>
+              </tr>
+              <tr>
+                <td>待确认</td>
+                <td><strong>Domino</strong></td>
+                <td>桌游</td>
+                <td>DominoPlus</td>
+                <td>1.0.7</td>
+                <td><span class="chip gray">灰度</span></td>
+                <td>MENA</td>
+                <td>AR</td>
+                <td>2 - 4</td>
+                <td><span class="chip good">支持</span></td>
+                <td><span class="chip gray">关闭</span></td>
+                <td><span class="chip warn">待确认</span></td>
+                <td>201</td>
+                <td>Top / Bottom</td>
+                <td>2026-04-24 16:12</td>
+                <td>补资料 · 编辑</td>
+              </tr>
+              <tr>
+                <td>待确认</td>
+                <td><strong>你画我猜</strong></td>
+                <td>画猜</td>
+                <td>待确认</td>
+                <td>-</td>
+                <td><span class="chip bad">未上架</span></td>
+                <td>MENA</td>
+                <td>AR / EN</td>
+                <td>3 - 12</td>
+                <td><span class="chip good">支持</span></td>
+                <td><span class="chip good">支持</span></td>
+                <td><span class="chip gray">不依赖</span></td>
+                <td>201</td>
+                <td>Bottom</td>
+                <td>2026-04-22 12:10</td>
+                <td>待评审</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>当前游戏详情：Ludo</h2>
+            <p>右侧以“可评审编辑页”方式展示，适合和前台、服务端、测试一起确认接入与显示口径。</p>
+          </div>
+          <div class="chip good">编辑稿</div>
+        </div>
+        <div class="section-body split">
+          <div class="form-grid">
+            <div class="form-card">
+              <h3>基础信息</h3>
+              <div class="pair"><label>游戏 ID</label><div class="input"><span>300101</span></div></div>
+              <div class="pair"><label>游戏名称</label><div class="input"><span>Ludo</span></div></div>
+              <div class="pair"><label>Bytesun 名称</label><div class="input"><span>ludoPlus</span></div></div>
+              <div class="pair"><label>游戏分类</label><div class="input"><span>桌游</span></div></div>
+              <div class="pair"><label>多语言名称</label><div class="input"><span>AR: لعبة الطيران / EN: Ludo</span></div></div>
+            </div>
+
+            <div class="form-card">
+              <h3>版本与资源</h3>
+              <div class="pair"><label>当前版本</label><div class="input"><span>1.0.7</span></div></div>
+              <div class="pair"><label>下载地址</label><div class="input"><span>download_url / cdn path</span></div></div>
+              <div class="pair"><label>URL 直连</label><div class="switch-row"><span class="switch on">开启</span><span class="switch">关闭</span></div></div>
+              <div class="pair"><label>本地 Zip 加载</label><div class="switch-row"><span class="switch on">开启</span><span class="switch">关闭</span></div></div>
+              <div class="pair"><label>更新策略</label><div class="input"><span>灰度 / 自动</span></div></div>
+            </div>
+
+            <div class="form-card">
+              <h3>人数与玩法</h3>
+              <div class="pair"><label>最小人数</label><div class="input"><span>2</span></div></div>
+              <div class="pair"><label>最大人数</label><div class="input"><span>4</span></div></div>
+              <div class="pair"><label>是否允许观战</label><div class="switch-row"><span class="switch on">支持</span><span class="switch">不支持</span></div></div>
+              <div class="pair"><label>是否允许中途加入</label><div class="switch-row"><span class="switch">支持</span><span class="switch on">关闭</span></div></div>
+              <div class="pair"><label>门票档位映射</label><div class="input"><span>Free / 100 / 200 / 500</span></div></div>
+            </div>
+
+            <div class="form-card">
+              <h3>语聊房模式</h3>
+              <div class="pair"><label>gameMode</label><div class="input"><span>3（语聊房模式）</span></div></div>
+              <div class="pair"><label>默认语言</label><div class="input"><span>Arabic (7)</span></div></div>
+              <div class="pair"><label>默认 GSP</label><div class="input"><span>201 · Dubai AWS</span></div></div>
+              <div class="pair"><label>安全区</label><div class="input"><span>game_margin_top / bottom</span></div></div>
+              <div class="pair"><label>屏幕方向</label><div class="input"><span>竖屏</span></div></div>
+            </div>
+
+            <div class="form-card">
+              <h3>能力开关</h3>
+              <div class="pair"><label>hideLobby</label><div class="switch-row"><span class="switch">支持</span><span class="switch on">待 Bytesun 确认</span></div></div>
+              <div class="pair"><label>游戏内 RTC</label><div class="switch-row"><span class="switch">支持</span><span class="switch on">关闭</span></div></div>
+              <div class="pair"><label>聊天同步</label><div class="switch-row"><span class="switch">支持</span><span class="switch on">关闭</span></div></div>
+              <div class="pair"><label>机器人补位</label><div class="switch-row"><span class="switch">支持</span><span class="switch on">后续版本</span></div></div>
+            </div>
+
+            <div class="form-card">
+              <h3>发布与运营</h3>
+              <div class="pair"><label>上架状态</label><div class="switch-row"><span class="switch on">上架</span><span class="switch">下架</span><span class="switch">维护</span></div></div>
+              <div class="pair"><label>支持地区</label><div class="input"><span>MENA</span></div></div>
+              <div class="pair"><label>支持语言</label><div class="input"><span>Arabic / English</span></div></div>
+              <div class="pair"><label>灰度比例</label><div class="input"><span>30%</span></div></div>
+              <div class="pair"><label>备注</label><div class="input"><span>V1 必做游戏</span></div></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="form-card">
+              <h3>接入配置总览</h3>
+              <div class="pair"><label>Bytesun appChannel</label><div class="input"><span>wechill</span></div></div>
+              <div class="pair"><label>Bytesun appId</label><div class="input"><span>88888888</span></div></div>
+              <div class="pair"><label>默认 API 环境</label><div class="input"><span>Formal</span></div></div>
+              <div class="pair"><label>默认 CDN</label><div class="input"><span>cdn.wechill.games</span></div></div>
+              <div class="pair"><label>游戏列表同步</label><div class="switch-row"><span class="switch on">自动同步</span><span class="switch">手动同步</span></div></div>
+              <div class="pair"><label>AppKey</label><div class="input"><span>••••••••••••••••</span></div></div>
+            </div>
+
+            <div class="tip">
+              配置页需要给研发和测试两个使用场景：一是确认前台显示口径，例如人数、观战、中途加入、安全区；二是确认服务端接入口径，例如 `gameMode=3`、默认 `gsp=201`、版本更新和资源加载策略。
+            </div>
+
+            <div class="form-card" style="margin-top:14px">
+              <h3>待确认项</h3>
+              <div class="pair"><label>game_list_type</label><div class="input"><span>2 or 3 待确认</span></div></div>
+              <div class="pair"><label>hideLobby 快速开局 API</label><div class="input"><span>路径 / 参数 / 鉴权待补充</span></div></div>
+              <div class="pair"><label>ticketSlots 含义</label><div class="input"><span>金额档位映射待确认</span></div></div>
+              <div class="pair"><label>断线重连有效期</label><div class="input"><span>与前台重连策略联动</span></div></div>
+              <div class="pair"><label>主动移出游戏座位</label><div class="input"><span>房主踢人能力待确认</span></div></div>
+            </div>
+
+            <div class="footer-actions">
+              <button class="ghost-btn">取消</button>
+              <button class="ghost-btn">保存草稿</button>
+              <button class="primary-btn">保存并发布</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

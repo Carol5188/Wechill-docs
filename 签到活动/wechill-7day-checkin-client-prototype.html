@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WeChill 7-Day Check-in Prototype</title>
+  <style>
+    :root {
+      --gold: #f4c85b;
+      --gold-deep: #b77b22;
+      --amber: #ff8a13;
+      --ink: #14100c;
+      --cream: #fff6dc;
+      --mint: #4fd2b4;
+      --rose: #f05164;
+      --violet: #7250c8;
+      --line: rgba(255, 228, 160, 0.34);
+      --shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: #e9eaee;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .phone {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(30, 20, 12, 0.25), rgba(8, 6, 5, 0.92) 30%),
+        radial-gradient(circle at 64% 5%, rgba(245, 198, 95, 0.36), transparent 30%),
+        linear-gradient(150deg, #2b170d, #060505 62%, #120805);
+      box-shadow: 0 18px 42px rgba(15, 19, 30, 0.35);
+      isolation: isolate;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08), transparent 13%),
+        repeating-linear-gradient(90deg, rgba(255, 215, 112, 0.03) 0 1px, transparent 1px 24px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .status {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      font-size: 15px;
+      font-weight: 760;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+
+    .status .right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .battery {
+      width: 25px;
+      height: 12px;
+      border: 1.5px solid currentColor;
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 5px;
+      background: currentColor;
+      border-radius: 2px;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      width: 18px;
+      background: #78e65b;
+      border-radius: 2px;
+    }
+
+    .home {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      overflow: hidden;
+      padding: 58px 13px 92px;
+    }
+
+    .hero {
+      position: relative;
+      margin: -58px -13px 0;
+      padding: 80px 13px 20px;
+      height: 230px;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(14, 8, 4, 0.72)),
+        radial-gradient(circle at 72% 36%, rgba(251, 205, 95, 0.3), transparent 20%),
+        linear-gradient(135deg, #433024, #15100d 72%);
+      box-shadow: inset 0 -45px 58px rgba(9, 6, 4, 0.95);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 24px;
+      height: 86px;
+      opacity: 0.48;
+      background:
+        linear-gradient(to top, #20130b 0 14px, transparent 14px),
+        linear-gradient(120deg, transparent 0 9%, rgba(255, 228, 167, 0.23) 9% 10%, transparent 10% 18%, rgba(255, 228, 167, 0.16) 18% 20%, transparent 20%),
+        linear-gradient(to top, rgba(255, 228, 167, 0.18), transparent);
+      clip-path: polygon(0 100%, 0 65%, 6% 65%, 6% 35%, 11% 35%, 11% 70%, 17% 70%, 17% 42%, 22% 42%, 22% 18%, 29% 18%, 29% 62%, 35% 62%, 35% 28%, 42% 28%, 42% 68%, 48% 68%, 48% 42%, 56% 42%, 56% 20%, 63% 20%, 63% 66%, 69% 66%, 69% 38%, 76% 38%, 76% 72%, 83% 72%, 83% 48%, 90% 48%, 90% 70%, 100% 70%, 100% 100%);
+    }
+
+    .tabs {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      font-size: 18px;
+      font-weight: 650;
+      color: rgba(255, 245, 218, 0.72);
+    }
+
+    .tab.active {
+      color: #ffe39b;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .tab.active::after {
+      content: "";
+      display: block;
+      width: 34px;
+      height: 4px;
+      margin: 8px auto 0;
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 14px rgba(244, 200, 91, 0.7);
+    }
+
+    .top-actions {
+      position: absolute;
+      z-index: 3;
+      top: 86px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .icon-btn {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      color: #ffe6ac;
+      border-radius: 50%;
+      background: rgba(14, 8, 3, 0.24);
+      border: 1px solid rgba(255, 223, 143, 0.24);
+      box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .search-icon {
+      width: 18px;
+      height: 18px;
+      border: 3px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .search-icon::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 3px;
+      background: currentColor;
+      border-radius: 2px;
+      transform: translate(12px, 14px) rotate(45deg);
+    }
+
+    .palace-icon {
+      width: 25px;
+      height: 21px;
+      position: relative;
+      border-bottom: 5px solid #f4c85b;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.45));
+    }
+
+    .palace-icon::before {
+      content: "";
+      position: absolute;
+      left: 1px;
+      right: 1px;
+      bottom: 5px;
+      height: 13px;
+      background:
+        radial-gradient(circle at 50% 0, #fff4bd 0 5px, transparent 5px),
+        linear-gradient(90deg, #f0b52d 0 6px, transparent 6px 8px, #f5ce69 8px 15px, transparent 15px 17px, #d98b17 17px 100%);
+      clip-path: polygon(0 100%, 0 52%, 12% 52%, 12% 30%, 30% 30%, 30% 10%, 50% 0, 70% 10%, 70% 30%, 88% 30%, 88% 52%, 100% 52%, 100% 100%);
+    }
+
+    .sign-entry {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      background: linear-gradient(150deg, #fff170, #ffbd2f 58%, #d97516);
+      box-shadow:
+        0 8px 20px rgba(255, 152, 38, 0.32),
+        inset 0 2px 8px rgba(255, 255, 255, 0.55);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      display: grid;
+      place-items: center;
+    }
+
+    .sign-entry::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      right: -5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #f03750;
+      box-shadow: 0 0 0 2px rgba(40, 13, 11, 0.7);
+    }
+
+    .mini-calendar {
+      width: 27px;
+      height: 27px;
+      border-radius: 7px;
+      background: #6ad9b9;
+      border: 2px solid #673a10;
+      box-shadow: inset 0 -6px 0 rgba(22, 99, 74, 0.22);
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 8px 4px 4px;
+    }
+
+    .mini-calendar::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 5px;
+      right: 5px;
+      height: 8px;
+      border-radius: 6px;
+      background: repeating-linear-gradient(90deg, #773b12 0 3px, #ffd966 3px 6px);
+      border: 1px solid rgba(75, 41, 14, 0.6);
+    }
+
+    .mini-calendar span {
+      background: #fff8d9;
+      border-radius: 2px;
+    }
+
+    .entry-annotation {
+      position: absolute;
+      z-index: 9;
+      top: 74px;
+      right: 88px;
+      width: 58px;
+      height: 58px;
+      display: none;
+      border: 6px solid #f04647;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(240, 70, 71, 0.08);
+      pointer-events: none;
+    }
+
+    .phone[data-screen="room"] .entry-annotation {
+      display: block;
+    }
+
+    .banner {
+      position: relative;
+      z-index: 2;
+      height: 98px;
+      margin-top: -84px;
+      border: 1px solid rgba(255, 218, 132, 0.35);
+      border-radius: 13px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 82% 46%, rgba(68, 208, 174, 0.32), transparent 30%),
+        radial-gradient(circle at 22% 30%, rgba(255, 216, 91, 0.35), transparent 28%),
+        linear-gradient(110deg, #150c08, #4b120f 45%, #111319);
+      box-shadow: 0 9px 20px rgba(0, 0, 0, 0.48);
+    }
+
+    .banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.55;
+      background:
+        radial-gradient(circle at 20% 70%, #ffcc4d 0 2px, transparent 2px),
+        radial-gradient(circle at 29% 26%, #fff1b7 0 2px, transparent 2px),
+        radial-gradient(circle at 77% 30%, #f6c654 0 2px, transparent 2px),
+        radial-gradient(circle at 89% 73%, #fff3c7 0 2px, transparent 2px);
+      background-size: 42px 38px;
+    }
+
+    .banner-title {
+      position: absolute;
+      top: 18px;
+      left: 17px;
+      right: 17px;
+      color: #fff1b5;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 0 3px 0 #63380e, 0 0 12px rgba(255, 229, 148, 0.55);
+      white-space: nowrap;
+    }
+
+    .banner-copy {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      color: #ffe9b3;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .rank-card {
+      height: 84px;
+      border: 1px solid rgba(255, 218, 132, 0.45);
+      border-radius: 9px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(244, 200, 91, 0.2), transparent 48%),
+        linear-gradient(135deg, rgba(52, 31, 14, 0.96), rgba(19, 12, 8, 0.98));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 13px;
+      color: #fff2c8;
+    }
+
+    .rank-card strong {
+      font-size: 14px;
+      color: #ffe39b;
+      margin-bottom: 6px;
+      display: block;
+      font-weight: 700;
+    }
+
+    .avatar-stack {
+      display: flex;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .avatar-dot {
+      width: 25px;
+      height: 25px;
+      margin-left: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 232, 169, 0.85);
+      background: linear-gradient(145deg, #f4c85b, #7c4bdd);
+    }
+
+    .avatar-dot:nth-child(2) {
+      background: linear-gradient(145deg, #5fd4b8, #1b6d52);
+    }
+
+    .avatar-dot:nth-child(3) {
+      background: linear-gradient(145deg, #f05b72, #3d1520);
+    }
+
+    .filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 15px 0 11px;
+    }
+
+    .pill {
+      min-width: 86px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #ffe2a4;
+      font-size: 15px;
+      font-weight: 760;
+      background: rgba(255, 239, 200, 0.13);
+    }
+
+    .pill.active {
+      border: 1px solid rgba(244, 200, 91, 0.8);
+      background: rgba(23, 18, 13, 0.82);
+      box-shadow: inset 0 0 0 1px rgba(244, 200, 91, 0.18);
+    }
+
+    .grid-icon {
+      margin-left: auto;
+      width: 25px;
+      height: 25px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+    }
+
+    .grid-icon span {
+      border-radius: 4px;
+      background: linear-gradient(145deg, #ffe39a, #8e6424);
+    }
+
+    .rooms {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 12px;
+    }
+
+    .room-card {
+      position: relative;
+      height: 158px;
+      overflow: hidden;
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, transparent 28%, rgba(0, 0, 0, 0.86)),
+        linear-gradient(135deg, #9a6b25, #1c0e08 58%, #080605);
+      border: 1px solid rgba(255, 225, 150, 0.16);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
+    }
+
+    .room-card:nth-child(2) {
+      background:
+        linear-gradient(180deg, transparent 34%, rgba(0, 0, 0, 0.9)),
+        linear-gradient(140deg, #2f6e70, #46262b 58%, #060507);
+    }
+
+    .room-card:nth-child(3) {
+      background:
+        linear-gradient(180deg, transparent 34%, rgba(0, 0, 0, 0.9)),
+        linear-gradient(140deg, #6b2332, #805f30 52%, #060507);
+    }
+
+    .room-card:nth-child(4) {
+      background:
+        linear-gradient(180deg, transparent 34%, rgba(0, 0, 0, 0.9)),
+        linear-gradient(140deg, #204e22, #40215f 55%, #060507);
+    }
+
+    .room-art {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 42% 36%, rgba(255, 255, 255, 0.42), transparent 18%),
+        linear-gradient(145deg, #f2c466, #6d351a 66%);
+      box-shadow: 0 0 0 3px rgba(255, 224, 155, 0.18), 0 12px 20px rgba(0, 0, 0, 0.34);
+    }
+
+    .room-art::after {
+      content: "";
+      position: absolute;
+      inset: 18px 20px 12px;
+      border-radius: 999px 999px 18px 18px;
+      background: rgba(0, 0, 0, 0.38);
+      box-shadow: 30px 8px 0 -7px rgba(0, 0, 0, 0.34);
+    }
+
+    .lang {
+      position: absolute;
+      top: 72px;
+      left: 12px;
+      height: 22px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 6px;
+      color: #fff;
+      background: #3cb9e9;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .room-name {
+      position: absolute;
+      left: 13px;
+      right: 12px;
+      bottom: 34px;
+      font-size: 14px;
+      line-height: 1.2;
+      font-weight: 720;
+      color: #fff;
+      text-shadow: 0 1px 2px #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .room-meta {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini-avatars {
+      display: flex;
+    }
+
+    .mini-avatars span {
+      width: 19px;
+      height: 19px;
+      margin-right: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: linear-gradient(145deg, #f4c85b, #f05164);
+    }
+
+    .mini-avatars span:nth-child(2) {
+      background: linear-gradient(145deg, #4fd2b4, #7250c8);
+    }
+
+    .mini-avatars span:nth-child(3) {
+      background: linear-gradient(145deg, #fff, #777);
+    }
+
+    .bottom-nav {
+      position: absolute;
+      z-index: 8;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 86px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      padding: 7px 0 13px;
+      background:
+        linear-gradient(180deg, rgba(69, 44, 23, 0.88), rgba(17, 9, 6, 0.96)),
+        radial-gradient(circle at 16% 0, rgba(247, 203, 92, 0.32), transparent 36%);
+      border-top: 1px solid rgba(255, 224, 149, 0.2);
+      box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .nav-item {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 13px;
+    }
+
+    .nav-item.active {
+      color: #ffd66f;
+    }
+
+    .nav-icon {
+      width: 36px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      color: inherit;
+      font-size: 22px;
+      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.42));
+    }
+
+    .home-indicator {
+      position: absolute;
+      z-index: 11;
+      left: 50%;
+      bottom: 6px;
+      width: 134px;
+      height: 5px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .overlay {
+      position: absolute;
+      z-index: 20;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      background: rgba(0, 0, 0, 0.64);
+      backdrop-filter: blur(1px);
+    }
+
+    .phone[data-screen="popup"] .overlay,
+    .phone[data-screen="claimed"] .overlay {
+      display: flex;
+    }
+
+    .checkin-modal {
+      position: relative;
+      width: 342px;
+      min-height: 588px;
+      padding: 0 17px 23px;
+      border-radius: 26px;
+      color: #401d10;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 32%),
+        linear-gradient(162deg, #fff7d6 0%, #fffdf8 39%, #ffe0b6 100%);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+    }
+
+    .checkin-modal::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 116px;
+      border-radius: 26px 26px 42px 42px;
+      background:
+        radial-gradient(circle at 81% 29%, rgba(79, 210, 180, 0.36), transparent 26%),
+        linear-gradient(120deg, #fff36f, #ffe58a 52%, #ffc15d);
+      clip-path: polygon(0 0, 100% 0, 100% 74%, 72% 74%, 64% 100%, 0 100%);
+      pointer-events: none;
+    }
+
+    .checkin-modal::after {
+      content: "";
+      position: absolute;
+      top: 21px;
+      right: 22px;
+      width: 86px;
+      height: 74px;
+      background:
+        linear-gradient(180deg, transparent 0 19px, #34b991 19px 100%),
+        repeating-linear-gradient(90deg, transparent 0 14px, rgba(255, 255, 255, 0.9) 14px 22px, transparent 22px 32px);
+      border: 4px solid #6a3f14;
+      border-radius: 18px 18px 14px 14px;
+      box-shadow: inset 0 -15px 0 rgba(0, 0, 0, 0.08), 0 10px 18px rgba(119, 70, 16, 0.22);
+      transform: rotate(4deg);
+    }
+
+    .modal-top {
+      position: relative;
+      z-index: 2;
+      padding: 25px 0 17px;
+    }
+
+    .title-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .spark {
+      width: 34px;
+      height: 34px;
+      background: #99ffe1;
+      clip-path: polygon(50% 0, 62% 30%, 96% 17%, 75% 48%, 100% 62%, 66% 65%, 72% 100%, 50% 75%, 28% 100%, 34% 65%, 0 62%, 25% 48%, 4% 17%, 38% 30%);
+      box-shadow: 0 0 0 4px rgba(153, 255, 225, 0.2);
+      flex: 0 0 auto;
+    }
+
+    .modal-title {
+      margin: 0;
+      color: #191006;
+      font-size: 27px;
+      font-weight: 880;
+      line-height: 1;
+      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .modal-sub {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 27px;
+      padding: 0 10px;
+      border: 1px solid rgba(255, 160, 31, 0.34);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      color: #de7111;
+      font-size: 12px;
+      font-weight: 720;
+      box-shadow: 0 4px 11px rgba(255, 154, 27, 0.14);
+    }
+
+    .switch {
+      position: relative;
+      width: 30px;
+      height: 16px;
+      border-radius: 999px;
+      background: var(--amber);
+      margin-left: 2px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18);
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      right: 2px;
+      top: 1.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .signed-copy {
+      position: relative;
+      z-index: 2;
+      margin: 4px 0 12px;
+      text-align: center;
+      color: #5b2415;
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .phone[data-screen="claimed"] .signed-copy::after {
+      content: " · Claimed today";
+      color: #14a67d;
+    }
+
+    .reward-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .day-card {
+      position: relative;
+      min-height: 102px;
+      padding: 11px 5px 8px;
+      border-radius: 14px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      box-shadow: inset 0 -13px 22px rgba(248, 203, 97, 0.08);
+      overflow: hidden;
+    }
+
+    .day-card.active {
+      background: linear-gradient(180deg, #fff464, #fff7b2 68%, #fff);
+      border-color: #ffd416;
+      box-shadow: 0 7px 14px rgba(244, 190, 36, 0.28), inset 0 -12px 20px rgba(245, 166, 23, 0.15);
+    }
+
+    .day-card.claimed {
+      background: linear-gradient(180deg, #dffbf1, #fff 76%);
+      border-color: rgba(20, 166, 125, 0.4);
+    }
+
+    .day-card.locked {
+      opacity: 0.72;
+      background: rgba(246, 246, 246, 0.82);
+      color: #8e8e8e;
+    }
+
+    .day-card.big {
+      grid-column: span 2;
+    }
+
+    .day-label {
+      color: #191006;
+      font-size: 13px;
+      font-weight: 780;
+    }
+
+    .locked .day-label,
+    .locked .reward-name {
+      color: #a7a7a7;
+    }
+
+    .reward-art {
+      position: relative;
+      width: 50px;
+      height: 38px;
+      margin: 9px auto 2px;
+    }
+
+    .coin {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 28%, #fff9b8 0 18%, #ffd437 22% 58%, #e98d18 62% 100%);
+      border: 2px solid #fff1a6;
+      box-shadow: 0 2px 0 #c56b16;
+    }
+
+    .coin:nth-child(1) {
+      left: 10px;
+      top: 5px;
+    }
+
+    .coin:nth-child(2) {
+      left: 23px;
+      top: 11px;
+      transform: rotate(14deg);
+    }
+
+    .coin:nth-child(3) {
+      left: 4px;
+      top: 17px;
+      transform: rotate(-16deg);
+    }
+
+    .gift-art {
+      position: relative;
+      width: 56px;
+      height: 44px;
+      margin: 4px auto 0;
+    }
+
+    .gift-art::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      right: 9px;
+      bottom: 4px;
+      height: 31px;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, transparent 43%, rgba(255, 255, 255, 0.75) 43% 56%, transparent 56%),
+        linear-gradient(145deg, #ffbf2c, #f05a64 44%, #7250c8);
+      box-shadow: 0 5px 10px rgba(116, 49, 116, 0.23);
+    }
+
+    .gift-art::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      top: 8px;
+      height: 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ffe784, #ff8a13);
+      border: 1px solid rgba(95, 43, 20, 0.2);
+    }
+
+    .chest-art {
+      position: relative;
+      width: 72px;
+      height: 47px;
+      margin: 1px auto 0;
+    }
+
+    .chest-art::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      right: 7px;
+      bottom: 4px;
+      height: 34px;
+      border-radius: 8px 8px 12px 12px;
+      background:
+        linear-gradient(90deg, transparent 45%, rgba(255, 242, 174, 0.8) 45% 56%, transparent 56%),
+        linear-gradient(160deg, #8932c7, #f3576f 42%, #ffc34c);
+      border: 2px solid #ffe28a;
+      box-shadow: 0 6px 12px rgba(121, 42, 77, 0.24);
+    }
+
+    .chest-art::after {
+      content: "";
+      position: absolute;
+      top: 1px;
+      left: 18px;
+      width: 35px;
+      height: 28px;
+      border-radius: 20px 20px 6px 6px;
+      border: 5px solid #ffd34e;
+      border-bottom: 0;
+      transform: rotate(-8deg);
+    }
+
+    .boost-art {
+      width: 48px;
+      height: 39px;
+      margin: 7px auto 0;
+      position: relative;
+    }
+
+    .boost-art::before {
+      content: "";
+      position: absolute;
+      inset: 5px 3px 4px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #56d9bd, #2a604b);
+      box-shadow: 0 5px 10px rgba(24, 104, 76, 0.25);
+    }
+
+    .boost-art::after {
+      content: "+";
+      position: absolute;
+      right: 4px;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff8a13;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      box-shadow: 0 2px 6px rgba(255, 138, 19, 0.4);
+    }
+
+    .bonus {
+      display: inline-block;
+      margin-top: -3px;
+      padding: 1px 4px;
+      border-radius: 5px;
+      color: #fff;
+      background: var(--amber);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .reward-name {
+      color: #e58b22;
+      font-size: 12px;
+      font-weight: 720;
+      line-height: 1.15;
+      margin-top: 2px;
+      min-height: 27px;
+      display: grid;
+      place-items: center;
+    }
+
+    .claimed-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 19px;
+      height: 19px;
+      display: none;
+      place-items: center;
+      border-radius: 50%;
+      background: #14a67d;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .claimed .claimed-badge {
+      display: grid;
+    }
+
+    .modal-actions {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 11px;
+      margin-top: 20px;
+    }
+
+    .check-btn {
+      min-width: 196px;
+      height: 54px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(90deg, #ff7e0e, #ff9f13);
+      box-shadow: 0 10px 18px rgba(255, 126, 14, 0.26);
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .phone[data-screen="claimed"] .check-btn {
+      color: rgba(255, 255, 255, 0.96);
+      background: linear-gradient(90deg, #14a67d, #46caa8);
+      box-shadow: 0 10px 18px rgba(20, 166, 125, 0.22);
+    }
+
+    .task-link {
+      color: #6b2715;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .close-btn {
+      position: absolute;
+      left: 50%;
+      bottom: 84px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      background: rgba(0, 0, 0, 0.2);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .close-btn::before,
+    .close-btn::after {
+      content: "";
+      position: absolute;
+      width: 25px;
+      height: 3px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .close-btn::before {
+      transform: rotate(45deg);
+    }
+
+    .close-btn::after {
+      transform: rotate(-45deg);
+    }
+
+    .phone[data-screen="room"] .close-btn {
+      display: none;
+    }
+
+    @media (max-width: 430px) {
+      body {
+        padding: 0;
+        background: #090605;
+      }
+
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        min-height: 844px;
+        border-radius: 0;
+        border: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" data-screen="room" id="phone">
+    <div class="status">
+      <div>8:51</div>
+      <div class="right">
+        <span>5.46 KB/s</span>
+        <span>WiFi</span>
+        <span class="battery"></span>
+      </div>
+    </div>
+
+    <main class="home">
+      <section class="hero">
+        <div class="tabs">
+          <div class="tab">Mine</div>
+          <div class="tab active">Party</div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn sign-entry" type="button" aria-label="Daily check-in" data-action="open-checkin">
+            <span class="mini-calendar"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Search"><span class="search-icon"></span></button>
+          <button class="icon-btn" type="button" aria-label="Palace"><span class="palace-icon"></span></button>
+        </div>
+      </section>
+
+      <div class="banner">
+        <div class="banner-title">We chill أنشطة</div>
+        <div class="banner-copy">Join rooms, collect coins, win gifts</div>
+      </div>
+
+      <section class="rank-grid">
+        <div class="rank-card">
+          <div>
+            <strong>Wealth</strong>
+            <div class="avatar-stack"><span class="avatar-dot"></span><span class="avatar-dot"></span><span class="avatar-dot"></span></div>
+          </div>
+        </div>
+        <div class="rank-card">
+          <div>
+            <strong>Charm</strong>
+            <div class="avatar-stack"><span class="avatar-dot"></span><span class="avatar-dot"></span><span class="avatar-dot"></span></div>
+          </div>
+        </div>
+        <div class="rank-card">
+          <div>
+            <strong>Room</strong>
+            <div class="avatar-stack"><span class="avatar-dot"></span><span class="avatar-dot"></span><span class="avatar-dot"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="filter">
+        <div class="pill active">Hot</div>
+        <div class="pill">Latest</div>
+        <div class="grid-icon"><span></span><span></span><span></span><span></span></div>
+      </div>
+
+      <section class="rooms">
+        <article class="room-card">
+          <div class="room-art"></div>
+          <div class="lang">A Arabic</div>
+          <div class="room-name">Arabic مستخدمين | Service Room</div>
+          <div class="room-meta"><div class="mini-avatars"><span></span><span></span><span></span></div><span>1985</span></div>
+        </article>
+        <article class="room-card">
+          <div class="room-art"></div>
+          <div class="lang">A Arabic</div>
+          <div class="room-name">GAME OVER | Friends Party</div>
+          <div class="room-meta"><div class="mini-avatars"><span></span><span></span><span></span></div><span>3962</span></div>
+        </article>
+        <article class="room-card">
+          <div class="room-art"></div>
+          <div class="lang">A French</div>
+          <div class="room-name">Venus Agency</div>
+          <div class="room-meta"><div class="mini-avatars"><span></span><span></span><span></span></div><span>3938</span></div>
+        </article>
+        <article class="room-card">
+          <div class="room-art"></div>
+          <div class="lang">A Arabic</div>
+          <div class="room-name">Top One Agency</div>
+          <div class="room-meta"><div class="mini-avatars"><span></span><span></span><span></span></div><span>3451</span></div>
+        </article>
+      </section>
+    </main>
+
+    <div class="entry-annotation"></div>
+
+    <nav class="bottom-nav">
+      <div class="nav-item active"><div class="nav-icon">▰</div><div>Party</div></div>
+      <div class="nav-item"><div class="nav-icon">◆</div><div>Community</div></div>
+      <div class="nav-item"><div class="nav-icon">✉</div><div>Messages</div></div>
+      <div class="nav-item"><div class="nav-icon">♛</div><div>Mine</div></div>
+    </nav>
+
+    <div class="overlay">
+      <section class="checkin-modal" role="dialog" aria-modal="true" aria-labelledby="checkin-title">
+        <div class="modal-top">
+          <div class="title-line">
+            <span class="spark"></span>
+            <h1 class="modal-title" id="checkin-title">Daily Check-In</h1>
+          </div>
+          <div class="modal-sub">
+            <span>Turn on Notifications +10%</span>
+            <span class="switch"></span>
+          </div>
+        </div>
+
+        <div class="signed-copy">Signed 1/7 days</div>
+
+        <div class="reward-grid">
+          <div class="day-card day-1 active">
+            <div class="claimed-badge">✓</div>
+            <div class="day-label">Day1</div>
+            <div class="reward-art"><span class="coin"></span><span class="coin"></span><span class="coin"></span></div>
+            <span class="bonus">+10%</span>
+            <div class="reward-name">Coins x5</div>
+          </div>
+          <div class="day-card locked">
+            <div class="day-label">Day2</div>
+            <div class="reward-art"><span class="coin"></span><span class="coin"></span><span class="coin"></span></div>
+            <span class="bonus">+10%</span>
+            <div class="reward-name">Coins x8</div>
+          </div>
+          <div class="day-card locked">
+            <div class="day-label">Day3</div>
+            <div class="gift-art"></div>
+            <span class="bonus">Gift</span>
+            <div class="reward-name">Lucky gift</div>
+          </div>
+          <div class="day-card locked">
+            <div class="day-label">Day4</div>
+            <div class="reward-art"><span class="coin"></span><span class="coin"></span><span class="coin"></span></div>
+            <span class="bonus">+10%</span>
+            <div class="reward-name">Coins x10</div>
+          </div>
+          <div class="day-card locked">
+            <div class="day-label">Day5</div>
+            <div class="boost-art"></div>
+            <span class="bonus">Boost</span>
+            <div class="reward-name">Room heat</div>
+          </div>
+          <div class="day-card locked">
+            <div class="day-label">Day6</div>
+            <div class="reward-art"><span class="coin"></span><span class="coin"></span><span class="coin"></span></div>
+            <span class="bonus">+10%</span>
+            <div class="reward-name">Coins x15</div>
+          </div>
+          <div class="day-card big locked">
+            <div class="day-label">Day7</div>
+            <div class="chest-art"></div>
+            <span class="bonus">Chest</span>
+            <div class="reward-name">Frame + Coins</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="check-btn" type="button" data-action="claim">Check in</button>
+          <div class="task-link">More rewards in Task Center &gt;</div>
+        </div>
+      </section>
+      <button class="close-btn" type="button" aria-label="Close" data-action="close"></button>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+
+  <script>
+    const phone = document.getElementById("phone");
+    const params = new URLSearchParams(window.location.search);
+    const initialScreen = params.get("screen") || "room";
+    const validScreens = new Set(["room", "popup", "claimed"]);
+
+    function setScreen(screen) {
+      const next = validScreens.has(screen) ? screen : "room";
+      phone.dataset.screen = next;
+      const dayOne = document.querySelector(".day-1");
+      const claimButton = document.querySelector("[data-action='claim']");
+      if (next === "claimed") {
+        dayOne.classList.add("claimed");
+        claimButton.textContent = "Checked";
+      } else {
+        dayOne.classList.remove("claimed");
+        claimButton.textContent = "Check in";
+      }
+    }
+
+    setScreen(initialScreen);
+
+    document.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-action]")?.dataset.action;
+      if (action === "open-checkin") setScreen("popup");
+      if (action === "claim") setScreen("claimed");
+      if (action === "close") setScreen("room");
+    });
+  </script>
+</body>
+</html>

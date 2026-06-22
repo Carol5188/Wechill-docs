@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>龙蛋玩法后台原型预览</title>
+  <style>
+    :root {
+      --bg: #f4ecdf;
+      --bg-strong: #e8dcc4;
+      --panel: rgba(255, 250, 241, 0.92);
+      --panel-strong: #fff7ea;
+      --panel-deep: #f4e7cf;
+      --line: rgba(39, 42, 31, 0.12);
+      --text: #1d241f;
+      --muted: #68736d;
+      --brand: #cf6a22;
+      --brand-deep: #8c4319;
+      --brand-soft: rgba(207, 106, 34, 0.12);
+      --gold: #edb84f;
+      --teal: #1d7d72;
+      --teal-soft: rgba(29, 125, 114, 0.12);
+      --ok: #1a8d57;
+      --warn: #c47a24;
+      --danger: #c54f3f;
+      --shadow: 0 20px 50px rgba(71, 45, 20, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(237, 184, 79, 0.25), transparent 26%),
+        radial-gradient(circle at top right, rgba(29, 125, 114, 0.16), transparent 24%),
+        linear-gradient(180deg, #f7efe2 0%, #f0e4cf 100%);
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 72%);
+    }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      gap: 24px;
+      padding: 22px;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, rgba(109, 55, 25, 0.92) 0%, rgba(71, 34, 19, 0.95) 100%);
+      border-radius: 30px;
+      color: #fff6eb;
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 22px;
+      height: calc(100vh - 44px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 35% 35%, #fff4d3 0%, #f3cb67 28%, #d87a28 65%, #9f4a1f 100%);
+      box-shadow: inset 0 2px 12px rgba(255, 255, 255, 0.28), 0 8px 18px rgba(0, 0, 0, 0.22);
+      position: relative;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 248, 220, 0.6);
+    }
+
+    .brand-title {
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      color: rgba(255, 244, 227, 0.72);
+      font-size: 12px;
+    }
+
+    .side-section {
+      margin-top: 14px;
+    }
+
+    .side-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 244, 227, 0.55);
+      margin-bottom: 10px;
+    }
+
+    .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 14px;
+    }
+
+    .nav-item:hover,
+    .nav-item.is-active {
+      background: rgba(255, 247, 233, 0.12);
+      transform: translateX(2px);
+    }
+
+    .nav-pill {
+      background: rgba(255, 247, 233, 0.18);
+      color: #ffe3ba;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      background: rgba(255, 248, 236, 0.08);
+      border: 1px solid rgba(255, 240, 215, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(255, 244, 227, 0.78);
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 248, 238, 0.95), rgba(247, 232, 202, 0.92));
+      border: 1px solid rgba(120, 82, 48, 0.08);
+      border-radius: 34px;
+      padding: 26px 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+      gap: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -60px;
+      top: -70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(237, 184, 79, 0.35), rgba(237, 184, 79, 0));
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      font-size: 34px;
+      line-height: 1.12;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.75;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(94, 69, 42, 0.09);
+      font-size: 13px;
+      color: #594938;
+    }
+
+    .hero-summary {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .summary-card {
+      background: rgba(255, 252, 244, 0.76);
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 22px;
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .summary-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--brand-deep);
+    }
+
+    .summary-meta {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #7d684f;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin: 22px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: rgba(255, 250, 244, 0.8);
+      color: #6a5948;
+      box-shadow: inset 0 0 0 1px rgba(90, 68, 43, 0.08);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .tab-button.is-active {
+      background: linear-gradient(135deg, var(--brand), #e59d3f);
+      color: white;
+      box-shadow: 0 14px 30px rgba(207, 106, 34, 0.26);
+    }
+
+    .page {
+      display: none;
+      gap: 18px;
+    }
+
+    .page.is-active {
+      display: grid;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px 0;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      margin: 0;
+    }
+
+    .card-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .card-body {
+      padding: 22px 24px 24px;
+      overflow-x: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .field {
+      min-width: 150px;
+      flex: 1 1 150px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .input,
+    .select,
+    .button {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(90, 68, 43, 0.12);
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--text);
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .button {
+      width: auto;
+      cursor: pointer;
+      padding: 0 18px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--brand), #e49c3f);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 22px rgba(207, 106, 34, 0.22);
+    }
+
+    .button.secondary {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .button.ghost {
+      background: transparent;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(380px, 0.9fr) minmax(420px, 1.1fr);
+      gap: 18px;
+    }
+
+    .data-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-stat {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(251, 241, 224, 0.88));
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .mini-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .mini-stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #442f1e;
+    }
+
+    .mini-stat-foot {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #7b664f;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(90, 68, 43, 0.08);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    tbody tr {
+      transition: 0.15s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(207, 106, 34, 0.05);
+    }
+
+    tbody tr.is-selected {
+      background: rgba(207, 106, 34, 0.08);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .chip.brand {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+    }
+
+    .chip.ok {
+      background: rgba(26, 141, 87, 0.12);
+      color: var(--ok);
+    }
+
+    .chip.warn {
+      background: rgba(196, 122, 36, 0.12);
+      color: var(--warn);
+    }
+
+    .chip.teal {
+      background: var(--teal-soft);
+      color: var(--teal);
+    }
+
+    .config-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-block {
+      background: var(--panel-strong);
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .section-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .level-panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(249, 238, 217, 0.9));
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 22px;
+      padding: 16px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .level-panel::before {
+      content: "";
+      position: absolute;
+      top: -32px;
+      right: -28px;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(237, 184, 79, 0.24), rgba(237, 184, 79, 0));
+    }
+
+    .level-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--brand-deep);
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-target {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-note {
+      font-size: 12px;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .reward-list {
+      display: grid;
+      gap: 8px;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .reward-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .room-overview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .overview-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(249, 239, 220, 0.92));
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .overview-heading {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .overview-value {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .overview-desc {
+      margin-top: 8px;
+      color: #7b664f;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .level-cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .level-card {
+      border-radius: 24px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(243, 232, 208, 0.94));
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.2s ease;
+      min-height: 245px;
+    }
+
+    .level-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(75, 46, 21, 0.14);
+    }
+
+    .level-card.is-complete::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -20% 40%;
+      height: 180px;
+      background: radial-gradient(circle, rgba(29, 125, 114, 0.2), rgba(29, 125, 114, 0));
+    }
+
+    .level-status {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .level-status.complete {
+      background: rgba(26, 141, 87, 0.12);
+      color: var(--ok);
+    }
+
+    .level-status.pending {
+      background: rgba(196, 122, 36, 0.12);
+      color: var(--warn);
+    }
+
+    .progress {
+      height: 12px;
+      width: 100%;
+      background: rgba(140, 110, 74, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #e39d37, #e9c662);
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .avatars {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: -8px;
+      border: 2px solid rgba(255, 250, 241, 0.92);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .avatar:nth-child(1) { background: linear-gradient(135deg, #d86d27, #f3b14c); }
+    .avatar:nth-child(2) { background: linear-gradient(135deg, #0f8276, #4eb5a9); }
+    .avatar:nth-child(3) { background: linear-gradient(135deg, #a24d35, #d98963); }
+
+    .subtle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(248, 239, 219, 0.95));
+      border: 1px solid rgba(90, 68, 43, 0.08);
+      border-radius: 20px;
+      padding: 15px;
+    }
+
+    .metric-card strong {
+      display: block;
+      font-size: 24px;
+      margin-top: 8px;
+      color: #412d1d;
+    }
+
+    .trend-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 160px;
+      padding-top: 14px;
+    }
+
+    .trend-bar-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trend-bar {
+      width: 100%;
+      border-radius: 12px 12px 4px 4px;
+      background: linear-gradient(180deg, rgba(29, 125, 114, 0.88), rgba(29, 125, 114, 0.35));
+    }
+
+    .trend-bar.alt {
+      background: linear-gradient(180deg, rgba(207, 106, 34, 0.92), rgba(207, 106, 34, 0.38));
+    }
+
+    .trend-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 30, 18, 0.42);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 30;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(1180px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255, 251, 244, 0.98), rgba(248, 239, 220, 0.98));
+      box-shadow: 0 30px 90px rgba(28, 16, 8, 0.28);
+      border: 1px solid rgba(90, 68, 43, 0.08);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 24px 26px 0;
+      align-items: flex-start;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 28px;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+    }
+
+    .modal-body {
+      padding: 20px 26px 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .modal-close {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(90, 68, 43, 0.08);
+      cursor: pointer;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .footnote {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    #buff-detail-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tight-table td,
+    .tight-table th {
+      padding: 12px 10px;
+    }
+
+    @media (max-width: 1400px) {
+      .level-grid,
+      .level-cards,
+      .metric-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .room-overview,
+      .mini-stats,
+      .modal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .app-shell {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+      }
+
+      .hero,
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .level-grid,
+      .level-cards,
+      .room-overview,
+      .metric-grid,
+      .mini-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #buff-detail-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        padding: 14px;
+        gap: 14px;
+      }
+
+      .hero,
+      .card-header,
+      .card-body,
+      .modal-header,
+      .modal-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .level-grid,
+      .level-cards,
+      .room-overview,
+      .metric-grid,
+      .mini-stats,
+      .modal-grid,
+      .config-meta {
+        grid-template-columns: 1fr;
+      }
+
+      th,
+      td {
+        padding: 12px 8px;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-title">龙蛋后台</div>
+          <div class="brand-subtitle">Dragon Egg Admin Console</div>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <div class="side-label">Preview Navigation</div>
+        <button class="nav-item is-active" data-tab-target="config-page">
+          <span>奖励配置</span>
+          <span class="nav-pill">Core</span>
+        </button>
+        <button class="nav-item" data-tab-target="dashboard-page">
+          <span>数据看板</span>
+          <span class="nav-pill">Live</span>
+        </button>
+        <button class="nav-item">
+          <span>获奖记录</span>
+          <span class="nav-pill">Soon</span>
+        </button>
+        <button class="nav-item">
+          <span>操作日志</span>
+          <span class="nav-pill">Soon</span>
+        </button>
+      </div>
+
+      <div class="side-section">
+        <div class="side-label">Quick Insight</div>
+        <button class="nav-item">
+          <span>当前生效配置</span>
+          <strong>3</strong>
+        </button>
+        <button class="nav-item">
+          <span>今日达成房间</span>
+          <strong>128</strong>
+        </button>
+        <button class="nav-item">
+          <span>BUFF进行中</span>
+          <strong>26</strong>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        本页是静态原型，已预置演示数据与交互。
+        <br>
+        可切换页面签、点击配置行、点击龙蛋等级卡查看榜单与 BUFF 详情。
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div>
+          <h1>龙蛋玩法后台管理页面预览</h1>
+          <p>
+            这是一版可直接评审的后台原型，重点覆盖分区独立的奖励配置、房间数据看板、等级贡献榜单弹窗，以及 BUFF 加成期间礼物消耗汇总。页面风格按照运营后台但保留了玩法气质，方便你同时看结构和观感。
+          </p>
+          <div class="hero-badges">
+            <span class="badge">GMT+3 重置口径</span>
+            <span class="badge">Level 1 - Level 5 奖励配置</span>
+            <span class="badge">点击可查看结算榜单</span>
+            <span class="badge">BUFF 消耗趋势明细</span>
+          </div>
+        </div>
+        <div class="hero-summary">
+          <div class="summary-card">
+            <div class="summary-title">今日龙蛋总触发</div>
+            <div class="summary-value">428 次</div>
+            <div class="summary-meta">MENA-A 分区占比 38%，最高活跃时段 21:00 - 22:00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-title">BUFF 期间礼物消耗增长率</div>
+            <div class="summary-value">+34.8%</div>
+            <div class="summary-meta">基于同房间非 BUFF 时段均值计算，演示口径</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="tab-bar">
+        <button class="tab-button is-active" data-tab-target="config-page">奖励配置模块</button>
+        <button class="tab-button" data-tab-target="dashboard-page">数据看板模块</button>
+      </div>
+
+      <section class="page is-active" id="config-page">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">奖励配置</h2>
+              <div class="card-subtitle">按分区独立管理龙蛋玩法版本、生效范围、奖励池和 BUFF 方案</div>
+            </div>
+            <div class="inline-actions">
+              <button class="button secondary">复制当前版本</button>
+              <button class="button primary">新建配置</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="toolbar">
+              <div class="field">
+                <label>分区</label>
+                <select class="select">
+                  <option>MENA-A</option>
+                  <option>SEA-B</option>
+                  <option>Global-Test</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>配置状态</label>
+                <select class="select">
+                  <option>全部</option>
+                  <option>生效中</option>
+                  <option>已停用</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>配置版本</label>
+                <select class="select">
+                  <option>当前版本</option>
+                  <option>历史版本</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>操作人</label>
+                <input class="input" value="Lina / Omar / Admin" />
+              </div>
+              <div class="button-row">
+                <button class="button secondary">查询</button>
+                <button class="button ghost">重置</button>
+              </div>
+            </div>
+
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <div class="mini-stat-label">生效版本数</div>
+                <div class="mini-stat-value">3</div>
+                <div class="mini-stat-foot">当前仅允许每个分区 1 个生效版本</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">房主奖励开启率</div>
+                <div class="mini-stat-value">66%</div>
+                <div class="mini-stat-foot">2 个分区给房主追加奖励</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">分等级 BUFF 方案</div>
+                <div class="mini-stat-value">2</div>
+                <div class="mini-stat-foot">L2-L3 x1.2，L4-L5 x1.5</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">待审核风控异常</div>
+                <div class="mini-stat-value">4</div>
+                <div class="mini-stat-foot">命中多账号冲榜预警</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="split-grid">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">配置版本列表</h2>
+                <div class="card-subtitle">点击任意配置行，右侧会同步展示详情与等级奖励</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <table id="config-table">
+                <thead>
+                  <tr>
+                    <th>配置ID</th>
+                    <th>分区</th>
+                    <th>版本</th>
+                    <th>范围</th>
+                    <th>状态</th>
+                    <th>操作人</th>
+                    <th>更新时间</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">配置详情</h2>
+                <div class="card-subtitle">基础配置、BUFF设置与风险控制采用右侧集中查看</div>
+              </div>
+              <div class="inline-actions">
+                <button class="button secondary">编辑</button>
+                <button class="button primary">发布新版本</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="config-meta" id="config-meta"></div>
+              <div class="section-stack">
+                <div class="meta-block">
+                  <div class="meta-label">基础配置</div>
+                  <div class="footnote" id="basic-config-copy"></div>
+                </div>
+                <div class="meta-block">
+                  <div class="meta-label">BUFF 配置</div>
+                  <div class="footnote" id="buff-config-copy"></div>
+                </div>
+                <div class="meta-block">
+                  <div class="meta-label">风险控制配置</div>
+                  <div class="footnote" id="risk-config-copy"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Level 1 - Level 5 奖励配置预览</h2>
+              <div class="card-subtitle">每个等级展示达成门槛、奖励对象、奖励池和动画方式</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="level-grid" id="config-level-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="dashboard-page">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">房间数据看板</h2>
+              <div class="card-subtitle">支持按日期、分区、房间查看基础信息、最高等级龙蛋、榜单详情和 BUFF 消耗</div>
+            </div>
+            <div class="inline-actions">
+              <button class="button secondary">导出报表</button>
+              <button class="button primary">刷新数据</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="toolbar">
+              <div class="field">
+                <label>日期</label>
+                <input class="input" value="2026-04-01 (GMT+3)" />
+              </div>
+              <div class="field">
+                <label>分区</label>
+                <select class="select">
+                  <option>MENA-A</option>
+                  <option>SEA-B</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>房间ID</label>
+                <input class="input" value="880321" />
+              </div>
+              <div class="field">
+                <label>主播昵称</label>
+                <input class="input" value="Noura" />
+              </div>
+              <div class="button-row">
+                <button class="button secondary">查询</button>
+                <button class="button ghost">重置</button>
+              </div>
+            </div>
+
+            <div class="room-overview" id="room-overview"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">当日龙蛋总览</h2>
+              <div class="card-subtitle">点击任意等级卡即可查看该等级结算榜单</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="level-cards" id="dashboard-level-cards"></div>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">等级明细表</h2>
+                <div class="card-subtitle">一行一个等级，适合运营快速定位发奖和 BUFF 状态</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <table id="level-table">
+                <thead>
+                  <tr>
+                    <th>等级</th>
+                    <th>状态</th>
+                    <th>达成时间</th>
+                    <th>积分</th>
+                    <th>参与人数</th>
+                    <th>Top1</th>
+                    <th>发奖状态</th>
+                    <th>BUFF</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">BUFF 礼物消耗汇总</h2>
+                <div class="card-subtitle">关注 BUFF 触发后礼物消耗、财富值和复触发转化表现</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metric-grid" id="buff-summary"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">BUFF 消耗趋势</h2>
+                <div class="card-subtitle">橙色为 BUFF 时段，青绿色为非 BUFF 基准时段</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="trend-bars" id="trend-bars"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">BUFF 明细表</h2>
+                <div class="card-subtitle">点击查看单次 BUFF 的礼物明细、用户消耗和增长率</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <table id="buff-table">
+                <thead>
+                  <tr>
+                    <th>记录ID</th>
+                    <th>等级</th>
+                    <th>时间</th>
+                    <th>倍率</th>
+                    <th>覆盖人数</th>
+                    <th>礼物消耗</th>
+                    <th>增长率</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="ranking-modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="ranking-title">Level 1 贡献榜</h3>
+          <div class="card-subtitle" id="ranking-subtitle"></div>
+        </div>
+        <button class="modal-close" data-close-modal="ranking-modal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid" id="ranking-metrics"></div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body" style="padding-top:0;">
+            <table class="tight-table" id="ranking-table">
+              <thead>
+                <tr>
+                  <th>排名</th>
+                  <th>用户</th>
+                  <th>贡献积分</th>
+                  <th>达成时间</th>
+                  <th>奖励</th>
+                  <th>发奖状态</th>
+                  <th>达成时在线</th>
+                  <th>当前在房</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="footnote">
+          说明：榜单按贡献值倒序，同分按达成时间顺序结算。即使用户离房，只要存在有效贡献，也会保留在榜单并参与发奖。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="buff-modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="buff-title">BUFF 详情</h3>
+          <div class="card-subtitle" id="buff-subtitle"></div>
+        </div>
+        <button class="modal-close" data-close-modal="buff-modal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid" id="buff-metrics"></div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body">
+            <div id="buff-detail-layout">
+              <div class="meta-block">
+                <div class="meta-label">分钟级礼物消耗趋势</div>
+                <div class="trend-bars" id="buff-detail-trend" style="height:200px;"></div>
+              </div>
+              <div class="meta-block">
+                <div class="meta-label">礼物类型分布</div>
+                <table class="tight-table" id="gift-breakdown">
+                  <thead>
+                    <tr>
+                      <th>礼物</th>
+                      <th>件数</th>
+                      <th>消耗</th>
+                      <th>占比</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-body" style="padding-top:0;">
+            <div class="meta-label">用户消耗明细</div>
+            <table class="tight-table" id="buff-user-table">
+              <thead>
+                <tr>
+                  <th>用户</th>
+                  <th>是否参与龙蛋</th>
+                  <th>BUFF期间消费</th>
+                  <th>BUFF期间贡献</th>
+                  <th>角色</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const configData = [
+      {
+        id: "CFG-20260401-01",
+        region: "MENA-A",
+        version: "v3",
+        scope: "全分区房间",
+        status: "生效中",
+        operator: "Lina",
+        updatedAt: "2026-04-01 10:20",
+        basicCopy: "玩法开关已开启，适用于 MENA-A 全分区房间，每日按 GMT+3 00:00 重置。房主参与榜单统计，且额外获得房主激励奖励。全服飘屏与孵化弹窗同步开启。",
+        buffCopy: "采用分等级倍率方案：Level 2-3 为 x1.2，Level 4-5 为 x1.5，持续 30 分钟。连续触发时按时长累加，BUFF 可跨天保留至自然结束，最后 5 分钟展示即将结束提示。",
+        riskCopy: "开启异常送礼预警、同设备多账号冲榜识别及小号刷榜检测。命中风控时暂缓发奖并进入人工复核队列，自动重试 3 次后进入补发列表。",
+        meta: [
+          { label: "配置名称", value: "MENA 标准激励版" },
+          { label: "生效时间", value: "2026-04-01 00:00 GMT+3" },
+          { label: "房主奖励", value: "开启" },
+          { label: "重置时间", value: "每日 00:00 GMT+3" }
+        ],
+        levels: [
+          { level: "Level 1", target: "20,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "孵化动画 + 全服飘屏" },
+          { level: "Level 2", target: "50,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "触发 x1.2 财富值加成 30 分钟" },
+          { level: "Level 3", target: "100,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "触发 x1.2 财富值加成 30 分钟" },
+          { level: "Level 4", target: "200,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "触发 x1.5 财富值加成 30 分钟" },
+          { level: "Level 5", target: "500,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励6"]], note: "触发 x1.5 财富值加成 30 分钟" }
+        ]
+      },
+      {
+        id: "CFG-20260322-04",
+        region: "SEA-B",
+        version: "v2",
+        scope: "指定房间",
+        status: "生效中",
+        operator: "Omar",
+        updatedAt: "2026-03-28 18:10",
+        basicCopy: "玩法仅在高活跃度房间生效，指定 300 个房间参与活动。房主不参与榜单，但保留独立奖励位。全服飘屏关闭，仅房间内展示孵化提示。",
+        buffCopy: "采用固定倍率方案，Level 1-5 统一 x1.5，持续 20 分钟，连续触发按时长累加。只作用于参与该等级龙蛋送礼的用户。",
+        riskCopy: "仅开启异常送礼预警，命中后先告警不拦截，发奖失败进入补发队列，不触发风控暂停。",
+        meta: [
+          { label: "配置名称", value: "SEA 精准投放版" },
+          { label: "生效时间", value: "2026-03-22 00:00 GMT+3" },
+          { label: "房主奖励", value: "独立奖励" },
+          { label: "重置时间", value: "每日 00:00 GMT+3" }
+        ],
+        levels: [
+          { level: "Level 1", target: "12,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "房间内孵化提示" },
+          { level: "Level 2", target: "30,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "x1.5 财富值加成 20 分钟" },
+          { level: "Level 3", target: "65,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "x1.5 财富值加成 20 分钟" },
+          { level: "Level 4", target: "120,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "x1.5 财富值加成 20 分钟" },
+          { level: "Level 5", target: "280,000", audience: "Top10 + 房主", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励6"]], note: "x1.5 财富值加成 20 分钟" }
+        ]
+      },
+      {
+        id: "CFG-20260212-09",
+        region: "Global-Test",
+        version: "v1",
+        scope: "实验房间",
+        status: "已停用",
+        operator: "Admin",
+        updatedAt: "2026-02-12 09:32",
+        basicCopy: "历史实验版，供测试房间验证动画与奖励发放链路，已停止生效。",
+        buffCopy: "历史版本使用固定 x1.3 倍率，已归档。",
+        riskCopy: "仅保留告警，不拦截发奖。",
+        meta: [
+          { label: "配置名称", value: "Global Test v1" },
+          { label: "生效时间", value: "2026-02-01 00:00 GMT+3" },
+          { label: "房主奖励", value: "关闭" },
+          { label: "重置时间", value: "每日 00:00 GMT+3" }
+        ],
+        levels: [
+          { level: "Level 1", target: "10,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "历史测试" },
+          { level: "Level 2", target: "25,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励4"]], note: "历史测试" },
+          { level: "Level 3", target: "60,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "历史测试" },
+          { level: "Level 4", target: "120,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励5"]], note: "历史测试" },
+          { level: "Level 5", target: "250,000", audience: "Top10", rewardSummary: [["1st", "奖励1"], ["2nd", "奖励2"], ["3rd", "奖励3"], ["4-10", "奖励6"]], note: "历史测试" }
+        ]
+      }
+    ];
+
+    const roomOverview = [
+      { label: "房间基础信息", value: "880321 / Desert Dragon Show", desc: "分区 MENA-A，主播 Noura，直播中 6h 18m" },
+      { label: "当日礼物流水", value: "$18,620", desc: "送礼人数 327，累计有效积分 642,500" },
+      { label: "当日最高龙蛋等级", value: "Level 4", desc: "Level 5 尚未达成，当前完成率 28%" },
+      { label: "当前 BUFF 状态", value: "x1.5 / 18:42", desc: "作用范围：当前房间所有用户" }
+    ];
+
+    const levelSummary = [
+      { level: "Level 1", status: "已完成", reachedAt: "09:10", points: 22000, target: 20000, participants: 61, top1: "Khaled", top1Score: 5200, rewardStatus: "成功", buff: "未触发", top3: ["KH", "LY", "SM"] },
+      { level: "Level 2", status: "已完成", reachedAt: "12:35", points: 53840, target: 50000, participants: 93, top1: "Layla", top1Score: 11040, rewardStatus: "成功", buff: "x1.2 / 已结束", top3: ["LY", "KH", "ZN"] },
+      { level: "Level 3", status: "已完成", reachedAt: "17:42", points: 108200, target: 100000, participants: 125, top1: "Rayan", top1Score: 18900, rewardStatus: "部分失败", buff: "x1.2 / 已结束", top3: ["RY", "LY", "MJ"] },
+      { level: "Level 4", status: "已完成", reachedAt: "21:08", points: 226340, target: 200000, participants: 172, top1: "Mira", top1Score: 30400, rewardStatus: "成功", buff: "x1.5 / 生效中", top3: ["MI", "RY", "LY"] },
+      { level: "Level 5", status: "未完成", reachedAt: "-", points: 142800, target: 500000, participants: 188, top1: "Mira", top1Score: 38500, rewardStatus: "-", buff: "未触发", top3: ["MI", "RY", "LY"] }
+    ];
+
+    const rankingData = {
+      "Level 1": {
+        subtitle: "房间 880321 / MENA-A / 达成时间 09:10 / 目标积分 20,000 / 最终积分 22,000",
+        metrics: [
+          { label: "参与用户数", value: "61" },
+          { label: "获奖人数", value: "10" },
+          { label: "榜首贡献值", value: "5,200" },
+          { label: "第10名贡献值", value: "980" }
+        ],
+        rows: [
+          ["1", "Khaled", "5,200", "08:59:12", "奖励1", "成功", "是", "否"],
+          ["2", "Layla", "4,960", "09:00:20", "奖励2", "成功", "是", "是"],
+          ["3", "Sami", "3,420", "09:03:08", "奖励3", "成功", "否", "否"],
+          ["4", "Zayn", "2,940", "09:03:55", "奖励4", "成功", "是", "否"],
+          ["5", "Mira", "1,860", "09:04:17", "奖励4", "成功", "是", "是"],
+          ["6", "Rayan", "1,530", "09:05:05", "奖励4", "成功", "否", "是"],
+          ["7", "Noor", "1,400", "09:05:08", "奖励4", "成功", "否", "否"],
+          ["8", "Yara", "1,200", "09:07:33", "奖励4", "成功", "是", "否"],
+          ["9", "Dina", "1,140", "09:08:10", "奖励4", "成功", "否", "否"],
+          ["10", "Omar", "980", "09:09:22", "奖励4", "成功", "是", "是"]
+        ]
+      },
+      "Level 2": {
+        subtitle: "房间 880321 / MENA-A / 达成时间 12:35 / 目标积分 50,000 / 最终积分 53,840",
+        metrics: [
+          { label: "参与用户数", value: "93" },
+          { label: "获奖人数", value: "11" },
+          { label: "榜首贡献值", value: "11,040" },
+          { label: "第10名贡献值", value: "2,150" }
+        ],
+        rows: [
+          ["1", "Layla", "11,040", "12:30:11", "奖励1", "成功", "是", "是"],
+          ["2", "Khaled", "9,280", "12:31:28", "奖励2", "成功", "是", "否"],
+          ["3", "Zayn", "6,610", "12:31:49", "奖励3", "成功", "否", "否"],
+          ["4", "Rayan", "4,920", "12:32:05", "奖励4", "成功", "是", "是"],
+          ["5", "Mira", "4,820", "12:32:44", "奖励4", "成功", "是", "是"],
+          ["6", "Noura(房主)", "3,960", "12:33:02", "房主奖励", "成功", "是", "是"],
+          ["7", "Sami", "3,420", "12:33:18", "奖励4", "成功", "是", "否"],
+          ["8", "Noor", "3,110", "12:33:42", "奖励4", "成功", "否", "否"],
+          ["9", "Yara", "2,780", "12:34:10", "奖励4", "成功", "否", "否"],
+          ["10", "Dina", "2,150", "12:34:38", "奖励4", "成功", "否", "是"]
+        ]
+      },
+      "Level 3": {
+        subtitle: "房间 880321 / MENA-A / 达成时间 17:42 / 目标积分 100,000 / 最终积分 108,200",
+        metrics: [
+          { label: "参与用户数", value: "125" },
+          { label: "获奖人数", value: "11" },
+          { label: "榜首贡献值", value: "18,900" },
+          { label: "第10名贡献值", value: "4,080" }
+        ],
+        rows: [
+          ["1", "Rayan", "18,900", "17:38:20", "奖励1", "成功", "是", "是"],
+          ["2", "Layla", "16,200", "17:38:44", "奖励2", "成功", "是", "是"],
+          ["3", "Mira", "14,700", "17:39:01", "奖励3", "成功", "是", "是"],
+          ["4", "Khaled", "9,320", "17:39:18", "奖励5", "成功", "否", "否"],
+          ["5", "Noura(房主)", "8,760", "17:39:59", "房主奖励", "成功", "是", "是"],
+          ["6", "Zayn", "7,220", "17:40:15", "奖励5", "成功", "否", "否"],
+          ["7", "Sami", "6,050", "17:40:44", "奖励5", "失败待补发", "否", "否"],
+          ["8", "Noor", "5,540", "17:41:06", "奖励5", "成功", "否", "是"],
+          ["9", "Yara", "4,880", "17:41:25", "奖励5", "成功", "是", "否"],
+          ["10", "Dina", "4,080", "17:41:38", "奖励5", "成功", "否", "否"]
+        ]
+      },
+      "Level 4": {
+        subtitle: "房间 880321 / MENA-A / 达成时间 21:08 / 目标积分 200,000 / 最终积分 226,340",
+        metrics: [
+          { label: "参与用户数", value: "172" },
+          { label: "获奖人数", value: "11" },
+          { label: "榜首贡献值", value: "30,400" },
+          { label: "第10名贡献值", value: "7,980" }
+        ],
+        rows: [
+          ["1", "Mira", "30,400", "21:02:11", "奖励1", "成功", "是", "是"],
+          ["2", "Rayan", "27,100", "21:02:34", "奖励2", "成功", "是", "是"],
+          ["3", "Layla", "24,880", "21:03:02", "奖励3", "成功", "是", "是"],
+          ["4", "Khaled", "18,500", "21:03:38", "奖励5", "成功", "否", "否"],
+          ["5", "Noura(房主)", "14,600", "21:04:05", "房主奖励", "成功", "是", "是"],
+          ["6", "Zayn", "13,920", "21:04:42", "奖励5", "成功", "是", "否"],
+          ["7", "Sami", "11,620", "21:05:11", "奖励5", "成功", "否", "否"],
+          ["8", "Noor", "10,540", "21:05:33", "奖励5", "成功", "否", "是"],
+          ["9", "Yara", "8,610", "21:06:15", "奖励5", "成功", "否", "否"],
+          ["10", "Dina", "7,980", "21:06:54", "奖励5", "成功", "否", "否"]
+        ]
+      },
+      "Level 5": {
+        subtitle: "房间 880321 / MENA-A / 当前未达成，展示实时竞争态势预览",
+        metrics: [
+          { label: "参与用户数", value: "188" },
+          { label: "目标积分", value: "500,000" },
+          { label: "当前积分", value: "142,800" },
+          { label: "距达成差值", value: "357,200" }
+        ],
+        rows: [
+          ["1", "Mira", "38,500", "21:34:21", "待结算", "-", "是", "是"],
+          ["2", "Rayan", "29,880", "21:35:06", "待结算", "-", "是", "是"],
+          ["3", "Layla", "27,440", "21:36:10", "待结算", "-", "是", "是"],
+          ["4", "Khaled", "17,020", "21:37:02", "待结算", "-", "否", "否"],
+          ["5", "Zayn", "11,860", "21:39:18", "待结算", "-", "否", "否"],
+          ["6", "Noor", "9,240", "21:40:45", "待结算", "-", "否", "是"],
+          ["7", "Sami", "8,820", "21:41:10", "待结算", "-", "否", "否"],
+          ["8", "Yara", "7,360", "21:42:01", "待结算", "-", "否", "否"],
+          ["9", "Dina", "5,980", "21:42:37", "待结算", "-", "否", "否"],
+          ["10", "Omar", "5,510", "21:43:08", "待结算", "-", "否", "否"]
+        ]
+      }
+    };
+
+    const buffSummary = [
+      { label: "当日 BUFF 触发次数", value: "3 次", foot: "Level 2 / 3 / 4 各触发一次" },
+      { label: "BUFF 累计时长", value: "90 分钟", foot: "当前仍剩余 18 分 42 秒" },
+      { label: "BUFF 期间礼物消耗", value: "$7,460", foot: "非 BUFF 时段对照为 $5,530" },
+      { label: "BUFF 期间 ARPPU", value: "$43.1", foot: "较非 BUFF 时段增长 19.4%" },
+      { label: "再次触发转化率", value: "41%", foot: "指 BUFF 后 30 分钟内再次达成龙蛋" }
+    ];
+
+    const trendSeries = [
+      { label: "18:40", buff: 42, base: 22 },
+      { label: "18:45", buff: 56, base: 26 },
+      { label: "18:50", buff: 63, base: 28 },
+      { label: "18:55", buff: 78, base: 35 },
+      { label: "19:00", buff: 94, base: 44 },
+      { label: "19:05", buff: 88, base: 39 },
+      { label: "19:10", buff: 76, base: 34 },
+      { label: "19:15", buff: 68, base: 31 }
+    ];
+
+    const buffSessions = [
+      {
+        id: "BUFF-401",
+        level: "Level 2",
+        time: "12:35 - 13:05",
+        rate: "x1.2",
+        coverage: 142,
+        spend: "$2,140",
+        growth: "+32.1%",
+        subtitle: "房间 880321 / 来自 Level 2 龙蛋达成 / 生效范围：全房间用户",
+        metrics: [
+          { label: "持续时长", value: "30 分钟" },
+          { label: "覆盖用户数", value: "142" },
+          { label: "礼物订单数", value: "398" },
+          { label: "财富值增量", value: "+2,568" }
+        ],
+        trend: [
+          { label: "00", value: 24 }, { label: "05", value: 38 }, { label: "10", value: 44 },
+          { label: "15", value: 52 }, { label: "20", value: 46 }, { label: "25", value: 36 }
+        ],
+        gifts: [
+          ["火箭", "46", "$980", "45.8%"],
+          ["嘉年华", "19", "$540", "25.2%"],
+          ["玫瑰雨", "88", "$330", "15.4%"],
+          ["其他", "245", "$290", "13.6%"]
+        ],
+        users: [
+          ["Layla", "是", "$380", "2,440", "核心竞争用户"],
+          ["Khaled", "是", "$350", "2,220", "核心竞争用户"],
+          ["Noura", "否", "$210", "-", "房主"],
+          ["Rayan", "是", "$198", "1,320", "冲榜用户"]
+        ]
+      },
+      {
+        id: "BUFF-402",
+        level: "Level 3",
+        time: "17:42 - 18:12",
+        rate: "x1.2",
+        coverage: 168,
+        spend: "$2,560",
+        growth: "+28.7%",
+        subtitle: "房间 880321 / 来自 Level 3 龙蛋达成 / 生效范围：全房间用户",
+        metrics: [
+          { label: "持续时长", value: "30 分钟" },
+          { label: "覆盖用户数", value: "168" },
+          { label: "礼物订单数", value: "446" },
+          { label: "财富值增量", value: "+3,072" }
+        ],
+        trend: [
+          { label: "00", value: 30 }, { label: "05", value: 41 }, { label: "10", value: 53 },
+          { label: "15", value: 58 }, { label: "20", value: 47 }, { label: "25", value: 39 }
+        ],
+        gifts: [
+          ["火箭", "51", "$1,080", "42.1%"],
+          ["嘉年华", "22", "$610", "23.8%"],
+          ["玫瑰雨", "95", "$430", "16.8%"],
+          ["其他", "278", "$440", "17.3%"]
+        ],
+        users: [
+          ["Rayan", "是", "$420", "2,960", "榜首用户"],
+          ["Mira", "是", "$360", "2,420", "冲榜用户"],
+          ["Layla", "是", "$312", "2,110", "冲榜用户"],
+          ["Noura", "否", "$180", "-", "房主"]
+        ]
+      },
+      {
+        id: "BUFF-403",
+        level: "Level 4",
+        time: "21:08 - 21:38",
+        rate: "x1.5",
+        coverage: 211,
+        spend: "$2,760",
+        growth: "+43.3%",
+        subtitle: "房间 880321 / 来自 Level 4 龙蛋达成 / 生效范围：全房间用户 / 当前生效中",
+        metrics: [
+          { label: "持续时长", value: "30 分钟" },
+          { label: "覆盖用户数", value: "211" },
+          { label: "礼物订单数", value: "508" },
+          { label: "财富值增量", value: "+4,140" }
+        ],
+        trend: [
+          { label: "00", value: 35 }, { label: "05", value: 49 }, { label: "10", value: 62 },
+          { label: "15", value: 76 }, { label: "20", value: 74 }, { label: "25", value: 58 }
+        ],
+        gifts: [
+          ["火箭", "64", "$1,240", "44.9%"],
+          ["嘉年华", "29", "$690", "25.0%"],
+          ["玫瑰雨", "112", "$470", "17.0%"],
+          ["其他", "303", "$360", "13.1%"]
+        ],
+        users: [
+          ["Mira", "是", "$520", "3,900", "榜首用户"],
+          ["Rayan", "是", "$460", "3,180", "榜二用户"],
+          ["Layla", "是", "$410", "2,860", "榜三用户"],
+          ["Noura", "否", "$200", "-", "房主"]
+        ]
+      }
+    ];
+
+    const configTableBody = document.querySelector("#config-table tbody");
+    const configMeta = document.querySelector("#config-meta");
+    const basicConfigCopy = document.querySelector("#basic-config-copy");
+    const buffConfigCopy = document.querySelector("#buff-config-copy");
+    const riskConfigCopy = document.querySelector("#risk-config-copy");
+    const configLevelGrid = document.querySelector("#config-level-grid");
+    const roomOverviewContainer = document.querySelector("#room-overview");
+    const dashboardLevelCards = document.querySelector("#dashboard-level-cards");
+    const levelTableBody = document.querySelector("#level-table tbody");
+    const buffSummaryContainer = document.querySelector("#buff-summary");
+    const trendBars = document.querySelector("#trend-bars");
+    const buffTableBody = document.querySelector("#buff-table tbody");
+
+    const rankingModal = document.querySelector("#ranking-modal");
+    const rankingTitle = document.querySelector("#ranking-title");
+    const rankingSubtitle = document.querySelector("#ranking-subtitle");
+    const rankingMetrics = document.querySelector("#ranking-metrics");
+    const rankingTableBody = document.querySelector("#ranking-table tbody");
+
+    const buffModal = document.querySelector("#buff-modal");
+    const buffTitle = document.querySelector("#buff-title");
+    const buffSubtitle = document.querySelector("#buff-subtitle");
+    const buffMetrics = document.querySelector("#buff-metrics");
+    const buffDetailTrend = document.querySelector("#buff-detail-trend");
+    const giftBreakdown = document.querySelector("#gift-breakdown tbody");
+    const buffUserTable = document.querySelector("#buff-user-table tbody");
+
+    let selectedConfigId = configData[0].id;
+
+    function statusChip(type, text) {
+      return `<span class="chip ${type}">${text}</span>`;
+    }
+
+    function renderConfigTable() {
+      configTableBody.innerHTML = configData.map((config) => `
+        <tr data-config-id="${config.id}" class="${config.id === selectedConfigId ? "is-selected" : ""}">
+          <td><strong>${config.id}</strong></td>
+          <td>${config.region}</td>
+          <td>${config.version}</td>
+          <td>${config.scope}</td>
+          <td>${config.status === "生效中" ? statusChip("ok", config.status) : statusChip("warn", config.status)}</td>
+          <td>${config.operator}</td>
+          <td>${config.updatedAt}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderConfigDetail() {
+      const config = configData.find((item) => item.id === selectedConfigId) || configData[0];
+      configMeta.innerHTML = config.meta.map((item) => `
+        <div class="meta-block">
+          <div class="meta-label">${item.label}</div>
+          <div class="meta-value">${item.value}</div>
+        </div>
+      `).join("");
+
+      basicConfigCopy.textContent = config.basicCopy;
+      buffConfigCopy.textContent = config.buffCopy;
+      riskConfigCopy.textContent = config.riskCopy;
+
+      configLevelGrid.innerHTML = config.levels.map((item) => `
+        <div class="level-panel">
+          <div class="level-name">${item.level}</div>
+          <div class="level-target">${item.target}</div>
+          <div class="level-note">达成积分门槛</div>
+          <div class="chip teal">${item.audience}</div>
+          <div class="level-note">${item.note}</div>
+          <div class="reward-list">
+            ${item.rewardSummary.map((reward) => `
+              <div class="reward-row">
+                <span>${reward[0]}</span>
+                <strong>${reward[1]}</strong>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderRoomOverview() {
+      roomOverviewContainer.innerHTML = roomOverview.map((item) => `
+        <div class="overview-card">
+          <div class="overview-heading">${item.label}</div>
+          <div class="overview-value">${item.value}</div>
+          <div class="overview-desc">${item.desc}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderLevelCards() {
+      dashboardLevelCards.innerHTML = levelSummary.map((item) => {
+        const percent = Math.min(100, Math.round((item.points / item.target) * 100));
+        const complete = item.status === "已完成";
+        return `
+          <div class="level-card ${complete ? "is-complete" : ""}" data-open-ranking="${item.level}">
+            <div class="level-status ${complete ? "complete" : "pending"}">${item.status}</div>
+            <div class="level-name">${item.level}</div>
+            <div class="level-target">${item.points.toLocaleString()}</div>
+            <div class="level-note">当前积分 / 目标 ${item.target.toLocaleString()}</div>
+            <div class="progress">
+              <div class="progress-fill" style="width:${percent}%"></div>
+            </div>
+            <div class="progress-meta">
+              <span>${percent}%</span>
+              <span>${item.reachedAt === "-" ? "待达成" : "达成 " + item.reachedAt}</span>
+            </div>
+            <div class="subtle">Top3 贡献头像</div>
+            <div class="avatars">
+              ${item.top3.map((name) => `<span class="avatar">${name}</span>`).join("")}
+            </div>
+            <div class="subtle" style="margin-top:auto;">参与人数 ${item.participants} · ${item.buff}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderLevelTable() {
+      levelTableBody.innerHTML = levelSummary.map((item) => `
+        <tr>
+          <td><strong>${item.level}</strong></td>
+          <td>${item.status === "已完成" ? statusChip("ok", item.status) : statusChip("warn", item.status)}</td>
+          <td>${item.reachedAt}</td>
+          <td>${item.points.toLocaleString()} / ${item.target.toLocaleString()}</td>
+          <td>${item.participants}</td>
+          <td>${item.top1} / ${item.top1Score.toLocaleString()}</td>
+          <td>${item.rewardStatus === "成功" ? statusChip("ok", item.rewardStatus) : item.rewardStatus === "部分失败" ? statusChip("warn", item.rewardStatus) : "-"}</td>
+          <td>${item.buff.includes("x") ? statusChip("teal", item.buff) : item.buff}</td>
+          <td>
+            <div class="table-actions">
+              <button class="button secondary" data-open-ranking="${item.level}">查看榜单</button>
+              ${item.buff.includes("x") ? `<button class="button ghost" data-open-buff="${item.level}">查看BUFF详情</button>` : ""}
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderBuffSummary() {
+      buffSummaryContainer.innerHTML = buffSummary.map((item) => `
+        <div class="metric-card">
+          <div class="subtle">${item.label}</div>
+          <strong>${item.value}</strong>
+          <div class="overview-desc">${item.foot}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderTrendBars() {
+      trendBars.innerHTML = trendSeries.map((item) => `
+        <div class="trend-bar-wrap">
+          <div class="trend-bar alt" style="height:${item.buff * 1.3}px"></div>
+          <div class="trend-bar" style="height:${item.base * 1.3}px"></div>
+          <div class="trend-label">${item.label}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderBuffTable() {
+      buffTableBody.innerHTML = buffSessions.map((item) => `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${item.level}</td>
+          <td>${item.time}</td>
+          <td>${statusChip("teal", item.rate)}</td>
+          <td>${item.coverage}</td>
+          <td>${item.spend}</td>
+          <td>${statusChip("ok", item.growth)}</td>
+          <td><button class="button secondary" data-open-buff-id="${item.id}">查看明细</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function openRankingModal(level) {
+      const data = rankingData[level];
+      rankingTitle.textContent = `${level} 贡献榜详情`;
+      rankingSubtitle.textContent = data.subtitle;
+      rankingMetrics.innerHTML = data.metrics.map((item) => `
+        <div class="overview-card">
+          <div class="overview-heading">${item.label}</div>
+          <div class="overview-value">${item.value}</div>
+        </div>
+      `).join("");
+      rankingTableBody.innerHTML = data.rows.map((row) => `
+        <tr>
+          <td>${row[0]}</td>
+          <td><strong>${row[1]}</strong></td>
+          <td>${row[2]}</td>
+          <td>${row[3]}</td>
+          <td>${row[4]}</td>
+          <td>${row[5] === "成功" ? statusChip("ok", row[5]) : row[5] === "-" ? "-" : statusChip("warn", row[5])}</td>
+          <td>${row[6]}</td>
+          <td>${row[7]}</td>
+        </tr>
+      `).join("");
+      rankingModal.classList.add("is-open");
+    }
+
+    function findBuffSessionByLevel(level) {
+      return buffSessions.find((item) => item.level === level) || buffSessions[0];
+    }
+
+    function openBuffModalById(id) {
+      const data = buffSessions.find((item) => item.id === id) || buffSessions[0];
+      buffTitle.textContent = `${data.id} · ${data.level} BUFF 明细`;
+      buffSubtitle.textContent = data.subtitle;
+      buffMetrics.innerHTML = data.metrics.map((item) => `
+        <div class="overview-card">
+          <div class="overview-heading">${item.label}</div>
+          <div class="overview-value">${item.value}</div>
+        </div>
+      `).join("");
+      buffDetailTrend.innerHTML = data.trend.map((item) => `
+        <div class="trend-bar-wrap">
+          <div class="trend-bar alt" style="height:${item.value * 2.2}px"></div>
+          <div class="trend-label">${item.label}m</div>
+        </div>
+      `).join("");
+      giftBreakdown.innerHTML = data.gifts.map((gift) => `
+        <tr>
+          <td>${gift[0]}</td>
+          <td>${gift[1]}</td>
+          <td>${gift[2]}</td>
+          <td>${gift[3]}</td>
+        </tr>
+      `).join("");
+      buffUserTable.innerHTML = data.users.map((user) => `
+        <tr>
+          <td><strong>${user[0]}</strong></td>
+          <td>${user[1]}</td>
+          <td>${user[2]}</td>
+          <td>${user[3]}</td>
+          <td>${user[4]}</td>
+        </tr>
+      `).join("");
+      buffModal.classList.add("is-open");
+    }
+
+    function bindEvents() {
+      document.querySelectorAll("[data-tab-target]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.getAttribute("data-tab-target");
+          document.querySelectorAll(".page").forEach((page) => {
+            page.classList.toggle("is-active", page.id === target);
+          });
+          document.querySelectorAll(".tab-button").forEach((tab) => {
+            tab.classList.toggle("is-active", tab.getAttribute("data-tab-target") === target);
+          });
+          document.querySelectorAll(".nav-item[data-tab-target]").forEach((nav) => {
+            nav.classList.toggle("is-active", nav.getAttribute("data-tab-target") === target);
+          });
+        });
+      });
+
+      configTableBody.addEventListener("click", (event) => {
+        const row = event.target.closest("tr[data-config-id]");
+        if (!row) return;
+        selectedConfigId = row.getAttribute("data-config-id");
+        renderConfigTable();
+        renderConfigDetail();
+      });
+
+      document.body.addEventListener("click", (event) => {
+        const rankingTrigger = event.target.closest("[data-open-ranking]");
+        if (rankingTrigger) {
+          openRankingModal(rankingTrigger.getAttribute("data-open-ranking"));
+          return;
+        }
+
+        const buffLevelTrigger = event.target.closest("[data-open-buff]");
+        if (buffLevelTrigger) {
+          const session = findBuffSessionByLevel(buffLevelTrigger.getAttribute("data-open-buff"));
+          openBuffModalById(session.id);
+          return;
+        }
+
+        const buffIdTrigger = event.target.closest("[data-open-buff-id]");
+        if (buffIdTrigger) {
+          openBuffModalById(buffIdTrigger.getAttribute("data-open-buff-id"));
+          return;
+        }
+
+        const closeTrigger = event.target.closest("[data-close-modal]");
+        if (closeTrigger) {
+          document.getElementById(closeTrigger.getAttribute("data-close-modal")).classList.remove("is-open");
+        }
+
+        if (event.target.classList.contains("modal")) {
+          event.target.classList.remove("is-open");
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          rankingModal.classList.remove("is-open");
+          buffModal.classList.remove("is-open");
+        }
+      });
+    }
+
+    function init() {
+      renderConfigTable();
+      renderConfigDetail();
+      renderRoomOverview();
+      renderLevelCards();
+      renderLevelTable();
+      renderBuffSummary();
+      renderTrendBars();
+      renderBuffTable();
+      bindEvents();
+    }
+
+    init();
+  </script>
+</body>
+</html>

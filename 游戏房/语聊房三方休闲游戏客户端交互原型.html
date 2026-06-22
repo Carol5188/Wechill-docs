@@ -1,0 +1,4421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语聊房三方休闲游戏客户端交互原型</title>
+  <style>
+    :root {
+      --app-bg: #f1f1f1;
+      --bg: #090604;
+      --bg-2: #130c07;
+      --panel: #1b110b;
+      --panel-2: #24160e;
+      --panel-3: #33251d;
+      --card: #3d342f;
+      --gold: #f3c35f;
+      --gold-2: #fff1b5;
+      --text: #fff8ec;
+      --muted: rgba(255, 248, 236, 0.66);
+      --dim: rgba(255, 255, 255, 0.44);
+      --line: rgba(255, 255, 255, 0.12);
+      --blue: #43caf6;
+      --green: #29d77b;
+      --pink: #ff62c7;
+      --red: #ff5b58;
+      --purple: #8a62ff;
+      --shadow: 0 18px 46px rgba(0, 0, 0, 0.36);
+      --phone-w: 390px;
+      --phone-h: 844px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(243, 195, 95, 0.18), transparent 34%),
+        linear-gradient(180deg, #fff, var(--app-bg));
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .prototype-shell {
+      width: min(100vw, 1180px);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr var(--phone-w) 1fr;
+      align-items: center;
+      gap: 32px;
+      padding: 24px;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(147, 93, 42, 0.54), transparent 34%),
+        linear-gradient(180deg, #1b120b 0%, #0d0704 42%, #080604 100%);
+      box-shadow:
+        0 0 0 9px #111,
+        0 0 0 10px rgba(255, 255, 255, 0.06),
+        var(--shadow);
+      isolation: isolate;
+      transform-origin: center;
+    }
+
+    .side-note {
+      align-self: center;
+      max-width: 300px;
+      color: #2b251f;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .side-note h1 {
+      margin: 0 0 10px;
+      color: #1a120b;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .side-note p {
+      margin: 0 0 12px;
+    }
+
+    .route-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .route-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #fff;
+      color: #2b251f;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-glow {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 250px;
+      background:
+        linear-gradient(180deg, rgba(9, 6, 4, 0), rgba(9, 6, 4, 0.92)),
+        radial-gradient(circle at 22% 32%, rgba(255, 222, 132, 0.42) 0 3%, transparent 4%),
+        radial-gradient(circle at 70% 20%, rgba(255, 215, 102, 0.36) 0 5%, transparent 6%),
+        linear-gradient(135deg, #694623, #27130b 50%, #080604);
+      opacity: 0.56;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .status {
+      height: 35px;
+      padding: 9px 20px 0;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(12, 7, 4, 0.94);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 35px 0 0;
+      display: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .topbar {
+      height: 58px;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: rgba(12, 7, 4, 0.95);
+    }
+
+    .tab-row {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .tab-button {
+      position: relative;
+      padding: 0 0 8px;
+      color: rgba(255, 232, 191, 0.8);
+      background: transparent;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .tab-button.active {
+      color: var(--gold);
+      font-weight: 900;
+      text-shadow: 0 3px 14px rgba(243, 195, 95, 0.36);
+    }
+
+    .tab-button.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 30px;
+      height: 3px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: var(--gold);
+    }
+
+    .icon-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .topbar.activity-mode .activity-hidden {
+      display: none;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 241, 181, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--gold-2);
+      font-size: 18px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .mini-avatar {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.82);
+      background:
+        radial-gradient(circle at 50% 38%, #f7dac4 0 24%, transparent 25%),
+        linear-gradient(135deg, #322337, #e6aa4d);
+    }
+
+    .content {
+      height: calc(100% - 58px);
+      padding: 10px 8px 90px;
+      position: relative;
+      z-index: 2;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .wallet-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin: 2px 2px 12px;
+    }
+
+    .wallet {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.86);
+      background:
+        radial-gradient(circle at 50% 40%, #f3d2be 0 24%, transparent 25%),
+        linear-gradient(135deg, #29324c, #f5ead7);
+    }
+
+    .coin {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffd84f;
+      color: #92610e;
+      font-size: 11px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.34);
+    }
+
+    .plus-mini,
+    .private-room .plus-mini {
+      width: 23px;
+      height: 23px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(243, 195, 95, 0.7);
+      background: rgba(243, 195, 95, 0.13);
+      color: var(--gold);
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .private-room {
+      height: 36px;
+      padding: 0 10px 0 13px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(243, 195, 95, 0.34);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--gold-2);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 13px;
+    }
+
+    .game-card {
+      min-width: 0;
+      height: 109px;
+      position: relative;
+      padding: 9px 7px;
+      overflow: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.26);
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.78), transparent 18%),
+        radial-gradient(circle at 24% 33%, rgba(255, 255, 255, 0.42), transparent 12%),
+        radial-gradient(circle at 76% 36%, rgba(255, 255, 255, 0.42), transparent 12%);
+      opacity: 0.34;
+    }
+
+    .game-card::after {
+      position: absolute;
+      left: 50%;
+      top: 25px;
+      transform: translateX(-50%);
+      font-size: 30px;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.28));
+    }
+
+    .game-card span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .g-8ball { background: linear-gradient(135deg, #4cc7ff, #7b85ff); }
+    .g-8ball::after { content: "🎱"; }
+    .g-uno { background: linear-gradient(135deg, #ff384f, #ff8c91); }
+    .g-uno::after { content: "🃏"; }
+    .g-bingo { background: linear-gradient(135deg, #f7c24c, #bf5cff); }
+    .g-bingo::after { content: "🔵"; }
+    .g-domino { background: linear-gradient(135deg, #45ddb8, #8ef0bd); }
+    .g-domino::after { content: "domino"; font-size: 22px; font-weight: 900; }
+    .g-slot { background: linear-gradient(135deg, #7c37ff, #6a31dd); }
+    .g-slot::after { content: "🎰"; }
+    .g-more { background: linear-gradient(135deg, #ffc75a, #ffe39d); }
+    .g-more::after { content: "🧩"; }
+    .g-ludo { background: linear-gradient(135deg, #28b3ff, #ffcf37 48%, #ff4b4b); }
+    .g-ludo::after { content: "🎲"; }
+    .g-snake { background: linear-gradient(135deg, #46c7ff, #25d08f); }
+    .g-snake::after { content: "🪜"; }
+
+    .hot-badge {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 4;
+      padding: 4px 8px;
+      border-radius: 0 10px 0 0;
+      background: #ff9920;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 7px 2px 8px;
+      color: var(--gold-2);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .section-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .country-filter {
+      margin: 0 2px 10px;
+      display: block;
+    }
+
+    .country-scroll {
+      width: 100%;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .country-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .country-chip {
+      flex: 0 0 auto;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 232, 191, 0.86);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .country-chip.active {
+      border-color: rgba(243, 195, 95, 0.7);
+      background: rgba(243, 195, 95, 0.16);
+      color: var(--gold);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .country-search-btn {
+      width: 38px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.34);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--gold-2);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .room-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .room-card {
+      min-height: 78px;
+      padding: 8px;
+      border-radius: 12px;
+      position: relative;
+      display: grid;
+      grid-template-columns: 70px 1fr 42px;
+      gap: 8px;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(82, 72, 66, 0.92), rgba(57, 49, 46, 0.92));
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    }
+
+    .room-card::after {
+      content: "🎮";
+      position: absolute;
+      top: 10px;
+      right: 13px;
+      z-index: 2;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 236, 174, 0.95), rgba(224, 126, 50, 0.95));
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+      font-size: 13px;
+    }
+
+    .room-cover {
+      height: 62px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 9px;
+      background:
+        radial-gradient(circle at 52% 44%, rgba(255, 233, 154, 0.78), transparent 24%),
+        linear-gradient(135deg, #17110d, #a77735);
+    }
+
+    .room-cover::after {
+      content: "Wechill";
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 13px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.42);
+    }
+
+    .room-cover.pink { background: linear-gradient(135deg, #181315, #b6465c); }
+    .room-cover.brown { background: linear-gradient(135deg, #19110a, #826039); }
+    .room-cover.gold { background: linear-gradient(135deg, #282017, #d39a5b); }
+
+    .room-name {
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .room-meta {
+      margin-top: 7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .country-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: rgba(255, 248, 236, 0.76);
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .wealth-tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 230, 143, 0.35);
+      background: linear-gradient(135deg, #6e4319, #f1bd54);
+      color: #fff5ca;
+      font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    .game-state {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(243, 195, 95, 0.18);
+      color: var(--gold-2);
+      font-weight: 900;
+    }
+
+    .game-state.waiting {
+      background: rgba(41, 215, 123, 0.18);
+      color: #9dffc8;
+    }
+
+    .game-state.playing {
+      background: rgba(67, 202, 246, 0.18);
+      color: #aeefff;
+    }
+
+    .game-state.ended {
+      background: rgba(255, 255, 255, 0.11);
+      color: rgba(255, 248, 236, 0.72);
+    }
+
+    .avatars {
+      display: flex;
+      margin-top: 7px;
+    }
+
+    .avatars i {
+      width: 20px;
+      height: 20px;
+      margin-right: -5px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd4ca, #5c342b);
+    }
+
+    .online {
+      align-self: end;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .event-card {
+      position: relative;
+      min-height: 96px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at 26% 44%, rgba(255, 255, 255, 0.18), transparent 18%),
+        linear-gradient(135deg, #271610, #b88635 55%, #2d1b10);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .event-card:nth-child(2) { background: linear-gradient(135deg, #3b2314, #c4974d 52%, #22120c); }
+    .event-card:nth-child(3) { background: linear-gradient(135deg, #f4d8a4, #a86f2d 52%, #19130f); }
+    .event-card:nth-child(4) { background: linear-gradient(135deg, #07090c, #1a1a18 52%, #8a4b25); }
+
+    .event-rank {
+      width: fit-content;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff6bd5, #fff1a8);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .event-title {
+      font-size: 16px;
+      font-weight: 900;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
+    }
+
+    .event-date {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 25;
+      width: 100%;
+      height: 77px;
+      padding: 8px 8px 7px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-radius: 18px 18px 0 0;
+      background:
+        linear-gradient(180deg, rgba(63, 42, 24, 0.96), rgba(24, 11, 5, 0.98)),
+        radial-gradient(circle at 20% 0%, rgba(244, 197, 99, 0.2), transparent 36%);
+      box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-item {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 5px;
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .nav-item .icon {
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .nav-item.active {
+      color: var(--gold);
+    }
+
+    .home-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 6px;
+      z-index: 28;
+      width: 150px;
+      height: 4px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .room-screen {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.46)),
+        radial-gradient(circle at 50% 44%, rgba(201, 151, 72, 0.35), transparent 34%),
+        linear-gradient(135deg, #211109, #8b652b 42%, #180c06);
+    }
+
+    .room-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(180deg, rgba(32, 18, 7, 0.2), rgba(4, 2, 1, 0.72)),
+        repeating-linear-gradient(90deg, rgba(255, 212, 122, 0.1) 0 1px, transparent 1px 38px),
+        radial-gradient(circle at 50% 36%, rgba(246, 202, 109, 0.32), transparent 27%);
+    }
+
+    .curtain {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 128px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 226, 141, 0.58), transparent 42%),
+        repeating-linear-gradient(95deg, #3c210d 0 13px, #c38c3b 14px 18px, #2a1609 19px 33px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+      opacity: 0.88;
+    }
+
+    .room-ui {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      padding: 8px 10px 84px;
+    }
+
+    .room-header {
+      height: 78px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .room-owner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .owner-pic {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #f3d06d;
+      background:
+        radial-gradient(circle at 50% 35%, #f3d4c7 0 24%, transparent 25%),
+        linear-gradient(135deg, #6d1625, #f5bd5d);
+    }
+
+    .room-title {
+      min-width: 0;
+      max-width: 155px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .room-id {
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .room-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .room-action {
+      min-width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.38);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .room-close-action {
+      font-size: 18px;
+      background: rgba(0, 0, 0, 0.48);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .room-exit-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 118;
+      display: none;
+      place-items: center;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.82)),
+        radial-gradient(circle at 50% 35%, rgba(243, 195, 95, 0.13), transparent 38%);
+      color: #fff;
+    }
+
+    .room-exit-mask.show {
+      display: grid;
+    }
+
+    .room-exit-panel {
+      width: 100%;
+      min-height: 470px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 58px;
+    }
+
+    .room-exit-choice {
+      display: grid;
+      justify-items: center;
+      gap: 13px;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 500;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.42);
+    }
+
+    .room-exit-icon {
+      width: 88px;
+      height: 88px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.72), transparent 30%),
+        linear-gradient(135deg, #fff0b9, #d4a34c 74%, #8b5c19);
+      color: #6e430d;
+      font-size: 45px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+    }
+
+    .room-exit-icon.minimize::before {
+      content: "↙";
+      position: absolute;
+      left: 23px;
+      top: 21px;
+      transform: rotate(2deg);
+      font-size: 34px;
+      font-weight: 1000;
+    }
+
+    .room-exit-icon.minimize::after {
+      content: "↗";
+      position: absolute;
+      right: 22px;
+      bottom: 20px;
+      font-size: 34px;
+      font-weight: 1000;
+    }
+
+    .room-exit-icon.exit {
+      font-size: 58px;
+      font-weight: 900;
+    }
+
+    .room-exit-plus {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      width: 68px;
+      height: 68px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff5a22;
+      color: #fff;
+      font-size: 38px;
+      font-weight: 400;
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .seat-ring {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 90px;
+      height: 230px;
+    }
+
+    .seat {
+      position: absolute;
+      width: 58px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .seat .pic {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 4px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 217, 120, 0.82);
+      background:
+        radial-gradient(circle at 50% 38%, #f1d0bc 0 23%, transparent 24%),
+        linear-gradient(135deg, #1c2f54, #e4a53d);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.34);
+    }
+
+    .seat.empty .pic {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .seat.s1 { left: 7px; top: 16px; }
+    .seat.s2 { left: 96px; top: 2px; }
+    .seat.s3 { left: 187px; top: 2px; }
+    .seat.s4 { right: 7px; top: 16px; }
+    .seat.s5 { left: 34px; top: 132px; }
+    .seat.s6 { right: 34px; top: 132px; }
+
+    .room-center {
+      position: absolute;
+      left: 50%;
+      top: 220px;
+      width: 154px;
+      height: 154px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255, 232, 158, 0.18), rgba(84, 42, 15, 0.36) 58%, rgba(0, 0, 0, 0.12));
+      border: 1px solid rgba(255, 228, 143, 0.22);
+    }
+
+    .room-center::after {
+      content: "Voice";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 236, 185, 0.5);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .room-chat {
+      position: absolute;
+      left: 12px;
+      right: 78px;
+      bottom: 162px;
+      display: grid;
+      gap: 8px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.35;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.52);
+    }
+
+    .chat-line {
+      max-width: 260px;
+      padding: 6px 8px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(6px);
+    }
+
+    .gift-float {
+      position: absolute;
+      right: 14px;
+      bottom: 146px;
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffb32d, #ff6048);
+      color: #fff;
+      font-size: 27px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+    }
+
+    .room-toolbar {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 84px;
+      height: 54px;
+      display: grid;
+      grid-template-columns: 36px 36px 1fr 36px 36px 36px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tool {
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.52);
+      color: #fff;
+      font-size: 17px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.26);
+    }
+
+    .tool.game {
+      position: relative;
+      background: linear-gradient(135deg, #7c31ff, #ff8a2b);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16), 0 8px 22px rgba(124, 49, 255, 0.38);
+    }
+
+    .tool.game::after {
+      content: "";
+      position: absolute;
+      right: -3px;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff4267;
+      border: 2px solid rgba(255, 255, 255, 0.82);
+    }
+
+    .chat-input {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.58);
+      background: rgba(0, 0, 0, 0.46);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .game-float {
+      position: absolute;
+      right: 14px;
+      bottom: 214px;
+      z-index: 8;
+      min-width: 118px;
+      min-height: 52px;
+      display: none;
+      grid-template-columns: 42px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 9px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 241, 181, 0.28);
+      background: rgba(20, 12, 7, 0.86);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(10px);
+    }
+
+    .game-float.show {
+      display: grid;
+    }
+
+    .game-float-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #28b3ff, #ffcf37 52%, #ff4b4b);
+      font-size: 20px;
+    }
+
+    .game-float-title {
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .game-float-sub {
+      margin-top: 3px;
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .party-minimized-screen {
+      padding: 0 12px 92px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(73, 45, 25, 0.34), rgba(21, 10, 5, 0.96) 34%),
+        radial-gradient(circle at 64% 8%, rgba(255, 215, 126, 0.26), transparent 26%),
+        #1a0d07;
+    }
+
+    .party-hero {
+      height: 182px;
+      margin: -2px -12px 10px;
+      padding: 18px 14px 0;
+      background:
+        linear-gradient(180deg, rgba(8, 4, 2, 0.28), rgba(22, 10, 5, 0.86)),
+        radial-gradient(circle at 74% 54%, rgba(249, 196, 95, 0.34), transparent 20%),
+        linear-gradient(135deg, #4b2d19, #18100b 58%, #110805);
+    }
+
+    .party-tabs {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 46px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .party-tabs .active {
+      position: relative;
+      color: var(--gold);
+      font-size: 28px;
+      font-weight: 1000;
+    }
+
+    .party-tabs .active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      width: 32px;
+      height: 4px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: var(--gold);
+    }
+
+    .party-top-actions {
+      position: absolute;
+      right: 16px;
+      top: 58px;
+      display: flex;
+      gap: 18px;
+      font-size: 28px;
+      color: var(--gold-2);
+    }
+
+    .party-banner {
+      height: 96px;
+      margin-top: 34px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 20% 48%, rgba(255, 255, 255, 0.78), transparent 15%),
+        linear-gradient(135deg, #123823, #c18b37 72%, #1b0e08);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .party-category-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .party-category {
+      height: 96px;
+      border-radius: 8px;
+      border: 1px solid rgba(243, 195, 95, 0.34);
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.72), transparent 24%),
+        linear-gradient(135deg, rgba(65, 41, 20, 0.96), rgba(21, 10, 6, 0.96));
+      color: #fff4da;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .party-category:nth-child(2) {
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.72), transparent 24%),
+        linear-gradient(135deg, rgba(19, 78, 35, 0.92), rgba(23, 12, 7, 0.96));
+    }
+
+    .party-category:nth-child(3) {
+      background:
+        radial-gradient(circle at 50% 54%, rgba(255, 230, 150, 0.62), transparent 24%),
+        linear-gradient(135deg, rgba(83, 23, 85, 0.92), rgba(23, 12, 7, 0.96));
+    }
+
+    .party-filter-row {
+      display: grid;
+      grid-template-columns: 92px 112px 1fr 42px;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 13px;
+    }
+
+    .party-filter {
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 195, 95, 0.72);
+      display: grid;
+      place-items: center;
+      color: var(--gold-2);
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .party-filter.muted {
+      border-color: transparent;
+      background: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .party-list-button {
+      width: 40px;
+      height: 40px;
+      justify-self: end;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #a5762e, #f2c96c);
+      color: #2b1606;
+      font-size: 22px;
+      font-weight: 1000;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .party-room-card {
+      width: 196px;
+      height: 174px;
+      position: relative;
+      padding: 112px 12px 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: block;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(17, 10, 6, 0.86)),
+        linear-gradient(135deg, #f9f0d9, #1d130b);
+      color: #fff;
+      text-align: left;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+    }
+
+    .party-room-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.86), transparent 18%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 60%);
+    }
+
+    .party-room-card b,
+    .party-room-card span {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .party-room-card b {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .party-room-card span {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .minimized-room-bubble {
+      position: absolute;
+      right: 28px;
+      top: 470px;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 5px solid rgba(255, 241, 181, 0.42);
+      background:
+        radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.86), transparent 26%),
+        linear-gradient(135deg, #5e4a2d, #d8ba6e);
+      color: #fff;
+      font-size: 28px;
+      box-shadow:
+        0 0 0 8px rgba(243, 195, 95, 0.1),
+        0 12px 26px rgba(0, 0, 0, 0.42);
+    }
+
+    .minimized-room-bubble.has-game::after {
+      content: "Ludo · Waiting";
+      position: absolute;
+      left: 50%;
+      top: 82px;
+      min-width: 96px;
+      padding: 4px 7px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .party-create {
+      position: absolute;
+      left: 50%;
+      bottom: 172px;
+      width: 72px;
+      height: 72px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ff5a22;
+      color: #fff;
+      font-size: 34px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .party-minimized-screen .bottom-nav {
+      background:
+        linear-gradient(180deg, rgba(37, 19, 8, 0.86), rgba(12, 6, 3, 0.98)),
+        radial-gradient(circle at 16% 0%, rgba(244, 197, 99, 0.2), transparent 36%);
+    }
+
+    .sheet-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: flex-end;
+      background: rgba(0, 0, 0, 0.58);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .sheet-mask.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-height: 646px;
+      padding: 18px 18px 24px;
+      border-radius: 20px 20px 0 0;
+      background:
+        radial-gradient(circle at 50% 13%, rgba(111, 61, 28, 0.42), transparent 46%),
+        rgba(24, 14, 8, 0.97);
+      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.4);
+      transform: translateY(104%);
+      transition: transform 220ms ease;
+    }
+
+    .sheet-mask.open .bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .country-search-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 66;
+      display: flex;
+      align-items: flex-end;
+      background: rgba(0, 0, 0, 0.58);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .country-search-mask.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .country-search-panel {
+      width: 100%;
+      max-height: 620px;
+      padding: 18px 18px 24px;
+      border-radius: 20px 20px 0 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(243, 195, 95, 0.22), transparent 42%),
+        rgba(24, 14, 8, 0.98);
+      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.4);
+      transform: translateY(104%);
+      transition: transform 220ms ease;
+    }
+
+    .country-search-mask.open .country-search-panel {
+      transform: translateY(0);
+    }
+
+    .country-search-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .country-search-title {
+      margin: 0;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .country-search-input {
+      height: 42px;
+      margin-bottom: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.09);
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .country-search-subtitle {
+      margin: 0 0 9px;
+      color: var(--gold-2);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .country-hot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .country-hot-grid button {
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .country-result-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .sheet-title {
+      margin: 0;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .sheet-close,
+    .help-btn {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.42);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .all-games-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 16px;
+      row-gap: 22px;
+    }
+
+    .all-game {
+      min-width: 0;
+      color: #fff;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+
+    .all-game-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 8px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 900;
+      text-shadow: 0 3px 9px rgba(0, 0, 0, 0.34);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .i1 { background: linear-gradient(135deg, #7c31ff, #ffca2e); }
+    .i2 { background: linear-gradient(135deg, #16264a, #f0a323); }
+    .i3 { background: linear-gradient(135deg, #9c1dff, #f93958); }
+    .i4 { background: linear-gradient(135deg, #78d9ff, #27c953); }
+    .i5 { background: linear-gradient(135deg, #a331ff, #ff2bc4); }
+    .i6 { background: linear-gradient(135deg, #5128ff, #ff9f23); }
+    .i7 { background: linear-gradient(135deg, #6c321f, #ffbc49); }
+    .i8 { background: linear-gradient(135deg, #3450ff, #8edaff); }
+    .i9 { background: linear-gradient(135deg, #7613c6, #d9b734); }
+    .i10 { background: linear-gradient(135deg, #fff0aa, #e94fff); }
+    .i11 { background: linear-gradient(135deg, #3956d8, #db783c); }
+    .i12 { background: linear-gradient(135deg, #593051, #37ba82); }
+
+    .room-game-tabs {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .room-game-tab {
+      position: relative;
+      padding: 0 0 10px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .room-game-tab.active {
+      color: var(--gold);
+    }
+
+    .room-game-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 34px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--gold);
+    }
+
+    .room-game-page {
+      display: none;
+    }
+
+    .room-game-page.active {
+      display: block;
+    }
+
+    .current-game-box {
+      display: none;
+      margin: 0 0 16px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(243, 195, 95, 0.26);
+      background: linear-gradient(135deg, rgba(243, 195, 95, 0.14), rgba(255, 255, 255, 0.05));
+    }
+
+    .current-game-box.show {
+      display: block;
+    }
+
+    .current-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .current-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px 12px;
+    }
+
+    .sheet-game {
+      min-width: 0;
+      color: #fff;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+
+    .sheet-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 7px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      font-size: 24px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
+    }
+
+    .activity-mini {
+      display: grid;
+      gap: 10px;
+    }
+
+    .activity-mini-card {
+      min-height: 74px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #28160c, #b98437 52%, #2d170c);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .emoji-cell {
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 24px;
+    }
+
+    .btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: linear-gradient(180deg, #ffe68c, #ffb727);
+      color: #8b4207;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(180deg, #efefef, #888);
+      color: #fff;
+    }
+
+    .btn.dark {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: none;
+    }
+
+    .btn.red {
+      background: linear-gradient(180deg, #ff8b5f, #e82d35);
+      color: #fff;
+    }
+
+    .setting-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      overflow: hidden;
+      background: #35c8db;
+    }
+
+    .setting-screen.show {
+      display: block;
+    }
+
+    .setting-screen.theme-ludo {
+      background:
+        linear-gradient(180deg, rgba(46, 215, 116, 0.18), rgba(38, 160, 231, 0.34)),
+        linear-gradient(135deg, #7de76f, #25b3f2);
+    }
+
+    .setting-screen.theme-uno {
+      background:
+        radial-gradient(circle at 70% 0%, rgba(255, 255, 255, 0.2), transparent 22%),
+        linear-gradient(180deg, #140b5f, #331493 45%, #f2a046);
+    }
+
+    .setting-screen.theme-snake {
+      background:
+        linear-gradient(180deg, rgba(43, 221, 172, 0.18), rgba(12, 78, 107, 0.48)),
+        linear-gradient(135deg, #77d5ff, #1687ad);
+    }
+
+    .setting-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.42;
+      background:
+        radial-gradient(circle at 22% 15%, rgba(255, 255, 255, 0.38), transparent 12%),
+        radial-gradient(circle at 72% 22%, rgba(255, 255, 255, 0.28), transparent 10%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px 44px);
+    }
+
+    .setting-top {
+      position: relative;
+      z-index: 2;
+      height: 116px;
+      padding: 14px 12px 0;
+    }
+
+    .setting-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    }
+
+    .setting-avatars {
+      margin-top: 16px;
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .setting-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.34);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+
+    .setting-panel {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      top: 190px;
+      z-index: 2;
+      min-height: 285px;
+      padding: 16px 18px 18px;
+      border-radius: 20px;
+      background: rgba(20, 74, 102, 0.72);
+      border: 4px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.26);
+      backdrop-filter: blur(5px);
+    }
+
+    .theme-uno .setting-panel {
+      background: rgba(48, 16, 139, 0.78);
+      border-color: rgba(123, 91, 244, 0.86);
+    }
+
+    .theme-snake .setting-panel {
+      top: 250px;
+      background: rgba(19, 88, 107, 0.62);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .game-logo {
+      margin: 2px auto 20px;
+      text-align: center;
+      color: #fff;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 5px 14px rgba(0, 0, 0, 0.36);
+    }
+
+    .theme-snake .game-logo {
+      margin-top: -72px;
+      margin-bottom: 76px;
+      font-size: 36px;
+      color: #ffe66e;
+    }
+
+    .coin-strip {
+      width: fit-content;
+      min-width: 108px;
+      height: 28px;
+      margin: -30px auto 14px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(20, 33, 64, 0.8);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .coin-strip small {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .setting-row {
+      min-height: 46px;
+      margin-bottom: 12px;
+      padding: 0 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.22);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .setting-row.segmented {
+      gap: 8px;
+      padding: 7px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .segment {
+      flex: 1;
+      min-height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .segment.active {
+      background: linear-gradient(180deg, #61d3ff, #257dff);
+    }
+
+    .round-ctl {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #6bd841, #108c28);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
+    }
+
+    .round-ctl.minus {
+      background: linear-gradient(180deg, #eee, #858585);
+      color: #3a3a3a;
+    }
+
+    .seat-dots {
+      display: flex;
+      justify-content: center;
+      gap: 17px;
+      margin: 18px 0 24px;
+    }
+
+    .seat-dot {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.38);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .setting-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+      margin-top: 8px;
+    }
+
+    .setting-chat {
+      position: absolute;
+      left: 15px;
+      right: 15px;
+      bottom: 42px;
+      z-index: 2;
+      display: grid;
+      gap: 10px;
+    }
+
+    .notice {
+      min-height: 42px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.24);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 10px;
+      line-height: 1.4;
+      font-weight: 800;
+    }
+
+    .chat-send {
+      display: grid;
+      grid-template-columns: 34px 1fr 54px;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .chat-send input {
+      min-width: 0;
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 12px;
+      color: rgba(255, 255, 255, 0.72);
+      background: rgba(0, 30, 70, 0.34);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .send-btn {
+      height: 32px;
+      border-radius: 999px;
+      background: rgba(0, 52, 102, 0.42);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .exchange-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 96;
+      display: none;
+      overflow: hidden;
+      background: #f5f5f7;
+      color: #151515;
+    }
+
+    .exchange-screen.show {
+      display: block;
+    }
+
+    .exchange-status {
+      height: 40px;
+      padding: 8px 34px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #0f0f13;
+      font-size: 13px;
+      font-weight: 900;
+      background: #fff;
+    }
+
+    .exchange-nav {
+      height: 56px;
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .exchange-back,
+    .exchange-record {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #101014;
+      font-size: 24px;
+      font-weight: 800;
+      background: transparent;
+    }
+
+    .exchange-record {
+      border-radius: 10px;
+      border: 2px solid #151515;
+      font-size: 16px;
+      color: #79c23a;
+    }
+
+    .exchange-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      color: #9a9aa3;
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .exchange-tabs span.active {
+      color: #111;
+    }
+
+    .exchange-body {
+      padding: 18px 12px 26px;
+    }
+
+    .exchange-hero {
+      position: relative;
+      min-height: 112px;
+      padding: 22px 24px;
+      overflow: hidden;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 84% 30%, #fff27f 0 22%, transparent 23%),
+        linear-gradient(135deg, #19c94e, #a8fa4b);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(34, 198, 82, 0.22);
+    }
+
+    .exchange-hero span {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .exchange-hero strong {
+      display: block;
+      margin-top: 20px;
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: 0;
+    }
+
+    .exchange-hero .controller {
+      position: absolute;
+      right: 22px;
+      top: 24px;
+      font-size: 64px;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.18));
+      transform: rotate(-12deg);
+    }
+
+    .exchange-card {
+      margin-top: 18px;
+      padding: 22px 18px 20px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.04);
+    }
+
+    .exchange-card h3 {
+      margin: 0 0 22px;
+      color: #17171a;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .exchange-card label {
+      display: block;
+      margin-bottom: 12px;
+      color: #1f1f23;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .exchange-input {
+      width: 100%;
+      height: 48px;
+      margin-bottom: 12px;
+      border: 0;
+      border-radius: 12px;
+      padding: 0 16px;
+      background: #f1f1f4;
+      color: #111;
+      font-size: 17px;
+      font-weight: 850;
+      outline: none;
+    }
+
+    .exchange-input::placeholder {
+      color: #c7c7cc;
+    }
+
+    .exchange-quick {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .exchange-quick button {
+      height: 34px;
+      border-radius: 999px;
+      background: #eef8ed;
+      color: #1b9d46;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .exchange-meta {
+      display: grid;
+      gap: 10px;
+      color: #262629;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .exchange-meta b {
+      color: #ff8b1d;
+      font-weight: 900;
+    }
+
+    .exchange-warning {
+      margin: 14px 0 20px;
+      color: #ff4b52;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 850;
+    }
+
+    .exchange-submit {
+      width: 100%;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffb23f, #ff7f19);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .exchange-submit:disabled {
+      background: #d7d7d7;
+      color: #fff;
+    }
+
+    .insufficient-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 126;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.42);
+    }
+
+    .insufficient-mask.show {
+      display: grid;
+    }
+
+    .insufficient-card {
+      width: 100%;
+      max-width: 326px;
+      padding: 24px 20px 18px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255, 190, 77, 0.3), transparent 42%),
+        rgba(22, 16, 12, 0.98);
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+    }
+
+    .insufficient-card h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      font-weight: 1000;
+    }
+
+    .insufficient-card p {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .insufficient-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .confirm-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 128;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.46);
+    }
+
+    .confirm-mask.show {
+      display: grid;
+    }
+
+    .confirm-card {
+      width: 100%;
+      max-width: 326px;
+      padding: 23px 20px 18px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% -8%, rgba(243, 195, 95, 0.3), transparent 44%),
+        rgba(23, 15, 10, 0.98);
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+    }
+
+    .confirm-card h3 {
+      margin: 0 0 9px;
+      font-size: 21px;
+      font-weight: 1000;
+    }
+
+    .confirm-card p {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .h5-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      overflow: hidden;
+      background: #0b0503;
+    }
+
+    .h5-screen.show {
+      display: block;
+    }
+
+    .h5-game {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #2be37c, #25a7ee);
+    }
+
+    .h5-game.uno {
+      background:
+        radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.32), transparent 9%),
+        linear-gradient(180deg, #65daf8, #29a1ed 64%, #164e96);
+    }
+
+    .h5-game.ludo {
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(0, 0, 0, 0.14) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(0, 0, 0, 0.14) 50%, transparent 51%),
+        conic-gradient(from 45deg, #f3403a, #f3403a 25%, #ffd239 0 50%, #27b969 0 75%, #2d8fff 0);
+    }
+
+    .h5-game.ball {
+      background:
+        radial-gradient(circle at 50% 46%, #e6be8d 0 27%, transparent 28%),
+        radial-gradient(circle at 50% 46%, rgba(0, 0, 0, 0.16) 0 35%, transparent 36%),
+        linear-gradient(180deg, #6b1a12, #160906);
+    }
+
+    .h5-game.snake {
+      background:
+        repeating-linear-gradient(90deg, transparent 0 38px, rgba(255, 255, 255, 0.15) 39px 43px),
+        linear-gradient(180deg, #8bd9fc, #1d8fad 54%, #064058);
+    }
+
+    .h5-top {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 5;
+      height: 134px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.46), transparent);
+    }
+
+    .h5-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .h5-room {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.46);
+    }
+
+    .h5-mini-pic {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      background:
+        radial-gradient(circle at 50% 38%, #f3d2be 0 24%, transparent 25%),
+        linear-gradient(135deg, #29324c, #f5ead7);
+    }
+
+    .h5-actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .h5-seats {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .h5-seat {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+    }
+
+    .h5-seat.on {
+      background:
+        radial-gradient(circle at 50% 38%, #f4d4c0 0 23%, transparent 24%),
+        linear-gradient(135deg, #214d65, #f7bd43);
+    }
+
+    .game-board {
+      position: absolute;
+      left: 35px;
+      right: 35px;
+      top: 190px;
+      z-index: 2;
+      height: 330px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
+    }
+
+    .h5-game.uno .game-board {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.78), transparent 12%),
+        linear-gradient(135deg, #ff322d, #ff322d 25%, #f8d731 0 50%, #2da7ff 0 75%, #31c368 0);
+      transform: rotate(-10deg);
+      height: 210px;
+      top: 290px;
+      left: 72px;
+      right: 72px;
+      border-radius: 24px;
+    }
+
+    .h5-game.ludo .game-board {
+      background:
+        linear-gradient(90deg, transparent 48%, rgba(255, 255, 255, 0.96) 48% 52%, transparent 52%),
+        linear-gradient(0deg, transparent 48%, rgba(255, 255, 255, 0.96) 48% 52%, transparent 52%),
+        conic-gradient(from 45deg, #f44336, #f44336 25%, #ffdc38 0 50%, #2fbe5f 0 75%, #2189ff 0);
+      border: 10px solid rgba(255, 255, 255, 0.72);
+      top: 182px;
+      height: 360px;
+    }
+
+    .h5-game.ball .game-board {
+      border-radius: 10px;
+      border: 14px solid #8a3e1e;
+      background:
+        radial-gradient(circle at 50% 50%, #111 0 5px, transparent 6px),
+        radial-gradient(circle at 44% 48%, #fff 0 8px, transparent 9px),
+        radial-gradient(circle at 54% 52%, #161616 0 8px, transparent 9px),
+        radial-gradient(circle at 58% 45%, #c23 0 8px, transparent 9px),
+        linear-gradient(135deg, #e8bd88, #d89b55);
+      top: 170px;
+      height: 380px;
+      left: 18px;
+      right: 18px;
+    }
+
+    .h5-game.snake .game-board {
+      top: 138px;
+      height: 450px;
+      left: 24px;
+      right: 24px;
+      border-radius: 16px;
+      background:
+        linear-gradient(90deg, transparent 0 46%, rgba(214, 147, 31, 0.9) 47% 52%, transparent 53%),
+        repeating-linear-gradient(0deg, rgba(103, 143, 59, 0.8) 0 28px, transparent 29px 64px),
+        linear-gradient(180deg, rgba(108, 206, 106, 0.48), rgba(28, 88, 112, 0.62));
+      border: 0;
+      box-shadow: none;
+    }
+
+    .player-card {
+      position: absolute;
+      z-index: 4;
+      min-width: 72px;
+      padding: 6px 8px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.38);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .player-card .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 38%, #f4d4c0 0 24%, transparent 25%),
+        linear-gradient(135deg, #214d65, #f7bd43);
+    }
+
+    .player-card.p1 { left: 18px; top: 288px; }
+    .player-card.p2 { right: 18px; top: 230px; }
+    .player-card.p3 { right: 28px; top: 430px; }
+
+    .h5-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      min-height: 112px;
+      padding: 10px 13px 42px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.66), transparent);
+    }
+
+    .h5-notice {
+      min-height: 38px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.26);
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .h5-input {
+      margin-top: 9px;
+      display: grid;
+      grid-template-columns: 34px 1fr 50px;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .h5-input span,
+    .h5-input button {
+      height: 32px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.44);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .h5-input .placeholder {
+      justify-content: start;
+      padding: 0 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .h5-game {
+      background-image: url("../outputs/game-prototype-assets/ludo-game.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .h5-game.uno {
+      background-image: url("../outputs/game-prototype-assets/uno-game.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .h5-game.ludo {
+      background-image: url("../outputs/game-prototype-assets/ludo-game.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .h5-game.ball {
+      background-image: url("../outputs/game-prototype-assets/8ball-game.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .h5-game.snake {
+      background-image: url("../outputs/game-prototype-assets/snake-game.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .h5-game .game-board,
+    .h5-game .player-card,
+    .h5-room,
+    .h5-seats,
+    .h5-bottom {
+      display: none;
+    }
+
+    .h5-top {
+      height: 72px;
+      padding: 11px 12px;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .h5-headline {
+      justify-content: flex-end;
+    }
+
+    .h5-actions {
+      pointer-events: auto;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .game-room-chrome {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+    }
+
+    .game-room-header {
+      position: absolute;
+      left: 18px;
+      top: clamp(44px, 8.2%, 68px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .game-room-avatar {
+      width: 42px;
+      height: 42px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      border: 2px solid rgba(255, 255, 255, 0.82);
+      background:
+        radial-gradient(circle at 50% 38%, #ffd8c6 0 21%, transparent 22%),
+        radial-gradient(circle at 50% 28%, #f3403b 0 31%, transparent 32%),
+        linear-gradient(135deg, #941c28, #ffcf5c);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
+      font-size: 22px;
+    }
+
+    .game-room-avatar::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.86);
+      background: #29d77b;
+    }
+
+    .game-room-title {
+      max-width: 126px;
+      line-height: 1.2;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .game-room-title b,
+    .game-room-title span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .game-room-title span {
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .game-room-bookmark {
+      position: absolute;
+      left: 174px;
+      top: clamp(50px, 9%, 76px);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      border: 2px solid rgba(255, 255, 255, 0.82);
+      background: linear-gradient(180deg, #fff7ad, #f1c537);
+      color: #23160a;
+      font-size: 20px;
+      font-weight: 900;
+      pointer-events: auto;
+      box-shadow: 0 7px 18px rgba(0, 0, 0, 0.34);
+    }
+
+    .game-room-bookmark::before {
+      content: "▣";
+    }
+
+    .game-room-header,
+    .game-room-bookmark,
+    .game-side-banner {
+      display: none !important;
+    }
+
+    .game-side-banner {
+      position: absolute;
+      right: 10px;
+      bottom: clamp(92px, 12.5%, 116px);
+      width: clamp(56px, 16.7%, 68px);
+      aspect-ratio: 0.54;
+      padding: 8px 5px 7px;
+      display: grid;
+      align-content: end;
+      justify-items: center;
+      gap: 4px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.82);
+      background:
+        radial-gradient(circle at 52% 18%, rgba(255, 255, 255, 0.92) 0 13%, transparent 14%),
+        radial-gradient(circle at 30% 38%, rgba(255, 230, 150, 0.88) 0 14%, transparent 15%),
+        linear-gradient(180deg, rgba(26, 44, 52, 0.68), rgba(166, 80, 27, 0.92)),
+        linear-gradient(135deg, #593a1b, #e8b85c);
+      color: #fff;
+      pointer-events: auto;
+      overflow: hidden;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
+    }
+
+    .game-side-banner::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      right: 9px;
+      bottom: 18px;
+      height: 34px;
+      border-radius: 50% 50% 44% 44%;
+      background:
+        radial-gradient(circle at 50% 36%, #fff9d1 0 16%, transparent 17%),
+        linear-gradient(180deg, #ffd86b, #ff8f2e);
+      box-shadow: 0 0 18px rgba(255, 218, 94, 0.55);
+    }
+
+    .game-side-banner b,
+    .game-side-banner span {
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .game-side-banner b {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .game-side-banner span {
+      padding: 3px 4px;
+      border-radius: 999px;
+      background: rgba(165, 32, 22, 0.82);
+      font-size: 7px;
+      font-weight: 900;
+    }
+
+    .game-tools {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 19px;
+      min-height: 62px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 6px;
+      align-items: center;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 210, 108, 0.24), transparent 40%),
+        rgba(0, 0, 0, 0.72);
+      pointer-events: auto;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.38);
+    }
+
+    .game-tool-btn {
+      position: relative;
+      width: min(40px, 100%);
+      aspect-ratio: 1;
+      justify-self: center;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff8ec;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 241, 181, 0.18), transparent 54%),
+        rgba(255, 255, 255, 0.08);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 6px 14px rgba(0, 0, 0, 0.32);
+      font-size: clamp(15px, 5vw, 20px);
+    }
+
+    .game-tool-btn.is-muted::after {
+      content: "";
+      position: absolute;
+      width: 27px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 248, 236, 0.92);
+      transform: rotate(-42deg);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
+    }
+
+    .game-tool-btn.is-game {
+      background:
+        radial-gradient(circle at 50% 38%, #fff0ad 0 14%, transparent 15%),
+        linear-gradient(135deg, #7c35ff, #ff5ec6);
+      color: #fff;
+      font-size: clamp(18px, 5vw, 23px);
+    }
+
+    .game-tool-btn.is-gift {
+      background: linear-gradient(135deg, #2b72ff, #3dd8ff);
+      color: #fff;
+      font-size: clamp(18px, 5vw, 23px);
+    }
+
+    .game-tool-badge {
+      position: absolute;
+      right: -5px;
+      top: -7px;
+      min-width: 20px;
+      height: 18px;
+      padding: 0 5px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #ff4261;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.34);
+    }
+
+    .game-home-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 7px;
+      width: 138px;
+      height: 4px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .loading-overlay,
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 110;
+      display: none;
+      place-items: center;
+      background: rgba(5, 3, 2, 0.28);
+      backdrop-filter: none;
+    }
+
+    .loading-overlay.show,
+    .result-overlay.show {
+      display: grid;
+    }
+
+    .loading-card,
+    .result-card {
+      width: 300px;
+      padding: 24px 20px;
+      border-radius: 22px;
+      border: 1px solid rgba(243, 195, 95, 0.22);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(243, 195, 95, 0.26), transparent 40%),
+        rgba(26, 16, 9, 0.96);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+      text-align: center;
+    }
+
+    .loading-card h3,
+    .result-card h3 {
+      margin: 0 0 12px;
+      color: #fff;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .loading-card p,
+    .result-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress span {
+      display: block;
+      width: 76%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f3c35f, #fff1b5);
+      animation: loadbar 1400ms ease-in-out infinite alternate;
+    }
+
+    @keyframes loadbar {
+      from { width: 28%; }
+      to { width: 92%; }
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .stat-card b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 108px;
+      z-index: 130;
+      min-width: 210px;
+      max-width: 310px;
+      padding: 11px 14px;
+      transform: translateX(-50%) translateY(20px);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.78);
+      color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        display: block;
+        background: #111;
+      }
+
+      .prototype-shell {
+        width: 100vw;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        place-items: center;
+        padding: 0;
+      }
+
+      .side-note {
+        display: none;
+      }
+
+      .phone {
+        width: min(100vw, var(--phone-w));
+        height: min(100vh, var(--phone-h));
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+
+    @media (min-width: 861px) and (max-height: 820px) {
+      .phone {
+        transform: scale(0.82);
+      }
+    }
+
+    @media (min-width: 861px) and (max-height: 700px) {
+      .phone {
+        transform: scale(0.74);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="prototype-shell">
+    <aside class="side-note">
+      <h1>语聊房内三方休闲游戏</h1>
+      <p>黑金 Discover、Activity、房间内半屏面板、游戏设置和全屏游戏容器已串成一条可点击链路。</p>
+      <div class="route-pills">
+        <span class="route-pill">Discover</span>
+        <span class="route-pill">More Games</span>
+        <span class="route-pill">Voice Room</span>
+        <span class="route-pill">Game Sheet</span>
+        <span class="route-pill">Game Setting</span>
+        <span class="route-pill">H5 Fullscreen</span>
+      </div>
+    </aside>
+
+    <main class="phone" id="phone">
+      <div class="hero-glow"></div>
+      <div class="status">
+        <span>5:25</span>
+        <span>171 KB/s · Wi-Fi · 95</span>
+      </div>
+
+      <section class="screen active" id="discoverScreen">
+        <header class="topbar" id="discoverTopbar">
+          <div class="tab-row" role="tablist">
+            <button class="tab-button active" type="button" data-discover-tab="games">Games</button>
+            <button class="tab-button" type="button" data-discover-tab="activity">Activity</button>
+          </div>
+          <div class="icon-actions">
+            <button class="icon-btn activity-hidden" type="button" data-toast="Game tasks will open in V1.1">🎁</button>
+            <span class="mini-avatar activity-hidden"></span>
+            <button class="icon-btn" type="button" data-toast="Search room ID / user ID">⌕</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="page active" id="discoverGames">
+            <div class="wallet-line">
+              <div class="wallet">
+                <span class="user-avatar"></span>
+                <span class="coin">●</span>
+                <span id="walletValue">1466</span>
+                <button class="plus-mini" type="button" data-open-exchange>+</button>
+              </div>
+              <button class="private-room" type="button" data-private-room>
+                <span>Private room</span>
+                <span class="plus-mini">+</span>
+              </button>
+            </div>
+
+            <div class="games-grid">
+              <button class="game-card g-8ball" type="button" data-recommend-game="8 Ball"><span>8 Ball</span></button>
+              <button class="game-card g-uno" type="button" data-recommend-game="UNO"><span>UNO</span></button>
+              <button class="game-card g-bingo" type="button" data-recommend-game="Bingo"><span>Bingo</span></button>
+              <button class="game-card g-domino" type="button" data-recommend-game="Domino"><span>Domino 50</span></button>
+              <button class="game-card g-slot" type="button" data-toast="Slots require compliance review"><span>Golden Slot<br>Machine</span><b class="hot-badge">Hot</b></button>
+              <button class="game-card g-more" type="button" data-open-sheet="moreGames"><span>More Games</span></button>
+            </div>
+
+            <div class="section-title">
+              <span>Game Rooms</span>
+              <button class="country-search-btn" type="button" data-open-country-search>⌕</button>
+            </div>
+
+            <div class="country-filter" aria-label="Country filter">
+              <div class="country-scroll">
+                <button class="country-chip active" type="button" data-country="全部">全部</button>
+                <button class="country-chip" type="button" data-country="沙特">🇸🇦 沙特</button>
+                <button class="country-chip" type="button" data-country="叙利亚">🇸🇾 叙利亚</button>
+                <button class="country-chip" type="button" data-country="土耳其">🇹🇷 土耳其</button>
+                <button class="country-chip" type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+                <button class="country-chip" type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+                <button class="country-chip" type="button" data-country="埃及">🇪🇬 埃及</button>
+                <button class="country-chip" type="button" data-country="也门">🇾🇪 也门</button>
+              </div>
+            </div>
+
+            <div class="room-list">
+              <button class="room-card" type="button" data-open-room data-room-mode="waiting">
+                <span class="room-cover"></span>
+                <span>
+                  <span class="room-name">ترحيب مستخدمين الجدد والدا</span>
+                  <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.18</span><span class="game-state waiting">Ludo · Waiting</span></span>
+                  <span class="avatars"><i></i><i></i><i></i></span>
+                </span>
+                <span class="online">818 ▮</span>
+              </button>
+
+              <button class="room-card" type="button" data-open-room data-room-mode="playing">
+                <span class="room-cover pink"></span>
+                <span>
+                  <span class="room-name">GAME OVER</span>
+                  <span class="room-meta"><span class="country-label">🇦🇪 阿联酋</span><span class="wealth-tag">财富 Lv.22</span><span class="game-state playing">UNO · Playing</span></span>
+                  <span class="avatars"><i></i><i></i><i></i><i></i></span>
+                </span>
+                <span class="online">3167 ▮</span>
+              </button>
+
+              <button class="room-card" type="button" data-open-room data-room-mode="ended">
+                <span class="room-cover brown"></span>
+                <span>
+                  <span class="room-name">وكاله آزلزالTop1</span>
+                  <span class="room-meta"><span class="country-label">🇮🇶 伊拉克</span><span class="wealth-tag">财富 Lv.15</span><span class="game-state ended">8 Ball · Ended</span></span>
+                  <span class="avatars"><i></i><i></i><i></i><i></i><i></i></span>
+                </span>
+                <span class="online">2686 ▮</span>
+              </button>
+
+              <button class="room-card" type="button" data-open-room>
+                <span class="room-cover gold"></span>
+                <span>
+                  <span class="room-name">√enüs مملكة</span>
+                  <span class="room-meta"><span class="country-label">🇱🇧 黎巴嫩</span><span class="wealth-tag">财富 Lv.27</span><span class="game-state waiting">Domino · Waiting</span></span>
+                  <span class="avatars"><i></i><i></i><i></i><i></i></span>
+                </span>
+                <span class="online">3376 ▮</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="page" id="discoverActivity">
+            <div class="section-title">
+              <span>Hot Events</span>
+              <small>Sorted by count</small>
+            </div>
+            <div class="activity-list">
+              <button class="event-card" type="button" data-toast="Activity detail opened">
+                <span class="event-rank">NEW · 01</span>
+                <span class="event-title">2026 وكالات العالم HAWA</span>
+                <span class="event-date">2026/01/01 - 2027/01/01</span>
+              </button>
+              <button class="event-card" type="button" data-toast="Joined event room">
+                <span class="event-rank">NEW · 02</span>
+                <span class="event-title">2026 تحدي قلاع الوكالات</span>
+                <span class="event-date">2026/05/01 05:00 - 2027/02/01 05:00</span>
+              </button>
+              <button class="event-card" type="button" data-toast="Activity detail opened">
+                <span class="event-rank">03</span>
+                <span class="event-title">hawa MISS</span>
+                <span class="event-date">2026/01/01 - 2026/12/31</span>
+              </button>
+              <button class="event-card" type="button" data-toast="Long-term banner opened">
+                <span class="event-rank">04</span>
+                <span class="event-title">الأيدي الديناميكي بجائزة جديدة</span>
+                <span class="event-date">Long-term activity banner</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <nav class="bottom-nav" aria-label="Bottom navigation">
+          <a class="nav-item" href="#" data-open-party><span class="icon">🏰</span>Party</a>
+          <a class="nav-item active" href="#"><span class="icon">🧭</span>Discover</a>
+          <a class="nav-item" href="#" data-toast="Community opened"><span class="icon">🌴</span>Community</a>
+          <a class="nav-item" href="#" data-toast="Messages opened"><span class="icon">✉️</span>Messages</a>
+          <a class="nav-item" href="#" data-toast="Mine opened"><span class="icon">🦁</span>Mine</a>
+        </nav>
+
+      </section>
+
+      <section class="screen party-minimized-screen" id="partyMinimizedScreen">
+        <div class="party-hero">
+          <div class="party-tabs">
+            <span>Mine</span>
+            <span class="active">Party</span>
+          </div>
+          <div class="party-top-actions">
+            <button class="icon-btn" type="button" data-open-discover-from-minimized>⌕</button>
+            <button class="icon-btn" type="button" data-toast="Room dress-up opened">🕌</button>
+          </div>
+          <div class="party-banner"></div>
+        </div>
+
+        <div class="party-category-row">
+          <button class="party-category" type="button" data-toast="Wealth rooms opened">Wealth</button>
+          <button class="party-category" type="button" data-toast="Charm rooms opened">Charm</button>
+          <button class="party-category" type="button" data-toast="Room ranking opened">Room</button>
+        </div>
+
+        <div class="party-filter-row">
+          <button class="party-filter" type="button">Hot</button>
+          <button class="party-filter muted" type="button">Latest</button>
+          <span></span>
+          <button class="party-list-button" type="button" data-open-discover-from-minimized>▦</button>
+        </div>
+
+        <button class="party-room-card" type="button" data-restore-minimized-room>
+          <b>u15728</b>
+          <span>当前语聊房 · 点击恢复</span>
+        </button>
+
+        <button class="minimized-room-bubble has-game" type="button" data-restore-minimized-room>🏛</button>
+        <button class="party-create" type="button" data-private-room>+</button>
+
+        <nav class="bottom-nav" aria-label="Bottom navigation">
+          <a class="nav-item active" href="#"><span class="icon">🏰</span>Party</a>
+          <a class="nav-item" href="#" data-open-discover-from-minimized><span class="icon">🧭</span>Discover</a>
+          <a class="nav-item" href="#" data-toast="Community opened"><span class="icon">🌴</span>Community</a>
+          <a class="nav-item" href="#" data-toast="Messages opened"><span class="icon">✉️</span>Messages</a>
+          <a class="nav-item" href="#" data-toast="Mine opened"><span class="icon">🦁</span>Mine</a>
+        </nav>
+      </section>
+
+      <section class="screen room-screen" id="roomScreen">
+        <div class="room-bg"></div>
+        <div class="curtain"></div>
+        <div class="room-ui">
+          <div class="room-header">
+            <div class="room-owner">
+              <span class="owner-pic"></span>
+              <span class="room-title">嗨嗨摸鱼局<br><span class="room-id">ID 1020304</span></span>
+            </div>
+            <div class="room-actions">
+              <span class="room-action">25</span>
+              <button class="room-action room-close-action" type="button" data-open-room-exit>×</button>
+            </div>
+          </div>
+
+          <div class="seat-ring">
+            <div class="seat s1"><div class="pic"></div><span>مها</span></div>
+            <div class="seat s2"><div class="pic"></div><span>Ahmed</span></div>
+            <div class="seat s3 empty"><div class="pic"></div><span>Empty</span></div>
+            <div class="seat s4"><div class="pic"></div><span>Noor</span></div>
+            <div class="seat s5"><div class="pic"></div><span>Ali</span></div>
+            <div class="seat s6 empty"><div class="pic"></div><span>Empty</span></div>
+          </div>
+
+          <div class="room-center"></div>
+
+          <div class="game-float" id="roomGameFloat">
+            <span class="game-float-icon" id="floatIcon">🎲</span>
+            <span>
+              <span class="game-float-title" id="floatTitle">Ludo · Playing</span>
+              <span class="game-float-sub" id="floatSub">Open · 4/4</span>
+            </span>
+          </div>
+
+          <div class="room-chat">
+            <div class="chat-line">欢迎来到房间，一起开一局吧。</div>
+            <div class="chat-line">系统：游戏入口已开启，房主可以选择 Ludo / UNO。</div>
+          </div>
+
+          <div class="gift-float">🎁</div>
+
+          <div class="room-toolbar">
+            <button class="tool" type="button" data-toast="Mic toggled">🎙</button>
+            <button class="tool" type="button" data-toast="Speaker toggled">🔊</button>
+            <div class="chat-input">Say something</div>
+            <button class="tool" type="button" data-toast="Emoji sent">☺</button>
+            <button class="tool game" type="button" data-open-sheet="roomGames">🎮</button>
+            <button class="tool" type="button" data-toast="More tools">▦</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="home-indicator"></div>
+
+      <div class="sheet-mask" id="moreGamesSheet" aria-hidden="true">
+        <section class="bottom-sheet" role="dialog" aria-label="More Games">
+          <div class="sheet-head">
+            <h2 class="sheet-title">Game</h2>
+          </div>
+          <div class="all-games-grid">
+            <button class="all-game" type="button" data-toast="Jackpot requires compliance review"><span class="all-game-icon i1">🍒</span>Jackpot</button>
+            <button class="all-game" type="button" data-recommend-game="Dragon Tiger"><span class="all-game-icon i2">🐉</span>Dragon Tiger</button>
+            <button class="all-game" type="button" data-recommend-game="CrazyFruit"><span class="all-game-icon i3">🍉</span>CrazyFruit</button>
+            <button class="all-game" type="button" data-recommend-game="ShootGoal"><span class="all-game-icon i4">⚽</span>ShootGoal</button>
+            <button class="all-game" type="button" data-recommend-game="UnderOrOver"><span class="all-game-icon i5">🎲</span>UnderOrOver</button>
+            <button class="all-game" type="button" data-toast="Slot777 is hidden for review accounts"><span class="all-game-icon i6">777</span>Slot777</button>
+            <button class="all-game" type="button" data-recommend-game="Captains Bounty"><span class="all-game-icon i7">🏴‍☠️</span>Captains Bounty</button>
+            <button class="all-game" type="button" data-recommend-game="Teen Patti"><span class="all-game-icon i8">🃏</span>Teen Patti</button>
+            <button class="all-game" type="button" data-recommend-game="Lucky77"><span class="all-game-icon i9">💍</span>Lucky77</button>
+            <button class="all-game" type="button" data-recommend-game="GreedyCatKing"><span class="all-game-icon i10">🍰</span>GreedyCatKing</button>
+            <button class="all-game" type="button" data-recommend-game="LampOfInfinity"><span class="all-game-icon i11">🧞</span>LampOfInfinity</button>
+            <button class="all-game" type="button" data-recommend-game="Wise Kingdoms"><span class="all-game-icon i12">👸</span>Wise Kingdoms</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="country-search-mask" id="countrySearchMask" aria-hidden="true">
+        <section class="country-search-panel" role="dialog" aria-label="国家搜索">
+          <div class="country-search-head">
+            <h2 class="country-search-title">国家搜索</h2>
+            <button class="sheet-close" type="button" id="closeCountrySearch">×</button>
+          </div>
+          <div class="country-search-input">⌕ 搜索国家 / 房间 ID / 房间名称</div>
+          <h3 class="country-search-subtitle">热门国家</h3>
+          <div class="country-hot-grid">
+            <button type="button" data-country="全部">全部</button>
+            <button type="button" data-country="沙特">🇸🇦 沙特</button>
+            <button type="button" data-country="叙利亚">🇸🇾 叙利亚</button>
+            <button type="button" data-country="土耳其">🇹🇷 土耳其</button>
+            <button type="button" data-country="阿联酋">🇦🇪 阿联酋</button>
+            <button type="button" data-country="伊拉克">🇮🇶 伊拉克</button>
+            <button type="button" data-country="埃及">🇪🇬 埃及</button>
+            <button type="button" data-country="也门">🇾🇪 也门</button>
+          </div>
+          <h3 class="country-search-subtitle">示例搜索结果 · 沙特</h3>
+          <div class="country-result-list">
+            <button class="room-card" type="button" data-open-room data-room-mode="waiting">
+              <span class="room-cover gold"></span>
+              <span>
+                <span class="room-name">Saudi Ludo Room</span>
+                <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.19</span><span class="game-state waiting">Ludo · Waiting</span></span>
+                <span class="avatars"><i></i><i></i><i></i></span>
+              </span>
+              <span class="online">818 ▮</span>
+            </button>
+            <button class="room-card" type="button" data-open-room data-room-mode="playing">
+              <span class="room-cover pink"></span>
+              <span>
+                <span class="room-name">Riyadh UNO Night</span>
+                <span class="room-meta"><span class="country-label">🇸🇦 沙特</span><span class="wealth-tag">财富 Lv.31</span><span class="game-state playing">UNO · Playing</span></span>
+                <span class="avatars"><i></i><i></i><i></i><i></i></span>
+              </span>
+              <span class="online">1466 ▮</span>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div class="sheet-mask" id="roomGamesSheet" aria-hidden="true">
+        <section class="bottom-sheet" role="dialog" aria-label="Room Games">
+          <div class="sheet-head">
+            <h2 class="sheet-title">Games</h2>
+            <button class="sheet-close" type="button" data-close-sheets>×</button>
+          </div>
+
+          <div class="room-game-tabs">
+            <button class="room-game-tab active" type="button" data-room-tab="casual">休闲游戏</button>
+            <button class="room-game-tab" type="button" data-room-tab="events">游戏</button>
+            <button class="room-game-tab" type="button" data-room-tab="emoji">动态表情</button>
+          </div>
+
+          <div class="current-game-box" id="currentGameBox">
+            <div class="current-title">
+              <span id="currentGameTitle">Current Game · Ludo</span>
+              <span id="currentGameState">Waiting</span>
+            </div>
+            <div class="current-actions">
+              <button class="btn" type="button" id="joinCurrentGame">Join</button>
+              <button class="btn dark" type="button" id="openCurrentGame">Open</button>
+            </div>
+          </div>
+
+          <div class="room-game-page active" id="roomTabCasual">
+            <div class="sheet-grid">
+              <button class="sheet-game" type="button" data-open-setting="Black Jack"><span class="sheet-icon i8">🃏</span>Black Jack</button>
+              <button class="sheet-game" type="button" data-open-setting="Ludo"><span class="sheet-icon g-ludo">🎲</span>Ludo</button>
+              <button class="sheet-game" type="button" data-open-setting="Rocket"><span class="sheet-icon i11">🚀</span>Rocket</button>
+              <button class="sheet-game" type="button" data-open-setting="UNO"><span class="sheet-icon g-uno">🃏</span>UNO</button>
+              <button class="sheet-game" type="button" data-open-setting="Domino"><span class="sheet-icon g-domino">◼</span>Domino</button>
+              <button class="sheet-game" type="button" data-open-setting="8 Ball"><span class="sheet-icon g-8ball">🎱</span>8 Ball</button>
+              <button class="sheet-game" type="button" data-open-setting="Snake & Ladder"><span class="sheet-icon g-snake">🪜</span>Snake</button>
+              <button class="sheet-game" type="button" data-open-setting="Carrom"><span class="sheet-icon i2">◎</span>Carrom</button>
+              <button class="sheet-game" type="button" data-open-setting="Bingo"><span class="sheet-icon g-bingo">🔵</span>Bingo</button>
+              <button class="sheet-game" type="button" data-open-setting="Draw Guess"><span class="sheet-icon i3">🎨</span>Draw</button>
+              <button class="sheet-game" type="button" data-toast="More games loaded"><span class="sheet-icon i12">＋</span>More</button>
+              <button class="sheet-game" type="button" data-toast="Game rules opened"><span class="sheet-icon i5">?</span>Help</button>
+            </div>
+          </div>
+
+          <div class="room-game-page" id="roomTabEvents">
+            <div class="activity-mini">
+              <button class="activity-mini-card" type="button" data-toast="Joined 2026 HAWA activity">2026 HAWA<br><span>Play 3 rounds to unlock rewards</span></button>
+              <button class="activity-mini-card" type="button" data-toast="Domino weekly event opened">Domino Weekly<br><span>Free ticket every day</span></button>
+              <button class="activity-mini-card" type="button" data-toast="Room challenge opened">Room Challenge<br><span>Top rooms win gift packs</span></button>
+            </div>
+          </div>
+
+          <div class="room-game-page" id="roomTabEmoji">
+            <div class="emoji-grid">
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🎉</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🔥</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">💎</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">👏</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🤣</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🏆</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🪙</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">💘</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">⚡</button>
+              <button class="emoji-cell" type="button" data-toast="Emoji sent">🌟</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="sheet-mask" id="privateGamesSheet" aria-hidden="true">
+        <section class="bottom-sheet" role="dialog" aria-label="Private Room Games">
+          <div class="sheet-head">
+            <h2 class="sheet-title">Games</h2>
+            <button class="sheet-close" type="button" data-close-sheets>×</button>
+          </div>
+          <div class="room-game-tabs">
+            <button class="room-game-tab active" type="button">休闲游戏</button>
+          </div>
+          <div class="sheet-grid">
+            <button class="sheet-game" type="button" data-private-game="Black Jack"><span class="sheet-icon i8">🃏</span>Black Jack</button>
+            <button class="sheet-game" type="button" data-private-game="Ludo"><span class="sheet-icon g-ludo">🎲</span>Ludo</button>
+            <button class="sheet-game" type="button" data-private-game="Rocket"><span class="sheet-icon i11">🚀</span>Rocket</button>
+            <button class="sheet-game" type="button" data-private-game="UNO"><span class="sheet-icon g-uno">🃏</span>UNO</button>
+            <button class="sheet-game" type="button" data-private-game="Domino"><span class="sheet-icon g-domino">◼</span>Domino</button>
+            <button class="sheet-game" type="button" data-private-game="8 Ball"><span class="sheet-icon g-8ball">🎱</span>8 Ball</button>
+            <button class="sheet-game" type="button" data-private-game="Snake & Ladder"><span class="sheet-icon g-snake">🪜</span>Snake</button>
+            <button class="sheet-game" type="button" data-private-game="Carrom"><span class="sheet-icon i2">◎</span>Carrom</button>
+            <button class="sheet-game" type="button" data-private-game="Bingo"><span class="sheet-icon g-bingo">🔵</span>Bingo</button>
+            <button class="sheet-game" type="button" data-private-game="Draw Guess"><span class="sheet-icon i3">🎨</span>Draw</button>
+            <button class="sheet-game" type="button" data-toast="More games loaded"><span class="sheet-icon i12">＋</span>More</button>
+            <button class="sheet-game" type="button" data-toast="Game rules opened"><span class="sheet-icon i5">?</span>Help</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="setting-screen theme-ludo" id="settingScreen" aria-hidden="true">
+        <div class="setting-bg"></div>
+        <div class="setting-top">
+          <div class="setting-brand">😈 BIGBOSS 😈 <span style="opacity:.72;">ID:1002063</span></div>
+          <div class="setting-avatars">
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+            <span class="setting-avatar"></span>
+          </div>
+        </div>
+
+        <div class="setting-panel">
+          <button class="coin-strip" type="button" id="settingCoinEntry"><span class="coin">●</span><span id="settingCoinBalance">300</span><small>Game coins</small></button>
+          <div class="game-logo" id="settingGameLogo">Ludo</div>
+          <div class="setting-row segmented" id="playersRow">
+            <button class="segment active" type="button" data-players="1 V 1">1 V 1</button>
+            <button class="segment" type="button" data-players="4 Player">4 Player</button>
+          </div>
+          <div class="setting-row">
+            <button class="round-ctl minus" type="button" id="ticketMinus">−</button>
+            <span id="ticketValue">Free</span>
+            <button class="round-ctl" type="button" id="ticketPlus">+</button>
+          </div>
+          <div class="setting-row" id="magicRow"><span>✅ 🎲 Magic</span><span style="opacity:.72;">?</span></div>
+          <div class="seat-dots">
+            <button class="seat-dot" type="button">+</button>
+            <button class="seat-dot" type="button">+</button>
+            <button class="seat-dot" type="button">+</button>
+            <button class="seat-dot" type="button">+</button>
+          </div>
+          <div class="setting-actions">
+            <button class="btn red" type="button" id="quitSetting">Quit Game</button>
+            <button class="btn secondary" type="button" id="startGame">Start</button>
+          </div>
+        </div>
+
+        <div class="setting-chat">
+          <div class="notice">直接在当前语聊房调起游戏，语音、礼物、聊天保留。游戏内门票、下注、结算统一使用游戏币。</div>
+          <div class="chat-send">
+            <span class="tool">🎙</span>
+            <input value="Say something" readonly>
+            <button class="send-btn" type="button">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="exchange-screen" id="exchangeScreen" aria-hidden="true">
+        <div class="exchange-status">
+          <span>20:33</span>
+          <span>•••• Wi-Fi 100</span>
+        </div>
+        <header class="exchange-nav">
+          <button class="exchange-back" type="button" id="exchangeBack">‹</button>
+          <div class="exchange-tabs" aria-label="Wallet tabs">
+            <span>Gold coins</span>
+            <span>Diamonds</span>
+            <span class="active">Game coins</span>
+          </div>
+          <button class="exchange-record" type="button" data-toast="兑换记录">▤</button>
+        </header>
+        <div class="exchange-body">
+          <div class="exchange-hero">
+            <span>我的游戏币余额</span>
+            <strong id="exchangeGameBalance">300</strong>
+            <i class="controller">🎮</i>
+          </div>
+          <section class="exchange-card" aria-label="兑换游戏币">
+            <h3>兑换游戏币</h3>
+            <label for="exchangeInput">输入兑换的游戏币数量</label>
+            <input class="exchange-input" id="exchangeInput" inputmode="numeric" placeholder="请输入">
+            <div class="exchange-quick">
+              <button type="button" data-exchange-amount="200">+200</button>
+              <button type="button" data-exchange-amount="500">+500</button>
+              <button type="button" data-exchange-amount="1000">+1000</button>
+            </div>
+            <div class="exchange-meta">
+              <span>我的金币余额：<b id="exchangeGoldBalance">384397340</b></span>
+              <span>扣除金币数量：<b id="exchangeGoldCost">0</b></span>
+              <span>兑换比例：100金币 = 1000游戏币</span>
+            </div>
+            <p class="exchange-warning">注意：游戏币仅供游戏内使用，不得提现及兑换金币</p>
+            <button class="exchange-submit" type="button" id="exchangeSubmit" disabled>立即兑换</button>
+          </section>
+        </div>
+      </section>
+
+      <div class="insufficient-mask" id="insufficientMask" aria-hidden="true">
+        <section class="insufficient-card" role="dialog" aria-label="游戏币不足">
+          <h3>游戏币不足</h3>
+          <p id="insufficientText">当前游戏币不足以开始本局，请先兑换游戏币。</p>
+          <div class="insufficient-actions">
+            <button class="btn dark" type="button" id="insufficientCancel">取消</button>
+            <button class="btn" type="button" id="insufficientExchange">去兑换</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="confirm-mask" id="confirmMask" aria-hidden="true">
+        <section class="confirm-card" role="dialog" aria-label="确认离开当前房间">
+          <h3>确认离开当前房间么？</h3>
+          <p id="confirmText">离开后将退出当前语聊房，并按当前游戏状态处理。</p>
+          <div class="confirm-actions">
+            <button class="btn dark" type="button" id="confirmCancel">取消</button>
+            <button class="btn" type="button" id="confirmOk">确认离开</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="room-exit-mask" id="roomExitMask" aria-hidden="true">
+        <div class="room-exit-panel" role="dialog" aria-label="房间关闭操作">
+          <button class="room-exit-choice" type="button" data-room-exit-minimize>
+            <span class="room-exit-icon minimize"></span>
+            <span>Minimize</span>
+          </button>
+          <button class="room-exit-choice" type="button" data-room-exit-leave>
+            <span class="room-exit-icon exit">⏻</span>
+            <span>Exit room</span>
+          </button>
+          <button class="room-exit-plus" type="button" data-toast="Invite friends">+</button>
+        </div>
+      </div>
+
+      <section class="h5-screen" id="h5Screen" aria-hidden="true">
+        <div class="h5-game ludo" id="h5GameArt">
+          <div class="game-board"></div>
+          <div class="player-card p1"><span class="avatar"></span><span>You</span></div>
+          <div class="player-card p2"><span class="avatar"></span><span>Noor</span></div>
+          <div class="player-card p3"><span class="avatar"></span><span>Ali</span></div>
+        </div>
+        <div class="h5-top">
+          <div class="h5-headline">
+            <div class="h5-room">
+              <span class="h5-mini-pic"></span>
+              <span>嗨嗨摸鱼局<br><span style="opacity:.72;">ID 1020304</span></span>
+            </div>
+            <div class="h5-actions">
+              <button class="room-action" type="button" id="minimizeGame">—</button>
+              <button class="room-action" type="button" id="finishGame">✓</button>
+              <button class="room-action" type="button" id="closeGame">×</button>
+            </div>
+          </div>
+          <div class="h5-seats">
+            <span class="h5-seat on"></span>
+            <span class="h5-seat on"></span>
+            <span class="h5-seat"></span>
+            <span class="h5-seat"></span>
+            <span class="h5-seat"></span>
+            <span class="h5-seat"></span>
+            <span class="h5-seat"></span>
+          </div>
+        </div>
+        <div class="game-room-chrome" aria-label="语聊房常驻入口">
+          <button class="game-room-header" type="button" data-room-tool="room">
+            <span class="game-room-avatar">🎭</span>
+            <span class="game-room-title">
+              <b>房间名称房间...</b>
+              <span>777.6k ID:1234567</span>
+            </span>
+          </button>
+          <button class="game-room-bookmark" type="button" aria-label="房间收藏" data-room-tool="bookmark"></button>
+          <button class="game-side-banner" type="button" data-room-tool="banner">
+            <b>Navigation<br>Plan</b>
+            <span>Voice Chat</span>
+          </button>
+          <div class="game-tools" role="toolbar" aria-label="语聊房工具栏">
+            <button class="game-tool-btn" type="button" data-room-tool="chat" aria-label="公屏聊天">💬</button>
+            <button class="game-tool-btn is-muted" type="button" data-room-tool="speaker" aria-label="扬声器">🔊</button>
+            <button class="game-tool-btn is-muted" type="button" data-room-tool="mic" aria-label="麦克风">🎙</button>
+            <button class="game-tool-btn" type="button" data-room-tool="emoji" aria-label="表情">☺</button>
+            <button class="game-tool-btn" type="button" data-room-tool="message" aria-label="消息">
+              💬
+              <span class="game-tool-badge">78</span>
+            </button>
+            <button class="game-tool-btn is-game" type="button" data-room-tool="game" data-open-sheet="roomGames" aria-label="游戏入口">🎮</button>
+            <button class="game-tool-btn is-gift" type="button" data-room-tool="gift" aria-label="礼物">🎁</button>
+            <button class="game-tool-btn" type="button" data-room-tool="menu" aria-label="更多">▦</button>
+          </div>
+          <div class="game-home-indicator"></div>
+        </div>
+        <div class="h5-bottom">
+          <div class="h5-notice">语音大厅公聊、欢迎语、礼物、低保、魅力、财富等级内容保持可用。</div>
+          <div class="h5-input">
+            <span>🎙</span>
+            <span class="placeholder">Say something</span>
+            <button type="button">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-card">
+          <h3 id="loadingTitle">Loading Ludo</h3>
+          <p id="loadingSubtitle">getConfig 已返回，等待 gameLoaded 回调。</p>
+          <div class="progress"><span></span></div>
+        </div>
+      </div>
+
+      <div class="result-overlay" id="resultOverlay">
+        <div class="result-card">
+          <h3 id="resultTitle">Ludo game ended</h3>
+          <p>Winner: Ahmed · Reward: 1,200 Game coins</p>
+          <div class="result-stats">
+            <span class="stat-card"><b>+1200</b>Reward</span>
+            <span class="stat-card"><b>4/4</b>Players</span>
+          </div>
+          <div class="setting-actions">
+            <button class="btn" type="button" id="playAgain">Play Again</button>
+            <button class="btn dark" type="button" id="backToRoom">Room</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </main>
+
+    <aside class="side-note">
+      <h1>可交互节点</h1>
+      <p>点击推荐游戏会先进入 Matching；点击 Private room 会进入自己的房间并立即弹出休闲游戏选择；语聊房最小化后从 Party 页再进游戏列表会先确认离开。</p>
+    </aside>
+  </div>
+
+  <script>
+    const state = {
+      activeGame: null,
+      hasCurrentGame: false,
+      ticketIndex: 0,
+      tickets: ["Free", "100", "500", "10.0B"],
+      gameMode: "waiting",
+      roomPresence: "none",
+      roomMinimized: false,
+      roomReturnScreen: "discoverScreen",
+      entrySource: null,
+      privateWaitingCreated: false,
+      readyToStart: false,
+      gameCoins: 300,
+      goldCoins: 384397340,
+      exchangeRateGold: 100,
+      exchangeRateGame: 1000,
+      exchangeRequired: 0,
+      pendingStartAfterExchange: false
+    };
+
+    const gameMeta = {
+      "Ludo": { theme: "theme-ludo", logo: "Ludo", art: "ludo", icon: "🎲" },
+      "UNO": { theme: "theme-uno", logo: "UNO", art: "uno", icon: "🃏" },
+      "Domino": { theme: "theme-ludo", logo: "Domino", art: "ludo", icon: "◼" },
+      "8 Ball": { theme: "theme-uno", logo: "8 Ball", art: "ball", icon: "🎱" },
+      "Snake & Ladder": { theme: "theme-snake", logo: "Snake & Ladder", art: "snake", icon: "🪜" },
+      "Carrom": { theme: "theme-uno", logo: "Carrom", art: "ball", icon: "◎" },
+      "Black Jack": { theme: "theme-ludo", logo: "Black Jack", art: "uno", icon: "🃏" },
+      "Rocket": { theme: "theme-uno", logo: "Rocket", art: "uno", icon: "🚀" },
+      "Bingo": { theme: "theme-ludo", logo: "Bingo", art: "ludo", icon: "🔵" },
+      "Draw Guess": { theme: "theme-snake", logo: "Draw Guess", art: "snake", icon: "🎨" }
+    };
+
+    const screens = document.querySelectorAll(".screen");
+    const toast = document.querySelector("#toast");
+    const discoverTabs = document.querySelectorAll("[data-discover-tab]");
+    const discoverTopbar = document.querySelector("#discoverTopbar");
+    const discoverGames = document.querySelector("#discoverGames");
+    const discoverActivity = document.querySelector("#discoverActivity");
+    const moreGamesSheet = document.querySelector("#moreGamesSheet");
+    const roomGamesSheet = document.querySelector("#roomGamesSheet");
+    const privateGamesSheet = document.querySelector("#privateGamesSheet");
+    const countrySearchMask = document.querySelector("#countrySearchMask");
+    const settingScreen = document.querySelector("#settingScreen");
+    const phone = document.querySelector("#phone");
+    const h5Screen = document.querySelector("#h5Screen");
+    const h5GameArt = document.querySelector("#h5GameArt");
+    const loadingOverlay = document.querySelector("#loadingOverlay");
+    const resultOverlay = document.querySelector("#resultOverlay");
+    const settingGameLogo = document.querySelector("#settingGameLogo");
+    const loadingTitle = document.querySelector("#loadingTitle");
+    const loadingSubtitle = document.querySelector("#loadingSubtitle");
+    const resultTitle = document.querySelector("#resultTitle");
+    const ticketValue = document.querySelector("#ticketValue");
+    const currentGameBox = document.querySelector("#currentGameBox");
+    const currentGameTitle = document.querySelector("#currentGameTitle");
+    const currentGameState = document.querySelector("#currentGameState");
+    const roomGameFloat = document.querySelector("#roomGameFloat");
+    const floatTitle = document.querySelector("#floatTitle");
+    const floatSub = document.querySelector("#floatSub");
+    const floatIcon = document.querySelector("#floatIcon");
+    const discoverMinimizedEntry = document.querySelector("#discoverMinimizedEntry");
+    const discoverMinimizedTitle = document.querySelector("#discoverMinimizedTitle");
+    const discoverMinimizedSub = document.querySelector("#discoverMinimizedSub");
+    const walletValue = document.querySelector("#walletValue");
+    const settingCoinBalance = document.querySelector("#settingCoinBalance");
+    const exchangeScreen = document.querySelector("#exchangeScreen");
+    const exchangeInput = document.querySelector("#exchangeInput");
+    const exchangeGameBalance = document.querySelector("#exchangeGameBalance");
+    const exchangeGoldBalance = document.querySelector("#exchangeGoldBalance");
+    const exchangeGoldCost = document.querySelector("#exchangeGoldCost");
+    const exchangeSubmit = document.querySelector("#exchangeSubmit");
+    const insufficientMask = document.querySelector("#insufficientMask");
+    const insufficientText = document.querySelector("#insufficientText");
+    const confirmMask = document.querySelector("#confirmMask");
+    const confirmText = document.querySelector("#confirmText");
+    const confirmCancel = document.querySelector("#confirmCancel");
+    const confirmOk = document.querySelector("#confirmOk");
+    const roomExitMask = document.querySelector("#roomExitMask");
+    let pendingConfirmAction = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1700);
+    }
+
+    function formatAmount(value) {
+      if (value >= 1000000000) return (value / 1000000000).toFixed(1) + "B";
+      return Number(value).toLocaleString("en-US");
+    }
+
+    function parseTicketAmount(value) {
+      if (!value || value === "Free") return 0;
+      if (value.includes("B")) return Math.round(Number.parseFloat(value) * 1000000000);
+      return Number(value.replace(/[^\d]/g, "")) || 0;
+    }
+
+    function updateCurrencyUI() {
+      if (walletValue) walletValue.textContent = formatAmount(state.gameCoins);
+      if (settingCoinBalance) settingCoinBalance.textContent = formatAmount(state.gameCoins);
+      if (exchangeGameBalance) exchangeGameBalance.textContent = formatAmount(state.gameCoins);
+      if (exchangeGoldBalance) exchangeGoldBalance.textContent = formatAmount(state.goldCoins);
+      updateExchangePreview();
+    }
+
+    function closeInsufficient() {
+      insufficientMask.classList.remove("show");
+      insufficientMask.setAttribute("aria-hidden", "true");
+    }
+
+    function openInsufficient(required) {
+      const lack = Math.max(required - state.gameCoins, 0);
+      state.exchangeRequired = required;
+      insufficientText.textContent = "本局门票需要 " + formatAmount(required) + " 游戏币，当前余额 " + formatAmount(state.gameCoins) + "，还差 " + formatAmount(lack) + "。";
+      insufficientMask.classList.add("show");
+      insufficientMask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeExchange() {
+      exchangeScreen.classList.remove("show");
+      exchangeScreen.setAttribute("aria-hidden", "true");
+    }
+
+    function closeCountrySearch() {
+      countrySearchMask.classList.remove("open");
+      countrySearchMask.setAttribute("aria-hidden", "true");
+    }
+
+    function openCountrySearch() {
+      closeSheets();
+      countrySearchMask.classList.add("open");
+      countrySearchMask.setAttribute("aria-hidden", "false");
+    }
+
+    function openExchange(required) {
+      closeInsufficient();
+      state.exchangeRequired = required || 0;
+      const lack = Math.max(state.exchangeRequired - state.gameCoins, 0);
+      exchangeInput.value = lack ? String(Math.ceil(lack / 100) * 100) : "";
+      exchangeScreen.classList.add("show");
+      exchangeScreen.setAttribute("aria-hidden", "false");
+      updateCurrencyUI();
+    }
+
+    function updateExchangePreview() {
+      if (!exchangeInput || !exchangeGoldCost || !exchangeSubmit) return;
+      const amount = Number(exchangeInput.value.replace(/[^\d]/g, "")) || 0;
+      const goldCost = amount ? Math.ceil(amount * state.exchangeRateGold / state.exchangeRateGame) : 0;
+      const valid = amount > 0 && goldCost <= state.goldCoins;
+      exchangeGoldCost.textContent = formatAmount(goldCost);
+      exchangeSubmit.disabled = !valid;
+    }
+
+    function submitExchange() {
+      const amount = Number(exchangeInput.value.replace(/[^\d]/g, "")) || 0;
+      const goldCost = amount ? Math.ceil(amount * state.exchangeRateGold / state.exchangeRateGame) : 0;
+      if (!amount || goldCost > state.goldCoins) {
+        showToast("金币余额不足或输入无效");
+        return;
+      }
+      state.goldCoins -= goldCost;
+      state.gameCoins += amount;
+      updateCurrencyUI();
+      closeExchange();
+      showToast("兑换成功，游戏币已刷新");
+      if (state.pendingStartAfterExchange) {
+        state.pendingStartAfterExchange = false;
+        window.setTimeout(startGame, 650);
+      }
+    }
+
+    function closeConfirm() {
+      pendingConfirmAction = null;
+      confirmMask.classList.remove("show");
+      confirmMask.setAttribute("aria-hidden", "true");
+    }
+
+    function showConfirm(message, onConfirm) {
+      confirmText.textContent = message || "离开后将退出当前语聊房，并按当前游戏状态处理。";
+      pendingConfirmAction = onConfirm;
+      confirmMask.classList.add("show");
+      confirmMask.setAttribute("aria-hidden", "false");
+    }
+
+    function openRoomExitSheet() {
+      closeSheets();
+      closeCountrySearch();
+      roomExitMask.classList.add("show");
+      roomExitMask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRoomExitSheet() {
+      roomExitMask.classList.remove("show");
+      roomExitMask.setAttribute("aria-hidden", "true");
+    }
+
+    function getActiveScreenId() {
+      const active = document.querySelector(".screen.active");
+      return active ? active.id : "";
+    }
+
+    function clearRoomState() {
+      state.roomPresence = "none";
+      state.roomMinimized = false;
+      state.roomReturnScreen = "discoverScreen";
+      state.activeGame = null;
+      state.hasCurrentGame = false;
+      state.gameMode = "waiting";
+      state.entrySource = null;
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
+      updateCurrentGameUI();
+    }
+
+    function needsLeaveCurrentRoomConfirm() {
+      if (state.roomPresence === "none") return false;
+      if (state.gameMode === "settling") {
+        showToast("结算中，请稍候");
+        return "blocked";
+      }
+      return state.roomMinimized;
+    }
+
+    function withExternalEntryGuard(next) {
+      const guard = needsLeaveCurrentRoomConfirm();
+      if (guard === "blocked") return;
+      if (!guard) {
+        next();
+        return;
+      }
+      showConfirm("你当前有一个最小化语聊房。确认离开当前房间么？", () => {
+        clearRoomState();
+        next();
+      });
+    }
+
+    function showScreen(id) {
+      screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
+      closeCountrySearch();
+    }
+
+    function closeSheets() {
+      [moreGamesSheet, roomGamesSheet, privateGamesSheet].forEach((sheet) => {
+        sheet.classList.remove("open");
+        sheet.setAttribute("aria-hidden", "true");
+      });
+    }
+
+    function activateRoomTab(id) {
+      document.querySelectorAll("[data-room-tab]").forEach((item) => item.classList.toggle("active", item.dataset.roomTab === id));
+      document.querySelector("#roomTabCasual").classList.toggle("active", id === "casual");
+      document.querySelector("#roomTabEvents").classList.toggle("active", id === "events");
+      document.querySelector("#roomTabEmoji").classList.toggle("active", id === "emoji");
+    }
+
+    function openSheet(name) {
+      closeSheets();
+      closeCountrySearch();
+      const sheet = name === "roomGames" ? roomGamesSheet : name === "privateGames" ? privateGamesSheet : moreGamesSheet;
+      if (name === "roomGames") activateRoomTab("casual");
+      sheet.classList.add("open");
+      sheet.setAttribute("aria-hidden", "false");
+      updateCurrentGameUI();
+    }
+
+    function openPartyPage() {
+      showScreen("partyMinimizedScreen");
+      showToast(state.roomMinimized ? "语聊房已最小化，点击右侧浮窗可恢复" : "Party opened");
+    }
+
+    function minimizeRoom() {
+      closeRoomExitSheet();
+      state.roomMinimized = true;
+      showScreen(state.roomReturnScreen || "discoverScreen");
+      closeSheets();
+      updateMinimizedRoomUI();
+      showToast("语聊房已最小化");
+    }
+
+    function exitRoomFromSheet() {
+      if (state.gameMode === "settling") {
+        closeRoomExitSheet();
+        showToast("结算中，请稍候");
+        return;
+      }
+      const hadGame = state.hasCurrentGame;
+      closeRoomExitSheet();
+      closeSetting();
+      h5Screen.classList.remove("show");
+      h5Screen.setAttribute("aria-hidden", "true");
+      resultOverlay.classList.remove("show");
+      clearRoomState();
+      showScreen("discoverScreen");
+      showToast(hadGame ? "已离开房间，当前游戏态已按规则退出" : "已离开房间");
+    }
+
+    function restoreMinimizedRoom() {
+      state.roomMinimized = false;
+      showScreen("roomScreen");
+      updateCurrentGameUI();
+      updateMinimizedRoomUI();
+      showToast("已恢复语聊房");
+    }
+
+    function openRoom(mode, context, returnScreen) {
+      state.roomPresence = context || "other";
+      state.roomMinimized = false;
+      state.roomReturnScreen = returnScreen || "discoverScreen";
+      state.entrySource = context === "own" ? "private_room" : "game_room";
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
+      showScreen("roomScreen");
+      state.gameMode = mode || state.gameMode;
+      if (mode === "playing") {
+        state.activeGame = "UNO";
+        state.hasCurrentGame = true;
+        state.gameMode = "playing";
+      } else if (mode === "waiting") {
+        state.activeGame = "Ludo";
+        state.hasCurrentGame = true;
+        state.gameMode = "waiting";
+      } else if (mode === "ended") {
+        state.activeGame = "8 Ball";
+        state.hasCurrentGame = true;
+        state.gameMode = "ended";
+      }
+      updateCurrentGameUI();
+    }
+
+    function openTargetRoom(mode) {
+      withExternalEntryGuard(() => {
+        closeCountrySearch();
+        openRoom(mode, "other", "discoverScreen");
+        const roomToastMap = {
+          playing: "已进入游戏中房间，可观战或打开游戏",
+          ended: "已进入已结束游戏房，可查看结算态",
+          waiting: "已进入等待中游戏房"
+        };
+        showToast(roomToastMap[mode] || roomToastMap.waiting);
+      });
+    }
+
+    function openPrivateRoomFlow() {
+      withExternalEntryGuard(() => {
+        state.roomPresence = "own";
+        state.roomMinimized = false;
+        state.roomReturnScreen = "discoverScreen";
+        state.entrySource = "private_room";
+        state.privateWaitingCreated = false;
+        state.readyToStart = false;
+        state.activeGame = null;
+        state.hasCurrentGame = false;
+        state.gameMode = "waiting";
+        closeCountrySearch();
+        showScreen("roomScreen");
+        updateCurrentGameUI();
+        window.setTimeout(() => openSheet("privateGames"), 160);
+      });
+    }
+
+    function startRecommendMatch(gameName) {
+      withExternalEntryGuard(() => {
+        closeSheets();
+        closeCountrySearch();
+        loadingTitle.textContent = "Matching " + gameName;
+        loadingSubtitle.textContent = "正在匹配同类型 waiting / ready 未开局房，最多 15s。";
+        loadingOverlay.classList.add("show");
+        window.clearTimeout(startRecommendMatch.timer);
+        startRecommendMatch.timer = window.setTimeout(() => {
+          loadingOverlay.classList.remove("show");
+          if (gameName === "Bingo") {
+            showToast("暂无同类型等待房，可通过 Private room 创建");
+            return;
+          }
+          openRoom("waiting", "other", "discoverScreen");
+          state.activeGame = gameName;
+          state.hasCurrentGame = true;
+          state.gameMode = "waiting";
+          updateCurrentGameUI();
+          showToast("匹配成功，已进入同类型 waiting 游戏房");
+        }, 1200);
+      });
+    }
+
+    function openPrivateGameSetting(gameName) {
+      state.roomPresence = "own";
+      state.entrySource = "private_room";
+      closeSheets();
+      openSetting(gameName);
+      showToast("已进入自己的房间，请确认游戏配置");
+    }
+
+    function openSetting(gameName) {
+      if (state.hasCurrentGame && state.activeGame && state.gameMode !== "ended" && state.activeGame !== gameName) {
+        closeSheets();
+        showToast("当前游戏进行中，不允许切换");
+        return;
+      }
+      closeSheets();
+      const meta = gameMeta[gameName] || gameMeta.Ludo;
+      state.activeGame = gameName;
+      settingScreen.className = "setting-screen show " + meta.theme;
+      settingScreen.setAttribute("aria-hidden", "false");
+      const title = gameMeta[gameName] ? meta.logo : gameName;
+      settingGameLogo.textContent = title;
+      loadingTitle.textContent = "Loading " + title;
+      resultTitle.textContent = title + " game ended";
+      state.ticketIndex = gameName === "UNO" ? 2 : 0;
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+      updateCurrencyUI();
+    }
+
+    function closeSetting() {
+      settingScreen.classList.remove("show");
+      settingScreen.setAttribute("aria-hidden", "true");
+    }
+
+    function resetGameViewport() {
+      window.scrollTo(0, 0);
+      if (phone) {
+        phone.scrollTop = 0;
+        phone.scrollLeft = 0;
+      }
+      h5Screen.scrollTop = 0;
+      h5Screen.scrollLeft = 0;
+    }
+
+    function startGame() {
+      const required = parseTicketAmount(ticketValue.textContent);
+      const followUpPrivateStart = state.entrySource === "private_room" && state.privateWaitingCreated;
+      if (!followUpPrivateStart && required > state.gameCoins) {
+        state.pendingStartAfterExchange = true;
+        openInsufficient(required);
+        return;
+      }
+      if (!followUpPrivateStart) {
+        state.gameCoins -= required;
+        updateCurrencyUI();
+      }
+      if (state.entrySource === "private_room" && !state.privateWaitingCreated) {
+        state.hasCurrentGame = true;
+        state.gameMode = "waiting";
+        state.privateWaitingCreated = true;
+        state.readyToStart = false;
+        closeSetting();
+        showScreen("roomScreen");
+        updateCurrentGameUI();
+        showToast("已创建游戏等待房，可最小化等待或分享邀请");
+        return;
+      }
+      beginGame();
+    }
+
+    function beginGame() {
+      resetGameViewport();
+      const gameName = state.activeGame || "Ludo";
+      const meta = gameMeta[gameName] || gameMeta.Ludo;
+      closeSetting();
+      closeExchange();
+      h5GameArt.className = "h5-game " + meta.art;
+      const title = gameMeta[gameName] ? meta.logo : gameName;
+      loadingTitle.textContent = "Loading " + title;
+      loadingSubtitle.textContent = "getConfig 已返回，等待 gameLoaded 回调。";
+      resultTitle.textContent = title + " game ended";
+      loadingOverlay.classList.add("show");
+      state.hasCurrentGame = true;
+      state.gameMode = "playing";
+      updateCurrentGameUI();
+      window.setTimeout(() => {
+        loadingOverlay.classList.remove("show");
+        h5Screen.classList.add("show");
+        h5Screen.setAttribute("aria-hidden", "false");
+        resetGameViewport();
+        showToast("gameLoaded received");
+      }, 1200);
+    }
+
+    function minimizeGame() {
+      h5Screen.classList.remove("show");
+      h5Screen.setAttribute("aria-hidden", "true");
+      showScreen("roomScreen");
+      updateCurrentGameUI();
+      showToast("游戏已最小化，返回所属语聊房");
+    }
+
+    function openCurrentGame() {
+      closeSheets();
+      if (!state.activeGame) {
+        openSetting("Ludo");
+        return;
+      }
+      const meta = gameMeta[state.activeGame] || gameMeta.Ludo;
+      h5GameArt.className = "h5-game " + meta.art;
+      h5Screen.classList.add("show");
+      h5Screen.setAttribute("aria-hidden", "false");
+      resetGameViewport();
+    }
+
+    function finishGame() {
+      resultOverlay.classList.add("show");
+      state.gameMode = "settling";
+      updateCurrentGameUI();
+    }
+
+    function closeGame() {
+      h5Screen.classList.remove("show");
+      h5Screen.setAttribute("aria-hidden", "true");
+      resultOverlay.classList.remove("show");
+      state.gameMode = "ended";
+      state.hasCurrentGame = false;
+      state.privateWaitingCreated = false;
+      state.readyToStart = false;
+      updateCurrentGameUI();
+      showScreen("roomScreen");
+    }
+
+    function updateCurrentGameUI() {
+      const hasGame = state.hasCurrentGame && state.activeGame;
+      const meta = gameMeta[state.activeGame] || gameMeta.Ludo;
+      currentGameBox.classList.toggle("show", Boolean(hasGame));
+      roomGameFloat.classList.toggle("show", Boolean(hasGame));
+      if (!hasGame) {
+        updateMinimizedRoomUI();
+        return;
+      }
+      const labelMap = {
+        playing: "Playing",
+        settling: "Settling",
+        ended: "Ended",
+        ready: "Ready",
+        waiting: "Waiting"
+      };
+      const label = labelMap[state.gameMode] || "Waiting";
+      currentGameTitle.textContent = "Current Game · " + state.activeGame;
+      currentGameState.textContent = label;
+      floatTitle.textContent = state.activeGame + " · " + label;
+      floatSub.textContent = label === "Playing" ? "Open · 4/4" : "Join · 2/4";
+      floatIcon.textContent = meta.icon;
+      const joinBtn = document.querySelector("#joinCurrentGame");
+      const openBtn = document.querySelector("#openCurrentGame");
+      if (joinBtn) joinBtn.textContent = state.roomPresence === "own" && state.gameMode === "waiting" ? "Config" : "Join";
+      if (openBtn) openBtn.textContent = state.gameMode === "playing" ? "Open" : "Watch";
+      updateMinimizedRoomUI();
+    }
+
+    function updateMinimizedRoomUI() {
+      const isMinimized = state.roomMinimized && state.roomPresence !== "none";
+      if (discoverMinimizedEntry) discoverMinimizedEntry.classList.toggle("show", Boolean(isMinimized));
+      if (!isMinimized) return;
+      const title = state.activeGame ? state.activeGame + " · " + (state.gameMode === "playing" ? "Playing" : "Waiting") : "当前语聊房";
+      if (discoverMinimizedTitle) discoverMinimizedTitle.textContent = title;
+      if (discoverMinimizedSub) discoverMinimizedSub.textContent = "点击恢复房间";
+    }
+
+    discoverTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.discoverTab;
+        discoverTabs.forEach((item) => item.classList.toggle("active", item === tab));
+        discoverGames.classList.toggle("active", target === "games");
+        discoverActivity.classList.toggle("active", target === "activity");
+        discoverTopbar.classList.toggle("activity-mode", target === "activity");
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      const toastTarget = event.target.closest("[data-toast]");
+      if (toastTarget) {
+        event.preventDefault();
+        showToast(toastTarget.dataset.toast);
+      }
+
+      const roomToolTarget = event.target.closest("[data-room-tool]");
+      if (roomToolTarget) {
+        const tips = {
+          room: "房间信息入口",
+          bookmark: "已打开房间收藏",
+          banner: "打开房间活动入口",
+          chat: "打开公屏聊天",
+          speaker: "切换扬声器",
+          mic: "切换麦克风",
+          emoji: "打开表情面板",
+          message: "打开消息列表",
+          game: "休闲游戏入口常驻",
+          gift: "打开礼物面板",
+          menu: "打开更多功能"
+        };
+        event.preventDefault();
+        showToast(tips[roomToolTarget.dataset.roomTool] || "语聊房工具入口");
+      }
+
+      const exchangeTarget = event.target.closest("[data-open-exchange]");
+      if (exchangeTarget) {
+        event.preventDefault();
+        state.pendingStartAfterExchange = false;
+        openExchange(0);
+      }
+
+      const countrySearchTarget = event.target.closest("[data-open-country-search]");
+      if (countrySearchTarget) {
+        event.preventDefault();
+        openCountrySearch();
+      }
+
+      const countryTarget = event.target.closest("[data-country]");
+      if (countryTarget) {
+        event.preventDefault();
+        document.querySelectorAll(".country-chip").forEach((item) => item.classList.toggle("active", item.dataset.country === countryTarget.dataset.country));
+        showToast("已筛选：" + countryTarget.dataset.country);
+      }
+
+      const privateTarget = event.target.closest("[data-private-room]");
+      if (privateTarget) {
+        event.preventDefault();
+        openPrivateRoomFlow();
+      }
+
+      const recommendTarget = event.target.closest("[data-recommend-game]");
+      if (recommendTarget) {
+        event.preventDefault();
+        startRecommendMatch(recommendTarget.dataset.recommendGame);
+      }
+
+      const partyTarget = event.target.closest("[data-open-party]");
+      if (partyTarget) {
+        event.preventDefault();
+        openPartyPage();
+      }
+
+      const restoreTarget = event.target.closest("[data-restore-minimized-room]");
+      if (restoreTarget) {
+        event.preventDefault();
+        restoreMinimizedRoom();
+      }
+
+      const discoverFromMinimized = event.target.closest("[data-open-discover-from-minimized]");
+      if (discoverFromMinimized) {
+        event.preventDefault();
+        showScreen("discoverScreen");
+        updateMinimizedRoomUI();
+      }
+
+      const roomExitTarget = event.target.closest("[data-open-room-exit]");
+      if (roomExitTarget) {
+        event.preventDefault();
+        openRoomExitSheet();
+      }
+
+      const roomExitMinimize = event.target.closest("[data-room-exit-minimize]");
+      if (roomExitMinimize) {
+        event.preventDefault();
+        minimizeRoom();
+      }
+
+      const roomExitLeave = event.target.closest("[data-room-exit-leave]");
+      if (roomExitLeave) {
+        event.preventDefault();
+        exitRoomFromSheet();
+      }
+
+      const minimizeRoomTarget = event.target.closest("[data-minimize-room]");
+      if (minimizeRoomTarget) {
+        event.preventDefault();
+        minimizeRoom();
+      }
+
+      const screenTarget = event.target.closest("[data-show-screen]");
+      if (screenTarget) {
+        event.preventDefault();
+        showScreen(screenTarget.dataset.showScreen);
+      }
+
+      const roomTarget = event.target.closest("[data-open-room]");
+      if (roomTarget) {
+        event.preventDefault();
+        openTargetRoom(roomTarget.dataset.roomMode);
+      }
+
+      const sheetTarget = event.target.closest("[data-open-sheet]");
+      if (sheetTarget) {
+        event.preventDefault();
+        const sheetName = sheetTarget.dataset.openSheet;
+        openSheet(sheetName);
+      }
+
+      const privateGameTarget = event.target.closest("[data-private-game]");
+      if (privateGameTarget) {
+        event.preventDefault();
+        openPrivateGameSetting(privateGameTarget.dataset.privateGame);
+      }
+
+      const gameTarget = event.target.closest("[data-open-setting]");
+      if (gameTarget) {
+        event.preventDefault();
+        openSetting(gameTarget.dataset.openSetting);
+      }
+
+      if (event.target.matches("[data-close-sheets]")) {
+        closeSheets();
+      }
+
+      if (event.target.classList.contains("sheet-mask")) {
+        closeSheets();
+      }
+
+      if (event.target.classList.contains("country-search-mask")) {
+        closeCountrySearch();
+      }
+
+      if (event.target.classList.contains("room-exit-mask")) {
+        closeRoomExitSheet();
+      }
+    });
+
+    document.querySelectorAll("[data-room-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        activateRoomTab(tab.dataset.roomTab);
+      });
+    });
+
+    document.querySelectorAll("[data-players]").forEach((segment) => {
+      segment.addEventListener("click", () => {
+        document.querySelectorAll("[data-players]").forEach((item) => item.classList.toggle("active", item === segment));
+      });
+    });
+
+    document.querySelector("#ticketPlus").addEventListener("click", () => {
+      state.ticketIndex = Math.min(state.ticketIndex + 1, state.tickets.length - 1);
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+    });
+
+    document.querySelector("#ticketMinus").addEventListener("click", () => {
+      state.ticketIndex = Math.max(state.ticketIndex - 1, 0);
+      ticketValue.textContent = state.tickets[state.ticketIndex];
+    });
+
+    document.querySelector("#quitSetting").addEventListener("click", closeSetting);
+    document.querySelector("#startGame").addEventListener("click", startGame);
+    document.querySelector("#minimizeGame").addEventListener("click", minimizeGame);
+    document.querySelector("#finishGame").addEventListener("click", finishGame);
+    document.querySelector("#closeGame").addEventListener("click", closeGame);
+    document.querySelector("#settingCoinEntry").addEventListener("click", () => {
+      state.pendingStartAfterExchange = false;
+      openExchange(0);
+    });
+    document.querySelector("#exchangeBack").addEventListener("click", () => {
+      state.pendingStartAfterExchange = false;
+      closeExchange();
+    });
+    document.querySelector("#closeCountrySearch").addEventListener("click", closeCountrySearch);
+    document.querySelector("#exchangeSubmit").addEventListener("click", submitExchange);
+    document.querySelector("#insufficientCancel").addEventListener("click", () => {
+      state.pendingStartAfterExchange = false;
+      closeInsufficient();
+    });
+    document.querySelector("#insufficientExchange").addEventListener("click", () => openExchange(state.exchangeRequired));
+    confirmCancel.addEventListener("click", closeConfirm);
+    confirmOk.addEventListener("click", () => {
+      const action = pendingConfirmAction;
+      closeConfirm();
+      if (typeof action === "function") action();
+    });
+    exchangeInput.addEventListener("input", updateExchangePreview);
+    document.querySelectorAll("[data-exchange-amount]").forEach((button) => {
+      button.addEventListener("click", () => {
+        exchangeInput.value = button.dataset.exchangeAmount;
+        updateExchangePreview();
+      });
+    });
+    document.querySelector("#backToRoom").addEventListener("click", closeGame);
+    document.querySelector("#playAgain").addEventListener("click", () => {
+      resultOverlay.classList.remove("show");
+      state.gameMode = "waiting";
+      updateCurrentGameUI();
+      openSetting(state.activeGame || "Ludo");
+    });
+    document.querySelector("#joinCurrentGame").addEventListener("click", () => {
+      if (state.roomPresence === "own" && state.gameMode === "waiting") {
+        state.readyToStart = true;
+        openSetting(state.activeGame || "Ludo");
+        showToast("有人加入游戏，请确认配置后开始");
+        return;
+      }
+      startGame();
+    });
+    document.querySelector("#openCurrentGame").addEventListener("click", openCurrentGame);
+    roomGameFloat.addEventListener("click", openCurrentGame);
+    updateCurrencyUI();
+  </script>
+</body>
+</html>

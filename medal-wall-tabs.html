@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medal wall</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --gold: #ffe084;
+      --gold-soft: rgba(255, 224, 132, 0.62);
+      --text: #fff8df;
+      --muted: rgba(255, 248, 223, 0.46);
+      --screen-w: min(100vw, 430px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #071126;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+    }
+
+    .screen {
+      position: relative;
+      width: var(--screen-w);
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(4, 9, 22, 0.1), rgba(2, 7, 18, 0.96) 78%),
+        linear-gradient(115deg, rgba(24, 47, 105, 0.84) 0%, rgba(6, 15, 33, 0.98) 44%, rgba(3, 9, 19, 1) 100%);
+      color: var(--text);
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        repeating-linear-gradient(72deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(150deg, rgba(82, 116, 187, 0.08) 0 1px, transparent 1px 8px);
+      mix-blend-mode: screen;
+      opacity: 0.64;
+    }
+
+    .screen::after {
+      content: "";
+      position: absolute;
+      inset: auto -24% -11% -24%;
+      height: 42%;
+      z-index: -1;
+      background:
+        radial-gradient(1px 1px at 10% 42%, rgba(192, 219, 255, 0.84), transparent 60%),
+        radial-gradient(1px 1px at 22% 28%, rgba(192, 219, 255, 0.58), transparent 60%),
+        radial-gradient(1px 1px at 36% 58%, rgba(192, 219, 255, 0.44), transparent 60%),
+        radial-gradient(1px 1px at 58% 22%, rgba(192, 219, 255, 0.52), transparent 60%),
+        radial-gradient(1px 1px at 77% 46%, rgba(192, 219, 255, 0.42), transparent 60%),
+        radial-gradient(1px 1px at 91% 30%, rgba(192, 219, 255, 0.5), transparent 60%),
+        linear-gradient(180deg, transparent, rgba(5, 14, 32, 0.92) 76%);
+      background-size: 108px 108px, 128px 128px, 148px 148px, 118px 118px, 152px 152px, 136px 136px, auto;
+      filter: blur(0.15px);
+      opacity: 0.72;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 22px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .play-dot {
+      width: 17px;
+      height: 17px;
+      border-radius: 5px;
+      background:
+        conic-gradient(from 120deg, #30ce65, #2bb9ff, #ffda4d, #ff664a, #30ce65);
+      position: relative;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92) inset;
+    }
+
+    .play-dot::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      border-left: 6px solid #fff;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 0.82;
+    }
+
+    .network {
+      text-align: right;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .signal,
+    .wifi,
+    .battery,
+    .bolt {
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .signal {
+      width: 16px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-radius: 3px;
+      position: relative;
+      opacity: 0.88;
+    }
+
+    .signal::before,
+    .signal::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+    }
+
+    .signal::before {
+      inset: 3px 3px auto auto;
+      width: 6px;
+      height: 2px;
+      transform: rotate(45deg);
+    }
+
+    .signal::after {
+      right: 1px;
+      top: 2px;
+      width: 2px;
+      height: 7px;
+      transform: rotate(45deg);
+    }
+
+    .wifi {
+      width: 20px;
+      height: 14px;
+      border: 3px solid transparent;
+      border-top-color: #fff;
+      border-radius: 50%;
+      position: relative;
+      opacity: 0.95;
+    }
+
+    .wifi::before,
+    .wifi::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid transparent;
+      border-top-color: #fff;
+      border-radius: 50%;
+    }
+
+    .wifi::before {
+      top: -1px;
+      width: 13px;
+      height: 9px;
+    }
+
+    .wifi::after {
+      top: 6px;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border: 0;
+    }
+
+    .battery {
+      position: relative;
+      width: 28px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 4px;
+      background: linear-gradient(90deg, #78e640 0 92%, transparent 92%);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset;
+    }
+
+    .battery::before {
+      content: "100";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+      line-height: 1;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.55);
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 4px;
+      width: 3px;
+      height: 6px;
+      border-radius: 0 2px 2px 0;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .bolt {
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .topbar {
+      position: relative;
+      display: grid;
+      grid-template-columns: 58px 1fr 58px;
+      align-items: center;
+      min-height: 72px;
+      padding: 0 18px;
+    }
+
+    .back {
+      width: 34px;
+      height: 44px;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .back::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 12px;
+      width: 18px;
+      height: 18px;
+      border-left: 4px solid #fff;
+      border-bottom: 4px solid #fff;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      color: #fff;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 820;
+      letter-spacing: 0;
+    }
+
+    .tabs {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: clamp(28px, 10vw, 54px);
+      min-height: 82px;
+      padding-top: 26px;
+    }
+
+    .tab {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255, 224, 132, 0.72);
+      min-width: 114px;
+      height: 46px;
+      padding: 0 4px 13px;
+      font: inherit;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: 0;
+      cursor: pointer;
+      position: relative;
+      transition: color 180ms ease, opacity 180ms ease;
+    }
+
+    .tab::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 2px;
+      width: 58px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+      transform: translateX(-50%) scaleX(0.5);
+      transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .tab.is-active {
+      color: var(--gold);
+    }
+
+    .tab.is-active::after {
+      background: var(--gold);
+      box-shadow: 0 0 14px rgba(255, 224, 132, 0.42);
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    .wall {
+      display: none;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 20px;
+      row-gap: 42px;
+      width: 100%;
+      padding: 14px 28px 120px;
+    }
+
+    .wall.is-active {
+      display: grid;
+      animation: wallIn 240ms ease both;
+    }
+
+    @keyframes wallIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .medal-card {
+      display: grid;
+      justify-items: center;
+      gap: 13px;
+      min-width: 0;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .medal {
+      --edge-1: #ffd35d;
+      --edge-2: #8d551b;
+      --core-1: #e34936;
+      --core-2: #6c1a18;
+      --gem: #ff385c;
+      position: relative;
+      width: min(30vw, 122px);
+      aspect-ratio: 1;
+      filter:
+        drop-shadow(0 8px 12px rgba(0, 0, 0, 0.44))
+        drop-shadow(0 0 12px color-mix(in srgb, var(--core-1), transparent 58%));
+      transition: transform 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+
+    .medal-card:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 8px;
+      border-radius: 10px;
+    }
+
+    .medal-card:hover .medal,
+    .medal-card.is-selected .medal {
+      transform: translateY(-3px) scale(1.03);
+      filter:
+        drop-shadow(0 12px 14px rgba(0, 0, 0, 0.48))
+        drop-shadow(0 0 20px color-mix(in srgb, var(--core-1), transparent 42%));
+    }
+
+    .medal::before {
+      content: "";
+      position: absolute;
+      inset: 4%;
+      border-radius: 34% 66% 33% 67% / 58% 44% 56% 42%;
+      background:
+        conic-gradient(from 12deg, var(--edge-1), var(--edge-2), #fff2a9, var(--edge-2), var(--edge-1), #af711e, var(--edge-1)),
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.8), transparent 28%);
+      clip-path: polygon(50% 0, 61% 16%, 80% 8%, 82% 28%, 99% 35%, 86% 50%, 95% 68%, 74% 69%, 68% 91%, 50% 80%, 32% 91%, 26% 69%, 5% 68%, 14% 50%, 1% 35%, 18% 28%, 20% 8%, 39% 16%);
+      box-shadow: inset 0 0 12px rgba(255, 244, 179, 0.68), inset 0 -11px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .medal::after {
+      content: "";
+      position: absolute;
+      inset: 14%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.72) 0 5%, transparent 6% 100%),
+        radial-gradient(circle at 50% 47%, var(--core-1) 0 10%, transparent 11%),
+        conic-gradient(from 0deg, var(--core-2), var(--core-1), #160b16, var(--core-1), var(--core-2)),
+        radial-gradient(circle, var(--core-1), var(--core-2));
+      border: 5px solid rgba(255, 220, 113, 0.78);
+      box-shadow:
+        inset 0 0 0 5px rgba(70, 26, 12, 0.42),
+        inset 0 -22px 24px rgba(0, 0, 0, 0.42),
+        0 0 0 2px rgba(255, 250, 206, 0.16);
+    }
+
+    .wings,
+    .crest,
+    .fangs {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .wings::before,
+    .wings::after {
+      content: "";
+      position: absolute;
+      top: 24%;
+      width: 38%;
+      height: 48%;
+      background:
+        linear-gradient(110deg, transparent 0 28%, rgba(255, 245, 181, 0.75) 29% 34%, transparent 35% 100%),
+        linear-gradient(68deg, transparent 0 38%, color-mix(in srgb, var(--core-1), white 8%) 39% 64%, transparent 65%),
+        linear-gradient(140deg, var(--edge-2), var(--edge-1));
+      clip-path: polygon(0 22%, 100% 0, 75% 38%, 100% 60%, 56% 54%, 50% 100%, 28% 58%, 0 70%);
+      opacity: 0.92;
+    }
+
+    .wings::before {
+      left: 4%;
+      transform: rotate(-12deg);
+    }
+
+    .wings::after {
+      right: 4%;
+      transform: scaleX(-1) rotate(-12deg);
+    }
+
+    .crest::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 18%;
+      width: 40%;
+      height: 47%;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.75), transparent 22%),
+        linear-gradient(135deg, var(--gold), var(--core-1) 48%, #1a0715);
+      clip-path: polygon(50% 0, 68% 28%, 100% 34%, 74% 54%, 82% 92%, 50% 68%, 18% 92%, 26% 54%, 0 34%, 32% 28%);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--core-1), transparent 50%);
+      border-radius: 42%;
+      z-index: 2;
+    }
+
+    .crest::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 16%;
+      width: 20%;
+      height: 20%;
+      transform: translateX(-50%) rotate(45deg);
+      background: linear-gradient(135deg, #fff6b8, var(--gem) 62%, #2b0d24);
+      border: 2px solid rgba(255, 239, 157, 0.7);
+      box-shadow: 0 0 10px var(--gem);
+      z-index: 3;
+    }
+
+    .fangs::before,
+    .fangs::after {
+      content: "";
+      position: absolute;
+      bottom: 18%;
+      width: 14%;
+      height: 26%;
+      background: linear-gradient(180deg, #fff4cb, #aa7022 62%, transparent);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      z-index: 4;
+      opacity: 0.88;
+    }
+
+    .fangs::before {
+      left: 37%;
+      transform: rotate(8deg);
+    }
+
+    .fangs::after {
+      right: 37%;
+      transform: rotate(-8deg);
+    }
+
+    .label {
+      color: var(--gold);
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: 0;
+      text-align: center;
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.58);
+    }
+
+    .locked {
+      opacity: 0.42;
+    }
+
+    .locked .label {
+      color: var(--muted);
+    }
+
+    .vip-red {
+      --core-1: #ff583f;
+      --core-2: #671511;
+      --gem: #ff316a;
+      --edge-1: #ffd675;
+      --edge-2: #9d5418;
+    }
+
+    .vip-green {
+      --core-1: #06c792;
+      --core-2: #064f4e;
+      --gem: #28f3db;
+      --edge-1: #ffe58c;
+      --edge-2: #817128;
+    }
+
+    .vip-bronze {
+      --core-1: #c67b38;
+      --core-2: #381c12;
+      --gem: #c73275;
+      --edge-1: #e5b56d;
+      --edge-2: #6e431e;
+    }
+
+    .vip-purple {
+      --core-1: #6e42e8;
+      --core-2: #170d39;
+      --gem: #5e4dff;
+      --edge-1: #b8a2ff;
+      --edge-2: #483075;
+    }
+
+    .vip-rose {
+      --core-1: #d8508e;
+      --core-2: #421023;
+      --gem: #ff72dd;
+      --edge-1: #ffc4e5;
+      --edge-2: #703352;
+    }
+
+    .vip-blue {
+      --core-1: #264cff;
+      --core-2: #111d61;
+      --gem: #59c8ff;
+      --edge-1: #9cc7ff;
+      --edge-2: #34477a;
+    }
+
+    .vip-ice {
+      --core-1: #74e1ff;
+      --core-2: #17344d;
+      --gem: #7ffaff;
+      --edge-1: #d7f5ff;
+      --edge-2: #446981;
+    }
+
+    .activity-sun {
+      --core-1: #ffbd37;
+      --core-2: #6a2a0a;
+      --gem: #ff7836;
+      --edge-1: #fff0a8;
+      --edge-2: #c98322;
+    }
+
+    .activity-fire {
+      --core-1: #ff4e4e;
+      --core-2: #561010;
+      --gem: #ffe45c;
+      --edge-1: #ffd783;
+      --edge-2: #9d3316;
+    }
+
+    .activity-moon {
+      --core-1: #7b8cff;
+      --core-2: #181b62;
+      --gem: #d8ddff;
+      --edge-1: #cad6ff;
+      --edge-2: #44548e;
+    }
+
+    .activity-leaf {
+      --core-1: #44d57a;
+      --core-2: #113b21;
+      --gem: #b7ff7c;
+      --edge-1: #d9ffb1;
+      --edge-2: #477c32;
+    }
+
+    .activity-ocean {
+      --core-1: #21b2ff;
+      --core-2: #08365d;
+      --gem: #6bfff1;
+      --edge-1: #b7edff;
+      --edge-2: #287391;
+    }
+
+    .activity-star {
+      --core-1: #f67cff;
+      --core-2: #45134c;
+      --gem: #fff08a;
+      --edge-1: #ffd6ff;
+      --edge-2: #82508e;
+    }
+
+    .activity-crown {
+      --core-1: #f5df65;
+      --core-2: #4e3b0e;
+      --gem: #ff466f;
+      --edge-1: #fff6bc;
+      --edge-2: #b48922;
+    }
+
+    .home-indicator {
+      position: fixed;
+      left: 50%;
+      bottom: 10px;
+      width: min(162px, 46vw);
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.76);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    @media (min-width: 431px) {
+      body {
+        padding: 24px;
+        background:
+          linear-gradient(145deg, #121a2f, #050914);
+      }
+
+      .screen {
+        min-height: 844px;
+        border-radius: 28px;
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.46);
+      }
+
+      .home-indicator {
+        position: absolute;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .status-bar {
+        padding-inline: 18px;
+      }
+
+      .tabs {
+        gap: 14px;
+      }
+
+      .tab {
+        min-width: 106px;
+        font-size: 19px;
+      }
+
+      .wall {
+        column-gap: 12px;
+        padding-inline: 20px;
+      }
+
+      .label {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="screen" aria-label="Medal wall">
+    <header class="status-bar" aria-hidden="true">
+      <div class="status-left">
+        <span>3:55</span>
+        <span class="play-dot"></span>
+        <span>...</span>
+      </div>
+      <div class="status-right">
+        <span class="network">1.39<br>KB/s</span>
+        <span class="signal"></span>
+        <span class="wifi"></span>
+        <span class="battery"></span>
+        <span class="bolt">↯</span>
+      </div>
+    </header>
+
+    <nav class="topbar">
+      <button class="back" aria-label="Back"></button>
+      <h1>Medal wall</h1>
+      <span></span>
+    </nav>
+
+    <div class="tabs" role="tablist" aria-label="Medal category">
+      <button class="tab is-active" id="tab-vip" role="tab" type="button" aria-selected="true" aria-controls="vip-wall" data-wall="vip-wall">VIP badge</button>
+      <button class="tab" id="tab-activity" role="tab" type="button" aria-selected="false" aria-controls="activity-wall" data-wall="activity-wall">Activity badge</button>
+    </div>
+
+    <section class="wall is-active" id="vip-wall" role="tabpanel" aria-labelledby="tab-vip">
+      <button class="medal-card is-selected" type="button">
+        <span class="medal vip-red"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP5</span>
+      </button>
+      <button class="medal-card" type="button">
+        <span class="medal vip-green"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP3</span>
+      </button>
+      <button class="medal-card" type="button">
+        <span class="medal vip-bronze"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP1</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal vip-purple"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP7</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal vip-rose"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP6</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal vip-blue"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP4</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal vip-ice"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">VIP2</span>
+      </button>
+    </section>
+
+    <section class="wall" id="activity-wall" role="tabpanel" aria-labelledby="tab-activity" hidden>
+      <button class="medal-card is-selected" type="button">
+        <span class="medal activity-sun"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Daily</span>
+      </button>
+      <button class="medal-card" type="button">
+        <span class="medal activity-fire"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Streak</span>
+      </button>
+      <button class="medal-card" type="button">
+        <span class="medal activity-moon"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Night</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal activity-leaf"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Check-in</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal activity-ocean"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Room</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal activity-star"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Event</span>
+      </button>
+      <button class="medal-card locked" type="button">
+        <span class="medal activity-crown"><span class="wings"></span><span class="crest"></span><span class="fangs"></span></span>
+        <span class="label">Champion</span>
+      </button>
+    </section>
+
+    <div class="home-indicator" aria-hidden="true"></div>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const walls = document.querySelectorAll(".wall");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const activeWall = tab.dataset.wall;
+
+        tabs.forEach((item) => {
+          const isActive = item === tab;
+          item.classList.toggle("is-active", isActive);
+          item.setAttribute("aria-selected", String(isActive));
+        });
+
+        walls.forEach((wall) => {
+          const isActive = wall.id === activeWall;
+          wall.classList.toggle("is-active", isActive);
+          wall.toggleAttribute("hidden", !isActive);
+        });
+      });
+    });
+
+    document.querySelectorAll(".medal-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const wall = card.closest(".wall");
+        wall.querySelectorAll(".medal-card").forEach((item) => item.classList.remove("is-selected"));
+        card.classList.add("is-selected");
+      });
+    });
+  </script>
+</body>
+</html>

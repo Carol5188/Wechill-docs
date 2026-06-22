@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeChill 游戏房客户端 PRD 原型 v1.1 补全版</title>
+  <style>
+    :root {
+      --paper: #f7f4ec;
+      --surface: #fffdf8;
+      --surface-2: #f0eee7;
+      --ink: #18221f;
+      --muted: #66716c;
+      --line: #d9d2c3;
+      --mint: #147c70;
+      --mint-soft: #dff0eb;
+      --coral: #d9573f;
+      --coral-soft: #ffe5df;
+      --gold: #c5912b;
+      --gold-soft: #f7ead0;
+      --sky: #2a78a8;
+      --sky-soft: #dfeef6;
+      --violet: #675a96;
+      --violet-soft: #e9e5f3;
+      --dark: #202a2a;
+      --good: #1d8a5a;
+      --warn: #b7791f;
+      --bad: #c94333;
+      --shadow: 0 18px 50px rgba(34, 40, 35, .12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero {
+      background: #1d2d2a;
+      color: #fffdf8;
+      padding: 36px 48px 28px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .hero-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr);
+      gap: 28px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      color: #f4c36a;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      max-width: 850px;
+      color: rgba(255,255,255,.78);
+      font-size: 15px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .meta {
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 70px;
+    }
+
+    .meta-label {
+      color: rgba(255,255,255,.56);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .meta-value {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      padding: 28px 48px 56px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 8px 28px rgba(34, 40, 35, .08);
+    }
+
+    .toc-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 9px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toc a:hover {
+      color: var(--ink);
+      background: var(--surface-2);
+    }
+
+    main {
+      display: grid;
+      gap: 28px;
+    }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(34, 40, 35, .07);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 17px;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: -4px 0 18px;
+      max-width: 980px;
+    }
+
+    .note {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fbf7ed;
+      color: #5a4e3b;
+      font-size: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      background: #fffefa;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .summary-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.mint { background: var(--mint-soft); color: var(--mint); border-color: #b9ded5; }
+    .tag.gold { background: var(--gold-soft); color: #7f5815; border-color: #e6c57c; }
+    .tag.coral { background: var(--coral-soft); color: var(--coral); border-color: #f2b4a6; }
+    .tag.sky { background: var(--sky-soft); color: var(--sky); border-color: #bad8e8; }
+    .tag.violet { background: var(--violet-soft); color: var(--violet); border-color: #cfc7e3; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fffefa;
+    }
+
+    th, td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #efe8d8;
+      font-size: 12px;
+      color: #514735;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .flow-board {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .flow {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fffefa;
+    }
+
+    .flow-title {
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #f7f3e8;
+      border-radius: 8px;
+      min-height: 86px;
+      padding: 10px;
+    }
+
+    .flow-step::after {
+      content: ">";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-weight: 800;
+      background: var(--surface);
+      width: 14px;
+      text-align: center;
+    }
+
+    .flow-step:last-child::after {
+      display: none;
+    }
+
+    .flow-step .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--dark);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .flow-step strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .flow-step span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .flow-step.decision {
+      background: #edf7f4;
+      border-color: #b7dcd2;
+    }
+
+    .flow-step.warn {
+      background: #fff4df;
+      border-color: #e7bf73;
+    }
+
+    .prototype-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(300px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+
+    .proto-item {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .proto-caption {
+      width: min(100%, 320px);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .proto-caption strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .phone {
+      width: 320px;
+      height: 690px;
+      background: #18201f;
+      border-radius: 26px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #fbf7ed;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 28px;
+      padding: 0 14px;
+      color: rgba(255,255,255,.9);
+      background: #162422;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .appbar {
+      height: 50px;
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      background: #fffdf8;
+    }
+
+    .appbar-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid #d7cfbd;
+      background: #fffefa;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .screen-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .screen-body.scroll {
+      overflow: auto;
+    }
+
+    .hero-banner {
+      min-height: 118px;
+      border-radius: 8px;
+      padding: 14px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(23,124,112,.96), rgba(42,120,168,.92)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='160' viewBox='0 0 320 160'%3E%3Crect width='320' height='160' fill='%23147c70'/%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.18' stroke-width='2'%3E%3Cpath d='M24 118C68 52 132 184 188 84S280 40 304 74'/%3E%3Cpath d='M0 32h320M0 82h320M60 0v160M150 0v160M240 0v160'/%3E%3C/g%3E%3Ccircle cx='244' cy='46' r='30' fill='%23f4c36a' fill-opacity='.55'/%3E%3C/svg%3E");
+      background-size: cover;
+    }
+
+    .hero-banner h4 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .hero-banner p {
+      margin: 0;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+      max-width: 210px;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .segmented span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #eee8da;
+      color: #635948;
+    }
+
+    .segmented .active {
+      background: var(--mint);
+      color: white;
+    }
+
+    .room-card {
+      border: 1px solid #ddd4c2;
+      background: #fffefa;
+      border-radius: 8px;
+      padding: 11px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .room-main {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .game-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gold-soft);
+      border: 1px solid #e4c174;
+      font-weight: 900;
+      color: #805713;
+    }
+
+    .game-icon.mint {
+      background: var(--mint-soft);
+      border-color: #b6ddd3;
+      color: var(--mint);
+    }
+
+    .game-icon.violet {
+      background: var(--violet-soft);
+      border-color: #cdc6e1;
+      color: var(--violet);
+    }
+
+    .room-title {
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .room-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .room-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .primary-btn, .secondary-btn, .danger-btn {
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 0 12px;
+      font-weight: 800;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: var(--mint);
+      color: white;
+    }
+
+    .secondary-btn {
+      background: #fffefa;
+      color: var(--ink);
+      border-color: #d8cfbd;
+    }
+
+    .danger-btn {
+      background: var(--coral-soft);
+      color: var(--coral);
+      border-color: #f0b2a5;
+    }
+
+    .bottom-nav {
+      height: 58px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background: #fffefa;
+    }
+
+    .bottom-nav div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .bottom-nav .active {
+      color: var(--mint);
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .input-like {
+      min-height: 38px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d9d0be;
+      background: #fffefa;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .choice {
+      min-height: 70px;
+      border: 1px solid #d9d0be;
+      border-radius: 8px;
+      background: #fffefa;
+      padding: 10px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .choice.active {
+      border-color: var(--mint);
+      background: var(--mint-soft);
+    }
+
+    .choice strong {
+      font-size: 13px;
+    }
+
+    .choice span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .game-table {
+      height: 212px;
+      border-radius: 8px;
+      background:
+        linear-gradient(160deg, rgba(20,124,112,.94), rgba(35,68,84,.94)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='220' viewBox='0 0 300 220'%3E%3Crect width='300' height='220' fill='%23147c70'/%3E%3Cpath d='M30 30h240v160H30z' fill='none' stroke='%23fff' stroke-opacity='.22' stroke-width='3'/%3E%3Cpath d='M60 60h80v50H60zM160 60h80v50h-80zM60 130h80v50H60zM160 130h80v50h-80z' fill='%23f4c36a' fill-opacity='.18' stroke='%23fff' stroke-opacity='.18'/%3E%3C/svg%3E");
+      background-size: cover;
+      position: relative;
+      overflow: hidden;
+      padding: 12px;
+      color: white;
+    }
+
+    .player-seat {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      border: 2px solid rgba(244,195,106,.95);
+      box-shadow: 0 8px 22px rgba(0,0,0,.2);
+    }
+
+    .player-seat.empty {
+      border-style: dashed;
+      background: rgba(255,255,255,.22);
+      color: white;
+    }
+
+    .seat-top { left: 123px; top: 10px; }
+    .seat-left { left: 12px; top: 80px; }
+    .seat-right { right: 12px; top: 80px; }
+    .seat-bottom { left: 123px; bottom: 10px; }
+
+    .room-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .mic {
+      height: 52px;
+      border-radius: 8px;
+      background: #fffefa;
+      border: 1px solid #d9d0be;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 700;
+      position: relative;
+    }
+
+    .mic.active {
+      border-color: var(--mint);
+      background: var(--mint-soft);
+      color: var(--mint);
+    }
+
+    .mic.locked::after {
+      content: "锁";
+      position: absolute;
+      right: 4px;
+      top: 3px;
+      font-size: 10px;
+      color: var(--coral);
+      font-weight: 900;
+    }
+
+    .queue-float {
+      position: absolute;
+      left: 10px;
+      bottom: 76px;
+      min-width: 76px;
+      height: 40px;
+      border-radius: 8px;
+      background: #1f2a28;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(0,0,0,.22);
+    }
+
+    .queue-float.rtl {
+      left: auto;
+      right: 10px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--coral);
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .list-row {
+      min-height: 54px;
+      border: 1px solid #d9d0be;
+      border-radius: 8px;
+      background: #fffefa;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--sky-soft);
+      border: 1px solid #bdd9e7;
+      display: grid;
+      place-items: center;
+      color: var(--sky);
+      font-size: 12px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .row-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .row-main strong {
+      display: block;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-main span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tiny-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .tiny {
+      min-width: 42px;
+      height: 28px;
+      border-radius: 7px;
+      border: 1px solid #d8cfbd;
+      background: #fffefa;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .tiny.ok {
+      background: var(--mint);
+      color: white;
+      border-color: var(--mint);
+    }
+
+    .tiny.no {
+      background: var(--coral-soft);
+      color: var(--coral);
+      border-color: #f0b2a5;
+    }
+
+    .modal-sheet {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border-radius: 8px;
+      background: #fffdf8;
+      border: 1px solid #d8cfbd;
+      box-shadow: 0 -14px 38px rgba(20,24,22,.2);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      max-height: 430px;
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sheet-head strong {
+      font-size: 15px;
+    }
+
+    .seat-picker {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .pick-seat {
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid #d9d0be;
+      background: #fffefa;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .pick-seat.selected {
+      background: var(--mint);
+      color: white;
+      border-color: var(--mint);
+    }
+
+    .pick-seat.lock {
+      background: #f1ece1;
+      color: #9a8b73;
+    }
+
+    .match-orbit {
+      height: 210px;
+      border-radius: 8px;
+      background: #182c2a;
+      display: grid;
+      place-items: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .match-ring {
+      width: 138px;
+      height: 138px;
+      border-radius: 50%;
+      border: 10px solid rgba(244,195,106,.22);
+      border-top-color: #f4c36a;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .match-chip {
+      position: absolute;
+      min-width: 52px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .c1 { top: 26px; left: 38px; }
+    .c2 { top: 48px; right: 30px; }
+    .c3 { bottom: 34px; left: 55px; }
+    .c4 { bottom: 42px; right: 50px; }
+
+    .result-podium {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-items: end;
+      height: 150px;
+    }
+
+    .podium {
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid #d9d0be;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 9px;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .podium.first { height: 150px; background: var(--gold-soft); color: #7b5516; }
+    .podium.second { height: 120px; background: var(--mint-soft); color: var(--mint); }
+    .podium.third { height: 100px; background: var(--sky-soft); color: var(--sky); }
+
+    .client-map {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .client-node {
+      min-height: 100px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fffefa;
+      display: grid;
+      gap: 6px;
+    }
+
+    .client-node strong {
+      font-size: 14px;
+    }
+
+    .client-node span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .check {
+      border: 1px solid var(--line);
+      background: #fffefa;
+      border-radius: 8px;
+      padding: 11px;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      font-size: 13px;
+    }
+
+    .check::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 5px solid var(--mint);
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .toc {
+        position: static;
+      }
+      .prototype-grid {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+      }
+      .flow-row,
+      .client-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .flow-step::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .hero {
+        padding: 28px 18px 22px;
+      }
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+      .layout {
+        padding: 18px;
+      }
+      section {
+        padding: 18px;
+      }
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .prototype-grid,
+      .checklist {
+        grid-template-columns: 1fr;
+      }
+      .phone {
+        width: min(320px, 100%);
+      }
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">PRD v1.1 补全稿 · 客户端前台产品设计 · HTML 原型</div>
+        <h1>WeChill 游戏房客户端评审原型</h1>
+        <p>结合游戏房 PRD v3.0、BytesunGame 语聊房模式 v1.0.7、排麦模式 PRD，并对应新版 <code>game-room-prd-review-framework-v1.1.md</code>，补全前台流程图、场景条件、排麦与游戏座位关系，并给出可评审的客户端原型图。</p>
+      </div>
+      <div class="meta-grid">
+        <div class="meta">
+          <div class="meta-label">面向区域</div>
+          <div class="meta-value">MENA / GMT+3</div>
+        </div>
+        <div class="meta">
+          <div class="meta-label">优先游戏</div>
+          <div class="meta-value">Ludo / UNO / Domino</div>
+        </div>
+        <div class="meta">
+          <div class="meta-label">客户端重点</div>
+          <div class="meta-value">游戏房 + 排麦 + 观战</div>
+        </div>
+        <div class="meta">
+          <div class="meta-label">生成日期</div>
+          <div class="meta-value">2026-04-22</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <div class="toc-title">目录</div>
+      <a href="#delta">补全摘要</a>
+      <a href="#architecture">客户端结构</a>
+      <a href="#conditions">关键条件</a>
+      <a href="#flows">流程图</a>
+      <a href="#prototype">前台原型图</a>
+      <a href="#queue">排麦融合</a>
+      <a href="#scenarios">场景矩阵</a>
+      <a href="#metrics">埋点验收</a>
+    </nav>
+
+    <main>
+      <section id="delta">
+        <h2>1. 本次补全摘要</h2>
+        <p class="lead">PRD v3.0 已经覆盖房间、Bytesun 接入、随机匹配和后台框架；本次补齐的是客户端可评审视图，尤其是游戏房如何复用排麦模式。</p>
+        <div class="grid-3">
+          <div class="summary-card">
+            <strong>补齐流程图</strong>
+            <p>新增客户端入口、创建房间、加入、游戏座位与语聊麦位同步、排麦审批、匹配、结算复玩的可视化流程。</p>
+          </div>
+          <div class="summary-card">
+            <strong>补齐场景条件</strong>
+            <p>补齐排麦模式下房主、管理员、普通用户、观战用户在游戏房内的申请、审批、上麦、锁麦、拒绝冷却和退出条件。</p>
+          </div>
+          <div class="summary-card">
+            <strong>补齐客户端原型</strong>
+            <p>提供游戏 Tab、创建游戏房、匹配等待、游戏房大厅、排麦审批、选择麦位、用户申请、游戏中、结算页、管理员权益十张前台页面稿。</p>
+          </div>
+        </div>
+        <div class="note" style="margin-top:16px;">
+          关键设计决策：游戏座位和语聊麦位不是同一个概念。游戏座位决定是否参与本局游戏；语聊麦位决定是否在房间发声。游戏房可以使用排麦模式管理语聊麦位，避免游戏中多人同时上麦造成噪音。
+        </div>
+      </section>
+
+      <section id="architecture">
+        <h2>2. 客户端前台结构</h2>
+        <p class="lead">客户端建议拆成五层：入口层、房间壳层、游戏 H5 层、语聊麦位层、结果复玩层。Bytesun 只承接游戏 H5 层和局内事件，其他归我方。</p>
+        <div class="client-map">
+          <div class="client-node">
+            <strong>入口层</strong>
+            <span>游戏 Tab、房间分类、好友邀请、深链、活动页。</span>
+          </div>
+          <div class="client-node">
+            <strong>房间壳层</strong>
+            <span>房间信息、房主权限、观众、聊天、礼物、红包。</span>
+          </div>
+          <div class="client-node">
+            <strong>游戏 H5 层</strong>
+            <span>WebView、getConfig、gameLoaded、游戏开始/结束。</span>
+          </div>
+          <div class="client-node">
+            <strong>语聊麦位层</strong>
+            <span>排麦浮窗、申请上麦、审批、锁麦、自由上下麦权限。</span>
+          </div>
+          <div class="client-node">
+            <strong>结果复玩层</strong>
+            <span>结算、再来一局、换游戏、分享、回到房间。</span>
+          </div>
+        </div>
+        <h3>2.1 两类座位定义</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>对象</th>
+              <th>含义</th>
+              <th>来源</th>
+              <th>用户表现</th>
+              <th>冲突处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>游戏座位</td>
+              <td>是否参与本局 Ludo / UNO / Domino。</td>
+              <td>Bytesun H5 type=15 / type=16，同步给 App。</td>
+              <td>棋盘或牌局中的玩家位。</td>
+              <td>进入游戏逻辑，以 Bytesun 局内座位为准，但需要和 App 预占座校验。</td>
+            </tr>
+            <tr>
+              <td>语聊麦位</td>
+              <td>是否能在房间内发声。</td>
+              <td>我方语聊房麦位系统，可启用排麦模式。</td>
+              <td>房间底部麦位、排麦浮窗、上麦审批。</td>
+              <td>以 App 麦位为准；若游戏座位变化需要同步角色，但不自动赋予上麦权限。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="conditions">
+        <h2>3. 关键条件与规则</h2>
+        <div class="grid-2">
+          <div>
+            <h3>3.1 进入与开局条件</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>条件</th>
+                  <th>规则</th>
+                  <th>失败处理</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>用户状态</td>
+                  <td>危险级禁止进入游戏房；限制级可进免费局但不参与返奖。</td>
+                  <td>提示账号受限。</td>
+                </tr>
+                <tr>
+                  <td>房间状态</td>
+                  <td>等待中/准备中可作为玩家进入；游戏中默认观战。</td>
+                  <td>展示观战入口。</td>
+                </tr>
+                <tr>
+                  <td>人数</td>
+                  <td>Ludo/UNO 最低 2 真人；AI 不计入有效真人。</td>
+                  <td>显示缺人数，提供邀请。</td>
+                </tr>
+                <tr>
+                  <td>余额</td>
+                  <td>付费局进入前校验余额；扣款由 change_balance 幂等处理。</td>
+                  <td>打开商城，充值后 walletUpdate。</td>
+                </tr>
+                <tr>
+                  <td>资源版本</td>
+                  <td>本地 Zip 版本低于 Bytesun game_version 时更新。</td>
+                  <td>提示加载中或切换 URL。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>3.2 排麦条件</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>条件</th>
+                  <th>规则</th>
+                  <th>失败处理</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>切换排麦</td>
+                  <td>仅房主可切换；切换时当前麦上用户自动下麦。</td>
+                  <td>普通用户不展示切换入口。</td>
+                </tr>
+                <tr>
+                  <td>申请上麦</td>
+                  <td>普通用户点击空麦位或排麦浮窗申请。</td>
+                  <td>已被拒绝 5 分钟内不可再次申请。</td>
+                </tr>
+                <tr>
+                  <td>排序</td>
+                  <td>财富等级降序；同等级按申请时间升序。</td>
+                  <td>即时刷新全部打开中的弹窗。</td>
+                </tr>
+                <tr>
+                  <td>审批权限</td>
+                  <td>房主可审批；管理员需授权“操作排麦用户列表”。</td>
+                  <td>未授权管理员只可查看或不展示入口。</td>
+                </tr>
+                <tr>
+                  <td>锁麦</td>
+                  <td>房主/授权管理员可锁麦；用户不能切换到锁定麦位。</td>
+                  <td>提示该麦位已锁定。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="flows">
+        <h2>4. 关键流程图</h2>
+        <p class="lead">流程图采用客户端真实触发点描述，便于产品、客户端、服务端和测试一起评审。</p>
+        <div class="flow-board">
+          <div class="flow">
+            <div class="flow-title">4.1 从入口进入游戏房</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="num">1</span><strong>游戏入口</strong><span>游戏 Tab / 房间分类 / 邀请 / 深链。</span></div>
+              <div class="flow-step decision"><span class="num">2</span><strong>校验状态</strong><span>用户风控、余额、版本、地区、房间状态。</span></div>
+              <div class="flow-step"><span class="num">3</span><strong>进入房间壳</strong><span>建立语聊房上下文，生成 roomId。</span></div>
+              <div class="flow-step"><span class="num">4</span><strong>加载 H5</strong><span>H5 调 getConfig，App 返回 role 和 code。</span></div>
+              <div class="flow-step"><span class="num">5</span><strong>进入等待</strong><span>收到 gameLoaded 和 type=20 后可上座。</span></div>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-title">4.2 游戏座位与排麦麦位同步</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="num">1</span><strong>用户上游戏座</strong><span>H5 发 type=15 或 App 发 type=4。</span></div>
+              <div class="flow-step decision"><span class="num">2</span><strong>是否有麦权</strong><span>玩家不等于自动上麦。</span></div>
+              <div class="flow-step warn"><span class="num">3</span><strong>需要发声</strong><span>点击排麦浮窗申请上麦。</span></div>
+              <div class="flow-step"><span class="num">4</span><strong>房主审批</strong><span>同意后选择具体语聊麦位。</span></div>
+              <div class="flow-step"><span class="num">5</span><strong>同步展示</strong><span>游戏位显示玩家，麦位显示发声用户。</span></div>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-title">4.3 排麦审批</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="num">1</span><strong>用户申请</strong><span>空麦位或浮窗发起申请。</span></div>
+              <div class="flow-step"><span class="num">2</span><strong>队列排序</strong><span>财富等级降序，同级按申请时间。</span></div>
+              <div class="flow-step warn"><span class="num">3</span><strong>红点提醒</strong><span>房主和授权管理员浮窗显示红点。</span></div>
+              <div class="flow-step decision"><span class="num">4</span><strong>同意/拒绝</strong><span>同意选麦位；拒绝冷却 5 分钟。</span></div>
+              <div class="flow-step"><span class="num">5</span><strong>即时刷新</strong><span>所有打开弹窗同步列表状态。</span></div>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-title">4.4 随机匹配与座位预占</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="num">1</span><strong>点击匹配</strong><span>选择游戏、语言、门票、地区。</span></div>
+              <div class="flow-step decision"><span class="num">2</span><strong>匹配房间</strong><span>优先补等待房，再创建新房。</span></div>
+              <div class="flow-step"><span class="num">3</span><strong>预占座位</strong><span>TTL 15 秒，超时释放。</span></div>
+              <div class="flow-step"><span class="num">4</span><strong>加载游戏</strong><span>gameLoaded 后确认上座。</span></div>
+              <div class="flow-step warn"><span class="num">5</span><strong>失败兜底</strong><span>type=18 或超时，重试或返回匹配。</span></div>
+            </div>
+          </div>
+
+          <div class="flow">
+            <div class="flow-title">4.5 结算与复玩</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="num">1</span><strong>游戏结束</strong><span>H5 发 type=14。</span></div>
+              <div class="flow-step"><span class="num">2</span><strong>服务端结算</strong><span>game_settle + change_balance。</span></div>
+              <div class="flow-step decision"><span class="num">3</span><strong>结算成功</strong><span>展示排名、得分、奖励和流水。</span></div>
+              <div class="flow-step"><span class="num">4</span><strong>复玩选择</strong><span>再来一局、换游戏、分享、返回。</span></div>
+              <div class="flow-step warn"><span class="num">5</span><strong>异常补偿</strong><span>失败进入补偿和对账队列。</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="prototype">
+        <h2>5. 客户端前台产品原型图</h2>
+        <p class="lead">以下为静态原型，用于评审页面结构和关键状态，不代表最终视觉稿。所有游戏图层均以本地占位视觉表达，不依赖外部资源。</p>
+
+        <div class="prototype-grid">
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:30</span><span>WeChill</span></div>
+                <div class="appbar">
+                  <div class="appbar-title">Games</div>
+                  <button class="icon-btn">+</button>
+                </div>
+                <div class="screen-body scroll">
+                  <div class="hero-banner">
+                    <h4>Play Ludo with voice</h4>
+                    <p>Arabic rooms, quick table, live chat.</p>
+                  </div>
+                  <div class="segmented">
+                    <span class="active">All</span>
+                    <span>Ludo</span>
+                    <span>UNO</span>
+                    <span>Watch</span>
+                  </div>
+                  <button class="primary-btn">Quick Match</button>
+                  <div class="room-card">
+                    <div class="room-main">
+                      <div class="game-icon">LU</div>
+                      <div>
+                        <div class="room-title">Oasis Ludo Room</div>
+                        <div class="room-sub">3/4 players · Arabic · Free</div>
+                      </div>
+                    </div>
+                    <div class="room-foot"><span class="tag mint">Waiting</span><span>Friend inside</span></div>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-main">
+                      <div class="game-icon violet">UN</div>
+                      <div>
+                        <div class="room-title">UNO Night</div>
+                        <div class="room-sub">Game started · 38 watching</div>
+                      </div>
+                    </div>
+                    <div class="room-foot"><span class="tag sky">Watch</span><span>500 coins</span></div>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-main">
+                      <div class="game-icon mint">DM</div>
+                      <div>
+                        <div class="room-title">Domino Majlis</div>
+                        <div class="room-sub">2/4 players · Dubai node</div>
+                      </div>
+                    </div>
+                    <div class="room-foot"><span class="tag gold">Ready</span><span>Arabic</span></div>
+                  </div>
+                </div>
+                <div class="bottom-nav">
+                  <div>Home</div>
+                  <div class="active">Games</div>
+                  <div>Rooms</div>
+                  <div>Me</div>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.1 游戏 Tab</strong>
+              游戏入口聚合推荐房、分类、快速匹配和可观战房间。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:31</span><span>Create</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Create Game Room</div>
+                  <button class="icon-btn">?</button>
+                </div>
+                <div class="screen-body scroll">
+                  <div class="choice-grid">
+                    <div class="choice active"><strong>Ludo</strong><span>2-4 · 10-20 min</span></div>
+                    <div class="choice"><strong>UNO</strong><span>2-6 · 5-15 min</span></div>
+                    <div class="choice"><strong>Domino</strong><span>2-4 · 5-15 min</span></div>
+                    <div class="choice"><strong>Draw</strong><span>V1.1 · chat sync</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Room name</label>
+                    <div class="input-like"><span>Oasis Ludo Room</span><span>Edit</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Language / node</label>
+                    <div class="input-like"><span>Arabic · Dubai gsp=201</span><span>Change</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Ticket</label>
+                    <div class="segmented">
+                      <span class="active">Free</span>
+                      <span>100</span>
+                      <span>200</span>
+                      <span>500</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Room mode</label>
+                    <div class="input-like"><span>Public · allow watchers</span><span>On</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Voice mic mode</label>
+                    <div class="input-like"><span>Queue mic · 15 seats</span><span>Host only</span></div>
+                  </div>
+                  <button class="primary-btn">Create Room</button>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.2 创建游戏房</strong>
+              创建页增加排麦模式配置，默认 15 麦；门票和随机匹配开关后续可后台控制。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:32</span><span>Match</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Ludo Match</div>
+                  <button class="icon-btn">×</button>
+                </div>
+                <div class="screen-body">
+                  <div class="match-orbit">
+                    <div class="match-ring">18s</div>
+                    <div class="match-chip c1">Arabic</div>
+                    <div class="match-chip c2">Dubai</div>
+                    <div class="match-chip c3">Free</div>
+                    <div class="match-chip c4">2/4</div>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-title">Finding table</div>
+                    <div class="room-sub">Strict matching is active. Seat will be reserved for 15 seconds after match success.</div>
+                    <div class="tag-row">
+                      <span class="tag mint">Same game</span>
+                      <span class="tag sky">Same language</span>
+                      <span class="tag gold">Same ticket</span>
+                    </div>
+                  </div>
+                  <button class="secondary-btn">Invite Friend</button>
+                  <button class="danger-btn">Cancel Match</button>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.3 随机匹配等待</strong>
+              等待页表达当前匹配条件、已找到人数和可取消状态；V2 上线。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:33</span><span>Room</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Oasis Ludo</div>
+                  <button class="icon-btn">⋯</button>
+                </div>
+                <div class="screen-body">
+                  <div class="game-table">
+                    <div class="player-seat seat-top">Host</div>
+                    <div class="player-seat seat-left">Noura</div>
+                    <div class="player-seat empty seat-right">Join</div>
+                    <div class="player-seat empty seat-bottom">Join</div>
+                  </div>
+                  <div class="tag-row">
+                    <span class="tag mint">Waiting</span>
+                    <span class="tag gold">Queue mic</span>
+                    <span class="tag sky">3 watchers</span>
+                  </div>
+                  <div class="room-strip">
+                    <div class="mic active">Host</div>
+                    <div class="mic active">Noura</div>
+                    <div class="mic">3</div>
+                    <div class="mic locked">4</div>
+                    <div class="mic">5</div>
+                  </div>
+                  <div class="grid-2">
+                    <button class="secondary-btn">Invite</button>
+                    <button class="primary-btn">Start</button>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-title">Room chat</div>
+                    <div class="room-sub">Maha sent a gift · Omar joined as watcher</div>
+                  </div>
+                </div>
+                <div class="queue-float"><span class="dot"></span><span>Queue 6</span></div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.4 游戏房等待态</strong>
+              棋盘是游戏座位；底部是语聊麦位。排麦浮窗 LTR 在左侧，阿语 RTL 镜像到右侧。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:34</span><span>Host</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Oasis Ludo</div>
+                  <button class="icon-btn">⋯</button>
+                </div>
+                <div class="screen-body">
+                  <div class="game-table">
+                    <div class="player-seat seat-top">Host</div>
+                    <div class="player-seat seat-left">Noura</div>
+                    <div class="player-seat empty seat-right">Join</div>
+                    <div class="player-seat empty seat-bottom">Join</div>
+                  </div>
+                </div>
+                <div class="queue-float rtl"><span class="dot"></span><span>Queue 6</span></div>
+                <div class="modal-sheet">
+                  <div class="sheet-head">
+                    <strong>Mic Queue</strong>
+                    <span class="tag coral">New</span>
+                  </div>
+                  <div class="mini-list">
+                    <div class="list-row">
+                      <div class="avatar">MA</div>
+                      <div class="row-main"><strong>Maha</strong><span>VIP · Lv.38 · UAE · applied 01:20</span></div>
+                      <div class="tiny-actions"><button class="tiny ok">OK</button><button class="tiny no">No</button></div>
+                    </div>
+                    <div class="list-row">
+                      <div class="avatar">OM</div>
+                      <div class="row-main"><strong>Omar</strong><span>Lv.32 · SA · applied 02:10</span></div>
+                      <div class="tiny-actions"><button class="tiny ok">OK</button><button class="tiny no">No</button></div>
+                    </div>
+                    <div class="list-row">
+                      <div class="avatar">SA</div>
+                      <div class="row-main"><strong>Sara</strong><span>Lv.32 · KW · applied 02:33</span></div>
+                      <div class="tiny-actions"><button class="tiny ok">OK</button><button class="tiny no">No</button></div>
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <button class="secondary-btn">Search UID</button>
+                    <button class="danger-btn">Clear All</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.5 房主/授权管理员审批</strong>
+              有新申请时排麦浮窗红点提醒；列表按财富等级和申请时间排序，可同意、拒绝、搜索和清空。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:35</span><span>Seat</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Select Mic</div>
+                  <button class="icon-btn">×</button>
+                </div>
+                <div class="screen-body">
+                  <div class="room-card">
+                    <div class="room-title">Approve Maha</div>
+                    <div class="room-sub">Choose one available mic seat. Locked seats cannot be selected.</div>
+                  </div>
+                  <div class="seat-picker">
+                    <div class="pick-seat">1</div>
+                    <div class="pick-seat">2</div>
+                    <div class="pick-seat selected">3</div>
+                    <div class="pick-seat lock">4</div>
+                    <div class="pick-seat">5</div>
+                    <div class="pick-seat">6</div>
+                    <div class="pick-seat">7</div>
+                    <div class="pick-seat">8</div>
+                    <div class="pick-seat lock">9</div>
+                    <div class="pick-seat">10</div>
+                    <div class="pick-seat">11</div>
+                    <div class="pick-seat">12</div>
+                    <div class="pick-seat">13</div>
+                    <div class="pick-seat">14</div>
+                    <div class="pick-seat">15</div>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-title">Conflict rule</div>
+                    <div class="room-sub">If another admin approved first, confirm returns “member already on mic”.</div>
+                  </div>
+                  <div class="grid-2">
+                    <button class="secondary-btn">Back</button>
+                    <button class="primary-btn">Confirm</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.6 同意后选择麦位</strong>
+              审批同意不是直接上麦，需选择具体麦位；锁麦不可选，并处理并发审批冲突。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:36</span><span>User</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Mic Queue</div>
+                  <button class="icon-btn">×</button>
+                </div>
+                <div class="screen-body">
+                  <div class="room-card">
+                    <div class="room-title">Waiting list</div>
+                    <div class="room-sub">6 requests · sorted by wealth level and apply time</div>
+                  </div>
+                  <div class="mini-list">
+                    <div class="list-row">
+                      <div class="avatar">MA</div>
+                      <div class="row-main"><strong>Maha</strong><span>Lv.38 · waiting</span></div>
+                      <span class="tag gold">Top</span>
+                    </div>
+                    <div class="list-row">
+                      <div class="avatar">ME</div>
+                      <div class="row-main"><strong>You</strong><span>Lv.31 · waiting</span></div>
+                      <span class="tag mint">Applied</span>
+                    </div>
+                    <div class="list-row">
+                      <div class="avatar">SA</div>
+                      <div class="row-main"><strong>Sara</strong><span>Lv.22 · waiting</span></div>
+                      <span class="tag">3</span>
+                    </div>
+                  </div>
+                  <button class="danger-btn">Cancel Queue</button>
+                  <div class="note">Leaving the room cancels queue. Minimizing the room keeps the queue.</div>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.7 普通用户申请上麦</strong>
+              用户可申请或取消排队；被拒绝后 5 分钟内再次申请需要 toast 提示。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:37</span><span>Playing</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">−</button>
+                  <div class="appbar-title">Ludo · Round 1829</div>
+                  <button class="icon-btn">⋯</button>
+                </div>
+                <div class="screen-body">
+                  <div class="game-table" style="height:300px;">
+                    <div class="player-seat seat-top">Host</div>
+                    <div class="player-seat seat-left">Noura</div>
+                    <div class="player-seat seat-right">Maha</div>
+                    <div class="player-seat seat-bottom">You</div>
+                  </div>
+                  <div class="tag-row">
+                    <span class="tag mint">Playing</span>
+                    <span class="tag sky">12 watchers</span>
+                    <span class="tag gold">Voice on</span>
+                  </div>
+                  <div class="room-strip">
+                    <div class="mic active">Host</div>
+                    <div class="mic active">You</div>
+                    <div class="mic">3</div>
+                    <div class="mic locked">4</div>
+                    <div class="mic">5</div>
+                  </div>
+                  <div class="grid-2">
+                    <button class="secondary-btn">Gift</button>
+                    <button class="secondary-btn">Chat</button>
+                  </div>
+                </div>
+                <div class="queue-float"><span>Queue 3</span></div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.8 游戏中</strong>
+              游戏中保留礼物、聊天和排麦入口，但弹窗不得遮挡关键游戏操作区。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:48</span><span>Result</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Result</div>
+                  <button class="icon-btn">Share</button>
+                </div>
+                <div class="screen-body">
+                  <div class="result-podium">
+                    <div class="podium second"><div>Noura</div><div>2nd</div></div>
+                    <div class="podium first"><div>You</div><div>Winner</div></div>
+                    <div class="podium third"><div>Maha</div><div>3rd</div></div>
+                  </div>
+                  <div class="room-card">
+                    <div class="room-title">Coins +420</div>
+                    <div class="room-sub">Round 1829 · 13m 28s · settlement success</div>
+                  </div>
+                  <div class="tag-row">
+                    <span class="tag mint">Completed</span>
+                    <span class="tag sky">No risk</span>
+                    <span class="tag gold">Replay ready</span>
+                  </div>
+                  <button class="primary-btn">Play Again</button>
+                  <div class="grid-2">
+                    <button class="secondary-btn">Change Game</button>
+                    <button class="secondary-btn">Back Room</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.9 结算页</strong>
+              展示排名、得分、钱包变动和复玩入口；后续版本可加入游戏房返奖。
+            </div>
+          </div>
+
+          <div class="proto-item">
+            <div class="phone">
+              <div class="screen">
+                <div class="statusbar"><span>12:50</span><span>Admin</span></div>
+                <div class="appbar">
+                  <button class="icon-btn">&lt;</button>
+                  <div class="appbar-title">Admin Rights</div>
+                  <button class="icon-btn">✓</button>
+                </div>
+                <div class="screen-body scroll">
+                  <div class="room-card">
+                    <div class="room-main">
+                      <div class="avatar">AD</div>
+                      <div>
+                        <div class="room-title">Omar · Room admin</div>
+                        <div class="room-sub">Game room · Queue mic mode</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Basic voice room rights</label>
+                    <div class="input-like"><span>Kick off mic</span><span>Off</span></div>
+                    <div class="input-like"><span>Kick out room</span><span>Off</span></div>
+                    <div class="input-like"><span>Invite to mic</span><span>On</span></div>
+                    <div class="input-like"><span>Lock mic</span><span>On</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Queue mic rights</label>
+                    <div class="input-like"><span>Free mic up/down</span><span>On</span></div>
+                    <div class="input-like"><span>Manage queue list</span><span>Off</span></div>
+                  </div>
+                  <div class="field">
+                    <label>Game room rights</label>
+                    <div class="input-like"><span>Manage game seat</span><span>Off</span></div>
+                    <div class="input-like"><span>Start game as host</span><span>Off</span></div>
+                  </div>
+                  <div class="note">If “Start game as host” is enabled, this admin can be mapped to Bytesun role=2.</div>
+                  <button class="primary-btn">Save Rights</button>
+                </div>
+              </div>
+            </div>
+            <div class="proto-caption">
+              <strong>5.10 管理员权益配置</strong>
+              参考排麦模式：排麦下新增自由上下麦、操作排麦用户列表；游戏房额外补充协助管理游戏座位和开始游戏。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="queue">
+        <h2>6. 排麦模式融入游戏房</h2>
+        <p class="lead">排麦模式用于管理语聊麦位，不替代游戏座位。游戏房默认建议开启排麦，降低噪音并保留房主控场。</p>
+        <div class="grid-2">
+          <div>
+            <h3>6.1 角色权限</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>角色</th>
+                  <th>排麦权限</th>
+                  <th>游戏权限</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>房主</td>
+                  <td>切换排麦、审批、清空、锁麦、踢下麦、踢出房间。</td>
+                  <td>Bytesun role=2，可开局。</td>
+                </tr>
+                <tr>
+                  <td>授权管理员</td>
+                  <td>按授权操作排麦列表、锁麦、踢人。</td>
+                  <td>可按房主授权成为主持或普通玩家。</td>
+                </tr>
+                <tr>
+                  <td>普通玩家</td>
+                  <td>申请上麦、取消排队、同意后换空麦位。</td>
+                  <td>Bytesun role=0，可参与游戏。</td>
+                </tr>
+                <tr>
+                  <td>观战用户</td>
+                  <td>可申请上麦，房主同意后发声。</td>
+                  <td>Bytesun role=1，默认只观战。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>6.2 排麦规则</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>规则</th>
+                  <th>客户端表现</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>入口位置</td>
+                  <td>LTR 在底部左侧；阿语 RTL 在底部右侧。</td>
+                </tr>
+                <tr>
+                  <td>红点</td>
+                  <td>新申请时房主和授权管理员可见，打开审批后当前用户红点消失。</td>
+                </tr>
+                <tr>
+                  <td>拒绝冷却</td>
+                  <td>被拒绝用户 5 分钟内再次申请，toast 提示等待。</td>
+                </tr>
+                <tr>
+                  <td>退出房间</td>
+                  <td>申请中用户退出房间自动取消排队。</td>
+                </tr>
+                <tr>
+                  <td>最小化</td>
+                  <td>申请中用户最小化房间，仍保留队列。</td>
+                </tr>
+                <tr>
+                  <td>即时刷新</td>
+                  <td>任一用户更新队列，所有打开弹窗实时刷新。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="scenarios">
+        <h2>7. 场景矩阵补全</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>编号</th>
+              <th>场景</th>
+              <th>触发</th>
+              <th>条件</th>
+              <th>客户端响应</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>S1</td>
+              <td>普通语聊房开启游戏</td>
+              <td>房主点击开启游戏。</td>
+              <td>房间未锁定，房主权限有效，游戏资源可用。</td>
+              <td>继承 roomId，打开游戏配置页，切换为混合房。</td>
+            </tr>
+            <tr>
+              <td>S2</td>
+              <td>游戏房启用排麦</td>
+              <td>创建房间选择排麦模式。</td>
+              <td>仅房主可切换，切换时麦上用户自动下麦。</td>
+              <td>底部显示排麦浮窗，麦位默认 15 麦。</td>
+            </tr>
+            <tr>
+              <td>S3</td>
+              <td>玩家申请上麦</td>
+              <td>点击空麦位或排麦浮窗。</td>
+              <td>未处于拒绝冷却，未被禁言，房间允许上麦申请。</td>
+              <td>进入队列，按钮变为取消排队。</td>
+            </tr>
+            <tr>
+              <td>S4</td>
+              <td>房主同意上麦</td>
+              <td>审批列表点击同意。</td>
+              <td>用户仍在队列中，目标麦位未锁且未占用。</td>
+              <td>打开选择麦位页，确认后用户上指定麦位。</td>
+            </tr>
+            <tr>
+              <td>S5</td>
+              <td>并发审批冲突</td>
+              <td>房主和管理员同时同意同一用户。</td>
+              <td>先确认者生效。</td>
+              <td>后确认者 toast：该成员已在麦上，刷新列表。</td>
+            </tr>
+            <tr>
+              <td>S6</td>
+              <td>游戏中观战转玩家</td>
+              <td>玩家退出出现空游戏座位。</td>
+              <td>游戏支持中途加入，用户余额和风控通过。</td>
+              <td>用户 role 从 1 切到 0，预占游戏座位，不自动上语聊麦。</td>
+            </tr>
+            <tr>
+              <td>S7</td>
+              <td>游戏中送礼</td>
+              <td>点击礼物。</td>
+              <td>房间允许礼物，弹窗不遮挡关键操作。</td>
+              <td>展示半屏礼物面板，游戏关键区域保留。</td>
+            </tr>
+            <tr>
+              <td>S8</td>
+              <td>结算失败</td>
+              <td>change_balance 超时或返回非 0。</td>
+              <td>订单未成功落账。</td>
+              <td>展示结算处理中，进入补偿队列。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="metrics">
+        <h2>8. 埋点与验收补充</h2>
+        <div class="grid-2">
+          <div>
+            <h3>8.1 新增客户端事件</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>事件</th>
+                  <th>触发</th>
+                  <th>关键参数</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>`game_mic_queue_open`</td>
+                  <td>打开排麦浮窗。</td>
+                  <td>room_id, role, queue_count, red_dot</td>
+                </tr>
+                <tr>
+                  <td>`game_mic_queue_apply`</td>
+                  <td>用户申请上麦。</td>
+                  <td>room_id, user_id, wealth_level</td>
+                </tr>
+                <tr>
+                  <td>`game_mic_queue_cancel`</td>
+                  <td>用户取消排队。</td>
+                  <td>room_id, wait_time, source</td>
+                </tr>
+                <tr>
+                  <td>`game_mic_queue_review`</td>
+                  <td>同意或拒绝申请。</td>
+                  <td>operator_id, target_id, result, seat</td>
+                </tr>
+                <tr>
+                  <td>`game_mic_queue_reject_cooldown`</td>
+                  <td>拒绝冷却内重复申请。</td>
+                  <td>room_id, user_id, remain_seconds</td>
+                </tr>
+                <tr>
+                  <td>`game_seat_mic_sync_conflict`</td>
+                  <td>游戏座位和语聊麦位冲突。</td>
+                  <td>room_id, game_seat, mic_seat, action</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>8.2 客户端验收清单</h3>
+            <div class="checklist">
+              <div class="check">阿语 RTL 下排麦浮窗出现在底部右侧。</div>
+              <div class="check">房主切换排麦模式时，麦上用户自动下麦。</div>
+              <div class="check">普通用户申请后，房主/授权管理员看到红点。</div>
+              <div class="check">拒绝后 5 分钟内重复申请有 toast。</div>
+              <div class="check">用户退出房间自动取消排队，最小化不取消。</div>
+              <div class="check">游戏座位变化不会自动授予语聊上麦权限。</div>
+              <div class="check">同意上麦必须选择未锁定空麦位。</div>
+              <div class="check">审批列表在多端打开时可即时刷新。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

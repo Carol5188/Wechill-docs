@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dragon Egg Rules & Reward Table</title>
+  <style>
+    :root {
+      --bg: #080604;
+      --panel: #17110b;
+      --panel-soft: #21170d;
+      --gold: #d9ad5d;
+      --gold-light: #f2d184;
+      --gold-dark: #8f6128;
+      --text: #d8bf8d;
+      --muted: #9b8255;
+      --line: rgba(220, 176, 92, .26);
+      --line-soft: rgba(220, 176, 92, .15);
+      --chip: rgba(222, 176, 84, .13);
+      --chip-line: rgba(222, 176, 84, .28);
+      --sticky: #24180d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% 0, rgba(130, 92, 32, .34), transparent 38%),
+        linear-gradient(180deg, #1a120a 0%, #070504 100%);
+      display: flex;
+      justify-content: center;
+      padding: 24px 10px;
+    }
+
+    .rule-page {
+      width: min(100%, 430px);
+      min-height: 880px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, .018) 1px, transparent 1px),
+        radial-gradient(circle at 50% 16%, rgba(105, 74, 30, .34), transparent 35%),
+        linear-gradient(180deg, rgba(43, 31, 17, .97), rgba(10, 8, 6, .99));
+      background-size: 19px 19px, 23px 23px, auto, auto;
+      border: 1px solid rgba(235, 192, 100, .28);
+      box-shadow: 0 22px 80px rgba(0, 0, 0, .62), inset 0 0 0 6px rgba(0, 0, 0, .28);
+    }
+
+    .rule-page::before,
+    .rule-page::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border: 1px solid rgba(223, 183, 94, .22);
+    }
+
+    .rule-page::before {
+      inset: 10px;
+    }
+
+    .rule-page::after {
+      inset: 18px;
+      border-color: rgba(223, 183, 94, .12);
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 32px 24px 34px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .back {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, .24);
+      color: var(--gold-light);
+      font-size: 28px;
+      line-height: 28px;
+      display: grid;
+      place-items: center;
+      padding: 0 2px 3px 0;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--gold-light);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 24px 0 10px;
+      color: var(--gold-light);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .rules {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .rules li {
+      margin-bottom: 13px;
+      padding-left: 3px;
+    }
+
+    .tips {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .table-shell {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, .2);
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: inset -20px 0 26px rgba(0, 0, 0, .22);
+    }
+
+    table {
+      width: max-content;
+      min-width: 960px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border-right: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      min-width: 172px;
+      padding: 12px 10px;
+      color: #1f1308;
+      background: linear-gradient(180deg, #f1d183, #b88136);
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      width: 72px;
+      min-width: 72px;
+      max-width: 72px;
+      text-align: center;
+      border-right: 1px solid rgba(241, 209, 131, .44);
+      box-shadow: 10px 0 18px rgba(0, 0, 0, .22);
+    }
+
+    th:first-child {
+      z-index: 5;
+    }
+
+    td {
+      width: 178px;
+      min-width: 178px;
+      height: 74px;
+      padding: 9px 8px;
+      background: rgba(0, 0, 0, .12);
+    }
+
+    td:first-child {
+      vertical-align: middle;
+      color: var(--gold-light);
+      background: var(--sticky);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    tr:nth-child(even) td:not(:first-child) {
+      background: rgba(255, 221, 139, .035);
+    }
+
+    tr.owner td {
+      background: rgba(142, 87, 28, .16);
+    }
+
+    tr.owner td:first-child {
+      background: #2f1e0d;
+    }
+
+    .reward-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-height: 26px;
+      padding: 4px 7px;
+      color: #e9c984;
+      border: 1px solid var(--chip-line);
+      background: var(--chip);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: normal;
+      word-break: keep-all;
+    }
+
+    .tag.money {
+      color: #ffe198;
+      background: rgba(245, 197, 93, .18);
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .legend strong {
+      color: var(--gold);
+    }
+
+    .scroll-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 0 10px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .scroll-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(217, 173, 93, .15), rgba(217, 173, 93, .64), rgba(217, 173, 93, .15));
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #8d7144;
+      font-size: 12px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 0;
+      }
+
+      .rule-page {
+        width: 100%;
+        min-height: 100vh;
+        border: 0;
+      }
+
+      .content {
+        padding: 28px 18px 30px;
+      }
+
+      .rules {
+        font-size: 14px;
+      }
+
+      table {
+        min-width: 900px;
+      }
+
+      th,
+      td {
+        min-width: 164px;
+        width: 164px;
+      }
+
+      th:first-child,
+      td:first-child {
+        width: 64px;
+        min-width: 64px;
+        max-width: 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="rule-page">
+    <section class="content">
+      <div class="topbar">
+        <button class="back" aria-label="Back">&lsaquo;</button>
+        <h1>Rules</h1>
+        <div></div>
+      </div>
+
+      <ol class="rules">
+        <li>The rocket will be launched when the amount of coins in the room reaches a certain level.</li>
+        <li>General gifts: 10 coins = 10 progress points. Lucky gifts: 10 coins = 1 progress point.</li>
+        <li>Different Dragon Egg levels have different reward pools. The top 10 contributors and the room owner may receive rewards from the reward pool of the current round.</li>
+        <li>Coins and Game Coins are one-time rewards. Vehicle, Avatar Frame, and Chat Bubble rewards are valid for the listed number of days.</li>
+        <li>Except that the VIP2 reward for Dragon Egg 1 is valid for 3 days, all other privileges and VIP rewards are valid for 7 days.</li>
+        <li>The rocket progress will be reset at 00:00 (GMT+8) every day.</li>
+      </ol>
+
+      <h2>Reward Details</h2>
+      <p class="tips">All Dragon Egg levels are shown in one table. Swipe horizontally to compare rewards.</p>
+
+      <div class="scroll-hint">
+        <span>Swipe table</span>
+        <span class="scroll-line"></span>
+        <span>Egg 1-5</span>
+      </div>
+
+      <div class="table-shell">
+        <table aria-label="Dragon Egg reward details">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Dragon Egg 1</th>
+              <th>Dragon Egg 2</th>
+              <th>Dragon Egg 3</th>
+              <th>Dragon Egg 4</th>
+              <th>Dragon Egg 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><div class="reward-list"><span class="tag money">Coins 5,000</span><span class="tag">Vehicle 2 days</span><span class="tag">Avatar Frame 2 days</span><span class="tag">Bubble 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 15,000</span><span class="tag">Vehicle 3 days</span><span class="tag">Avatar Frame 3 days</span><span class="tag">Bubble 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 50,000</span><span class="tag">Vehicle 5 days</span><span class="tag">Avatar Frame 5 days</span><span class="tag">Bubble 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 80,000</span><span class="tag">Vehicle 7 days</span><span class="tag">Avatar Frame 7 days</span><span class="tag">Bubble 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 200,000</span><span class="tag">Vehicle 7 days</span><span class="tag">Avatar Frame 7 days</span><span class="tag">Bubble 3 days</span></div></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><div class="reward-list"><span class="tag money">Coins 3,000</span><span class="tag">Vehicle 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 8,000</span><span class="tag">Vehicle 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 30,000</span><span class="tag">Vehicle 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 40,000</span><span class="tag">Vehicle 5 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Coins 100,000</span><span class="tag">Vehicle 5 days</span></div></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 50,000</span><span class="tag">Avatar Frame 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 100,000</span><span class="tag">Avatar Frame 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 200,000</span><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 500,000</span><span class="tag">Avatar Frame 5 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 1,000,000</span><span class="tag">Avatar Frame 5 days</span></div></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 20,000</span><span class="tag">Avatar Frame</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 60,000</span><span class="tag">Avatar Frame 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 120,000</span><span class="tag">Avatar Frame 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 300,000</span><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag money">Game Coins 500,000</span><span class="tag">Avatar Frame 3 days</span></div></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 5 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 7 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 7 days</span></div></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 5 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 5 days</span></div></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><div class="reward-list"><span class="tag">Vehicle 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 4 days</span></div></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Avatar Frame 4 days</span></div></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td><div class="reward-list"><span class="tag">Bubble 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 4 days</span></div></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td><div class="reward-list"><span class="tag">Bubble 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 2 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Bubble 3 days</span></div></td>
+            </tr>
+            <tr class="owner">
+              <td>Owner</td>
+              <td><div class="reward-list"><span class="tag">Vehicle 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 1 day</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 3 days</span></div></td>
+              <td><div class="reward-list"><span class="tag">Vehicle 3 days</span><span class="tag money">Game Coins 15,000</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="legend">
+        <div><strong>Tip:</strong> This version removes Dragon Egg tabs and shows every level in one comparison table.</div>
+        <div><strong>Validity:</strong> Vehicle, Avatar Frame and Bubble rewards are valid for the number of days shown in the table.</div>
+      </div>
+
+      <p class="footer">Rewards are subject to the final in-app result and official activity configuration.</p>
+    </section>
+  </main>
+</body>
+</html>

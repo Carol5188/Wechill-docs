@@ -1,3 +1,8 @@
 .DS_Store
 node_modules/
 *.log
+outputs/
+terms_render/
+*.docx
+build_*.mjs
+update_terms_email.py

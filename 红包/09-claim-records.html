@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红包后台 - 红包领取记录</title>
+  <link rel="stylesheet" href="hongbao-console-redesign.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>WeChill后台</div>
+    </div>
+
+    <div class="nav-scroll">
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◔</span><span>统计</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">▣</span><span>红包玩法</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+        <div class="nav-children">
+          <a class="nav-subitem" href="../hongbao-config-redesign.html">红包配置</a>
+          <a class="nav-subitem" href="06-packets.html">红包数据查询</a>
+          <a class="nav-subitem is-active" href="09-claim-records.html">红包领取记录</a>
+          <a class="nav-subitem" href="04-risk.html">红包风控明细</a>
+          <a class="nav-subitem" href="07-rebates.html">红包返奖记录</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◎</span><span>用户</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+      <div class="nav-group">
+        <button class="nav-item">
+          <span class="nav-item-main"><span class="nav-icon">◌</span><span>房间</span></span>
+          <span class="nav-arrow">⌄</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="breadcrumb">红包玩法 / 红包管理 / <strong>红包领取记录</strong></div>
+      <div class="topbar-right">
+        <span>运营后台</span>
+        <div class="avatar">LX</div>
+      </div>
+    </div>
+
+    <div class="page">
+      <section class="summary-grid">
+        <article class="summary-card">
+          <div class="summary-label">今日领取次数</div>
+          <div class="summary-value">6,842</div>
+          <div class="summary-foot">金币红包 4,891 次，礼物红包 1,951 次。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">有效领取人数</div>
+          <div class="summary-value">5,736</div>
+          <div class="summary-foot">发送人自领不计入有效领取人数，但保留明细展示。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">平均领取响应</div>
+          <div class="summary-value">2.8s</div>
+          <div class="summary-foot">红包发出后有 1 - 3 秒随机延迟窗口。</div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-label">异常响应样本</div>
+          <div class="summary-value">26</div>
+          <div class="summary-foot">领取响应 &lt; 500ms 标记可疑，连续 3 次 &lt; 1s 触发冷却。</div>
+        </article>
+      </section>
+
+      <section class="card filter-card">
+        <div class="filter-row">
+          <div class="field compact">
+            <label>领取时间</label>
+            <input class="control" value="2026-04-16 00:00 ~ 2026-04-16 23:59">
+          </div>
+          <div class="field compact">
+            <label>红包 ID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>发送人 UID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>领取人 UID</label>
+            <input class="control" value="全部">
+          </div>
+          <div class="field compact">
+            <label>红包类型</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>金币红包</option>
+              <option>礼物红包</option>
+            </select>
+          </div>
+          <div class="field compact">
+            <label>风控状态</label>
+            <select class="control">
+              <option selected>全部</option>
+              <option>危险级：禁发禁领</option>
+              <option>限制级：不参与返奖</option>
+              <option>观察名单</option>
+              <option>正常</option>
+            </select>
+          </div>
+          <div class="action-row">
+            <button class="btn secondary">重置</button>
+            <button class="btn primary">查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-toolbar">
+          <div>
+            <div class="table-title">领取记录列表</div>
+            <div class="table-subtitle">用于定位用户从悬浮窗点击、打开弹窗、领取成功、公屏消息和钱包变账的完整链路。</div>
+          </div>
+          <div class="table-tools">
+            <button class="btn light">导出</button>
+            <button class="icon-btn" title="刷新">↻</button>
+            <button class="icon-btn" title="列设置">☷</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>领取单号</th>
+                <th>红包信息</th>
+                <th>领取人</th>
+                <th>领取内容</th>
+                <th>领取条件</th>
+                <th>消息 / 变账</th>
+                <th>风险标记</th>
+                <th>领取时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="claim-record-table-body">
+              <tr>
+                <td class="main-cell"><strong>CLAIM-771901</strong><div class="sub">第 1 份</div></td>
+                <td class="main-cell"><strong>HB202604160012</strong><div class="sub">金币红包 / A档 / 房间 880321</div></td>
+                <td class="main-cell"><strong>UID 112345</strong><div class="sub">Noura</div></td>
+                <td>2,456 金币</td>
+                <td><span class="tag blue">在房用户</span></td>
+                <td class="main-cell"><strong>公屏已发</strong><div class="sub">钱包：红包获得 +2,456</div></td>
+                <td><span class="tag neutral">正常</span></td>
+                <td>2026-04-16 10:08:45</td>
+                <td><button class="link-btn danger" data-claim-action="risk">风控</button></td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>CLAIM-771902</strong><div class="sub">最后一份</div></td>
+                <td class="main-cell"><strong>HB202604160012</strong><div class="sub">金币红包 / A档 / 房间 880321</div></td>
+                <td class="main-cell"><strong>UID 983211</strong><div class="sub">发送人自领</div></td>
+                <td>1,036 金币</td>
+                <td><span class="tag blue">在房用户</span></td>
+                <td class="main-cell"><strong>结果弹窗合并</strong><div class="sub">自领不计入有效领取人数</div></td>
+                <td><span class="tag neutral">正常</span></td>
+                <td>2026-04-16 10:10:02</td>
+                <td><button class="link-btn danger" data-claim-action="risk">风控</button></td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>CLAIM-771944</strong><div class="sub">第 8 份</div></td>
+                <td class="main-cell"><strong>HB202604160016</strong><div class="sub">礼物红包 / B档 / 房间 991200</div></td>
+                <td class="main-cell"><strong>UID 223456</strong><div class="sub">Mira</div></td>
+                <td>星光 × 1 / 999 钻石</td>
+                <td><span class="tag purple">在麦用户</span></td>
+                <td class="main-cell"><strong>公屏已发</strong><div class="sub">钱包：收到红包礼物 +999 钻石</div></td>
+                <td><span class="tag yellow">高风险房间</span></td>
+                <td>2026-04-16 10:18:20</td>
+                <td><button class="link-btn primary" data-claim-action="adjust-risk-level" data-risk-level="观察名单">观察名单</button></td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>CLAIM-771978</strong><div class="sub">失败样本</div></td>
+                <td class="main-cell"><strong>HB202604160021</strong><div class="sub">金币红包 / B档 / 房间 880654</div></td>
+                <td class="main-cell"><strong>UID 778821</strong><div class="sub">Rami</div></td>
+                <td>-</td>
+                <td><span class="tag purple">在麦用户</span></td>
+                <td class="main-cell"><strong>Toast 已发</strong><div class="sub">该红包只能由麦上用户领取</div></td>
+                <td><span class="tag red">同 IP 黑名单</span></td>
+                <td>2026-04-16 10:24:13</td>
+                <td><button class="link-btn danger" data-claim-action="adjust-risk-level" data-risk-level="危险级：禁发禁领">危险级：禁发禁领</button></td>
+              </tr>
+              <tr>
+                <td class="main-cell"><strong>CLAIM-772006</strong><div class="sub">异常样本</div></td>
+                <td class="main-cell"><strong>HB202604160071</strong><div class="sub">金币红包 / B档 / 房间 880321</div></td>
+                <td class="main-cell"><strong>UID 190245</strong><div class="sub">Layla</div></td>
+                <td>3,028 金币</td>
+                <td><span class="tag blue">在房用户</span></td>
+                <td class="main-cell"><strong>公屏已发</strong><div class="sub">钱包：红包获得 +3,028</div></td>
+                <td><span class="tag red">&lt; 500ms 可疑</span></td>
+                <td>2026-04-16 11:02:04</td>
+                <td><button class="link-btn" data-claim-action="adjust-risk-level" data-risk-level="限制级：不参与返奖">限制级：不参与返奖</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>第 1-5 条 / 总共 6,842 条</span>
+          <div class="pager"><div class="page-btn">‹</div><div class="page-btn is-active">1</div><div class="page-btn">2</div><div class="page-btn">3</div><div class="page-btn">›</div></div>
+        </div>
+
+        <div class="tips-bar">
+          <span>领取人抢到礼物红包后，领取内容展示为礼物名称、数量和等价钻石；发送方返奖仍以金币结算。</span>
+          <span>发送人自领会出现在明细中，但不计入返奖开奖所需的有效领取人数。</span>
+        </div>
+      </section>
+
+      <section class="split-grid">
+        <article class="panel">
+          <div class="panel-head">选中领取记录详情</div>
+          <div class="panel-body">
+            <table class="mini-table">
+              <tbody>
+                <tr><th>红包 ID</th><td>HB202604160012</td><th>领取单号</th><td>CLAIM-771902</td></tr>
+                <tr><th>领取身份</th><td>发送人自领</td><th>领取条件</th><td>在房用户</td></tr>
+                <tr><th>红包进度</th><td>10 / 10 已领完</td><th>触发结果</th><td>合并结果弹窗</td></tr>
+                <tr><th>返奖口径</th><td colspan="3">红包满足 A 档且已领完，但发送人自领不计入有效领取人数；最终有效领取人数为 9。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">领取链路</div>
+          <div class="panel-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-time">10:08:32</div>
+                <div class="timeline-content"><strong>红包发送成功</strong>服务端返回 `claim_not_before`，客户端展示领取倒计时。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:08:35</div>
+                <div class="timeline-content"><strong>允许领取</strong>随机延迟窗口结束，领取按钮进入可点击状态。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:10:02</div>
+                <div class="timeline-content"><strong>最后一份被领取</strong>发送人自领最后一份，仅展示一个合并结果弹窗。</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-time">10:10:03</div>
+                <div class="timeline-content"><strong>触发开奖</strong>红包已领完，有效领取人数 9，进入返奖开奖链路。</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal-mask" id="claim-detail-mask" aria-hidden="true">
+    <section class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="claim-detail-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="claim-detail-title">领取记录详情</div>
+          <div class="modal-subtitle" id="claim-detail-subtitle">领取单号维度完整明细</div>
+        </div>
+        <button class="modal-close" type="button" data-close-modal>×</button>
+      </div>
+      <div class="modal-body" id="claim-detail-body"></div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" data-close-modal>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="claim-risk-level-mask" aria-hidden="true">
+    <section class="modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="claim-risk-level-title">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="claim-risk-level-title">调整风控等级</div>
+          <div class="modal-subtitle" id="claim-risk-level-subtitle">选择新的风控状态</div>
+        </div>
+        <button class="modal-close" type="button" data-close-modal>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="inline-help">选择后立即更新当前领取记录的风控状态。危险级禁发禁领，限制级不参与返奖，观察名单仅监控预警。</div>
+        <div class="choice-grid">
+          <button class="choice-btn red" type="button" data-risk-level-option="危险级：禁发禁领"><strong>危险级</strong><span>不展示红包入口，禁发禁领。</span></button>
+          <button class="choice-btn yellow" type="button" data-risk-level-option="限制级：不参与返奖"><strong>限制级</strong><span>可发可领，但不参与返奖。</span></button>
+          <button class="choice-btn blue" type="button" data-risk-level-option="观察名单"><strong>观察名单</strong><span>只监控和预警，不直接拦截。</span></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" data-close-modal>取消</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const claimTableBody = document.querySelector("#claim-record-table-body");
+    const claimDetailMask = document.querySelector("#claim-detail-mask");
+    const claimRiskLevelMask = document.querySelector("#claim-risk-level-mask");
+    const claimDetailTitle = document.querySelector("#claim-detail-title");
+    const claimDetailSubtitle = document.querySelector("#claim-detail-subtitle");
+    const claimDetailBody = document.querySelector("#claim-detail-body");
+    const claimRiskLevelSubtitle = document.querySelector("#claim-risk-level-subtitle");
+    let currentRiskLevelButton = null;
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function openMask(mask) {
+      mask.classList.add("is-open");
+      mask.setAttribute("aria-hidden", "false");
+    }
+
+    function closeMask(mask) {
+      mask.classList.remove("is-open");
+      mask.setAttribute("aria-hidden", "true");
+    }
+
+    function toneFor(text) {
+      if (text.includes("可疑") || text.includes("风控") || text.includes("冷却")) return "red";
+      if (text.includes("风险") || text.includes("不满足") || text.includes("否")) return "yellow";
+      if (text.includes("成功") || text.includes("正常") || text.includes("是")) return "green";
+      if (text.includes("礼物") || text.includes("在麦")) return "purple";
+      if (text.includes("在房")) return "blue";
+      return "neutral";
+    }
+
+    function tag(text) {
+      return `<span class="tag ${toneFor(text)}">${escapeHTML(text)}</span>`;
+    }
+
+    function matchText(value, pattern) {
+      const matched = value.match(pattern);
+      return matched ? matched[1] : "";
+    }
+
+    function getClaimRow(button) {
+      const row = button.closest("tr");
+      const cells = row.querySelectorAll("td");
+      return {
+        claimId: cells[0].innerText,
+        packet: cells[1].innerText,
+        user: cells[2].innerText,
+        content: cells[3].innerText,
+        condition: cells[4].innerText,
+        message: cells[5].innerText,
+        risk: cells[6].innerText,
+        time: cells[7].innerText
+      };
+    }
+
+    function openRiskBlacklist(data) {
+      const packetId = matchText(data.packet, /(HB\d+)/);
+      const roomId = matchText(data.packet, /房间\s*(\d+)/);
+      const uid = matchText(data.user, /UID\s*(\d+)/);
+      const claimId = data.claimId.split("\n")[0];
+      const params = new URLSearchParams({
+        openBlacklist: "1",
+        packetId,
+        claimId,
+        uid,
+        roomId,
+        source: "人工复核"
+      });
+      window.location.href = `04-risk.html?${params.toString()}#manual-blacklist`;
+    }
+
+    function riskLevelButtonClass(level) {
+      if (level.includes("危险")) return "link-btn danger";
+      if (level.includes("观察")) return "link-btn primary";
+      return "link-btn";
+    }
+
+    function openRiskLevelModal(button) {
+      currentRiskLevelButton = button;
+      const data = getClaimRow(button);
+      claimRiskLevelSubtitle.textContent = `${data.claimId.split("\n")[0]}｜${data.user.split("\n")[0]}`;
+      openMask(claimRiskLevelMask);
+    }
+
+    function applyRiskLevel(level) {
+      if (!currentRiskLevelButton) return;
+      currentRiskLevelButton.textContent = level;
+      currentRiskLevelButton.dataset.riskLevel = level;
+      currentRiskLevelButton.className = riskLevelButtonClass(level);
+      closeMask(claimRiskLevelMask);
+      currentRiskLevelButton = null;
+    }
+
+    function renderClaimDetail(data, isRisk) {
+      claimDetailTitle.textContent = isRisk ? "领取风控详情" : "领取记录详情";
+      claimDetailSubtitle.textContent = `${data.claimId.split("\n")[0]}｜${data.packet.split("\n")[0]}`;
+      claimDetailBody.innerHTML = `
+        <div class="modal-section-stack">
+          <div class="modal-section-title">领取基础信息</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>领取单号</th><td>${escapeHTML(data.claimId)}</td><th>红包信息</th><td>${escapeHTML(data.packet)}</td></tr>
+              <tr><th>领取人</th><td>${escapeHTML(data.user)}</td><th>领取内容</th><td>${escapeHTML(data.content)}</td></tr>
+              <tr><th>领取条件</th><td>${tag(data.condition)}</td><th>领取时间</th><td>${escapeHTML(data.time)}</td></tr>
+              <tr><th>消息 / 变账</th><td>${escapeHTML(data.message)}</td><th>风险标记</th><td>${tag(data.risk)}</td></tr>
+            </tbody>
+          </table>
+
+          <div class="modal-two-col">
+            <div class="modal-section-stack">
+              <div class="modal-section-title">领取链路</div>
+              <div class="timeline">
+                <div class="timeline-item"><div class="timeline-time">入口</div><div class="timeline-content"><strong>打开红包入口</strong>客户端展示领取弹窗并请求服务端校验领取资格。</div></div>
+                <div class="timeline-item"><div class="timeline-time">校验</div><div class="timeline-content"><strong>${escapeHTML(data.condition)}</strong>服务端校验房间、麦位、冷却和行为 token。</div></div>
+                <div class="timeline-item"><div class="timeline-time">结果</div><div class="timeline-content"><strong>${escapeHTML(data.message)}</strong>领取流水已写入后台记录。</div></div>
+              </div>
+            </div>
+            <div class="modal-section-stack">
+              <div class="modal-section-title">风控摘要</div>
+              <table class="mini-table">
+                <tbody>
+                  <tr><th>风险标记</th><td>${tag(data.risk)}</td></tr>
+                  <tr><th>处理口径</th><td>${escapeHTML(isRisk ? "进入风控复核，必要时触发验证码或临时冷却。" : "保留领取流水，用于红包开奖、返奖和用户投诉追溯。")}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+      openMask(claimDetailMask);
+    }
+
+    claimTableBody.addEventListener("click", (event) => {
+      const button = event.target.closest(".link-btn");
+      if (!button) return;
+      if (button.dataset.claimAction === "risk") openRiskBlacklist(getClaimRow(button));
+      if (button.dataset.claimAction === "adjust-risk-level") openRiskLevelModal(button);
+    });
+
+    claimDetailMask.addEventListener("click", (event) => {
+      if (event.target === claimDetailMask || event.target.closest("[data-close-modal]")) closeMask(claimDetailMask);
+    });
+
+    claimRiskLevelMask.addEventListener("click", (event) => {
+      const levelButton = event.target.closest("[data-risk-level-option]");
+      if (levelButton) {
+        applyRiskLevel(levelButton.dataset.riskLevelOption);
+        return;
+      }
+      if (event.target === claimRiskLevelMask || event.target.closest("[data-close-modal]")) {
+        closeMask(claimRiskLevelMask);
+        currentRiskLevelButton = null;
+      }
+    });
+  </script>
+</body>
+</html>

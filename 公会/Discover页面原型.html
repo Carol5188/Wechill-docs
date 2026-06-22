@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discover 页面原型</title>
+  <style>
+    :root {
+      --bg: #090604;
+      --panel: #17110d;
+      --panel-2: #24170f;
+      --card: #3a302c;
+      --gold: #f2c563;
+      --gold-soft: #fff1b2;
+      --text: #fff8ec;
+      --muted: rgba(255, 248, 236, 0.68);
+      --blue: #42caf6;
+      --orange: #ff7b23;
+      --line: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f2f2f2;
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+    }
+
+    .stage {
+      width: 390px;
+      height: 844px;
+      margin: 0 auto;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(109, 74, 33, 0.45), transparent 42%),
+        linear-gradient(180deg, #1b120b 0%, #0b0604 38%, #090604 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    .status {
+      height: 36px;
+      padding: 8px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 14px;
+      font-weight: 800;
+      background: rgba(14, 9, 7, 0.96);
+      color: #fff;
+    }
+
+    .topbar {
+      height: 58px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(14, 9, 7, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      color: var(--gold-soft);
+      text-shadow: 0 4px 18px rgba(242, 197, 99, 0.45);
+    }
+
+    .hero {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 220px;
+      opacity: 0.42;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(9, 6, 4, 0.05), rgba(9, 6, 4, 0.98)),
+        radial-gradient(circle at 24% 42%, rgba(246, 208, 106, 0.55) 0 3%, transparent 4%),
+        radial-gradient(circle at 72% 26%, rgba(246, 208, 106, 0.35) 0 4%, transparent 5%),
+        linear-gradient(135deg, #604321, #27120b 50%, #080604);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      height: calc(844px - 36px - 58px);
+      padding: 10px 8px 92px;
+      overflow: hidden;
+    }
+
+    .discover-tabs {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+
+    .discover-tab {
+      position: relative;
+      border: 0;
+      padding: 0 0 8px;
+      color: rgba(255, 232, 191, 0.82);
+      background: transparent;
+      font-size: 19px;
+      line-height: 1;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .discover-tab.active {
+      color: var(--gold);
+      font-weight: 900;
+      text-shadow: 0 4px 16px rgba(242, 197, 99, 0.32);
+    }
+
+    .discover-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 28px;
+      height: 3px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 3px 12px rgba(242, 197, 99, 0.44);
+    }
+
+    .game-tools {
+      display: grid;
+      grid-template-columns: 1fr 126px;
+      gap: 10px;
+      align-items: center;
+      margin: 2px 2px 12px;
+    }
+
+    .wallet-strip {
+      height: 40px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border: 2px solid rgba(255, 255, 255, 0.86);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 48% 38%, #f2d6bd 0 24%, transparent 25%),
+        linear-gradient(135deg, #29324c, #f5ead7);
+    }
+
+    .coin {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffd848;
+      color: #9c6610;
+      font-size: 13px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.32);
+    }
+
+    .coin-plus,
+    .room-plus {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(242, 197, 99, 0.72);
+      background: rgba(242, 197, 99, 0.13);
+      color: var(--gold);
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .bag {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.24));
+    }
+
+    .mini-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      background:
+        radial-gradient(circle at 50% 40%, #f0d0bc 0 23%, transparent 24%),
+        linear-gradient(135deg, #462f23, #f1bd48);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    }
+
+    .search-icon {
+      color: var(--gold-soft);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .private-room {
+      height: 36px;
+      padding: 0 10px 0 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(242, 197, 99, 0.34);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--gold-soft);
+      font-size: 14px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .game-card {
+      position: relative;
+      height: 112px;
+      padding: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.26);
+    }
+
+    .game-card.more-trigger {
+      cursor: pointer;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.78), transparent 19%),
+        radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.42), transparent 13%),
+        radial-gradient(circle at 76% 36%, rgba(255, 255, 255, 0.42), transparent 13%);
+      opacity: 0.36;
+    }
+
+    .game-card::after {
+      position: absolute;
+      left: 50%;
+      top: 27px;
+      transform: translateX(-50%);
+      font-size: 30px;
+      line-height: 1;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.28));
+    }
+
+    .game-card span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .g1 { background: linear-gradient(135deg, #50c2ff, #7d8cff); }
+    .g1::after { content: "🎱"; }
+    .g2 { background: linear-gradient(135deg, #ff334d, #ff8a8f); }
+    .g2::after { content: "🃏"; }
+    .g3 { background: linear-gradient(135deg, #f7c24c, #c05cff); }
+    .g3::after { content: "🔵"; }
+    .g4 { background: linear-gradient(135deg, #45ddb8, #8ef0bd); }
+    .g4::after { content: " domino"; font-size: 22px; font-weight: 900; }
+    .g5 { background: linear-gradient(135deg, #7c37ff, #7236ee); }
+    .g5::after { content: "🎰"; }
+    .g6 { background: linear-gradient(135deg, #ffc75a, #ffe39d); color: #fff; }
+    .g6::after { content: "🧩"; }
+
+    .hot-badge {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 3;
+      padding: 4px 9px;
+      border-radius: 0 10px 0 0;
+      background: #ff9b1f;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 2px 8px;
+      color: var(--gold-soft);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .room-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .room-card {
+      min-height: 78px;
+      padding: 8px;
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: 70px 1fr 36px;
+      gap: 8px;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(82, 72, 66, 0.92), rgba(57, 49, 46, 0.92));
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+    }
+
+    .room-cover {
+      height: 62px;
+      border-radius: 9px;
+      background:
+        radial-gradient(circle at 52% 44%, rgba(255, 233, 154, 0.78), transparent 24%),
+        linear-gradient(135deg, #17110d, #a77735);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .room-cover.alt1 { background: linear-gradient(135deg, #181315, #b6465c); }
+    .room-cover.alt2 { background: linear-gradient(135deg, #19110a, #826039); }
+    .room-cover.alt3 { background: linear-gradient(135deg, #282017, #d39a5b); }
+
+    .room-cover::after {
+      content: "Wechill";
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.42);
+    }
+
+    .room-name {
+      font-size: 16px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .room-meta {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .avatars {
+      display: flex;
+      margin-top: 8px;
+    }
+
+    .avatars i {
+      width: 20px;
+      height: 20px;
+      margin-right: -5px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd4ca, #5c342b);
+    }
+
+    .online {
+      align-self: end;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .event-card {
+      position: relative;
+      min-height: 96px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at 26% 44%, rgba(255, 255, 255, 0.18), transparent 18%),
+        linear-gradient(135deg, #271610, #b88635 55%, #2d1b10);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+    }
+
+    .event-card:nth-child(2) {
+      background: linear-gradient(135deg, #3b2314, #c4974d 52%, #22120c);
+    }
+
+    .event-card:nth-child(3) {
+      background: linear-gradient(135deg, #f4d8a4, #a86f2d 52%, #19130f);
+    }
+
+    .event-card:nth-child(4) {
+      background: linear-gradient(135deg, #07090c, #1a1a18 52%, #8a4b25);
+    }
+
+    .event-rank {
+      width: fit-content;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff6bd5, #fff1a8);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .event-title {
+      font-size: 17px;
+      font-weight: 900;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
+    }
+
+    .event-date {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 20;
+      width: 100%;
+      height: 76px;
+      padding: 8px 8px 6px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-radius: 18px 18px 0 0;
+      background:
+        linear-gradient(180deg, rgba(63, 42, 24, 0.96), rgba(24, 11, 5, 0.98)),
+        radial-gradient(circle at 20% 0%, rgba(244, 197, 99, 0.2), transparent 36%);
+      box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-item {
+      color: rgba(255, 255, 255, 0.86);
+      text-align: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav-item .icon {
+      display: block;
+      height: 30px;
+      margin-bottom: 5px;
+      font-size: 25px;
+      filter: grayscale(0.1);
+    }
+
+    .nav-item.active {
+      color: var(--gold);
+    }
+
+    .home-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 6px;
+      z-index: 21;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .sheet-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      display: flex;
+      align-items: flex-end;
+      background: rgba(0, 0, 0, 0.58);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .sheet-mask.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .game-sheet {
+      width: 100%;
+      max-height: 610px;
+      padding: 22px 20px 26px;
+      border-radius: 20px 20px 0 0;
+      background:
+        radial-gradient(circle at 50% 16%, rgba(96, 56, 24, 0.42), transparent 48%),
+        rgba(24, 14, 8, 0.96);
+      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.4);
+      transform: translateY(100%);
+      transition: transform 220ms ease;
+    }
+
+    .sheet-mask.open .game-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .sheet-head h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .help-btn {
+      width: 34px;
+      height: 34px;
+      border: 3px solid rgba(255, 255, 255, 0.72);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .all-games-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 18px;
+      row-gap: 26px;
+    }
+
+    .all-game {
+      min-width: 0;
+      text-align: center;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .all-game-icon {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 9px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 0 3px 9px rgba(0, 0, 0, 0.34);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .i1 { background: linear-gradient(135deg, #7c31ff, #ffca2e); }
+    .i2 { background: linear-gradient(135deg, #16264a, #f0a323); }
+    .i3 { background: linear-gradient(135deg, #9c1dff, #f93958); }
+    .i4 { background: linear-gradient(135deg, #78d9ff, #27c953); }
+    .i5 { background: linear-gradient(135deg, #a331ff, #ff2bc4); }
+    .i6 { background: linear-gradient(135deg, #5128ff, #ff9f23); }
+    .i7 { background: linear-gradient(135deg, #6c321f, #ffbc49); }
+    .i8 { background: linear-gradient(135deg, #3450ff, #8edaff); }
+    .i9 { background: linear-gradient(135deg, #7613c6, #d9b734); }
+    .i10 { background: linear-gradient(135deg, #fff0aa, #e94fff); }
+    .i11 { background: linear-gradient(135deg, #3956d8, #db783c); }
+    .i12 { background: linear-gradient(135deg, #593051, #37ba82); }
+
+    @media (max-width: 480px) {
+      .stage,
+      .bottom-nav {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="hero"></div>
+    <div class="status">
+      <span>5:25</span>
+      <span>171 KB/s · Wi-Fi · 95</span>
+    </div>
+    <header class="topbar">
+      <div class="discover-tabs" role="tablist">
+        <button class="discover-tab active" type="button" data-target="games">Games</button>
+        <button class="discover-tab" type="button" data-target="activity">Activity</button>
+      </div>
+      <div class="top-actions">
+        <span class="bag">🛍️</span>
+        <span class="mini-avatar"></span>
+        <span class="search-icon">⌕</span>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="page active" id="games">
+        <div class="game-tools">
+          <div class="wallet-strip">
+            <span class="user-avatar"></span>
+            <span class="coin">●</span>
+            <span>1466</span>
+            <span class="coin-plus">+</span>
+          </div>
+          <div class="private-room">
+            <span>Private room</span>
+            <span class="room-plus">+</span>
+          </div>
+        </div>
+
+        <div class="games-grid">
+          <div class="game-card g1"><span>8 Ball</span></div>
+          <div class="game-card g2"><span>ONO</span></div>
+          <div class="game-card g3"><span>Bingo</span></div>
+          <div class="game-card g4"><span>Domino 50</span></div>
+          <div class="game-card g5"><span>Golden Slot<br>Machine</span><b class="hot-badge">Hot</b></div>
+          <div class="game-card g6 more-trigger" id="moreGames"><span>More Games</span></div>
+        </div>
+
+        <div class="section-title">
+          <span>Game Rooms</span>
+          <span style="font-size:20px;">▦</span>
+        </div>
+
+        <div class="room-list">
+          <article class="room-card">
+            <div class="room-cover"></div>
+            <div>
+              <div class="room-name">ترحيب مستخدمين الجدد والدا</div>
+              <div class="room-meta"><span>🇨🇳</span><span class="pill">Arabic</span></div>
+              <div class="avatars"><i></i><i></i><i></i></div>
+            </div>
+            <div class="online">818 ▮</div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-cover alt1"></div>
+            <div>
+              <div class="room-name">GAME OVER</div>
+              <div class="room-meta"><span>🇬🇧</span><span class="pill">Arabic</span></div>
+              <div class="avatars"><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="online">3167 ▮</div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-cover alt2"></div>
+            <div>
+              <div class="room-name">وكاله آزلزالTop1</div>
+              <div class="room-meta"><span>🇮🇶</span><span class="pill">Arabic</span></div>
+              <div class="avatars"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="online">2686 ▮</div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-cover alt3"></div>
+            <div>
+              <div class="room-name">√enüs مملكة🦚</div>
+              <div class="room-meta"><span>🇱🇧</span><span class="pill">French</span></div>
+              <div class="avatars"><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="online">3376 ▮</div>
+          </article>
+        </div>
+      </div>
+
+      <div class="page" id="activity">
+        <div class="section-title">
+          <span>Hot Events</span>
+          <span style="font-size:13px;color:var(--muted);">Sorted by count</span>
+        </div>
+
+        <div class="activity-list">
+          <article class="event-card">
+            <span class="event-rank">NEW · 01</span>
+            <div class="event-title">2026 وكالات العالم HAWA</div>
+            <div class="event-date">2026/01/01 - 2027/01/01</div>
+          </article>
+          <article class="event-card">
+            <span class="event-rank">NEW · 02</span>
+            <div class="event-title">2026 تحدي قلاع الوكالات</div>
+            <div class="event-date">2026/05/01 05:00 - 2027/02/01 05:00</div>
+          </article>
+          <article class="event-card">
+            <span class="event-rank">03</span>
+            <div class="event-title">hawa MISS</div>
+            <div class="event-date">2026/01/01 - 2026/12/31</div>
+          </article>
+          <article class="event-card">
+            <span class="event-rank">04</span>
+            <div class="event-title">الأيدي الديناميكي بجائزة جديدة</div>
+            <div class="event-date">Long-term activity banner</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Bottom navigation">
+      <a class="nav-item" href="#"><span class="icon">🏰</span>Party</a>
+      <a class="nav-item active" href="#"><span class="icon">🧭</span>Discover</a>
+      <a class="nav-item" href="#"><span class="icon">🌴</span>Community</a>
+      <a class="nav-item" href="#"><span class="icon">✉️</span>Messages</a>
+      <a class="nav-item" href="#"><span class="icon">🦁</span>Mine</a>
+    </nav>
+    <div class="home-indicator"></div>
+
+    <div class="sheet-mask" id="gameSheetMask" aria-hidden="true">
+      <section class="game-sheet" role="dialog" aria-label="完整游戏列表">
+        <div class="sheet-head">
+          <h2>Game</h2>
+          <div class="help-btn">?</div>
+        </div>
+        <div class="all-games-grid">
+          <div class="all-game"><div class="all-game-icon i1">🍒</div>Jackpot</div>
+          <div class="all-game"><div class="all-game-icon i2">🐉</div>Dragon Tiger</div>
+          <div class="all-game"><div class="all-game-icon i3">🍉</div>CrazyFruit</div>
+          <div class="all-game"><div class="all-game-icon i4">⚽</div>ShootGoal</div>
+          <div class="all-game"><div class="all-game-icon i5">🎲</div>UnderOrOver</div>
+          <div class="all-game"><div class="all-game-icon i6">777</div>Slot777</div>
+          <div class="all-game"><div class="all-game-icon i7">🏴‍☠️</div>Captains Bounty</div>
+          <div class="all-game"><div class="all-game-icon i8">🃏</div>Teen Patti</div>
+          <div class="all-game"><div class="all-game-icon i9">💍</div>Lucky77</div>
+          <div class="all-game"><div class="all-game-icon i10">🍰</div>GreedyCatKing</div>
+          <div class="all-game"><div class="all-game-icon i11">🧞</div>LampOfInfinity</div>
+          <div class="all-game"><div class="all-game-icon i12">👸</div>Wise Kingdoms</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".discover-tab");
+    const pages = document.querySelectorAll(".page");
+    const moreGames = document.querySelector("#moreGames");
+    const gameSheetMask = document.querySelector("#gameSheetMask");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.target;
+        tabs.forEach((item) => item.classList.toggle("active", item === tab));
+        pages.forEach((page) => page.classList.toggle("active", page.id === target));
+      });
+    });
+
+    moreGames.addEventListener("click", () => {
+      gameSheetMask.classList.add("open");
+      gameSheetMask.setAttribute("aria-hidden", "false");
+    });
+
+    gameSheetMask.addEventListener("click", (event) => {
+      if (event.target === gameSheetMask) {
+        gameSheetMask.classList.remove("open");
+        gameSheetMask.setAttribute("aria-hidden", "true");
+      }
+    });
+  </script>
+</body>
+</html>

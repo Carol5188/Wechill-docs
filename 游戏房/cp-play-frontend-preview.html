@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语音房 CP 玩法前台原型预览</title>
+  <style>
+    :root {
+      --bg: #f7f0e2;
+      --sand: #f3e1bf;
+      --sand-deep: #deba73;
+      --paper: rgba(255, 251, 245, 0.92);
+      --paper-strong: #fffaf1;
+      --text: #1d2333;
+      --muted: #6d7388;
+      --line: rgba(40, 50, 69, 0.1);
+      --navy: #13233f;
+      --navy-soft: #20365d;
+      --teal: #0f9b93;
+      --gold: #df9e35;
+      --rose: #ea7b7c;
+      --rose-deep: #b74f61;
+      --rose-soft: rgba(234, 123, 124, 0.12);
+      --ok: #1c9a64;
+      --warn: #cc8a22;
+      --shadow: 0 22px 60px rgba(42, 29, 16, 0.14);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(223, 158, 53, 0.22), transparent 24%),
+        radial-gradient(circle at top right, rgba(15, 155, 147, 0.12), transparent 25%),
+        linear-gradient(180deg, #f8f2e5 0%, #f3e6cf 100%);
+      color: var(--text);
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 70%);
+    }
+
+    .app {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(20, 35, 63, 0.96), rgba(29, 51, 87, 0.92));
+      color: #f9f0df;
+      border-radius: 36px;
+      padding: 28px 30px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.9fr);
+      gap: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -100px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(223, 158, 53, 0.36), rgba(223, 158, 53, 0));
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -40px;
+      bottom: -100px;
+      width: 280px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(15, 155, 147, 0.22), rgba(15, 155, 147, 0));
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 38px;
+      line-height: 1.12;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      letter-spacing: 0.01em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 850px;
+      line-height: 1.8;
+      color: rgba(249, 240, 223, 0.82);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 247, 232, 0.1);
+      border: 1px solid rgba(255, 247, 232, 0.1);
+      font-size: 13px;
+      color: #f7e6c7;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card {
+      background: rgba(255, 248, 235, 0.08);
+      border: 1px solid rgba(255, 245, 224, 0.08);
+      border-radius: 20px;
+      padding: 16px 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card-label {
+      font-size: 12px;
+      color: rgba(247, 230, 199, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .hero-card-value {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .hero-card-foot {
+      margin-top: 8px;
+      color: rgba(249, 240, 223, 0.72);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid rgba(61, 46, 28, 0.08);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 22px 22px 0;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 22px;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+    }
+
+    .panel-subtitle {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .panel-body {
+      padding: 20px 22px 22px;
+    }
+
+    .flow-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .flow-item {
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(247, 238, 223, 0.92));
+      border: 1px solid rgba(61, 46, 28, 0.08);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .flow-item.is-active,
+    .flow-item:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(180deg, rgba(255, 248, 236, 0.95), rgba(248, 232, 207, 0.96));
+      box-shadow: 0 14px 32px rgba(104, 72, 28, 0.12);
+    }
+
+    .flow-step {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(223, 158, 53, 0.14);
+      color: #995f15;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .flow-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .flow-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .phone-stage {
+      padding: 18px;
+      min-height: 100%;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      border-radius: 42px;
+      padding: 14px;
+      background: linear-gradient(180deg, #1c2233, #0f1420);
+      box-shadow: 0 34px 70px rgba(17, 14, 12, 0.28);
+      position: relative;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 30px;
+      border-radius: 0 0 18px 18px;
+      background: #0a0e15;
+      z-index: 3;
+    }
+
+    .phone-screen {
+      min-height: 860px;
+      background: linear-gradient(180deg, #fffaf2 0%, #f8edda 100%);
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      min-height: 860px;
+    }
+
+    .screen.is-active {
+      display: block;
+    }
+
+    .screen-top {
+      padding: 56px 18px 16px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen-top.room {
+      background: linear-gradient(180deg, #20365d 0%, #334f7f 56%, #5573a7 100%);
+    }
+
+    .screen-top.proposal {
+      background: linear-gradient(180deg, #5f2749 0%, #874267 50%, #ba6d6d 100%);
+    }
+
+    .screen-top.home {
+      background: linear-gradient(180deg, #133349 0%, #1f5672 56%, #47a39c 100%);
+    }
+
+    .screen-top.gifts {
+      background: linear-gradient(180deg, #3d2e72 0%, #6348a1 54%, #8f77cb 100%);
+    }
+
+    .screen-top.celebration {
+      background: linear-gradient(180deg, #1f2b58 0%, #4a5db0 45%, #8b6de3 100%);
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-copy {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.82);
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-glow {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -40px;
+      top: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 233, 174, 0.42), rgba(255, 233, 174, 0));
+    }
+
+    .screen-body {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.gold {
+      background: rgba(223, 158, 53, 0.14);
+      color: #9d6615;
+    }
+
+    .pill.rose {
+      background: rgba(234, 123, 124, 0.12);
+      color: var(--rose-deep);
+    }
+
+    .pill.teal {
+      background: rgba(15, 155, 147, 0.12);
+      color: #187b75;
+    }
+
+    .pill.navy {
+      background: rgba(19, 35, 63, 0.08);
+      color: #29416c;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 22px;
+      border: 1px solid rgba(47, 55, 75, 0.08);
+      padding: 16px;
+      box-shadow: 0 12px 28px rgba(49, 35, 24, 0.08);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .room-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .room-meta strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .avatar-pair {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      margin-right: -10px;
+      border: 3px solid rgba(255, 250, 242, 0.95);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .avatar.a {
+      background: linear-gradient(135deg, #ef8d87, #d65a72);
+    }
+
+    .avatar.b {
+      background: linear-gradient(135deg, #4a7bc9, #203f7f);
+    }
+
+    .avatar.c {
+      background: linear-gradient(135deg, #0ea697, #1c625d);
+    }
+
+    .cp-entry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(255, 243, 222, 0.96), rgba(250, 227, 194, 0.96));
+      border-radius: 22px;
+      padding: 14px;
+      border: 1px solid rgba(223, 158, 53, 0.16);
+    }
+
+    .cp-entry-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .mic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mic-seat {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 236, 216, 0.96));
+      border-radius: 20px;
+      padding: 12px 10px;
+      text-align: center;
+      border: 1px solid rgba(47, 55, 75, 0.08);
+      min-height: 118px;
+    }
+
+    .mic-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #eba17d, #cb5d55);
+    }
+
+    .mic-avatar.alt {
+      background: linear-gradient(135deg, #5ab2c8, #3160a4);
+    }
+
+    .mic-avatar.third {
+      background: linear-gradient(135deg, #13a6a0, #1f6b65);
+    }
+
+    .mic-seat .line {
+      position: absolute;
+      top: 22px;
+      left: calc(100% - 4px);
+      width: 18px;
+      height: 18px;
+      border-top: 3px solid rgba(234, 123, 124, 0.76);
+      border-right: 3px solid rgba(234, 123, 124, 0.76);
+      border-radius: 0 16px 0 0;
+      transform: rotate(45deg);
+    }
+
+    .mic-name {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 16px;
+      min-height: 42px;
+      padding: 0 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, #ea7b7c, #d86677);
+      color: white;
+      box-shadow: 0 14px 26px rgba(218, 102, 119, 0.24);
+    }
+
+    .button.secondary {
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--text);
+      border: 1px solid rgba(47, 55, 75, 0.08);
+    }
+
+    .button.gold {
+      background: linear-gradient(135deg, #df9e35, #efc25a);
+      color: #3a2509;
+      box-shadow: 0 14px 26px rgba(223, 158, 53, 0.24);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .user-compare {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .user-card {
+      border-radius: 20px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 238, 220, 0.95));
+      border: 1px solid rgba(47, 55, 75, 0.08);
+      text-align: center;
+    }
+
+    .user-card .hero-avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      background: linear-gradient(135deg, #ea7b7c, #b74f61);
+    }
+
+    .user-card.alt .hero-avatar {
+      background: linear-gradient(135deg, #537fd3, #203f7f);
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-box {
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(47, 55, 75, 0.08);
+    }
+
+    .metric-box strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 6px;
+    }
+
+    .progress-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .ring {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background:
+        conic-gradient(#ea7b7c 0 67%, rgba(234, 123, 124, 0.14) 67% 100%);
+      display: grid;
+      place-items: center;
+    }
+
+    .ring::after {
+      content: "";
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #fff8ef;
+      box-shadow: inset 0 0 0 1px rgba(47, 55, 75, 0.06);
+    }
+
+    .ring-label {
+      position: absolute;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--rose-deep);
+      z-index: 1;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(47, 55, 75, 0.08);
+    }
+
+    .task-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .gift-card {
+      cursor: pointer;
+      border-radius: 20px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(241, 232, 252, 0.92));
+      border: 1px solid rgba(73, 63, 124, 0.12);
+      transition: 0.18s ease;
+    }
+
+    .gift-card.is-active,
+    .gift-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(81, 62, 126, 0.12);
+    }
+
+    .gift-illus {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 10px;
+      color: white;
+      font-size: 24px;
+      background: linear-gradient(135deg, #8b6de3, #cc79d6);
+    }
+
+    .gift-name {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .gift-price {
+      font-size: 13px;
+      color: #6147a5;
+      font-weight: 700;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(47, 55, 75, 0.08);
+      font-size: 13px;
+    }
+
+    .detail-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .celebration-stage {
+      position: relative;
+      min-height: 340px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(255, 228, 186, 0.18), transparent 40%),
+        linear-gradient(180deg, rgba(31, 43, 88, 0.98), rgba(61, 80, 153, 0.96));
+      padding: 18px;
+      color: white;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 12% 14%, rgba(255,255,255,0.9) 1px, transparent 1px),
+        radial-gradient(circle at 82% 16%, rgba(255,255,255,0.84) 1px, transparent 1px),
+        radial-gradient(circle at 66% 38%, rgba(255,255,255,0.8) 1px, transparent 1px),
+        radial-gradient(circle at 22% 48%, rgba(255,255,255,0.78) 1px, transparent 1px),
+        radial-gradient(circle at 74% 62%, rgba(255,255,255,0.84) 1px, transparent 1px),
+        radial-gradient(circle at 36% 72%, rgba(255,255,255,0.76) 1px, transparent 1px);
+      opacity: 0.7;
+    }
+
+    .moon {
+      position: absolute;
+      width: 88px;
+      height: 88px;
+      right: 28px;
+      top: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff2c9 0%, #f0d58b 50%, #e0b660 100%);
+      box-shadow: 0 0 32px rgba(255, 223, 160, 0.32);
+    }
+
+    .pair-center {
+      position: absolute;
+      left: 50%;
+      bottom: 48px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 46px;
+    }
+
+    .pair-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 24px;
+      border: 4px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
+    }
+
+    .pair-avatar.left {
+      background: linear-gradient(135deg, #ea7b7c, #b74f61);
+    }
+
+    .pair-avatar.right {
+      background: linear-gradient(135deg, #5b84d4, #24458a);
+    }
+
+    .pair-link {
+      position: absolute;
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 50px;
+      border-top: 3px solid rgba(255, 200, 117, 0.82);
+      border-radius: 100px 100px 0 0;
+      box-shadow: 0 -10px 30px rgba(255, 184, 88, 0.18);
+    }
+
+    .celebration-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 240px;
+      margin-top: 8px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sticky-notes {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note {
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(247, 237, 220, 0.94));
+      border: 1px solid rgba(61, 46, 28, 0.08);
+    }
+
+    .note-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .note ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .note li + li {
+      margin-top: 4px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 20, 32, 0.46);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fffaf3, #f7ecdb);
+      border: 1px solid rgba(61, 46, 28, 0.08);
+      box-shadow: 0 30px 80px rgba(20, 18, 15, 0.28);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -60px;
+      top: -70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(234, 123, 124, 0.22), rgba(234, 123, 124, 0));
+    }
+
+    .modal-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-copy {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .close {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(19, 35, 63, 0.08);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .footer-tip {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1340px) {
+      .layout {
+        grid-template-columns: 280px minmax(0, 1fr);
+      }
+
+      .right-column {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app {
+        padding: 14px;
+      }
+
+      .hero {
+        padding: 20px 18px;
+        border-radius: 28px;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .panel-header,
+      .panel-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .flow-list {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-row,
+      .gift-grid,
+      .mic-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .phone-screen,
+      .screen {
+        min-height: 780px;
+      }
+
+      .user-compare {
+        grid-template-columns: 1fr;
+      }
+
+      .pair-link {
+        width: 120px;
+      }
+
+      .pair-center {
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <h1>中东语聊房 CP 玩法前台原型</h1>
+        <p>
+          这版原型以 `Soul Pair / Partner Bond` 为对外表达，覆盖房间入口、发起结 CP、CP 主页、专属礼物、升级庆祝与房内氛围场景。整体视觉走星月、绿洲、灯笼、夜空路线，更贴近中东语聊房的关系表达和礼物消费氛围。
+        </p>
+        <div class="hero-badges">
+          <span class="hero-badge">房间内发现关系入口</span>
+          <span class="hero-badge">誓约礼物发起结 CP</span>
+          <span class="hero-badge">亲密值 + 等级成长</span>
+          <span class="hero-badge">双人专属礼物与纪念日</span>
+          <span class="hero-badge">可承接房主房氛围消费</span>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="hero-card">
+          <div class="hero-card-label">核心转化链路</div>
+          <div class="hero-card-value">入口 → 发起 → 接受 → 成长 → 礼物</div>
+          <div class="hero-card-foot">优先做轻关系表达，避免过度婚恋化，兼顾阿语本地化与公开房间氛围感。</div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-label">推荐 MVP</div>
+          <div class="hero-card-value">5 个页面状态</div>
+          <div class="hero-card-foot">房间入口、发起页、CP主页、礼物页、庆祝页已经足够验证收入和留存。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">页面流程</h2>
+            <div class="panel-subtitle">点击左侧步骤，中间会切换到对应前台页面。按钮里也有联动操作。</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="flow-list">
+            <div class="flow-item is-active" data-screen-target="screen-room">
+              <div class="flow-step">1</div>
+              <div class="flow-title">房间入口</div>
+              <div class="flow-copy">同房同麦时展示 Soul Pair 入口，鼓励在高氛围房间自然发起。</div>
+            </div>
+            <div class="flow-item" data-screen-target="screen-proposal">
+              <div class="flow-step">2</div>
+              <div class="flow-title">发起结 CP</div>
+              <div class="flow-copy">通过誓约礼物发起，承载第一笔关系付费与对方确认流程。</div>
+            </div>
+            <div class="flow-item" data-screen-target="screen-home">
+              <div class="flow-step">3</div>
+              <div class="flow-title">CP 主页</div>
+              <div class="flow-copy">展示等级、亲密值、任务、纪念日和双人资料卡，建立持续留存。</div>
+            </div>
+            <div class="flow-item" data-screen-target="screen-gifts">
+              <div class="flow-step">4</div>
+              <div class="flow-title">专属礼物</div>
+              <div class="flow-copy">把礼物按发起、日常、升级、纪念日、房间秀场分层设计。</div>
+            </div>
+            <div class="flow-item" data-screen-target="screen-celebration">
+              <div class="flow-step">5</div>
+              <div class="flow-title">庆祝与房效</div>
+              <div class="flow-copy">升级、纪念日和高价礼物都要给公开房间一个值得围观的氛围点。</div>
+            </div>
+          </div>
+          <div class="footer-tip">
+            原型内置演示文案和假数据，可用于产品评审、设计方向对齐和早期开发拆解。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">前台原型</h2>
+            <div class="panel-subtitle">模拟手机端主链路，支持点击切换页面、发起誓约、查看礼物详情和庆祝弹层。</div>
+          </div>
+          <span class="pill gold">Interactive Preview</span>
+        </div>
+        <div class="phone-stage">
+          <div class="phone">
+            <div class="phone-screen">
+
+              <div class="screen is-active" id="screen-room">
+                <div class="screen-top room">
+                  <div class="screen-glow"></div>
+                  <div class="status-row">
+                    <span>21:48</span>
+                    <span>Room 880321 · Arabic Party</span>
+                  </div>
+                  <div class="screen-title">房间内发现关系入口</div>
+                  <div class="screen-copy">在房间氛围最好、用户互动最自然的地方让关系发生，而不是强行独立开一个社交页。</div>
+                </div>
+                <div class="screen-body">
+                  <div class="card">
+                    <div class="room-header">
+                      <div class="room-meta">
+                        <strong>Desert Moon Majlis</strong>
+                        <div class="small">房主 Noura · 2.1k 在线 · 今日送礼热度 No.3</div>
+                      </div>
+                      <span class="pill navy">PK Room</span>
+                    </div>
+                  </div>
+
+                  <div class="cp-entry">
+                    <div>
+                      <div class="cp-entry-title">你和 Omar 最近很有默契</div>
+                      <div class="small">近 7 天同房 143 分钟 · 双上麦 38 分钟 · 私聊语音 26 分钟</div>
+                    </div>
+                    <button class="button primary" data-screen-jump="screen-proposal">成为 Soul Pair</button>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">房间麦位</div>
+                    <div class="mic-grid">
+                      <div class="mic-seat">
+                        <div class="mic-avatar">NO</div>
+                        <div class="mic-name">Noura</div>
+                        <div class="small">Host</div>
+                      </div>
+                      <div class="mic-seat">
+                        <div class="line"></div>
+                        <div class="mic-avatar alt">OM</div>
+                        <div class="mic-name">Omar</div>
+                        <div class="small">Lv.42</div>
+                      </div>
+                      <div class="mic-seat">
+                        <div class="mic-avatar third">LY</div>
+                        <div class="mic-name">Layla</div>
+                        <div class="small">Lv.39</div>
+                      </div>
+                      <div class="mic-seat">
+                        <div class="mic-avatar">ME</div>
+                        <div class="mic-name">You</div>
+                        <div class="small">Lv.36</div>
+                      </div>
+                    </div>
+                    <div class="small" style="margin-top:12px;">当两个候选对象在同房且双上麦时，系统可以给出轻提醒，不强打扰。</div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">推荐互动</div>
+                    <div class="chips">
+                      <span class="pill rose">送出誓约戒发起</span>
+                      <span class="pill teal">先私聊语音再建立关系</span>
+                      <span class="pill gold">送双月灯点亮双麦连线</span>
+                    </div>
+                    <div class="cta-row" style="margin-top:14px;">
+                      <button class="button secondary" data-screen-jump="screen-gifts">查看 CP 礼物</button>
+                      <button class="button gold" data-open-modal="modal-room-tip">查看房间提示文案</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="screen" id="screen-proposal">
+                <div class="screen-top proposal">
+                  <div class="screen-glow"></div>
+                  <div class="status-row">
+                    <span>21:49</span>
+                    <span>Soul Pair Request</span>
+                  </div>
+                  <div class="screen-title">发起结 CP</div>
+                  <div class="screen-copy">通过誓约礼物完成公开承接，既有仪式感，也让第一笔关系消费更自然。</div>
+                </div>
+                <div class="screen-body">
+                  <div class="card">
+                    <div class="user-compare">
+                      <div class="user-card">
+                        <div class="hero-avatar">ME</div>
+                        <strong>You</strong>
+                        <div class="small">活跃守护用户 · 常驻 Noura 房间</div>
+                      </div>
+                      <div class="pill rose" style="justify-content:center;">Soul Pair</div>
+                      <div class="user-card alt">
+                        <div class="hero-avatar">OM</div>
+                        <strong>Omar</strong>
+                        <div class="small">高频上麦用户 · 近 7 日互动稳定</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="metric-row">
+                    <div class="metric-box">
+                      <div class="small">互关状态</div>
+                      <strong>已满足</strong>
+                    </div>
+                    <div class="metric-box">
+                      <div class="small">近 7 日同房</div>
+                      <strong>143 分</strong>
+                    </div>
+                    <div class="metric-box">
+                      <div class="small">私聊语音</div>
+                      <strong>26 分</strong>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">誓约礼物</div>
+                    <div class="room-header">
+                      <div>
+                        <strong style="display:block; font-size:18px;">Moon Ring · 誓约戒</strong>
+                        <div class="small">价格 299 Coins · 用于发起结 CP · 成功后点亮双人资料卡</div>
+                      </div>
+                      <span class="pill gold">+120 亲密值</span>
+                    </div>
+                    <div class="detail-list" style="margin-top:8px;">
+                      <div class="detail-item"><span>对方确认有效期</span><strong>120 秒</strong></div>
+                      <div class="detail-item"><span>成功后奖励</span><strong>双人徽章 + 专属主页</strong></div>
+                      <div class="detail-item"><span>失败处理</span><strong>未接受则礼物不消耗</strong></div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">确认页文案建议</div>
+                    <div class="small">“Omar, You wants to become your Soul Pair. Accept and unlock your shared profile, intimacy missions and exclusive gifts.”</div>
+                  </div>
+
+                  <div class="cta-row">
+                    <button class="button secondary" data-screen-jump="screen-room">返回房间</button>
+                    <button class="button primary" data-open-modal="modal-proposal-send">送出誓约戒</button>
+                    <button class="button gold" data-open-modal="modal-proposal-accept">模拟对方接受</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="screen" id="screen-home">
+                <div class="screen-top home">
+                  <div class="screen-glow"></div>
+                  <div class="status-row">
+                    <span>21:51</span>
+                    <span>Soul Pair Home</span>
+                  </div>
+                  <div class="screen-title">CP 主页</div>
+                  <div class="screen-copy">这里承接长期关系价值，重点展示亲密值、等级、任务、纪念日和可消费节点。</div>
+                </div>
+                <div class="screen-body">
+                  <div class="card">
+                    <div class="room-header">
+                      <div>
+                        <div class="pill rose">Level 3 · 陪伴</div>
+                        <div class="avatar-pair" style="margin-top:12px; margin-left:0;">
+                          <span class="avatar a">ME</span>
+                          <span class="avatar b">OM</span>
+                        </div>
+                      </div>
+                      <div style="text-align:right;">
+                        <strong style="display:block; font-size:18px;">连结 32 天</strong>
+                        <div class="small">下一纪念日还剩 5 天</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card progress-card">
+                    <div style="position:relative; width:92px; height:92px;">
+                      <div class="ring"></div>
+                      <div class="ring-label">67%</div>
+                    </div>
+                    <div>
+                      <div class="card-title">亲密值进度</div>
+                      <div class="small">当前 6,720 / 10,000，距离 Level 4 “守护” 还差 3,280</div>
+                      <div class="chips" style="margin-top:10px;">
+                        <span class="pill teal">双上麦加成中</span>
+                        <span class="pill gold">今日同房已 +38</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">今日双人任务</div>
+                    <div class="task-list">
+                      <div class="task-item">
+                        <div>
+                          <strong>一起在房间停留 20 分钟</strong>
+                          <div class="small">已完成 18 / 20 分钟</div>
+                        </div>
+                        <span class="pill gold">+60</span>
+                      </div>
+                      <div class="task-item">
+                        <div>
+                          <strong>共同送出 1 个双月灯</strong>
+                          <div class="small">完成后解锁今夜专属连线样式</div>
+                        </div>
+                        <span class="pill rose">未完成</span>
+                      </div>
+                      <div class="task-item">
+                        <div>
+                          <strong>发起一次私聊语音</strong>
+                          <div class="small">完成后可领取限时气泡框</div>
+                        </div>
+                        <span class="pill teal">已完成</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">纪念日与礼物橱窗</div>
+                    <div class="chips">
+                      <span class="pill navy">第 30 天纪念页已解锁</span>
+                      <span class="pill gold">推荐礼包：Anniversary Pack</span>
+                    </div>
+                    <div class="cta-row" style="margin-top:14px;">
+                      <button class="button secondary" data-screen-jump="screen-gifts">购买专属礼物</button>
+                      <button class="button primary" data-screen-jump="screen-celebration">查看升级庆祝</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="screen" id="screen-gifts">
+                <div class="screen-top gifts">
+                  <div class="screen-glow"></div>
+                  <div class="status-row">
+                    <span>21:53</span>
+                    <span>CP Gift Shop</span>
+                  </div>
+                  <div class="screen-title">专属礼物商城</div>
+                  <div class="screen-copy">礼物不是单一商城，而是围绕发起、日常、升级、纪念日和房间氛围来设计。</div>
+                </div>
+                <div class="screen-body">
+                  <div class="gift-grid" id="gift-grid">
+                    <div class="gift-card is-active" data-gift-id="ring">
+                      <div class="gift-illus">💍</div>
+                      <div class="gift-name">Moon Ring</div>
+                      <div class="gift-price">299 Coins</div>
+                    </div>
+                    <div class="gift-card" data-gift-id="rose">
+                      <div class="gift-illus">🌹</div>
+                      <div class="gift-name">Desert Rose</div>
+                      <div class="gift-price">99 Coins</div>
+                    </div>
+                    <div class="gift-card" data-gift-id="lantern">
+                      <div class="gift-illus">🏮</div>
+                      <div class="gift-name">Twin Lantern</div>
+                      <div class="gift-price">399 Coins</div>
+                    </div>
+                    <div class="gift-card" data-gift-id="throne">
+                      <div class="gift-illus">🕌</div>
+                      <div class="gift-name">Oasis Throne</div>
+                      <div class="gift-price">699 Coins</div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title" id="gift-detail-title">Moon Ring · 誓约发起礼物</div>
+                    <div class="small" id="gift-detail-copy">用于发起 Soul Pair。对方接受后关系成立，并解锁双人主页、亲密值、任务和专属展示。</div>
+                    <div class="detail-list" id="gift-detail-list">
+                      <div class="detail-item"><span>使用场景</span><strong>发起结 CP</strong></div>
+                      <div class="detail-item"><span>关系要求</span><strong>未建立关系</strong></div>
+                      <div class="detail-item"><span>房间展示</span><strong>轻庆祝弹层</strong></div>
+                      <div class="detail-item"><span>商业价值</span><strong>首笔关系付费</strong></div>
+                    </div>
+                    <div class="cta-row" style="margin-top:14px;">
+                      <button class="button secondary" data-screen-jump="screen-room">回到房间</button>
+                      <button class="button gold" data-open-modal="modal-gift-scene">查看消耗场景</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="screen" id="screen-celebration">
+                <div class="screen-top celebration">
+                  <div class="screen-glow"></div>
+                  <div class="status-row">
+                    <span>21:55</span>
+                    <span>Room Celebration</span>
+                  </div>
+                  <div class="screen-title">升级庆祝与房效</div>
+                  <div class="screen-copy">公开房间需要一个值得围观的瞬间，让高价礼物和关系升级都能带动围观与跟送。</div>
+                </div>
+                <div class="screen-body">
+                  <div class="celebration-stage">
+                    <div class="stars"></div>
+                    <div class="moon"></div>
+                    <div class="celebration-copy">
+                      <span class="pill gold">Level Up</span>
+                      <h3 style="margin:10px 0 8px; font-size:24px;">You & Omar reached Level 4</h3>
+                      <div class="small" style="color:rgba(255,255,255,0.84);">
+                        双人连线已升级为 “Guardian Arc”，并解锁 `Star Carriage` 与 30 天纪念礼包预告。
+                      </div>
+                    </div>
+                    <div class="pair-link"></div>
+                    <div class="pair-center">
+                      <div class="pair-avatar left">ME</div>
+                      <div class="pair-avatar right">OM</div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-title">房内后续引导</div>
+                    <div class="task-list">
+                      <div class="task-item">
+                        <div>
+                          <strong>推荐连送 Star Carriage</strong>
+                          <div class="small">适合升级、纪念日、房主房冲榜场景</div>
+                        </div>
+                        <span class="pill gold">1299</span>
+                      </div>
+                      <div class="task-item">
+                        <div>
+                          <strong>推荐点亮双月灯</strong>
+                          <div class="small">双方同房时，连线特效最强，适合带动围观</div>
+                        </div>
+                        <span class="pill rose">399</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="cta-row">
+                    <button class="button secondary" data-screen-jump="screen-home">回 CP 主页</button>
+                    <button class="button primary" data-open-modal="modal-celebration">播放升级庆祝弹层</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel right-column">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">设计说明</h2>
+            <div class="panel-subtitle">右侧同步展示当前页面的产品重点和商业化机会。</div>
+          </div>
+          <span class="pill teal" id="context-pill">房间入口</span>
+        </div>
+        <div class="panel-body">
+          <div class="sticky-notes" id="context-notes">
+            <div class="note">
+              <div class="note-title">房间入口为什么重要</div>
+              <ul>
+                <li>中东语聊房的高价值互动大多发生在公共房间和房主房。</li>
+                <li>当用户已经同房、同麦、互相送礼时，结 CP 的转化阻力最低。</li>
+                <li>入口应做轻提醒，不要抢掉房内核心互动。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="modal-proposal-send">
+    <div class="modal-card">
+      <button class="close" data-close-modal="modal-proposal-send">×</button>
+      <h3 class="modal-title">誓约已送出</h3>
+      <div class="modal-copy">
+        Moon Ring 已送达 Omar。对方将在 120 秒内收到确认卡片。
+        <br>
+        若对方接受，则关系建立成功并点亮双人主页；若超时未接受，本次礼物不消耗。
+      </div>
+      <div class="modal-actions">
+        <button class="button secondary" data-close-modal="modal-proposal-send">继续等待</button>
+        <button class="button primary" data-open-modal="modal-proposal-accept" data-close-first="modal-proposal-send">模拟立即接受</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-proposal-accept">
+    <div class="modal-card">
+      <button class="close" data-close-modal="modal-proposal-accept">×</button>
+      <h3 class="modal-title">Soul Pair 建立成功</h3>
+      <div class="modal-copy">
+        You 和 Omar 已成为 Soul Pair。
+        <br>
+        已解锁：双人资料卡、亲密值任务、专属礼物入口、房内双麦连线。
+      </div>
+      <div class="modal-actions">
+        <button class="button secondary" data-close-modal="modal-proposal-accept">留在当前页</button>
+        <button class="button primary" data-screen-jump="screen-home" data-close-first="modal-proposal-accept">进入 CP 主页</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-room-tip">
+    <div class="modal-card">
+      <button class="close" data-close-modal="modal-room-tip">×</button>
+      <h3 class="modal-title">房间提示文案</h3>
+      <div class="modal-copy">
+        建议文案：
+        <br>
+        “You and Omar have been spending a lot of time together lately. Become Soul Pair and unlock your shared profile, daily missions and exclusive gifts.”
+      </div>
+      <div class="modal-actions">
+        <button class="button primary" data-close-modal="modal-room-tip">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-gift-scene">
+    <div class="modal-card">
+      <button class="close" data-close-modal="modal-gift-scene">×</button>
+      <h3 class="modal-title">礼物消耗场景建议</h3>
+      <div class="modal-copy">
+        发起礼物承担首笔付费，日常礼物承担持续消耗，升级礼物承担节点爆发，房间礼物承担公开秀场和围观效应。
+      </div>
+      <div class="modal-actions">
+        <button class="button gold" data-screen-jump="screen-celebration" data-close-first="modal-gift-scene">查看房间庆祝</button>
+        <button class="button secondary" data-close-modal="modal-gift-scene">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-celebration">
+    <div class="modal-card">
+      <button class="close" data-close-modal="modal-celebration">×</button>
+      <h3 class="modal-title">升级庆祝弹层</h3>
+      <div class="modal-copy">
+        推荐只在 `2 / 4 / 5 级` 做全房轻庆祝。普通升级只对双方展示，避免房间噪音过高。
+        <br>
+        高价礼物和升级庆祝要共用同一套夜空 + 星月 + 双人连线语言，形成可识别的关系资产。
+      </div>
+      <div class="modal-actions">
+        <button class="button secondary" data-close-modal="modal-celebration">关闭</button>
+        <button class="button primary" data-screen-jump="screen-gifts" data-close-first="modal-celebration">回礼物页</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const screenNotes = {
+      "screen-room": {
+        pill: "房间入口",
+        notes: [
+          {
+            title: "入口策略",
+            items: [
+              "只在同房、同麦或近 7 日互动满足条件时出现，避免全量打扰。",
+              "房间入口应优先服务高互动场景，比如房主房、游戏房、派对房。",
+              "适合结合房内礼物栏和用户资料卡做自然承接。"
+            ]
+          },
+          {
+            title: "商业机会",
+            items: [
+              "先从轻提醒切入，再用誓约礼物承接第一笔付费。",
+              "同房双上麦时推荐双月灯，可带来第二次较高确定性消耗。"
+            ]
+          }
+        ]
+      },
+      "screen-proposal": {
+        pill: "发起结 CP",
+        notes: [
+          {
+            title: "发起流程重点",
+            items: [
+              "建议采用发起礼物 + 对方接受的双向流程，而不是单方立即绑定。",
+              "发起页必须把双方资格、价格、成功后权益说清楚。",
+              "未接受不消耗，有助于降低第一次尝试门槛。"
+            ]
+          },
+          {
+            title: "风控关注",
+            items: [
+              "同一用户短时频繁发起应限制。",
+              "被拒绝后可做短冷却，避免骚扰。"
+            ]
+          }
+        ]
+      },
+      "screen-home": {
+        pill: "CP 主页",
+        notes: [
+          {
+            title: "留存核心",
+            items: [
+              "亲密值、等级、任务、纪念日是关系留存的四个核心抓手。",
+              "主页不应只做展示，要让用户清楚知道“下一步做什么”。",
+              "每日任务建议偏轻量，避免把关系变成高负担打卡。"
+            ]
+          },
+          {
+            title: "转化机会",
+            items: [
+              "在升级差值、纪念日前夕、任务未完成时露出礼物推荐。",
+              "主页适合承接礼包，而不是只承接单礼物。"
+            ]
+          }
+        ]
+      },
+      "screen-gifts": {
+        pill: "专属礼物",
+        notes: [
+          {
+            title: "礼物分层",
+            items: [
+              "发起礼物负责建联，低价礼物负责日常，高价礼物负责房间围观。",
+              "高价礼物最好自带房效或全房播报，强化秀场属性。",
+              "礼物命名建议走星月、绿洲、灯笼、玫瑰、王座这类中东意象。"
+            ]
+          },
+          {
+            title: "消耗场景",
+            items: [
+              "结 CP、升级、纪念日、房主房冲氛围、CP PK 都是核心消费节点。",
+              "礼物详情页要明确使用场景，提升理解和转化。"
+            ]
+          }
+        ]
+      },
+      "screen-celebration": {
+        pill: "庆祝房效",
+        notes: [
+          {
+            title: "公开氛围",
+            items: [
+              "庆祝是给围观者看的，不只是给关系双方看的。",
+              "强动画频次不要太高，建议只在关键等级或高价礼物时触发。",
+              "房内飘屏要和主活动优先级协调，避免噪音。"
+            ]
+          },
+          {
+            title: "GMV 作用",
+            items: [
+              "升级庆祝后立即推荐更高单价礼物，最容易形成跟送链。",
+              "房主房的公开房效能显著放大礼物的社交证明。"
+            ]
+          }
+        ]
+      }
+    };
+
+    const giftDetails = {
+      ring: {
+        title: "Moon Ring · 誓约发起礼物",
+        copy: "用于发起 Soul Pair。对方接受后关系成立，并解锁双人主页、亲密值、任务和专属展示。",
+        rows: [
+          ["使用场景", "发起结 CP"],
+          ["关系要求", "未建立关系"],
+          ["房间展示", "轻庆祝弹层"],
+          ["商业价值", "首笔关系付费"]
+        ]
+      },
+      rose: {
+        title: "Desert Rose · 日常陪伴礼物",
+        copy: "低门槛礼物，适合日常任务、同房互动和私聊表达，承担亲密值日常养成。",
+        rows: [
+          ["使用场景", "房间 / 私聊"],
+          ["关系要求", "已建立关系"],
+          ["房间展示", "轻飘花效"],
+          ["商业价值", "高频低客单"]
+        ]
+      },
+      lantern: {
+        title: "Twin Lantern · 双麦连线礼物",
+        copy: "当双方在同一房间时送出，房间内点亮双人连线与灯笼拖尾，是房内关系可见性的核心礼物。",
+        rows: [
+          ["使用场景", "双方同房"],
+          ["关系要求", "已建立关系"],
+          ["房间展示", "双麦连线 + 灯光轨迹"],
+          ["商业价值", "任务与围观兼容"]
+        ]
+      },
+      throne: {
+        title: "Oasis Throne · 房间氛围礼物",
+        copy: "高价礼物，推荐在房主房、升级庆祝、纪念日节点使用，可短时替换房间主题背景并触发全房播报。",
+        rows: [
+          ["使用场景", "房主房 / 纪念日"],
+          ["关系要求", "Level 2+ 建议解锁"],
+          ["房间展示", "背景换肤 + 全房播报"],
+          ["商业价值", "高客单秀场礼物"]
+        ]
+      }
+    };
+
+    const flowItems = document.querySelectorAll(".flow-item");
+    const screens = document.querySelectorAll(".screen");
+    const contextPill = document.querySelector("#context-pill");
+    const contextNotes = document.querySelector("#context-notes");
+    const giftGrid = document.querySelector("#gift-grid");
+    const giftCards = document.querySelectorAll(".gift-card");
+    const giftDetailTitle = document.querySelector("#gift-detail-title");
+    const giftDetailCopy = document.querySelector("#gift-detail-copy");
+    const giftDetailList = document.querySelector("#gift-detail-list");
+
+    function renderContext(screenId) {
+      const data = screenNotes[screenId];
+      contextPill.textContent = data.pill;
+      contextNotes.innerHTML = data.notes.map((note) => `
+        <div class="note">
+          <div class="note-title">${note.title}</div>
+          <ul>
+            ${note.items.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </div>
+      `).join("");
+    }
+
+    function activateScreen(screenId) {
+      screens.forEach((screen) => {
+        screen.classList.toggle("is-active", screen.id === screenId);
+      });
+      flowItems.forEach((item) => {
+        item.classList.toggle("is-active", item.getAttribute("data-screen-target") === screenId);
+      });
+      renderContext(screenId);
+    }
+
+    function updateGiftDetail(giftId) {
+      const data = giftDetails[giftId];
+      giftCards.forEach((card) => {
+        card.classList.toggle("is-active", card.getAttribute("data-gift-id") === giftId);
+      });
+      giftDetailTitle.textContent = data.title;
+      giftDetailCopy.textContent = data.copy;
+      giftDetailList.innerHTML = data.rows.map((row) => `
+        <div class="detail-item"><span>${row[0]}</span><strong>${row[1]}</strong></div>
+      `).join("");
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("is-open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("is-open");
+    }
+
+    flowItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        activateScreen(item.getAttribute("data-screen-target"));
+      });
+    });
+
+    giftGrid.addEventListener("click", (event) => {
+      const card = event.target.closest(".gift-card");
+      if (!card) return;
+      updateGiftDetail(card.getAttribute("data-gift-id"));
+    });
+
+    document.body.addEventListener("click", (event) => {
+      const jumpTrigger = event.target.closest("[data-screen-jump]");
+      if (jumpTrigger) {
+        const closeFirst = jumpTrigger.getAttribute("data-close-first");
+        if (closeFirst) closeModal(closeFirst);
+        activateScreen(jumpTrigger.getAttribute("data-screen-jump"));
+      }
+
+      const openTrigger = event.target.closest("[data-open-modal]");
+      if (openTrigger) {
+        const closeFirst = openTrigger.getAttribute("data-close-first");
+        if (closeFirst) closeModal(closeFirst);
+        openModal(openTrigger.getAttribute("data-open-modal"));
+      }
+
+      const closeTrigger = event.target.closest("[data-close-modal]");
+      if (closeTrigger) {
+        closeModal(closeTrigger.getAttribute("data-close-modal"));
+      }
+
+      if (event.target.classList.contains("modal")) {
+        event.target.classList.remove("is-open");
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        document.querySelectorAll(".modal.is-open").forEach((modal) => modal.classList.remove("is-open"));
+      }
+    });
+  </script>
+</body>
+</html>
