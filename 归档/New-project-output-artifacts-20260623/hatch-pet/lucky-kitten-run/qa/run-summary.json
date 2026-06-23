@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "run_dir": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run",
+  "spritesheet": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run/final/spritesheet.webp",
+  "validation": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run/final/validation.json",
+  "contact_sheet": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run/qa/contact-sheet.png",
+  "review": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run/qa/review.json",
+  "package": "/Users/xinyintiaodong/.codex/pets/lucky-kitten",
+  "repair_scope": "smooth-motion-pass",
+  "repair_artifacts": "/Users/xinyintiaodong/Documents/New project/outputs/hatch-pet/lucky-kitten-run/qa/smooth-pass-20260515",
+  "updated_at": "2026-05-15T04:42:46Z",
+  "spritesheet_sha256": "fc6a38a2412a05e5441fe0415fb60679f337f71b75d5623856ffbea3b82d0888",
+  "updated_states": [
+    "idle",
+    "jumping",
+    "failed",
+    "waiting",
+    "running",
+    "review"
+  ],
+  "preserved_states": [
+    "running-right",
+    "running-left",
+    "waving"
+  ],
+  "notes": "Codex pet frame counts are fixed by atlas contract; smooth pass improved motion inside existing frame slots. Directional running candidate was rejected due edge/cropping risk; waving retained prior mirror repair."
+}

@@ -1,0 +1,4 @@
+00: /private/tmp/lucky-kitten-wave-candidates/c3/frames/waving/00.png
+01: /private/tmp/lucky-kitten-wave-candidates/c0/frames/waving/01.png
+02: /private/tmp/lucky-kitten-wave-candidates/c3/frames/waving/01.png
+03: /private/tmp/lucky-kitten-wave-candidates/c3/frames/waving/03.png

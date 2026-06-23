@@ -1,0 +1,7 @@
+Create one clean full-body reference sprite for Codex pet Lucky Kitten.
+
+Pet identity: Cute chubby orange-and-white kitten with a round face, huge glossy amber eyes, tiny pink nose, fluffy cheeks, sweet innocent expression, hand-drawn pastel or oil-crayon illustration style with visible textured strokes, warm cozy feeling, festive red-and-gold lucky collar inspired by Chinese New Year with gold ingot charm, red tassels, and delicate ornamental details, visually simple and readable at small size for a floating desktop companion..
+Style: Pet-safe sprite: compact full-body mascot, readable in a 192x208 cell, clear silhouette, simple face, stable palette/materials, and crisp edges for chroma-key extraction. Style `painterly`: Painterly mascot with simplified brush texture, readable forms, stable palette, and enough edge clarity for clean extraction. User style notes: Use the uploaded cat image as the primary face and color reference. Keep the kitten front-readable, adorable, lucky, comforting, and friendly. Preserve soft crayon texture and simplified silhouette for Codex pet UI..
+
+
+Place a single centered pose on a perfectly flat pure cyan #00FFFF chroma-key background. Keep the full pet visible, compact, readable at 192x208, and easy to animate. Preserve approved reference identity cues. No scenery, text, borders, checkerboard transparency, shadows, glows, detached effects, or extra props. Keep #00FFFF and close colors out of the pet, props, highlights, and effects.
