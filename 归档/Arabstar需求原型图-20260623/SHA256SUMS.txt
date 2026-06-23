@@ -1,0 +1,108 @@
+2dd01d158b89b8577adad35072067d486130258bb467d91057624cdd65fb1e29  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/22-07-01 ME 1.0.0.rp
+6ea7e7124dbeb2742e2b5fae547304abcd6cecfdc148402028de4c7c33b2990d  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/22-07-20 超多游戏.rp
+b293874483b7af22f7b4ffc4d1b74a938f8597bbba0bc95ff03d0efda0cdbf69  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Aria HK版协议/Aria Chat Community Guidelines.docx
+781a27a69c85ddd13ffcb198f83dc3d90fc4edc679c45b7284c860d5481f5d03  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Aria HK版协议/Aria Chat Return policy.docx
+8ad4b610048c0b06ee6549c3f001995b8324ac39702567bf9c3f3a140775d66c  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Aria HK版协议/Aria Chat Terms of Service.docx
+a4778378872318d38a471764b541e6cbb3633d5fdcac1bce9d5d6533ca1ae738  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Aria HK版协议/Aria Chat privacy policy.docx
+e6f54d374d7046051b423f24d23534d598b03276342743e6bae0ad98d4a575f0  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/HK版协议/Hlah Chat Community Guidelines.docx
+c1f8dc4cf0f5842960da0cd7d3a9a8fd3a9a9b9199318fdb71b68b4e6ce1dc4f  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/HK版协议/Hlah Chat Return policy.docx
+d5088ef03b0817246092bd6caf51fe1b0c845920a9686937e04ecd08b4fbdba5  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/HK版协议/Hlah Chat Terms of Service.docx
+f3fae9e34e3cbf3c9e6cce78259e58bb4ee9129467788090d2e83071c617db59  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/HK版协议/Hlah Chat privacy policy.docx
+3b80dfb28411954ac94b3466feecc61dd71c7de2ca3750ca396ceaeafd6da6d2  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Hlah Chat Terms of Service.docx
+b47ce95799a1401f47b7cc72a45ee9d15ef006868fa02c73d55a0b644ef9168b  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/Hlah Chat privacy policy.docx
+f0f23e7b94e9d31e6cda2b59223cb1536647f9667e5f053951e5728dc3a12968  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/translate-2nd round.xlsx
+2af003841651908965ab7a789525d7a83c93eda623df0da2f248808a419f1e2d  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/敏感词.rtf
+a8acdf17b870efa40917e1688d2f9ba0f51fbb6cff5e8db468459a5d42621066  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/敏感词.txt
+a434109ff8826da3c4334ad6673e9d524e8ec5cc27d1f43e33634677c7be4624  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结构.xmind
+314f6af2f3eca27d89f85a021234f9fb819c228317adae41c241aa129d3f9dbd  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/2سياسة hlah withdraw policy.png
+d4c8d743fe57943a72702bd3ed82f095a8e158f7ed572b1afd93561e500367d3  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/2سياسة hlah withdraw policy.xlsx
+dc76b741236aa1f8cded5a04beacd8e5a355f447a5edd6ab50f099834fb15dd0  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/HlahChat host&agency policy.png
+b0241226006f694b974d2c2b2009ca48a07c6865d4cd02b9f3dee7c97a596cd4  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/HlahChat shipping agency policy.png
+358ad4fbad9171223ad814ffba0b95dfbd127fee4b586e8aa6a3156c69dd5abe  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/WechatIMG1508.png
+eb58e7ac157ae9e07643bcdd76f80a4c73d53069828402bec81f3298b10c835a  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/binmo.jpeg
+a94fd2755d2912ea0a313bc23867465d582d3ccbdd3ee7c04c1c39fe824b3b31  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/binmo表.xlsx
+0de0b0ed733fe6dba41e909eee29e704a1f82f25385b7ac66d0398f918ad839c  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/binmo表的副本.xlsx
+dea861b073758fc435295f3bece253c7fda4df8163241762afaee63c5b5aedb0  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/shipping agency policy.xlsx
+e0e4005b900580bb9cee3732fd70b6d96a9f81c1fdf3ef3f70e38e39eb7cd083  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/shipping agency.jpeg
+90040b9ea9ad79b7b8e9bb174ffe38b02b5805bdb71ea18baa40169959935ed7  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/withdraw policy.xlsx
+54e0e7f7161cddb72b049a88f9c25192efed027a657530e2b9fa4ef6d7096950  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/سياسة وكالة الشحن shipping agency policy.png
+228814b6569e94865554fc1885553642a0ce0cdc48956b5cd22e86ee313a2821  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/سياسة وكالة الشحن shipping agency policy.xlsx
+0cf72dcb7a729ddaa91f512fb3415683db897fca3a932430d4b930b0daa0cf40  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/开发表.xlsx
+1d8a3401862833b44b38c72cd9a3a9505732be48e93d5a3f17747daef0d2389b  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/正表.xlsx
+cb047b51d0b89f9c0a6130de072e0f4fbb04c5ad13aca49ac470296a37ca42db  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/组 1 拷贝.png
+43016d4ff86d2c2468a3a7be0224cad750749aa3683d446eeda89777bcf59c06  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/结算相关/结算表.xlsx
+1c9c77577f40f90b5d329db74ca5fe59ee70a33b62d9c623e7f702029597aa71  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材.zip
+3cdd1b6180d034640068e66d5b98b576f3ac5bc96c7be8068a4be3c84807af79  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/$champ2.png
+d4f34e7eeb4060f4be9ecf356c57b24b895e06b1dd3e4b4e9bc79939f9f2dea9  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/$champ3.png
+baea77167c948821cd6b17b5c72dcb2b55d14e8ae77d54c4bf1da7b4d357ac1d  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/ceremony.png
+dc8dc7c4e442181b402e76fe3b9a0b6e10805241267a0d1f7e383a9304bff040  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/crown king.png
+9b2bea853381ca1bbd57f3f75d6e7decbd1da14acd08b8b914217a19d78fbaae  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/ice angel.png
+ffd7eae4fafcd185236191ab88a85d3cd1866c8504bbe91d4e8ce1e90e171e8e  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/ice train.png
+6ceaae90ac3ee0b2e8f46998607f86d0befceeda95f707735db8e3cb9580cd17  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/queen.png
+9f31119566a2e74a34ece0155048a7d06dabe6fe8ed760a0323936f45f2936d0  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/saber.png
+7b18601b005f959762b27171cfb131277241bd7c964c9d4edeba84c51ff9381c  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/sword.png
+a8616424a0570c20b83dd30d378b11e6dc1afdc95d9d50dedf01295930a116d7  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月奖励素材/thunderwing.png
+b6b92d6515f6107ae83d146479cee78950ad6920f9fe7bb53f926a9e46f419cf  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/10月的activity.xlsx
+80c7cbd56e9a29e9d7b66374a03ec2777e3afb2f018c02814d4dda5e42320295  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/11月的activity.xlsx
+753e07d83df95f3175d57348b1b19d20d6149ebf1f8d4d376d77ff1450d1c43c  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/12月的activity的.xlsx
+76d05f18196e9d850a6dd34e0271d86a796805aad55f92a43884131d705625ee  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/1月的activity.xlsx
+95f4faf0bad9dcea6c4591716b6708c746f4bc3aee5fdf16a1c1921a7fb8404d  ./Hlah需求打包/22-06-30 Mid-east 1.0.0/运营活动相关/activity.xlsx
+762943211f5f2e59bfd7c5d951e918ae82c081c64d4c01d0a8200df55bc4d411  ./Hlah需求打包/22-07-28 1.0.1/22-07-28 Hlah1.0.1.rp
+eba47a2b4462859d4c6bfe6da296273d5355d55e71dfc704a13c2ecd9fa45619  ./Hlah需求打包/22-08-04 Hlah 1.2.0/22-08-04 Hlah 1.2.0.rp
+b7e6218505f1456e140ee1e5410b6b827679d4aea869d2ce7ab8afec32d9ee30  ./Hlah需求打包/22-08-26 Hlah 1.3.0/22-08-26 Hlah 1.3.0.rp
+1ccab24e8f636ad39c576b57676d49dfab208b248cafa8fde4383c802c516d0b  ./Hlah需求打包/22-08-26 Hlah 1.3.0/Hlah suggestion list.docx
+93c51aa035108be0d95c8a07eb2886b5df8347194e29710101ee28682ddb1479  ./Hlah需求打包/22-09-06 Hlah 1.4.0/22-09-06 Hlah 1.4.0.rp
+949f3709ac216c6b4332d8639baee8631f8a0cf998b43576ebd9c2a0d731ab40  ./Hlah需求打包/22-09-06 Hlah 1.4.0/UI.xlsx
+3b4ff115d3bd4698d3e0f5376bcbf3e84008d0f05181fb4022f4f5d5003ba0fd  ./Hlah需求打包/22-09-22 Hlah 1.5.0/22-09-22 Hlah 1.5.0.rp
+4447f96d74488a7fcda946e5f0ba377aae8c49264d43cbc6337d4ad7db3d7690  ./Hlah需求打包/22-10-10 Hlah 1.6.0/22-10-10 Hlah 1.6.0.rp
+9fdbe08e035482e59fc9602747f38960fb53e4d3e8ce7d1cd90f171aaff8d6fd  ./Hlah需求打包/22-10-25 Hlah 1.7.0/22-10-25 Hlah 1.7.0.rp
+783aca703a56785c1c3b85072e5fd85507fcbf60418332dc296d9775641c0f27  ./Hlah需求打包/22-11-11 Hlah 1.8.0/22-11-04 Hlah 1.8.0.rp
+f1ee7e9eab92375b3cb03c18ac91bbd732a164da25f957b45007a7b9bf9b9766  ./Hlah需求打包/22-11-17 Hlah 1.9.0/22-11-25 Hlah 1.9.0.rp
+b6551f0530afb9df5f1379903e066426cf9baa4eb647a676bac99e2228b6ec37  ./Hlah需求打包/22-11-17 Hlah 1.9.0/slot parsheet - 老黄.xlsx
+27641fe18cf19e2aedc2506aca0ae1cde8008637cff23580a49b37ef26c537a2  ./Hlah需求打包/22-12-14 Hlah 1.10.0/22-12-14 Hlah 1.10.0.rp
+0502f74a7965fc6219079488cbb35275f6891d5ee28bb7144318ae7e917b4456  ./Hlah需求打包/22-12-14 Hlah 1.10.0/Hlah level.xlsx
+6dd8ec690534ad2492b1e0ff74d8bee0a87a44ea7162e82676942903f4073e9b  ./Hlah需求打包/22-12-14 Hlah 1.10.0/裂变方案.xlsx
+a565ae97074befe036f56a77a77b12a0d3bda9946b023b725f4f974a9c74ae98  ./Hlah需求打包/23-01-04 Hlah 1.11.0/23-01-04 Hlah 1.11.0.rp
+e6d5ce68888408d21818b24d45ffa6ed32ef2a38f15686725beef02219d9f932  ./Hlah需求打包/23-01-29 Hlah 1.12.0/23-01-29 Hlah 1.12.0.rp
+b3b48bcde5888e560f38f37380fab2df43fc6ff357109a5486d99b53a5e0280f  ./Hlah需求打包/23-02-15 Hlah 1.13.0/23-02-15 Hlah 1.13.0.rp
+12ce43d0a4f3adb722fede241744a68b66c7ee0be142fca0e23f5d168b7264bf  ./Hlah需求打包/23-03-13 Hlah 2.0.0/23-03-13 Hlah 2.0.0.rp
+e31137079e492b508caf00f0ae3942eebfe1fe31588e24919728887395f70450  ./Hlah需求打包/23-03-13 Hlah 2.0.0/HlahChat Baloot.docx
+4885c044e7e3aab7227e36824b27f946ff962dec8218c994bc3cfc5964f0ca69  ./Hlah需求打包/23-04-06 Hlah 2.1.0/23-04-06 Hlah 2.1.0.rp
+12fedf39550fa721a29f1d1b1e0b5a26f66c9f6e528d54e69b6684712425bb9f  ./Hlah需求打包/23-04-06 Hlah 2.1.0/Hlah level.xlsx
+26043ef4475214333c30c1c0237fb54d30430d543cd48a08bcc6ff78ebd0a044  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档.zip
+e9c4b1b7e9e4efb604faa8d60151c58803503dc0d9d23e2eee68392071056a17  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档/JSSDK集成文档-v1.1.md
+e6bbe4cc7f408cf175fae7f778464a6441f0739c5277f6d71019fd774a8d2f0b  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档/JSSDK集成文档-v1.1.pdf
+c6ad370ab12da0841fb22ce632f8a4c4ea13534eb0486deb0c7d5b00ab79cf62  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档/平台服务器接口集成文档-v1.1.md
+813647af8d1a14bb07861b05ee9281f4f391d003eee8c0dd448a65b3a8b636c0  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档/平台服务器接口集成文档-v1.1.pdf
+d8c0812f4f0e0b7617df36f8cf0770a573e6013ad35047e45109b137df7324b0  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档0516.zip
+e272a01096f18accba8121b12aec35a24335c8d9948f6c310a946121c5b051cd  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档0516/JSSDK集成文档-v1.1.md
+014d29c3f2b88ee0584deba91fedb04ae9301db2e3746eb2c6b02be9be35e3a9  ./Hlah需求打包/23-04-06 Hlah 2.1.0/TOPPaySDK集成文档0516/平台服务器接口集成文档-v1.2.md
+b90e52c29a93b9d5d6a3de6d3e80bd8cda8bf137bcb42e96d3c4a5118b07af8d  ./Hlah需求打包/23-07-22 Hlah 2.3.0/23-07-23 Hlah 2.3.0.rp
+a1d5cd054e477f8843b2646cd5cbcd1cec483d9c0809e68acd4cdd4742efdfc8  ./Hlah需求打包/23-07-22 Hlah 2.3.0/公会活动奖金.xlsx
+5f16a5fe994d09d012f5727b822d757bdc6e505d707774904c23d750ca2830a8  ./Hlah需求打包/23-07-22 Hlah 2.3.0/斋月任务.xlsx
+fc5ac66b283943c367499004da3db7e168202126b671995b8b381299fadf4df8  ./Hlah需求打包/23-07-22 Hlah 2.3.0/斋月活动数值.xlsx
+62ee3020c729ed8040e8a8fa0e3e621c161996f26dc7f71f385374f3ee379861  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - vip5和vip6，客服可踢出房间-海外版本迭代-TAPD平台.pdf
+13b7b16e121ece2dfbe5078eedb4c87f32ac38b54a30a462cc9bb2bc331a6473  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 公会等级活动修改-海外版本迭代-TAPD平台.pdf
+c2ac4318c3db507a5c3cc6c456e171cee99cddccf154a046447cc67ae7195037  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 客服后台修改-海外版本迭代-TAPD平台.pdf
+1443838ca054a010f28001cc4e0d4ad0ce5ba406975338d8564361343fc2492d  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 币商充值积分-海外版本迭代-TAPD平台.pdf
+6f228060f77349d8e60689c61a2adc7d3d1038948dd18c5fc4b6d296dc042b7d  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 币商加入和个人钱包钱包互转功能-海外版本迭代-TAPD平台.pdf
+c6d520d63fe6af5917986f9ab30b309b766dc22a633e77732b9d39270db91d85  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 幸运大挑战活动-海外版本迭代-TAPD平台.pdf
+b032dfb01cee72c76c8dacc149b2f2f011f5e9ac9d81903c6bb911ce3fba47f1  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 建立BD系统-海外版本迭代-TAPD平台.pdf
+45257431ad781ebbef2b00b38e316c13acef6ebbf1327741d2193ebfae69775a  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 接入gcc的mada_applepay_knet-海外版本迭代-TAPD平台.pdf
+6e31b9542e6f76e19dc6d5f77794a5a7c8d1b2462a56c903accfcdf47fb1619c  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 支持纯阿语_英文，混搭数字ID-海外版本迭代-TAPD平台.pdf
+1b2419030ad8fcd3c42cfe1b634bd041df2a3a1893d74f1e64730b291964ff0d  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 斋月活动-海外版本迭代-TAPD平台.pdf
+523dfb828e32d0946ddd7beeb331845db56d4d517a4cb32cfb0327b5d617a86a  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 新年活动-海外版本迭代-TAPD平台.pdf
+ae1763ed2650fca83bd41844d692de47fc4f3dda71a19c579da3595ea504cce2  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 游戏王活动-海外版本迭代-TAPD平台.pdf
+66f57fd81eba85dbf4289df7ab296545986b3a3fe9d008fd9679824a043f8992  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 狮虎修改-海外版本迭代-TAPD平台.pdf
+f5ccb96d79f83102063ddee7c60cb8f524772a50e08468361d9fd51e83ecbf6b  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 生日活动-海外版本迭代-TAPD平台.pdf
+d8355616efa0d6322cb2d511e5aa9410d7f33c117b010ed1c0fd887cfa9a2229  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 礼物连击队列逻辑-海外版本迭代-TAPD平台.pdf
+15485f17e1d2f689330e4b2f591e418204cd306a79c1e147c866bbcf7bd4293a  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 荣誉铭刻勋章需求-海外版本迭代-TAPD平台.pdf
+e9a55d056bc834a1d02629eeee87e89b6b739f5e2c6745d00dbdd354a5d684a9  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 轮盘游戏-海外版本迭代-TAPD平台.pdf
+3a1689683e3354ed5a594e75950c65de1a81c72ebb8dd2b80dc4dd3e1f6d52db  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 通用奖励配置新增金勋章的普通类型，及各活动前端显示-海外版本迭代-TAPD平台.pdf
+d1ee457c13a4a0f57ca2097dbd8fbefb6e8fc56fb36a742873444371dab7db5f  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 道具赠送记录支持业务参数检索-海外版本迭代-TAPD平台.pdf
+411ad42c36c83561b4f47018e7ab19b160ae2539468b6f2e8f85d07180768334  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 金勋章新增类型-海外版本迭代-TAPD平台.pdf
+57681daec7c612b9f069e49db0d523569ad11c77b9571bce1551774bdb9e96ae  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 金勋章获得弹窗-海外版本迭代-TAPD平台.pdf
+f15c93c24724919ea539fe096c8017e437df928b402b02d84cc74be56a051d66  ./Hlah需求打包/23-08-01 Hlah 2.4.0～2.8.0/【产品需求】 - 麦位管理修改-海外版本迭代-TAPD平台.pdf
+91804648fe01709de40cf5f51f89956c32cfca16a3405c0b6b2cbb2e848647f7  ./README.md
+00fc1a7d62975c5e2d2869492f32761d1b8e316a5008233b7dba09ce475de2d0  ./SABA需求原型-1.rp
+d91387eee7690d5b53ea0890a69df15dc7201030728857e43e8853610223fa7a  ./SABA需求原型-2.rp
