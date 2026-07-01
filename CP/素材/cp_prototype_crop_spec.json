@@ -1,0 +1,74 @@
+{
+  "regions": [
+    {
+      "name": "01-Mine页CP入口",
+      "left": 0,
+      "top": 0,
+      "width": 380,
+      "height": 920
+    },
+    {
+      "name": "02-未绑定CP主页",
+      "left": 380,
+      "top": 0,
+      "width": 500,
+      "height": 920
+    },
+    {
+      "name": "03-半屏资料页-未绑定",
+      "left": 880,
+      "top": 0,
+      "width": 600,
+      "height": 920
+    },
+    {
+      "name": "04-CP邀请函弹窗",
+      "left": 1480,
+      "top": 0,
+      "width": 620,
+      "height": 920
+    },
+    {
+      "name": "05-CP权益说明",
+      "left": 2100,
+      "top": 0,
+      "width": 617,
+      "height": 920
+    },
+    {
+      "name": "06-已绑定CP主页",
+      "left": 380,
+      "top": 920,
+      "width": 500,
+      "height": 800
+    },
+    {
+      "name": "07-解绑确认弹窗",
+      "left": 880,
+      "top": 920,
+      "width": 600,
+      "height": 800
+    },
+    {
+      "name": "08-亲密度记录",
+      "left": 1480,
+      "top": 920,
+      "width": 620,
+      "height": 800
+    },
+    {
+      "name": "09-CP榜单",
+      "left": 380,
+      "top": 1720,
+      "width": 500,
+      "height": 903
+    },
+    {
+      "name": "10-等级奖励",
+      "left": 880,
+      "top": 1720,
+      "width": 600,
+      "height": 903
+    }
+  ]
+}

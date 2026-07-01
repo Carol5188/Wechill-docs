@@ -1,0 +1,3 @@
+{'duplicate': '系统提示绑定CP弹窗.jpg', 'canonical_keep': '系统提示组建CP_邀请者视角.jpg', 'action': 'moved', 'canonical_exists': True}
+{'duplicate': 'CP邀请接受弹窗_邀请者视角.jpg', 'canonical_keep': 'CP邀请接受弹窗_被邀请者视角.jpg', 'action': 'moved', 'canonical_exists': True}
+{'duplicate': 'CP组全服特效动画.jpg', 'canonical_keep': 'CP组全服特效_礼物面板.jpg', 'action': 'moved', 'canonical_exists': True}
