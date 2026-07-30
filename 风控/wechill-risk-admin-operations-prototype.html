@@ -1,0 +1,2416 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wechill 风控后台操作原型</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --line: #e3e8ef;
+      --line-strong: #cbd5e1;
+      --text: #172033;
+      --muted: #697586;
+      --brand: #2563eb;
+      --brand-deep: #1d4ed8;
+      --brand-soft: #eaf1ff;
+      --gold: #b8842f;
+      --gold-soft: #fff7e7;
+      --success: #138a58;
+      --success-soft: #e9f8f0;
+      --warning: #b76b12;
+      --warning-soft: #fff4df;
+      --danger: #d73d4a;
+      --danger-soft: #fff0f2;
+      --purple: #6d5bd0;
+      --purple-soft: #f2efff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, .06);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      color: var(--text);
+      background: var(--bg);
+      font-size: 14px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .sidebar {
+      width: 232px;
+      flex: 0 0 auto;
+      background: #111827;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: #fff;
+      font-weight: 850;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #f4c56a, #b8842f);
+      color: #111827;
+      font-weight: 950;
+    }
+
+    .nav {
+      padding: 14px 10px;
+      display: grid;
+      gap: 4px;
+      overflow: auto;
+    }
+
+    .nav-title {
+      padding: 16px 12px 6px;
+      color: #7f8da3;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .nav-btn {
+      border: 0;
+      width: 100%;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: transparent;
+      color: #cbd5e1;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .nav-btn.is-active {
+      color: #fff;
+      background: rgba(37, 99, 235, .22);
+      box-shadow: inset 3px 0 0 #f4c56a;
+      font-weight: 800;
+    }
+
+    .nav-btn.is-current-menu {
+      color: #38a1ff;
+      background: #e6f7ff;
+      box-shadow: inset 4px 0 0 #1890ff;
+      font-weight: 850;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .75;
+    }
+
+    .main {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 64px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+    }
+
+    .breadcrumb {
+      color: var(--muted);
+    }
+
+    .breadcrumb strong {
+      color: var(--text);
+    }
+
+    .operator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #111827;
+      color: #f4c56a;
+      font-weight: 900;
+    }
+
+    .page {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .page-head {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .page-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 900px;
+      font-size: 13px;
+    }
+
+    .head-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 98px;
+      padding: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .metric-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      padding: 16px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      outline: 0;
+    }
+
+    input,
+    select {
+      height: 36px;
+      padding: 0 10px;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      padding: 10px;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .btn {
+      height: 36px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .btn.primary:hover { background: var(--brand-deep); }
+
+    .btn.secondary {
+      color: #334155;
+      background: #fff;
+      border-color: var(--line-strong);
+    }
+
+    .btn.gold {
+      color: #3a2509;
+      background: #f4c56a;
+      border-color: #e0ae4c;
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .btn.text {
+      height: 28px;
+      padding: 0 4px;
+      border: 0;
+      color: var(--brand);
+      background: transparent;
+      font-weight: 750;
+    }
+
+    .btn.text.danger-text {
+      color: var(--danger);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 14px;
+    }
+
+    .section-head {
+      min-height: 52px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #fff;
+      color: #475467;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .list-foot {
+      min-height: 54px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .page-no {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid #1890ff;
+      border-radius: 4px;
+      color: #1890ff;
+      background: #fff;
+      font-weight: 800;
+    }
+
+    .section-title {
+      font-weight: 900;
+    }
+
+    .tabs {
+      display: inline-flex;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .tab {
+      height: 32px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      padding: 0 12px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .tab:last-child { border-right: 0; }
+
+    .tab.is-active {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      position: relative;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1040px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      color: #526071;
+      background: var(--panel-soft);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    td {
+      color: #263244;
+      font-size: 13px;
+    }
+
+    tbody tr:hover {
+      background: #fbfdff;
+    }
+
+    th:last-child,
+    td:last-child {
+      position: sticky;
+      right: 0;
+      background: inherit;
+      box-shadow: -8px 0 14px rgba(15, 23, 42, .05);
+    }
+
+    th:last-child {
+      background: var(--panel-soft);
+      z-index: 2;
+    }
+
+    td:last-child {
+      background: #fff;
+      z-index: 1;
+    }
+
+    tbody tr:hover td:last-child {
+      background: #fbfdff;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 3px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .pill.green {
+      color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .pill.yellow {
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .pill.red {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .pill.blue {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+    }
+
+    .pill.purple {
+      color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .identity-list {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-width: 120px;
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .rule-list {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .rule {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .rule strong {
+      color: #344054;
+    }
+
+    .rule span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .timeline {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .log-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .log-time {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .log-text {
+      line-height: 1.45;
+    }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, .42);
+      z-index: 20;
+    }
+
+    .modal-layer.is-open {
+      display: flex;
+    }
+
+    body.preview-modal .modal-layer.is-open {
+      align-items: flex-start;
+    }
+
+    body.preview-modal .modal {
+      max-height: none;
+      margin-top: 18px;
+      transform: scale(.82);
+      transform-origin: top center;
+    }
+
+    body.preview-modal #banModal .modal {
+      transform: scale(.62);
+    }
+
+    .modal {
+      width: min(1080px, 100%);
+      max-height: min(88vh, 860px);
+      overflow: auto;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, .24);
+    }
+
+    .modal.narrow {
+      width: min(560px, 100%);
+    }
+
+    .modal.ban-modal {
+      width: min(920px, 100%);
+    }
+
+    .modal-head {
+      min-height: 58px;
+      padding: 15px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .close {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal-foot {
+      min-height: 58px;
+      padding: 12px 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 12px;
+    }
+
+    .summary-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .summary-box strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .ban-form {
+      padding: 22px 30px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .ban-field label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #1f2933;
+      font-weight: 700;
+    }
+
+    .required {
+      color: #ff4d4f;
+      margin-right: 7px;
+      font-weight: 900;
+    }
+
+    .ban-field input,
+    .ban-field select,
+    .ban-field textarea {
+      height: 54px;
+      font-size: 17px;
+      border-radius: 4px;
+    }
+
+    .ban-field textarea {
+      height: 132px;
+      min-height: 132px;
+    }
+
+    .textarea-count {
+      text-align: right;
+      color: #8b8f97;
+      font-size: 16px;
+      margin-top: 6px;
+    }
+
+    .upload-box {
+      width: 100%;
+      min-height: 112px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 6px;
+      background: #fbfdff;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      padding: 16px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .upload-box:hover {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+    }
+
+    .upload-box small {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .note {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #f0d7a1;
+      background: var(--gold-soft);
+      color: #6a4713;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .danger-note {
+      border-color: #f4bdc3;
+      background: var(--danger-soft);
+      color: #8c2430;
+    }
+
+    .modal.remove-modal {
+      width: min(760px, 100%);
+    }
+
+    .remove-modal .modal-head,
+    .remove-modal .modal-body,
+    .remove-modal .modal-foot {
+      padding-left: 26px;
+      padding-right: 26px;
+    }
+
+    .remove-modal .modal-body {
+      gap: 16px;
+    }
+
+    .remove-modal .danger-note {
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .remove-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .remove-summary .summary-box {
+      min-height: 86px;
+      padding: 14px 16px;
+    }
+
+    .remove-summary .summary-box strong {
+      font-size: 22px;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .remove-summary .summary-box strong.nowrap {
+      white-space: nowrap;
+      font-size: 20px;
+    }
+
+    .remove-modal textarea {
+      min-height: 112px;
+    }
+
+    .confirm-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .confirm-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .confirm-item span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .confirm-item strong {
+      min-width: 0;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .confirm-item.is-wide {
+      grid-column: 1 / -1;
+    }
+
+    .history-summary {
+      display: grid;
+      grid-template-columns: 170px 170px 220px minmax(360px, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .history-summary .summary-box {
+      min-width: 0;
+    }
+
+    .history-summary .summary-box strong {
+      word-break: break-word;
+    }
+
+    .history-summary .summary-box.is-device {
+      grid-column: 4;
+    }
+
+    .history-summary .summary-box.is-device strong {
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      background: #111827;
+      color: #fff;
+      border-radius: 999px;
+      padding: 10px 16px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, .22);
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 30;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .history-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .history-summary .summary-box.is-device {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        display: block;
+      }
+
+      .nav {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .nav-title {
+        display: none;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        height: auto;
+        padding: 12px;
+        display: grid;
+      }
+
+      .page {
+        padding: 12px;
+      }
+
+      .page-head {
+        display: grid;
+      }
+
+      .metrics,
+      .summary-grid,
+      .confirm-details,
+      .form-grid,
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .remove-summary .summary-box strong.nowrap {
+        white-space: normal;
+      }
+
+      .history-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .history-summary .summary-box.is-device {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>Wechill 风控后台</div>
+    </div>
+    <nav class="nav" aria-label="后台导航">
+      <div class="nav-title">用户管理</div>
+      <button class="nav-btn"><span class="nav-dot"></span>用户列表</button>
+      <button class="nav-btn"><span class="nav-dot"></span>充值白名单</button>
+      <button class="nav-btn is-current-menu" data-view-target="risk"><span class="nav-dot"></span>封号封设备</button>
+      <button class="nav-btn"><span class="nav-dot"></span>设备白名单</button>
+      <button class="nav-btn"><span class="nav-dot"></span>实时在线</button>
+      <button class="nav-btn"><span class="nav-dot"></span>用户备注列表</button>
+      <div class="nav-title">新增风控能力</div>
+      <button class="nav-btn is-active" data-view-target="risk"><span class="nav-dot"></span>设备账号风控</button>
+      <button class="nav-btn"><span class="nav-dot"></span>设备充值封禁</button>
+      <button class="nav-btn" data-view-target="ip-whitelist"><span class="nav-dot"></span>IP 白名单</button>
+      <button class="nav-btn" data-view-target="ip-ban"><span class="nav-dot"></span>IP 封禁列表</button>
+      <button class="nav-btn"><span class="nav-dot"></span>操作审计日志</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="breadcrumb">风控管理 / <strong id="breadcrumbCurrent">设备账号与充值风控</strong></div>
+      <div class="operator">
+        <span>高级风控 · 今日值班</span>
+        <span class="avatar">RC</span>
+      </div>
+    </header>
+
+    <section class="page">
+      <section class="panel page-head" data-view="risk-archive" hidden>
+        <div>
+          <h1>设备账号与充值风控操作台</h1>
+          <p>覆盖同设备账号查询、登陆 IP 记录、设备充值限制、账号删除和 IP 白名单配置。白名单只豁免指定规则，不默认跳过设备、充值、主播和收益风控。</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn danger" data-open="banModal">封号封设备</button>
+          <button class="btn secondary" data-open="ipModal">查看登陆IP记录</button>
+          <button class="btn gold" data-open="whitelistModal">配置 IP 白名单</button>
+          <button class="btn primary" data-open="adjustModal">调整充值封禁</button>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="核心指标" data-view="risk-archive" hidden>
+        <div class="metric">
+          <div class="metric-label">设备充值限制中</div>
+          <div class="metric-value">128</div>
+          <div class="metric-note">较昨日 +9，含全面限制 18 台</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">同设备账号风险</div>
+          <div class="metric-value">342</div>
+          <div class="metric-note">设备账号数 >= 2 或主播占用冲突</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">IP 注册超限</div>
+          <div class="metric-value">76</div>
+          <div class="metric-note">同 IP 注册账号数 >= 5</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">IP 白名单</div>
+          <div class="metric-value">24</div>
+          <div class="metric-note">默认登录总数上限 8，可配置</div>
+        </div>
+      </section>
+
+      <section class="panel filters" data-view="risk">
+        <div class="filter-grid">
+          <div class="field">
+            <label for="deviceId">设备 ID</label>
+            <input id="deviceId" value="dev_9F7A_81C2">
+          </div>
+          <div class="field">
+            <label for="userId">用户 ID</label>
+            <input id="userId" placeholder="精确查询">
+          </div>
+          <div class="field">
+            <label for="ip">IP 地址</label>
+            <input id="ip" value="103.44.18.21">
+          </div>
+          <div class="field">
+            <label for="banDate">封禁时间</label>
+            <input id="banDate" type="date" value="2026-07-11">
+          </div>
+          <div class="field">
+            <label for="status">设备充值状态</label>
+            <select id="status">
+              <option>全部</option>
+              <option>未限制</option>
+              <option selected>200 美金限制</option>
+              <option>1000 美金限制</option>
+              <option>全面限制充值</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="whitelist">IP 白名单</label>
+            <select id="whitelist">
+              <option>全部</option>
+              <option>是</option>
+              <option selected>否</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="loginStatus">登陆状态</label>
+            <select id="loginStatus">
+              <option selected>全部</option>
+              <option>成功</option>
+              <option>失败</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="banStatus">封禁状态</label>
+            <select id="banStatus">
+              <option>全部</option>
+              <option selected>已封禁设备</option>
+              <option>未封禁</option>
+              <option>待处理</option>
+              <option>封号</option>
+              <option>封号封设备</option>
+            </select>
+          </div>
+          <div class="head-actions">
+            <button class="btn secondary">重置</button>
+            <button class="btn primary" data-toast="查询完成">查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-view="risk">
+        <div class="section-head">
+          <div>
+            <div class="section-title">设备列表</div>
+            <div class="sub">沿用现有封禁列表结构，补充设备/IP/充值维度，支持一键查看关联账号、调整设备充值封禁和导出列表。</div>
+          </div>
+          <div class="toolbar">
+            <button class="btn danger" data-toast="设备列表已导出">导出</button>
+            <button class="icon-btn" title="刷新" data-toast="列表已刷新">↻</button>
+            <button class="icon-btn" title="密度">↕</button>
+            <button class="icon-btn" title="列配置">⚙</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>用户ID</th>
+                <th>用户CODE</th>
+                <th>昵称</th>
+                <th>用户身份</th>
+                <th>是否是新用户</th>
+                <th>公会名称</th>
+                <th>公会ID</th>
+                <th>安全用户等级</th>
+                <th>设备序列号</th>
+                <th>最近登陆时间</th>
+                <th>登陆状态</th>
+                <th>登陆ip</th>
+                <th>ip所在国家</th>
+                <th>关联账号</th>
+                <th>登陆IP记录</th>
+                <th>设备充值总额</th>
+                <th>充值限制</th>
+                <th>封禁状态</th>
+                <th>封禁次数</th>
+                <th>封禁时间</th>
+                <th>封禁时长</th>
+                <th>封禁理由</th>
+                <th>封禁证据</th>
+                <th>解封理由</th>
+                <th>解禁时间</th>
+                <th>IP白名单</th>
+                <th>操作人</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><button class="btn text">6</button></td>
+                <td>-</td>
+                <td><div class="stack"><strong>u15393哦啦可</strong><span class="sub">口可乐yuletu</span></div></td>
+                <td><div class="identity-list"><span class="pill green">主播</span><span class="pill blue">BD</span></div></td>
+                <td><span class="pill red">否</span></td>
+                <td>小太阳</td>
+                <td>3485</td>
+                <td>三级用户</td>
+                <td class="mono">00c9f1cbcc294a4bb2777cbedc9eeb95</td>
+                <td>2026-07-10 16:51:20</td>
+                <td><span class="pill green">成功</span></td>
+                <td class="mono">103.44.18.21</td>
+                <td>土耳其</td>
+                <td><button class="btn text" data-open="deviceModal">2 个</button></td>
+                <td><button class="btn text" data-open="ipModal">4 条</button></td>
+                <td>$188.90</td>
+                <td><span class="pill yellow">200 美金限制</span></td>
+                <td><span class="pill red">封号</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">2 次</button></td>
+                <td>2026-07-11 10:18:36</td>
+                <td>6h</td>
+                <td>test</td>
+                <td><button class="btn text" data-toast="封禁证据预览">图片 2</button></td>
+                <td>-</td>
+                <td>2026-07-11 16:52:49</td>
+                <td><span class="pill red">否</span></td>
+                <td>小太阳</td>
+                <td>
+                  <button class="btn text" data-open="unbanAccountModal">解封</button>
+                  <button class="btn text" data-open="adjustModal">充值封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><button class="btn text">771020</button></td>
+                <td>WC10086</td>
+                <td>Amina</td>
+                <td><div class="identity-list"><span class="pill green">主播</span><span class="pill purple">BDM</span><span class="pill yellow">币商</span></div></td>
+                <td><span class="pill green">是</span></td>
+                <td>Star Guild</td>
+                <td>812</td>
+                <td>二级用户</td>
+                <td class="mono">dev_9F7A_81C2</td>
+                <td>2026-07-10 15:48:31</td>
+                <td><span class="pill red">失败</span></td>
+                <td class="mono">185.72.61.8</td>
+                <td>阿联酋</td>
+                <td><button class="btn text" data-open="deviceModal">2 个</button></td>
+                <td><button class="btn text" data-open="ipModal">5 条</button></td>
+                <td>$936.20</td>
+                <td><span class="pill red">1000 美金限制</span></td>
+                <td><span class="pill red">封号封设备</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">3 次</button></td>
+                <td>2026-07-11 11:30:12</td>
+                <td>7天</td>
+                <td>同设备多主播 + 设备充值超限</td>
+                <td><button class="btn text" data-toast="封禁证据预览">视频 1</button></td>
+                <td>-</td>
+                <td>2026-07-18 11:30:12</td>
+                <td><span class="pill green">是 · 上限8</span></td>
+                <td>system</td>
+                <td>
+                  <button class="btn text" data-open="unbanAccountModal">解封</button>
+                  <button class="btn text" data-open="adjustModal">充值封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><button class="btn text">771400</button></td>
+                <td>WC10112</td>
+                <td>Nour</td>
+                <td><div class="identity-list"><span class="pill blue">官方人员</span></div></td>
+                <td><span class="pill green">是</span></td>
+                <td>-</td>
+                <td>-</td>
+                <td>普通用户</td>
+                <td class="mono">dev_D550_7EA1</td>
+                <td>2026-07-10 09:12:04</td>
+                <td><span class="pill green">成功</span></td>
+                <td class="mono">45.88.20.119</td>
+                <td>德国</td>
+                <td><button class="btn text" data-open="deviceModal">2 个</button></td>
+                <td><button class="btn text" data-open="ipModal">8 条</button></td>
+                <td>$62.50</td>
+                <td><span class="pill blue">未限制</span></td>
+                <td><span class="pill red">封号</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">1 次</button></td>
+                <td>2026-07-11 09:44:20</td>
+                <td>12h</td>
+                <td>IP注册超限</td>
+                <td><button class="btn text" data-toast="封禁证据预览">图片 1</button></td>
+                <td>误封申诉待复核</td>
+                <td>-</td>
+                <td><span class="pill red">否</span></td>
+                <td>-</td>
+                <td>
+                  <button class="btn text danger-text" data-open="banModal">封禁</button>
+                  <button class="btn text" data-open="adjustModal">充值封禁</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="list-foot">
+          <span>第 1-3 条/总共 3 条</span>
+          <span class="page-no">1</span>
+          <select style="width: 104px;">
+            <option>20 条/页</option>
+            <option>50 条/页</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="layout" data-view="risk-archive" hidden>
+        <section class="panel">
+          <div class="section-head">
+            <div class="section-title">设备充值封禁与关联账号列表</div>
+            <div class="tabs">
+              <button class="tab is-active">设备维度</button>
+              <button class="tab">IP 维度</button>
+              <button class="tab">操作日志</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>设备 ID</th>
+                  <th>关联账号</th>
+                  <th>主播/公会</th>
+                  <th>设备充值总额</th>
+                  <th>充值状态</th>
+                  <th>注册 IP</th>
+                  <th>IP 白名单</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono">dev_9F7A_81C2</td>
+                  <td><div class="stack"><strong>2 个账号</strong><span class="sub">有效 2，封禁 0</span></div></td>
+                  <td><div class="stack"><strong>主播 1</strong><span class="sub">Guild 812 / 公会长否</span></div></td>
+                  <td><div class="stack"><strong>$188.90</strong><span class="sub">Google $118.9 / Apple $70</span></div></td>
+                  <td><span class="pill yellow">200 美金限制</span></td>
+                  <td class="mono">103.44.18.21</td>
+                  <td><span class="pill red">否</span></td>
+                  <td>2026-07-08 15:42</td>
+                  <td>
+                    <button class="btn text" data-open="deviceModal">查看账号</button>
+                    <button class="btn text" data-open="adjustModal">调整</button>
+                    <button class="btn text" data-toast="设备充值限制已解除，进入观察期">解封</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="mono">dev_A2C0_72BE</td>
+                  <td><div class="stack"><strong>2 个账号</strong><span class="sub">均为有效账号</span></div></td>
+                  <td><div class="stack"><strong>主播 0</strong><span class="sub">无公会关系</span></div></td>
+                  <td><div class="stack"><strong>$936.20</strong><span class="sub">Google $720 / Apple $216.2</span></div></td>
+                  <td><span class="pill red">1000 美金限制</span></td>
+                  <td class="mono">185.72.61.8</td>
+                  <td><span class="pill green">是 · 上限 8</span></td>
+                  <td>2026-07-08 14:08</td>
+                  <td>
+                    <button class="btn text" data-open="deviceModal">查看账号</button>
+                    <button class="btn text" data-open="adjustModal">调整</button>
+                    <button class="btn text" data-open="whitelistModal">白名单</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="mono">dev_D550_7EA1</td>
+                  <td><div class="stack"><strong>2 个账号</strong><span class="sub">删除待确认 1</span></div></td>
+                  <td><div class="stack"><strong>主播 1</strong><span class="sub">主播占用已记录</span></div></td>
+                  <td><div class="stack"><strong>$62.50</strong><span class="sub">Google $62.5 / Apple $0</span></div></td>
+                  <td><span class="pill blue">未限制</span></td>
+                  <td class="mono">45.88.20.119</td>
+                  <td><span class="pill red">否</span></td>
+                  <td>2026-07-08 12:17</td>
+                  <td>
+                    <button class="btn text" data-open="deviceModal">查看账号</button>
+                    <button class="btn text danger-text" data-open="deleteModal">删除账号</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="panel">
+            <div class="section-head">
+              <div class="section-title">基础规则摘要</div>
+            </div>
+            <div class="rule-list">
+              <div class="rule"><strong>设备注册</strong><span>一个设备最多注册 2 个账号。后台删除账号后，同步减少设备和 IP 注册计数。</span></div>
+              <div class="rule"><strong>主播占用</strong><span>加入公会才算主播，公会长也纳入主播类身份；一个设备只能登录 1 个主播账号。</span></div>
+              <div class="rule"><strong>IP 注册</strong><span>一个 IP 最多注册 5 个账号，不按身份筛选，仅统计数量。</span></div>
+              <div class="rule"><strong>IP 白名单</strong><span>只豁免 IP 注册数量限制，不豁免设备、主播、充值和收益风控；登录总数默认 8，可配置。</span></div>
+              <div class="rule"><strong>设备充值</strong><span>Google + Apple 按设备累计金额，命中后该设备下所有账号继续充值均受限。</span></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div class="section-title">最近操作</div>
+            </div>
+            <div class="timeline">
+              <div class="log-item"><div class="log-time">15:42</div><div class="log-text">系统自动将 <span class="mono">dev_9F7A_81C2</span> 调整为 200 美金限制。</div></div>
+              <div class="log-item"><div class="log-time">14:23</div><div class="log-text">管理员 RC 删除 UID 771020，设备计数 2 → 1，IP 计数 5 → 4。</div></div>
+              <div class="log-item"><div class="log-time">13:08</div><div class="log-text">IP <span class="mono">185.72.61.8</span> 加入白名单，登录总数上限 8。</div></div>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="panel page-head" data-view="ip-whitelist-archive" hidden>
+        <div>
+          <h1>IP 白名单列表</h1>
+          <p>展示已加入白名单的 IP、该 IP 下账号数量、有效期和操作记录。点击账号数量可查看该 IP 下关联账号详情；白名单只豁免 IP 注册数量限制，不豁免设备、主播、充值和收益风控。</p>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="IP 白名单指标" data-view="ip-whitelist-archive" hidden>
+        <div class="metric">
+          <div class="metric-label">白名单 IP 总数</div>
+          <div class="metric-value">24</div>
+          <div class="metric-note">含永久有效 3 个</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">今日新增</div>
+          <div class="metric-value">2</div>
+          <div class="metric-note">均已记录添加原因</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">7 日内到期</div>
+          <div class="metric-value">5</div>
+          <div class="metric-note">到期后恢复 IP 注册限制</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">账号数量超上限</div>
+          <div class="metric-value">1</div>
+          <div class="metric-note">需复核登录总数配置</div>
+        </div>
+      </section>
+
+      <section class="panel filters" data-view="ip-whitelist" hidden>
+        <div class="filter-grid">
+          <div class="field">
+            <label for="whitelistIp">IP 地址</label>
+            <input id="whitelistIp" placeholder="精确查询 IP">
+          </div>
+          <div class="field">
+            <label for="whitelistOperator">操作人</label>
+            <input id="whitelistOperator" placeholder="操作人账号">
+          </div>
+          <div class="field">
+            <label for="whitelistExpire">有效期状态</label>
+            <select id="whitelistExpire">
+              <option selected>全部</option>
+              <option>有效中</option>
+              <option>7 日内到期</option>
+              <option>已过期</option>
+              <option>永久</option>
+            </select>
+          </div>
+          <div class="head-actions">
+            <button class="btn secondary" data-toast="筛选条件已重置">重置</button>
+            <button class="btn primary" data-toast="IP 白名单查询完成">查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-view="ip-whitelist" hidden>
+        <div class="section-head">
+          <div>
+            <div class="section-title">IP 白名单列表</div>
+            <div class="sub">点击“该 IP 下账号数量”查看关联账号明细，编辑/移除操作均写入审计日志。</div>
+          </div>
+          <div class="toolbar">
+            <button class="btn gold" data-open="whitelistModal">新增 IP 白名单</button>
+            <button class="btn secondary" data-toast="IP 白名单列表已导出">导出</button>
+            <button class="icon-btn" title="刷新" data-toast="IP 白名单列表已刷新">↻</button>
+            <button class="icon-btn" title="列配置">⚙</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>ip地址</th>
+                <th>该ip下账号数量</th>
+                <th>添加白名单时间</th>
+                <th>白名单有效期</th>
+                <th>操作人</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td class="mono">185.72.61.8</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">8 个账号</button></td>
+                <td>2026-07-08 13:08:21</td>
+                <td><span class="pill green">2026-08-07 23:59:59</span></td>
+                <td>小太阳</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">编辑</button>
+                  <button class="btn text danger-text" data-open="removeWhitelistModal">移除</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td class="mono">103.44.18.21</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">5 个账号</button></td>
+                <td>2026-07-09 09:42:10</td>
+                <td><span class="pill yellow">2026-07-16 23:59:59</span></td>
+                <td>RC</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">编辑</button>
+                  <button class="btn text danger-text" data-open="removeWhitelistModal">移除</button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td class="mono">203.0.113.24</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">2 个账号</button></td>
+                <td>2026-07-10 11:18:45</td>
+                <td><span class="pill purple">永久</span></td>
+                <td>system</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">编辑</button>
+                  <button class="btn text danger-text" data-open="removeWhitelistModal">移除</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="list-foot">
+          <span>第 1-3 条/总共 24 条</span>
+          <span class="page-no">1</span>
+          <select style="width: 104px;">
+            <option>20 条/页</option>
+            <option>50 条/页</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel filters" data-view="ip-ban" hidden>
+        <div class="filter-grid">
+          <div class="field">
+            <label for="ipBanAddress">IP 地址</label>
+            <input id="ipBanAddress" placeholder="精确查询 IP" value="185.72.61.8">
+          </div>
+          <div class="field">
+            <label for="ipBanUser">用户 ID</label>
+            <input id="ipBanUser" placeholder="精确查询用户 ID">
+          </div>
+          <div class="field">
+            <label for="ipBanDevice">设备 ID</label>
+            <input id="ipBanDevice" placeholder="精确查询设备 ID">
+          </div>
+          <div class="field">
+            <label for="ipBanDate">封禁时间</label>
+            <input id="ipBanDate" type="date" value="2026-07-11">
+          </div>
+          <div class="field">
+            <label for="ipBanStatus">封禁状态</label>
+            <select id="ipBanStatus">
+              <option>全部</option>
+              <option selected>已封禁</option>
+              <option>已解封</option>
+              <option>待复核</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ipBanOperator">操作人</label>
+            <input id="ipBanOperator" placeholder="操作人账号">
+          </div>
+          <div class="head-actions">
+            <button class="btn secondary" data-toast="筛选条件已重置">重置</button>
+            <button class="btn primary" data-toast="IP 封禁查询完成">查询</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-view="ip-ban" hidden>
+        <div class="section-head">
+          <div>
+            <div class="section-title">IP 封禁列表</div>
+            <div class="sub">展示 IP 封禁记录、关联账号和解封信息；点击账号数量、封禁次数可继续查看明细。</div>
+          </div>
+          <div class="toolbar">
+            <button class="btn danger" data-open="banModal" data-ban-type="封IP">封禁 IP</button>
+            <button class="btn secondary" data-toast="IP 封禁列表已导出">导出</button>
+            <button class="icon-btn" title="刷新" data-toast="IP 封禁列表已刷新">↻</button>
+            <button class="icon-btn" title="列配置">⚙</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>IP 地址</th>
+                <th>IP 所在国家</th>
+                <th>关联账号</th>
+                <th>封禁状态</th>
+                <th>封禁次数</th>
+                <th>封禁时间</th>
+                <th>封禁时长</th>
+                <th>封禁理由</th>
+                <th>封禁证据</th>
+                <th>解封理由</th>
+                <th>解禁时间</th>
+                <th>操作人</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td class="mono">185.72.61.8</td>
+                <td>阿联酋</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">8 个账号</button></td>
+                <td><span class="pill red">已封禁</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">2 次</button></td>
+                <td>2026-07-11 11:30:12</td>
+                <td>12h</td>
+                <td>IP 注册账号超限</td>
+                <td><button class="btn text" data-toast="封禁证据预览">图片 2</button></td>
+                <td>-</td>
+                <td>2026-07-11 23:30:12</td>
+                <td>小太阳</td>
+                <td><button class="btn text" data-open="unbanIpModal">解封</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td class="mono">103.44.18.21</td>
+                <td>土耳其</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">5 个账号</button></td>
+                <td><span class="pill red">已封禁</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">1 次</button></td>
+                <td>2026-07-11 10:18:36</td>
+                <td>6h</td>
+                <td>封号封设备封IP-慎用</td>
+                <td><button class="btn text" data-toast="封禁证据预览">视频 1</button></td>
+                <td>-</td>
+                <td>2026-07-11 16:18:36</td>
+                <td>小太阳</td>
+                <td><button class="btn text" data-open="unbanIpModal">解封</button></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td class="mono">45.88.20.119</td>
+                <td>德国</td>
+                <td><button class="btn text" data-open="ipWhitelistAccountsModal">2 个账号</button></td>
+                <td><span class="pill green">已解封</span></td>
+                <td><button class="btn text" data-open="banHistoryModal">1 次</button></td>
+                <td>2026-07-10 22:05:00</td>
+                <td>1天</td>
+                <td>异常跨国登陆</td>
+                <td><button class="btn text" data-toast="封禁证据预览">图片 1</button></td>
+                <td>申诉通过</td>
+                <td>2026-07-11 08:40:21</td>
+                <td>RC</td>
+                <td><button class="btn text danger-text" data-open="banModal" data-ban-type="封IP">封禁</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="list-foot">
+          <span>第 1-3 条/总共 18 条</span>
+          <span class="page-no">1</span>
+          <select style="width: 104px;">
+            <option>20 条/页</option>
+            <option>50 条/页</option>
+          </select>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal-layer" id="banModal">
+    <section class="modal ban-modal" role="dialog" aria-modal="true" aria-labelledby="banTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="banTitle">封号</h2>
+          <div class="modal-subtitle">封号封设备入口。按现有逻辑写入账号/设备封禁；设备封禁命中后，同设备登录账号会被设备封禁链路拦截。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="ban-form">
+        <div class="ban-field">
+          <label><span class="required">*</span>封禁类型</label>
+          <select>
+            <option selected>封号封设备</option>
+            <option>仅封号</option>
+            <option>仅封设备</option>
+            <option>封IP</option>
+            <option>封号封设备封IP-慎用</option>
+          </select>
+        </div>
+        <div class="ban-field">
+          <label><span class="required">*</span>封禁时间</label>
+          <select>
+            <option selected disabled>请选择</option>
+            <option>1h</option>
+            <option>6h</option>
+            <option>12h</option>
+            <option>1天</option>
+            <option>2天</option>
+            <option>3天</option>
+            <option>7天</option>
+            <option>永久</option>
+          </select>
+        </div>
+        <div class="ban-field">
+          <label><span class="required">*</span>封禁理由</label>
+          <select>
+            <option selected disabled>请选择</option>
+            <option>设备注册账号超限</option>
+            <option>IP 注册账号超限</option>
+            <option>同设备多主播/公会长</option>
+            <option>设备充值封禁绕过</option>
+            <option>同设备小号套利</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="ban-field">
+          <label><span class="required">*</span>证据上传</label>
+          <button type="button" class="upload-box" data-toast="证据上传格式需与开发确认后接入">
+            <span>点击上传证据</span>
+            <small>格式需与开发确认；建议支持图片或视频（1 分钟内）。</small>
+          </button>
+        </div>
+        <div class="ban-field">
+          <label><span class="required">*</span>备注</label>
+          <textarea maxlength="100" placeholder="请输入">同设备关联账号 2 个，设备累计充值 $188.90，当前命中 200 美金设备充值限制；建议封号封设备并保留审计归档。</textarea>
+          <div class="textarea-count">60 / 100</div>
+        </div>
+        <div class="note">
+          关联处理：封IP针对对应 IP 入口封禁该 IP；封号封设备封IP-慎用会封该设备所有账号，并封禁最后一次登陆 IP 地址。设备充值封禁、IP 白名单、收益/提现限制需要单独处理。
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn primary" data-submit="封禁已提交，账号/设备封禁记录已写入">确定</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="deviceModal">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="deviceTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="deviceTitle">查看设备关联账号</h2>
+          <div class="modal-subtitle">设备 ID：dev_9F7A_81C2，展示同设备账号、主播身份、公会关系和充值金额。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-grid">
+          <div class="summary-box"><span>关联账号数</span><strong>2</strong></div>
+          <div class="summary-box"><span>关联主播数</span><strong>1</strong></div>
+          <div class="summary-box"><span>设备充值总额</span><strong>$188.90</strong></div>
+          <div class="summary-box"><span>充值状态</span><strong>200 美金限制</strong></div>
+          <div class="summary-box"><span>注册 IP</span><strong class="mono">103.44.18.21</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>用户 ID</th>
+                <th>用户 CODE</th>
+                <th>昵称</th>
+                <th>注册时间</th>
+                <th>注册 IP</th>
+                <th>最近登陆时间</th>
+                <th>主播</th>
+                <th>公会长</th>
+                <th>公会</th>
+                <th>充值金额</th>
+                <th>账号状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>771020</td>
+                <td>WC10086</td>
+                <td>Amina</td>
+                <td>2026-07-07 09:18</td>
+                <td class="mono">103.44.18.21</td>
+                <td>2026-07-10 15:48:31</td>
+                <td><span class="pill green">是</span></td>
+                <td><span class="pill red">否</span></td>
+                <td>Guild 812</td>
+                <td>$118.90</td>
+                <td><span class="pill green">正常</span></td>
+                <td>
+                  <button class="btn text danger-text" data-open="banModal">封禁</button>
+                  <button class="btn text danger-text" data-open="deleteModal">删除账号</button>
+                </td>
+              </tr>
+              <tr>
+                <td>771128</td>
+                <td>WC10091</td>
+                <td>Layla</td>
+                <td>2026-07-07 11:34</td>
+                <td class="mono">103.44.18.21</td>
+                <td>2026-07-10 13:20:05</td>
+                <td><span class="pill red">否</span></td>
+                <td><span class="pill red">否</span></td>
+                <td>-</td>
+                <td>$70.00</td>
+                <td><span class="pill green">正常</span></td>
+                <td>
+                  <button class="btn text danger-text" data-open="banModal">封禁</button>
+                  <button class="btn text danger-text" data-open="deleteModal">删除账号</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>关闭</button>
+        <button class="btn primary" data-open="adjustModal">调整设备充值封禁</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="ipModal">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="ipTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="ipTitle">登陆IP记录</h2>
+          <div class="modal-subtitle">用户 ID：771020，展示该账号在不同 IP 下的登陆记录、对应登陆设备、登陆状态和 IP 所在国家。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-grid">
+          <div class="summary-box"><span>登陆IP记录</span><strong>5 条</strong></div>
+          <div class="summary-box"><span>最近登陆时间</span><strong>2026-07-10 15:48</strong></div>
+          <div class="summary-box"><span>最近登陆状态</span><strong>失败</strong></div>
+          <div class="summary-box"><span>最近登陆IP</span><strong class="mono">185.72.61.8</strong></div>
+          <div class="summary-box"><span>IP所在国家</span><strong>阿联酋</strong></div>
+        </div>
+        <div class="note">原“IP注册数”字段调整为“登陆IP记录”：统计并查看同一用户账号在不同 IP 下的登陆记录；不同 IP 可以对应同一个登陆设备，不再表示同 IP 注册账号数。</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>用户 ID</th>
+                <th>登陆IP</th>
+                <th>IP所在国家</th>
+                <th>最近登陆时间</th>
+                <th>登陆状态</th>
+                <th>登陆设备</th>
+                <th>IP白名单</th>
+                <th>备注</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>771020</td>
+                <td class="mono">185.72.61.8</td>
+                <td>阿联酋</td>
+                <td>2026-07-10 15:48:31</td>
+                <td><span class="pill red">失败</span></td>
+                <td class="mono">dev_A2C0_72BE</td>
+                <td><span class="pill green">是 · 上限8</span></td>
+                <td>密码错误 2 次</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">IP白名单</button>
+                  <button class="btn text danger-text" data-open="banModal" data-ban-type="封IP">IP封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>771020</td>
+                <td class="mono">103.44.18.21</td>
+                <td>土耳其</td>
+                <td>2026-07-10 08:16:02</td>
+                <td><span class="pill green">成功</span></td>
+                <td class="mono">dev_9F7A_81C2</td>
+                <td><span class="pill red">否</span></td>
+                <td>常用设备</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">IP白名单</button>
+                  <button class="btn text danger-text" data-open="banModal" data-ban-type="封IP">IP封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>771020</td>
+                <td class="mono">45.88.20.119</td>
+                <td>德国</td>
+                <td>2026-07-09 23:11:44</td>
+                <td><span class="pill green">成功</span></td>
+                <td class="mono">dev_A2C0_72BE</td>
+                <td><span class="pill red">否</span></td>
+                <td>跨设备登陆</td>
+                <td>
+                  <button class="btn text" data-open="whitelistModal">IP白名单</button>
+                  <button class="btn text danger-text" data-open="banModal" data-ban-type="封IP">IP封禁</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>关闭</button>
+        <button class="btn gold" data-open="whitelistModal">配置 IP 白名单</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="adjustModal">
+    <section class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="adjustTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="adjustTitle">调整设备充值封禁</h2>
+          <div class="modal-subtitle">只影响当前设备充值能力，不自动解除账号封禁、设备登录封禁、收益或提现限制。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>设备 ID</label>
+            <input value="dev_9F7A_81C2" readonly>
+          </div>
+          <div class="field">
+            <label>当前累计充值</label>
+            <input value="$188.90" readonly>
+          </div>
+          <div class="field">
+            <label>当前状态</label>
+            <input value="200 美金限制" readonly>
+          </div>
+          <div class="field">
+            <label>调整后状态</label>
+            <select>
+              <option>未限制</option>
+              <option selected>200 美金限制</option>
+              <option>1000 美金限制</option>
+              <option>全面限制充值</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>调整原因</label>
+          <textarea>设备累计 Google + Apple 充值接近 200 美金限制阈值，按设备维度限制继续充值。</textarea>
+        </div>
+        <div class="note">命中设备充值封禁后，该设备下所有账号继续充值均按设备状态判断。账号白名单和设备充值白名单需单独配置。</div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn primary" data-submit="设备充值封禁已更新">确认调整</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="ipWhitelistAccountsModal">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="ipWhitelistAccountsTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="ipWhitelistAccountsTitle">该 IP 下账号详情</h2>
+          <div class="modal-subtitle">IP 地址：185.72.61.8，展示该 IP 下账号、设备、最近登陆时间和账号状态。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-grid">
+          <div class="summary-box"><span>账号数量</span><strong>8</strong></div>
+          <div class="summary-box"><span>主播/公会长</span><strong>2</strong></div>
+          <div class="summary-box"><span>白名单有效期</span><strong>2026-08-07</strong></div>
+          <div class="summary-box"><span>登录总数上限</span><strong>8</strong></div>
+        </div>
+        <div class="note">该详情只用于查看白名单 IP 下账号分布。删除账号、封号封设备、设备充值封禁仍通过对应风控操作执行。</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>用户 ID</th>
+                <th>用户 CODE</th>
+                <th>昵称</th>
+                <th>主播/公会长</th>
+                <th>注册时间</th>
+                <th>最近登陆时间</th>
+                <th>设备序列号</th>
+                <th>公会</th>
+                <th>账号状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>771020</td>
+                <td>WC10086</td>
+                <td>Amina</td>
+                <td><span class="pill green">主播</span></td>
+                <td>2026-07-07 09:18</td>
+                <td>2026-07-10 15:48:31</td>
+                <td class="mono">dev_9F7A_81C2</td>
+                <td>Guild 812</td>
+                <td><span class="pill green">正常</span></td>
+                <td>
+                  <button class="btn text danger-text" data-open="banModal">封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>771128</td>
+                <td>WC10091</td>
+                <td>Layla</td>
+                <td><span class="pill red">否</span></td>
+                <td>2026-07-07 11:34</td>
+                <td>2026-07-10 13:20:05</td>
+                <td class="mono">dev_9F7A_81C2</td>
+                <td>-</td>
+                <td><span class="pill green">正常</span></td>
+                <td>
+                  <button class="btn text danger-text" data-open="banModal">封禁</button>
+                </td>
+              </tr>
+              <tr>
+                <td>770912</td>
+                <td>WC10072</td>
+                <td>Test-03</td>
+                <td><span class="pill purple">公会长</span></td>
+                <td>2026-07-06 22:05</td>
+                <td>2026-07-09 21:42:11</td>
+                <td class="mono">dev_D550_7EA1</td>
+                <td>-</td>
+                <td><span class="pill yellow">已封禁</span></td>
+                <td>
+                  <button class="btn text" data-open="unbanAccountModal">解封</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="whitelistModal">
+    <section class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="whitelistTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="whitelistTitle">配置 IP 白名单</h2>
+          <div class="modal-subtitle">默认不限制该 IP 下注册数量，白名单内 IP 登录总数默认 8，可配置。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>IP 地址</label>
+            <input value="103.44.18.21">
+          </div>
+          <div class="field">
+            <label>登录总数上限</label>
+            <input type="number" min="1" value="8">
+          </div>
+          <div class="field">
+            <label>有效期</label>
+            <select>
+              <option>7 天</option>
+              <option selected>30 天</option>
+              <option>永久，需二次审批</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>添加原因</label>
+          <textarea>公会办公网络多人共用 IP，需豁免 IP 注册数量限制；设备规则、主播规则和充值规则仍正常生效。</textarea>
+        </div>
+        <div class="note">边界：IP 白名单不豁免设备注册限制、不豁免同设备主播登录限制、不豁免设备充值封禁。</div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn gold" data-submit="IP 白名单已更新">确认配置</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="removeWhitelistModal">
+    <section class="modal remove-modal" role="dialog" aria-modal="true" aria-labelledby="removeWhitelistTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="removeWhitelistTitle">确认移除 IP 白名单</h2>
+          <div class="modal-subtitle">移除后该 IP 将恢复 IP 注册数量限制，相关操作会写入审计日志。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="danger-note note">请确认该 IP 不再需要白名单豁免。移除白名单不会自动封禁账号，也不会影响设备、主播、充值等其他风控记录。</div>
+        <div class="summary-grid remove-summary">
+          <div class="summary-box"><span>IP 地址</span><strong class="mono nowrap">185.72.61.8</strong></div>
+          <div class="summary-box"><span>该 IP 下账号数量</span><strong>8</strong></div>
+          <div class="summary-box"><span>白名单有效期</span><strong class="nowrap">2026-08-07 23:59:59</strong></div>
+          <div class="summary-box"><span>操作人</span><strong>小太阳</strong></div>
+        </div>
+        <div class="field">
+          <label>移除原因</label>
+          <textarea>该 IP 已不再符合白名单条件，恢复 IP 注册数量限制。</textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn danger" data-submit="已移除 IP 白名单">确认移除</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="unbanIpModal">
+    <section class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="unbanIpTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="unbanIpTitle">确认解封 IP</h2>
+          <div class="modal-subtitle">确认后将提交 IP 解封操作，并写入操作日志。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="note">确认解封该 IP 么？</div>
+        <div class="confirm-details">
+          <div class="confirm-item"><span>IP 地址</span><strong class="mono">185.72.61.8</strong></div>
+          <div class="confirm-item"><span>当前封禁状态</span><strong>已封禁</strong></div>
+          <div class="confirm-item"><span>关联账号</span><strong>8 个账号</strong></div>
+          <div class="confirm-item"><span>操作人</span><strong>小太阳</strong></div>
+        </div>
+        <div class="field">
+          <label>解封原因（非必填）</label>
+          <textarea placeholder="请输入解封原因，可为空"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn primary" data-submit="已提交 IP 解封操作">确认解封</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="unbanAccountModal">
+    <section class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="unbanAccountTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="unbanAccountTitle">确认解封</h2>
+          <div class="modal-subtitle">确认后将提交账号解封操作，并写入操作日志。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="note">确认解封该账号么？</div>
+        <div class="confirm-details">
+          <div class="confirm-item"><span>用户 ID</span><strong>6</strong></div>
+          <div class="confirm-item"><span>当前封禁状态</span><strong>封号</strong></div>
+          <div class="confirm-item"><span>设备序列号</span><strong class="mono">00c9f1cbcc294a4bb2777cbedc9eeb95</strong></div>
+          <div class="confirm-item"><span>操作人</span><strong>小太阳</strong></div>
+        </div>
+        <div class="field">
+          <label>解封原因（非必填）</label>
+          <textarea placeholder="请输入解封原因，可为空"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn primary" data-submit="已提交解封操作">确认解封</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="banHistoryModal">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="banHistoryTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="banHistoryTitle">历史封禁记录</h2>
+          <div class="modal-subtitle">展示该账号/设备历史封禁次数、封禁时长、理由、证据、解封信息和操作人。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-summary">
+          <div class="summary-box"><span>用户 ID</span><strong>6</strong></div>
+          <div class="summary-box"><span>累计封禁次数</span><strong>2</strong></div>
+          <div class="summary-box"><span>最近封禁状态</span><strong>封号</strong></div>
+          <div class="summary-box is-device"><span>设备序列号</span><strong class="mono">00c9f1cbcc294a4bb2777cbedc9eeb95</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>封禁时间</th>
+                <th>封禁时长</th>
+                <th>封禁类型</th>
+                <th>封禁理由</th>
+                <th>封禁证据</th>
+                <th>解封时间</th>
+                <th>解封理由</th>
+                <th>操作人</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-07-11 10:18:36</td>
+                <td>12h</td>
+                <td>封号</td>
+                <td>设备注册账号超限</td>
+                <td><button class="btn text" data-toast="封禁证据预览">图片 2</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>小太阳</td>
+              </tr>
+              <tr>
+                <td>2026-07-08 21:10:02</td>
+                <td>6h</td>
+                <td>封IP</td>
+                <td>IP 注册账号超限</td>
+                <td><button class="btn text" data-toast="封禁证据预览">视频 1</button></td>
+                <td>2026-07-09 03:10:02</td>
+                <td>到期自动解封</td>
+                <td>system</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-layer" id="deleteModal">
+    <section class="modal remove-modal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="deleteTitle">删除账号确认</h2>
+          <div class="modal-subtitle">删除后同步减少设备注册计数和 IP 注册计数，并写入审计日志。</div>
+        </div>
+        <button class="close" data-close>×</button>
+      </div>
+      <div class="modal-body">
+        <div class="danger-note note">请确认删除对象无误。删除账号不清除审计归档，历史设备、IP、充值和公会证据仍保留。</div>
+        <div class="confirm-details">
+          <div class="confirm-item"><span>用户 ID</span><strong>771128</strong></div>
+          <div class="confirm-item"><span>昵称</span><strong>Layla</strong></div>
+          <div class="confirm-item"><span>设备 ID</span><strong class="mono">dev_9F7A_81C2</strong></div>
+          <div class="confirm-item"><span>注册 IP</span><strong class="mono">103.44.18.21</strong></div>
+          <div class="confirm-item is-wide"><span>计数变化</span><strong>设备 2→1 / IP 5→4</strong></div>
+        </div>
+        <div class="field">
+          <label>删除原因</label>
+          <textarea>同设备小号注册，释放设备/IP 注册名额，同时保留审计归档。</textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" data-close>取消</button>
+        <button class="btn danger" data-submit="账号已删除，设备/IP 计数已同步更新">确认删除</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">操作已完成</div>
+
+  <script>
+    const toast = document.getElementById("toast");
+    const breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
+    const viewTitles = {
+      risk: "设备账号与充值风控",
+      "ip-whitelist": "IP 白名单列表",
+      "ip-ban": "IP 封禁列表"
+    };
+
+    function showView(view) {
+      document.querySelectorAll("[data-view]").forEach((section) => {
+        section.hidden = section.dataset.view !== view;
+      });
+
+      document.querySelectorAll("[data-view-target]").forEach((button) => {
+        const label = button.textContent.trim();
+        const isLegacyRisk = view === "risk" && label === "封号封设备";
+        const isRiskEntry = view === "risk" && label === "设备账号风控";
+        const isWhitelistEntry = view === "ip-whitelist" && label === "IP 白名单";
+        const isIpBanEntry = view === "ip-ban" && label === "IP 封禁列表";
+        const isCurrent = isLegacyRisk || isRiskEntry || isWhitelistEntry || isIpBanEntry;
+
+        button.classList.toggle("is-current-menu", isLegacyRisk);
+        button.classList.toggle("is-active", isRiskEntry || isWhitelistEntry || isIpBanEntry);
+        button.setAttribute("aria-current", isCurrent ? "page" : "false");
+      });
+
+      if (breadcrumbCurrent) {
+        breadcrumbCurrent.textContent = viewTitles[view] || "设备账号与充值风控";
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add("is-open");
+    }
+
+    function closeModal(layer) {
+      layer.classList.remove("is-open");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    document.addEventListener("click", (event) => {
+      const viewTrigger = event.target.closest("[data-view-target]");
+      if (viewTrigger) {
+        showView(viewTrigger.dataset.viewTarget);
+        return;
+      }
+
+      const open = event.target.closest("[data-open]");
+      if (open) {
+        const current = event.target.closest(".modal-layer");
+        if (current) closeModal(current);
+        if (open.dataset.open === "banModal") {
+          const banType = open.dataset.banType || "封号封设备";
+          const banTypeControl = document.querySelector("#banModal select");
+          const banTitle = document.getElementById("banTitle");
+          if (banTypeControl) banTypeControl.value = banType;
+          if (banTitle) banTitle.textContent = banType === "封IP" ? "封禁 IP" : "封号";
+        }
+        openModal(open.dataset.open);
+        return;
+      }
+
+      const close = event.target.closest("[data-close]");
+      if (close) {
+        closeModal(close.closest(".modal-layer"));
+        return;
+      }
+
+      const submit = event.target.closest("[data-submit]");
+      if (submit) {
+        const current = event.target.closest(".modal-layer");
+        if (current) closeModal(current);
+        showToast(submit.dataset.submit);
+        return;
+      }
+
+      const toastTrigger = event.target.closest("[data-toast]");
+      if (toastTrigger) {
+        showToast(toastTrigger.dataset.toast);
+        return;
+      }
+
+      if (event.target.classList.contains("modal-layer")) {
+        closeModal(event.target);
+      }
+    });
+
+    const previewParams = new URLSearchParams(window.location.search);
+    const initialView = previewParams.get("view");
+    showView(["risk", "ip-whitelist", "ip-ban"].includes(initialView) ? initialView : "risk");
+
+    const previewModal = previewParams.get("modal");
+    const previewModalIds = new Set([
+      "banModal",
+      "deviceModal",
+      "ipModal",
+      "adjustModal",
+      "ipWhitelistAccountsModal",
+      "whitelistModal",
+      "removeWhitelistModal",
+      "unbanIpModal",
+      "unbanAccountModal",
+      "banHistoryModal",
+      "deleteModal"
+    ]);
+    if (previewModalIds.has(previewModal)) {
+      document.body.classList.add("preview-modal");
+      openModal(previewModal);
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      document.querySelectorAll(".modal-layer.is-open").forEach(closeModal);
+    });
+  </script>
+</body>
+</html>

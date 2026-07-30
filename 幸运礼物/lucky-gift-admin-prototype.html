@@ -1,0 +1,2511 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeChill 幸运礼物后台配置原型</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f9fbff;
+      --line: #e5eaf2;
+      --line-strong: #d6deeb;
+      --text: #1f2a3d;
+      --muted: #66758c;
+      --subtle: #8a97aa;
+      --brand: #316bff;
+      --brand-deep: #234fc5;
+      --brand-soft: #edf3ff;
+      --green: #18a66a;
+      --green-soft: #e9f9f1;
+      --amber: #d98716;
+      --amber-soft: #fff7e8;
+      --red: #dc5263;
+      --red-soft: #fff0f3;
+      --purple: #6b5bd8;
+      --purple-soft: #f2f0ff;
+      --cyan: #0b8ea0;
+      --cyan-soft: #e8f8fb;
+      --shadow: 0 12px 28px rgba(27, 43, 74, .06);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      height: 64px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #316bff, #0b8ea0);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 3px;
+      color: var(--subtle);
+      font-size: 11px;
+    }
+
+    .nav {
+      padding: 12px 10px 18px;
+      overflow: auto;
+    }
+
+    .nav-title {
+      margin: 10px 8px 6px;
+      color: #9aa7ba;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .nav-item {
+      width: 100%;
+      min-height: 40px;
+      margin: 2px 0;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #526176;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .nav-item:hover,
+    .nav-item.is-active {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: currentColor;
+      background: rgba(49, 107, 255, .08);
+      font-size: 12px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .sidebar-foot {
+      margin-top: auto;
+      padding: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--subtle);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content,
+    .view,
+    .panel,
+    .page-head,
+    .stat,
+    .summary-tile,
+    .grid-2 > *,
+    .grid-3 > *,
+    .grid-4 > *,
+    .form-grid > *,
+    .upload-grid > *,
+    .rule-grid > * {
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 64px;
+      padding: 0 20px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 8;
+    }
+
+    .breadcrumb {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .breadcrumb strong {
+      color: var(--text);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn,
+    .icon-btn,
+    .segment-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: #536177;
+      font-size: 13px;
+      font-weight: 800;
+      min-height: 34px;
+      transition: .16s ease;
+      white-space: nowrap;
+    }
+
+    .btn {
+      padding: 0 13px;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(49, 107, 255, .18);
+    }
+
+    .btn.light {
+      background: var(--brand-soft);
+      border-color: #d8e5ff;
+      color: var(--brand-deep);
+    }
+
+    .btn.warning {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: #fff;
+    }
+
+    .btn.danger {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    .icon-btn {
+      width: 34px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+
+    .content {
+      padding: 16px 18px 28px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.is-active {
+      display: grid;
+      gap: 14px;
+    }
+
+    .page-head,
+    .panel,
+    .stat,
+    .summary-tile {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .page-head {
+      padding: 17px 18px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .page-head p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 920px;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      min-height: 24px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .blue { color: var(--brand-deep); background: var(--brand-soft); }
+    .green { color: var(--green); background: var(--green-soft); }
+    .amber { color: #af6b05; background: var(--amber-soft); }
+    .red { color: #c53f50; background: var(--red-soft); }
+    .purple { color: var(--purple); background: var(--purple-soft); }
+    .cyan { color: var(--cyan); background: var(--cyan-soft); }
+    .neutral { color: #728096; background: #f2f5f9; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 13px 14px;
+      min-height: 106px;
+    }
+
+    .stat-label,
+    .mini-label {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 25px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .stat-foot {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .panel-head {
+      min-height: 54px;
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .panel-body {
+      padding: 15px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .control,
+    .textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 13px;
+    }
+
+    .control {
+      height: 38px;
+      padding: 0 11px;
+    }
+
+    .textarea {
+      min-height: 84px;
+      resize: vertical;
+      padding: 9px 11px;
+      line-height: 1.55;
+    }
+
+    .control:focus,
+    .textarea:focus {
+      border-color: #9eb9ff;
+      box-shadow: 0 0 0 3px rgba(49, 107, 255, .08);
+    }
+
+    .switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      color: #536177;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .switch input {
+      width: 38px;
+      height: 20px;
+      appearance: none;
+      background: #cbd5e1;
+      border-radius: 999px;
+      position: relative;
+      outline: none;
+    }
+
+    .switch input::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      top: 2px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .16);
+      transition: .16s ease;
+    }
+
+    .switch input:checked {
+      background: var(--brand);
+    }
+
+    .switch input:checked::after {
+      transform: translateX(18px);
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 940px;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid #eef2f7;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    th {
+      color: #59687e;
+      background: #f8fbff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    td {
+      color: #354258;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      letter-spacing: 0;
+    }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step {
+      min-height: 78px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+      align-content: start;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      right: -8px;
+      top: 28px;
+      color: #a5b1c2;
+      font-weight: 900;
+      z-index: 1;
+    }
+
+    .step b {
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .decision {
+      border-left: 4px solid var(--brand);
+      padding: 12px 13px;
+      background: #fbfdff;
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .decision strong {
+      font-size: 14px;
+    }
+
+    .decision p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .summary-tile {
+      padding: 13px;
+      min-height: 104px;
+    }
+
+    .summary-tile b {
+      display: block;
+      font-size: 15px;
+      margin-top: 7px;
+    }
+
+    .summary-tile span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .mode-row,
+    .tabs,
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .segment-btn {
+      min-height: 32px;
+      padding: 0 12px;
+    }
+
+    .segment-btn.is-active {
+      color: var(--brand-deep);
+      border-color: #cfe0ff;
+      background: var(--brand-soft);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 168px minmax(0, 1fr) 92px;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .range-row label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--brand);
+    }
+
+    .formula {
+      background: #0f172a;
+      color: #e7eefc;
+      border-radius: 8px;
+      padding: 12px 13px;
+      font-size: 12px;
+      line-height: 1.65;
+      overflow: auto;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #e8eef6;
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      background: var(--c, var(--brand));
+    }
+
+    .water-bars {
+      display: grid;
+      gap: 10px;
+    }
+
+    .water-line {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) 82px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .upload-slots {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .upload-slot {
+      min-height: 128px;
+      border: 1px dashed #bfd0e7;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .upload-slot input {
+      display: none;
+    }
+
+    .slot-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      font-weight: 900;
+    }
+
+    .upload-slot b {
+      font-size: 13px;
+    }
+
+    .upload-slot span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .asset-preview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .asset-preview figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .asset-preview img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      display: block;
+      background: #f8fafc;
+    }
+
+    .asset-preview figcaption {
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mini-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mini-flow div {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 9px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .mini-flow b {
+      font-size: 12px;
+    }
+
+    .mini-flow span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: #435066;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .check-item::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex: 0 0 auto;
+    }
+
+    .check-item.warn::before {
+      background: var(--amber);
+    }
+
+    .check-item.danger::before {
+      background: var(--red);
+    }
+
+    .calc-result {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .calc-result div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 11px;
+    }
+
+    .calc-result b {
+      display: block;
+      margin-top: 5px;
+      font-size: 18px;
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .approval-flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .approval-flow .step {
+      min-height: 70px;
+    }
+
+    @media (max-width: 1180px) {
+      .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid-4,
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .process,
+      .approval-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .step::after { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      body { overflow-x: hidden; }
+      .layout {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      .sidebar {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .brand { height: auto; padding: 12px 14px; }
+      .nav {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 8px 10px;
+      }
+      .nav-title,
+      .sidebar-foot { display: none; }
+      .nav-item { flex: 0 0 auto; width: auto; }
+      .main,
+      .topbar,
+      .content {
+        width: 100%;
+        max-width: 100%;
+      }
+      .topbar { position: static; height: auto; padding: 12px 14px; align-items: flex-start; overflow: hidden; }
+      .top-actions {
+        width: 100%;
+        max-width: 100%;
+      }
+      .top-actions .control {
+        flex: 1 1 120px;
+        min-width: 0;
+      }
+      .content { padding: 12px; }
+      .page-head,
+      .topbar { flex-direction: column; }
+      .stat-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .form-grid,
+      .upload-grid,
+      .asset-preview,
+      .rule-grid,
+      .process,
+      .approval-flow,
+      .mini-flow { grid-template-columns: 1fr; }
+      .range-row { grid-template-columns: 1fr; }
+      .calc-result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">LG</div>
+        <div>
+          <strong>幸运礼物后台</strong>
+          <span>共享奖池评审原型</span>
+        </div>
+      </div>
+      <nav class="nav" aria-label="后台导航">
+        <div class="nav-title">配置中心</div>
+        <button class="nav-item is-active" data-view="dashboard"><span class="nav-icon">01</span>概览</button>
+        <button class="nav-item" data-view="activity"><span class="nav-icon">02</span>活动&奖池</button>
+        <button class="nav-item" data-view="upload"><span class="nav-icon">03</span>礼物上传</button>
+        <button class="nav-item" data-view="rtp"><span class="nav-icon">04</span>RTP&概率</button>
+        <button class="nav-item" data-view="pool"><span class="nav-icon">05</span>水位预算</button>
+        <div class="nav-title">安全&发布</div>
+        <button class="nav-item" data-view="risk"><span class="nav-icon">06</span>风控规则</button>
+        <button class="nav-item" data-view="audit"><span class="nav-icon">07</span>审计发布</button>
+      </nav>
+      <div class="sidebar-foot">
+        当前方案：MVP 灰度安全档<br>
+        RTP 25% / 奖池注入 30% / 理论成本 <=30%
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">WeChill 管理后台 / 活动配置 / <strong id="crumbTitle">概览</strong></div>
+        <div class="top-actions">
+          <select class="control" id="envSelect" style="width: 124px;">
+            <option>生产环境</option>
+            <option>预发环境</option>
+            <option>测试环境</option>
+          </select>
+          <select class="control" id="countrySelect" style="width: 116px;">
+            <option>SA</option>
+            <option>EG</option>
+            <option>AE</option>
+            <option>KW</option>
+          </select>
+          <button class="btn light">导出配置</button>
+          <button class="btn primary">发起评审</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view is-active" id="dashboard">
+          <div class="page-head">
+            <div>
+              <h1>幸运礼物可视后台总览</h1>
+              <p>围绕“活动国家奖池、礼物资源、RTP 概率、水位预算、风控准入、审计发布”搭建，配置项和 PRD 口径一一对应，默认以 MVP 灰度安全档上线。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge green">可评审</span>
+              <span class="badge blue">共享奖池</span>
+              <span class="badge amber">风控联动</span>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="stat-label">即时 RTP 目标</div>
+              <div class="stat-value" data-bind="targetRtp">25%</div>
+              <div class="stat-foot">默认灰度安全档，活动增强可升至 30%。</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">即时奖池注入</div>
+              <div class="stat-value" data-bind="poolRatio">30%</div>
+              <div class="stat-foot">满足目标 RTP + 5% 缓冲水位。</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">玩法理论成本率</div>
+              <div class="stat-value" data-bind="theoryCost"><=30%</div>
+              <div class="stat-foot">即时返奖 + 榜单 + 亏损补偿 + TOP3 + 补贴。</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">资金占用率</div>
+              <div class="stat-value" data-bind="fundCost"><=35%</div>
+              <div class="stat-foot">奖池注入先占用，活动结束按规则回流或结转。</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">风控策略</div>
+              <div class="stat-value">独立模块</div>
+              <div class="stat-foot">配置页展示绑定摘要，规则维护在风控中心。</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>后台配置主流程</h2>
+                <p>从礼物资源到发布监控的最短闭环。</p>
+              </div>
+              <span class="badge blue">流程可审计</span>
+            </div>
+            <div class="panel-body">
+              <div class="process">
+                <div class="step"><b>礼物上传</b><span>基础信息、多语言、资源包、Lucky 标识。</span></div>
+                <div class="step"><b>活动绑定</b><span>国家、周期、礼物 ID、奖池维度。</span></div>
+                <div class="step"><b>RTP 概率</b><span>选择档位，生成概率表和成本校验。</span></div>
+                <div class="step"><b>水位预算</b><span>配置保护线、单笔支付上限、缓冲动作。</span></div>
+                <div class="step"><b>风控准入</b><span>绑定全局策略，按风险系数降权。</span></div>
+                <div class="step"><b>审批发布</b><span>产品、研发、财务、风控双签后生效。</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>风控展示裁决</h2>
+                  <p>评审建议和后台信息架构。</p>
+                </div>
+                <span class="badge purple">裁决建议</span>
+              </div>
+              <div class="panel-body">
+                <div class="decision">
+                  <strong>风控规则单独作为一级模块，活动/RTP/礼物页只展示绑定摘要。</strong>
+                  <p>原因是风控策略需要跨活动复用、独立权限、独立审计和紧急生效能力；如果塞在活动配置里，运营修改活动时容易误触安全策略，也不利于风控团队统一管理。</p>
+                </div>
+                <div class="grid-3" style="margin-top: 12px;">
+                  <div class="summary-tile">
+                    <div class="mini-label">活动页</div>
+                    <b>策略绑定</b>
+                    <span>展示当前绑定策略、版本、生效国家和风险等级覆盖。</span>
+                  </div>
+                  <div class="summary-tile">
+                    <div class="mini-label">RTP 页</div>
+                    <b>只读系数</b>
+                    <span>展示 risk_coef 对概率的影响，不允许在这里改规则。</span>
+                  </div>
+                  <div class="summary-tile">
+                    <div class="mini-label">风控页</div>
+                    <b>规则维护</b>
+                    <span>维护阈值、动作、灰度和紧急开关，单独留痕。</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>客户端原型参考</h2>
+                  <p>用于校验后台配置对前端展示的影响。</p>
+                </div>
+                <span class="badge cyan">Axure 资源</span>
+              </div>
+              <div class="panel-body">
+                <div class="asset-preview">
+                  <figure>
+                    <img src="assets/review/lucky_pool_entry_and_panel.png" alt="幸运奖池入口和面板">
+                    <figcaption>礼物箱入口与幸运奖池面板</figcaption>
+                  </figure>
+                  <figure>
+                    <img src="assets/review/lucky_effect_broadcast.png" alt="幸运礼物飘屏">
+                    <figcaption>高倍命中房间/全服飘屏</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>评审硬口径</h2>
+                <p>用于避免跨团队评审时出现口径分叉。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>主题</th>
+                    <th>后台落点</th>
+                    <th>默认值</th>
+                    <th>不可突破约束</th>
+                    <th>审批要求</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>即时 RTP</td>
+                    <td>RTP&概率</td>
+                    <td>25%</td>
+                    <td>常态不使用 90.069375%</td>
+                    <td>升至 30% 需财务确认，90%+ 需白名单三签</td>
+                  </tr>
+                  <tr>
+                    <td>奖池注入</td>
+                    <td>活动&奖池 / 水位预算</td>
+                    <td>30%</td>
+                    <td>必须 >= 目标 RTP + 5%</td>
+                    <td>低于安全线禁止保存</td>
+                  </tr>
+                  <tr>
+                    <td>自赠</td>
+                    <td>礼物上传 / 风控规则</td>
+                    <td>财富等级 >=5</td>
+                    <td>自赠幸运礼物默认不计榜、不补偿</td>
+                    <td>改动需财务、数据、风控确认</td>
+                  </tr>
+                  <tr>
+                    <td>奖励金币循环</td>
+                    <td>活动&奖池 / 审计发布</td>
+                    <td>不纳入外部结算</td>
+                    <td>BD/公会长/TG 结算不可默认放开</td>
+                    <td>放开需财务和风控双签</td>
+                  </tr>
+                  <tr>
+                    <td>风险降权</td>
+                    <td>风控规则</td>
+                    <td>正常 1.0 / 观察 0.7</td>
+                    <td>不允许 VIP 正向提奖</td>
+                    <td>紧急策略允许先发后补审计</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="activity">
+          <div class="page-head">
+            <div>
+              <h1>活动&国家奖池配置</h1>
+              <p>按活动 × 国家建立共享奖池和独立账本，礼物 ID 与活动唯一绑定，国家归属以房间归属国家/房主注册国锁定。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge blue">activity_country</span>
+              <span class="badge green">账本流水必填</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>基础信息</h2>
+                <p>保存时校验活动周期、国家范围、礼物绑定冲突和 RTP 安全线。</p>
+              </div>
+              <div class="top-actions">
+                <button class="btn">复制上一期</button>
+                <button class="btn primary">保存草稿</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="field">
+                  <label>活动 ID</label>
+                  <input class="control" value="LG_202607_SA_01">
+                </div>
+                <div class="field">
+                  <label>活动名称</label>
+                  <input class="control" value="Lucky Gift July Launch">
+                </div>
+                <div class="field">
+                  <label>生效国家</label>
+                  <select class="control">
+                    <option>SA, AE, KW</option>
+                    <option>EG</option>
+                    <option>全中东国家</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>结算时区</label>
+                  <input class="control" value="UTC+3" readonly>
+                </div>
+                <div class="field">
+                  <label>开始时间</label>
+                  <input class="control" value="2026-07-01 00:00:00">
+                </div>
+                <div class="field">
+                  <label>结束时间</label>
+                  <input class="control" value="2026-07-31 23:59:59">
+                </div>
+                <div class="field">
+                  <label>奖池维度</label>
+                  <select class="control">
+                    <option>activity_country</option>
+                    <option disabled>room_country</option>
+                    <option disabled>global</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>榜单周期</label>
+                  <input class="control" value="21:00:00 ~ 次日20:59:59">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-4">
+            <div class="summary-tile">
+              <div class="mini-label">instant_reward_pool</div>
+              <b>即时奖池</b>
+              <span>幸运礼物流水按 30% 注入，支付 Lucky Roll 金币奖励。</span>
+            </div>
+            <div class="summary-tile">
+              <div class="mini-label">rank_reward_pool</div>
+              <b>排名奖励池</b>
+              <span>默认按幸运礼物总消耗的 2% 建预算。</span>
+            </div>
+            <div class="summary-tile">
+              <div class="mini-label">loss_comp_pool</div>
+              <b>亏损补偿池</b>
+              <span>默认按幸运礼物总消耗的 1% 建预算。</span>
+            </div>
+            <div class="summary-tile">
+              <div class="mini-label">subsidy_budget</div>
+              <b>平台补贴</b>
+              <span>默认 <=1.5%，只用于有限体验兜底。</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>资金参数</h2>
+                <p>与 RTP 页面联动，默认档位满足 25% 目标 RTP + 5% 缓冲。</p>
+              </div>
+              <span class="badge green" id="activitySafeBadge">安全线通过</span>
+            </div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="field">
+                  <label>初始奖池/国家</label>
+                  <input class="control" value="100000">
+                </div>
+                <div class="field">
+                  <label>即时奖池注入比例</label>
+                  <input class="control" id="activityPoolRatio" value="30%">
+                </div>
+                <div class="field">
+                  <label>即时返奖安全缓冲</label>
+                  <input class="control" id="activityBuffer" value="5%">
+                </div>
+                <div class="field">
+                  <label>保护线比例</label>
+                  <input class="control" value="30%">
+                </div>
+                <div class="field">
+                  <label>排名奖励比例</label>
+                  <input class="control" id="rankRatio" value="2.0000%">
+                </div>
+                <div class="field">
+                  <label>亏损补偿比例</label>
+                  <input class="control" id="lossRatio" value="1.0000%">
+                </div>
+                <div class="field">
+                  <label>TOP3 额外预算</label>
+                  <input class="control" id="top3Ratio" value="0.5000%">
+                </div>
+                <div class="field">
+                  <label>补贴预算</label>
+                  <input class="control" id="subsidyRatio" value="1.5000%">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>国家奖池状态</h2>
+                <p>真实开奖读取服务端事务内水位，客户端只展示氛围状态。</p>
+              </div>
+              <button class="btn light">刷新水位</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>国家</th>
+                    <th>即时奖池余额</th>
+                    <th>保护线</th>
+                    <th>可用奖池</th>
+                    <th>水位</th>
+                    <th>开放倍率</th>
+                    <th>当日流水</th>
+                    <th>即时返奖</th>
+                    <th>小时 RTP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>SA</td>
+                    <td>328,400</td>
+                    <td>98,520</td>
+                    <td>229,880</td>
+                    <td><span class="badge green">高水位</span></td>
+                    <td>0/5/10/20/100/250/500</td>
+                    <td>846,000</td>
+                    <td>211,320</td>
+                    <td>24.98%</td>
+                  </tr>
+                  <tr>
+                    <td>AE</td>
+                    <td>87,200</td>
+                    <td>26,160</td>
+                    <td>61,040</td>
+                    <td><span class="badge amber">中水位</span></td>
+                    <td>0/5/10/20/100</td>
+                    <td>205,000</td>
+                    <td>54,700</td>
+                    <td>26.68%</td>
+                  </tr>
+                  <tr>
+                    <td>KW</td>
+                    <td>31,900</td>
+                    <td>9,570</td>
+                    <td>22,330</td>
+                    <td><span class="badge red">低水位</span></td>
+                    <td>0/5/10/20</td>
+                    <td>94,000</td>
+                    <td>27,800</td>
+                    <td>29.57%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="upload">
+          <div class="page-head">
+            <div>
+              <h1>礼物上传与 Lucky Gift 绑定</h1>
+              <p>沿用现有礼物上传链路，新增 Lucky 标识、活动绑定、概率模板、资源审核和结算折算校验。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge blue">资源审核</span>
+              <span class="badge amber">配置联动校验</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>上传流程</h2>
+                <p>现有礼物上传流程上补齐幸运礼物的活动、RTP 和风控绑定。</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="mini-flow">
+                <div><b>基础信息</b><span>ID、名称、价格、分类、上下架。</span></div>
+                <div><b>多语言</b><span>英文、阿语、资源文案、规则图。</span></div>
+                <div><b>资源包</b><span>图标、静态图、SVGA/APNG、飘屏。</span></div>
+                <div><b>Lucky 配置</b><span>绑定活动、RTP 模板、奖池策略。</span></div>
+                <div><b>审核发布</b><span>资源验收、财务风控校验、定时生效。</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>原有礼物上传字段映射</h2>
+                <p>保留现有礼物 ID 作为主键，Lucky Gift 只增加活动、概率、奖池和风控绑定字段。</p>
+              </div>
+              <div class="top-actions">
+                <input class="control" style="width: 220px;" value="gift_lucky_falcon_100">
+                <button class="btn light">查询礼物 ID</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>gift_id</th>
+                    <th>礼物名称</th>
+                    <th>价格</th>
+                    <th>icon_resource_id</th>
+                    <th>effect_resource_id</th>
+                    <th>broadcast_resource_id</th>
+                    <th>lucky_enabled</th>
+                    <th>activity_id</th>
+                    <th>probability_template</th>
+                    <th>审核状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">gift_lucky_falcon_100</td>
+                    <td>Lucky Falcon</td>
+                    <td>100</td>
+                    <td class="mono">res_icon_88301</td>
+                    <td class="mono">res_svga_88301</td>
+                    <td class="mono">res_banner_88301</td>
+                    <td><span class="badge green">true</span></td>
+                    <td class="mono">LG_202607_SA_01</td>
+                    <td class="mono">axure_default_scaled_25</td>
+                    <td><span class="badge amber">待资源复核</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">gift_lucky_moon_1000</td>
+                    <td>Lucky Moon</td>
+                    <td>1,000</td>
+                    <td class="mono">res_icon_88302</td>
+                    <td class="mono">res_svga_88302</td>
+                    <td class="mono">res_banner_88302</td>
+                    <td><span class="badge green">true</span></td>
+                    <td class="mono">LG_202607_SA_01</td>
+                    <td class="mono">axure_default_scaled_25</td>
+                    <td><span class="badge blue">待财务审核</span></td>
+                  </tr>
+                  <tr>
+                    <td class="mono">gift_rose_10</td>
+                    <td>Rose</td>
+                    <td>10</td>
+                    <td class="mono">res_icon_10011</td>
+                    <td class="mono">res_svga_10011</td>
+                    <td class="mono">-</td>
+                    <td><span class="badge neutral">false</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="badge green">已上架</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="upload-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>礼物基础配置</h2>
+                  <p>自赠和幸运礼物收益折算使用 PRD 固定口径。</p>
+                </div>
+                <label class="switch"><input type="checkbox" checked> Lucky 礼物</label>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>礼物 ID</label>
+                    <input class="control" value="gift_lucky_falcon_100">
+                  </div>
+                  <div class="field">
+                    <label>礼物名称</label>
+                    <input class="control" value="Lucky Falcon">
+                  </div>
+                  <div class="field">
+                    <label>金币价格</label>
+                    <input class="control" value="100">
+                  </div>
+                  <div class="field">
+                    <label>礼物分类</label>
+                    <select class="control">
+                      <option>幸运金币礼物</option>
+                      <option>普通礼物</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>绑定活动</label>
+                    <select class="control">
+                      <option>LG_202607_SA_01</option>
+                      <option>未绑定</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>概率模板</label>
+                    <select class="control">
+                      <option>axure_default_scaled_25</option>
+                      <option>activity_enhanced_30</option>
+                      <option>prototype_90_whitelist</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>上架状态</label>
+                    <select class="control">
+                      <option>待审核</option>
+                      <option>定时上架</option>
+                      <option>已上架</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>排序权重</label>
+                    <input class="control" value="80">
+                  </div>
+                  <div class="field">
+                    <label>普通礼物收益比例</label>
+                    <input class="control" value="100%" readonly>
+                  </div>
+                  <div class="field">
+                    <label>幸运礼物收益比例</label>
+                    <input class="control" value="10%" readonly>
+                  </div>
+                  <div class="field">
+                    <label>自赠钻石/流水比例</label>
+                    <input class="control" value="99%" readonly>
+                  </div>
+                  <div class="field">
+                    <label>自赠幸运财富/魅力比例</label>
+                    <input class="control" value="10% * 50%" readonly>
+                  </div>
+                </div>
+                <div class="grid-2" style="margin-top: 12px;">
+                  <div class="field">
+                    <label>英文名称</label>
+                    <input class="control" value="Lucky Falcon">
+                  </div>
+                  <div class="field">
+                    <label>阿语名称</label>
+                    <input class="control" value="الصقر المحظوظ" dir="rtl">
+                  </div>
+                </div>
+                <div class="field" style="margin-top: 12px;">
+                  <label>审核备注</label>
+                  <textarea class="textarea">新增幸运礼物 100 金币档，绑定 SA/AE/KW 活动奖池；资源走现有礼物审核，Lucky 配置走财务和风控加签。</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>资源上传</h2>
+                  <p>上传后进入资源校验队列，失败项禁止发布。</p>
+                </div>
+                <button class="btn light" id="mockUpload">模拟上传</button>
+              </div>
+              <div class="panel-body">
+                <div class="upload-slots">
+                  <label class="upload-slot">
+                    <input type="file" data-slot="礼物图标">
+                    <span class="slot-icon">+</span>
+                    <b>礼物图标</b>
+                    <span>PNG/WebP，透明底，256x256</span>
+                  </label>
+                  <label class="upload-slot">
+                    <input type="file" data-slot="静态预览">
+                    <span class="slot-icon">+</span>
+                    <b>静态预览</b>
+                    <span>礼物面板展示图，512x512</span>
+                  </label>
+                  <label class="upload-slot">
+                    <input type="file" data-slot="动效资源">
+                    <span class="slot-icon">+</span>
+                    <b>动效资源</b>
+                    <span>SVGA/APNG/WebP，含低端机兜底</span>
+                  </label>
+                  <label class="upload-slot">
+                    <input type="file" data-slot="飘屏资源">
+                    <span class="slot-icon">+</span>
+                    <b>飘屏资源</b>
+                    <span>高倍命中横幅与房间圆球</span>
+                  </label>
+                </div>
+
+                <div class="panel" style="box-shadow: none; margin-top: 12px;">
+                  <div class="panel-head">
+                    <div>
+                      <h2>发布校验</h2>
+                    </div>
+                    <span class="badge green" id="uploadStatus">4/4 通过</span>
+                  </div>
+                  <div class="panel-body">
+                    <div class="check-list">
+                      <div class="check-item">礼物 ID 未与其他活动冲突，同一 gift_id 仅绑定一个活动。</div>
+                      <div class="check-item">Lucky 礼物已绑定 RTP 模板和活动国家奖池。</div>
+                      <div class="check-item">自赠最低财富等级为 5，自赠幸运礼物默认不计榜。</div>
+                      <div class="check-item warn">资源包需补充低端机兜底动效后才可生产发布。</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>礼物列表</h2>
+                  <p>展示 Lucky 礼物与活动、概率和审核状态的绑定。</p>
+                </div>
+                <button class="btn primary">新建礼物</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>礼物 ID</th>
+                      <th>价格</th>
+                      <th>Lucky</th>
+                      <th>活动</th>
+                      <th>RTP</th>
+                      <th>状态</th>
+                      <th>资源</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="mono">gift_lucky_falcon_100</td>
+                      <td>100</td>
+                      <td><span class="badge green">是</span></td>
+                      <td>LG_202607_SA_01</td>
+                      <td>25%</td>
+                      <td><span class="badge amber">待资源复核</span></td>
+                      <td>3/4</td>
+                    </tr>
+                    <tr>
+                      <td class="mono">gift_lucky_moon_1000</td>
+                      <td>1,000</td>
+                      <td><span class="badge green">是</span></td>
+                      <td>LG_202607_SA_01</td>
+                      <td>25%</td>
+                      <td><span class="badge blue">待财务审核</span></td>
+                      <td>4/4</td>
+                    </tr>
+                    <tr>
+                      <td class="mono">gift_rose_10</td>
+                      <td>10</td>
+                      <td><span class="badge neutral">否</span></td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td><span class="badge green">已上架</span></td>
+                      <td>4/4</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>客户端展示校验</h2>
+                  <p>后台配置影响入口、面板、中奖特效和记录页。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="asset-preview">
+                  <figure>
+                    <img src="assets/review/lucky_effect_room_ball.png" alt="房间圆球特效">
+                    <figcaption>房间圆球特效，按命中倍率阈值展示</figcaption>
+                  </figure>
+                  <figure>
+                    <img src="assets/review/client_reward_record_crop.png" alt="奖励记录">
+                    <figcaption>我的奖励记录，展示 order_id 可查</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="rtp">
+          <div class="page-head">
+            <div>
+              <h1>RTP 调整与概率配置</h1>
+              <p>保留原型倍率形状，非 0 倍概率按目标 RTP 等比例缩放，被关闭或缩小的概率统一并入 0 倍。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge blue">预算化概率</span>
+              <span class="badge green">禁止正向提奖</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>档位选择</h2>
+                  <p>90.069375% 仅用于白名单压测或纯奖池再分配验证。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="mode-row" id="modeRow">
+                  <button class="segment-btn is-active" data-mode="mvp">MVP 灰度 25%</button>
+                  <button class="segment-btn" data-mode="boost">活动增强 30%</button>
+                  <button class="segment-btn" data-mode="strong">强刺激 35%</button>
+                  <button class="segment-btn" data-mode="prototype">原型兼容 90.069375%</button>
+                </div>
+                <div style="margin-top: 16px;">
+                  <div class="range-row">
+                    <label>即时 RTP 目标</label>
+                    <input type="range" min="20" max="45" step="1" id="rtpRange" value="25">
+                    <input class="control" id="rtpInput" value="25%">
+                  </div>
+                  <div class="range-row">
+                    <label>奖池注入比例</label>
+                    <input type="range" min="25" max="60" step="1" id="poolRange" value="30">
+                    <input class="control" id="poolInput" value="30%">
+                  </div>
+                  <div class="range-row">
+                    <label>安全缓冲</label>
+                    <input type="range" min="0" max="15" step="1" id="bufferRange" value="5">
+                    <input class="control" id="bufferInput" value="5%">
+                  </div>
+                </div>
+                <div class="formula" id="rtpFormula">
+                  rtp_factor = target_instant_rtp / 90.069375%<br>
+                  final_probability[m] = base_probability[m] * rtp_factor * water_level_coef * risk_coef * budget_coef<br>
+                  disabled_probability -> 0倍
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>成本校验</h2>
+                  <p>理论成本率与资金占用率分开展示，避免把注入误认为支出。</p>
+                </div>
+                <span class="badge green" id="rtpSafeBadge">安全线通过</span>
+              </div>
+              <div class="panel-body">
+                <div class="grid-2">
+                  <div class="summary-tile">
+                    <div class="mini-label">玩法返奖理论成本率</div>
+                    <b id="costTheory"><=30.00%</b>
+                    <span>目标 RTP + 排名 2% + 亏损 1% + TOP3 0.5% + 补贴 1.5%</span>
+                  </div>
+                  <div class="summary-tile">
+                    <div class="mini-label">资金占用率</div>
+                    <b id="costFund"><=35.00%</b>
+                    <span>奖池注入 + 排名 + 亏损 + TOP3 + 补贴</span>
+                  </div>
+                  <div class="summary-tile">
+                    <div class="mini-label">缓冲水位</div>
+                    <b id="costBuffer">5.00%</b>
+                    <span>奖池注入 - 目标 RTP，小于 5% 时禁止生产发布。</span>
+                  </div>
+                  <div class="summary-tile">
+                    <div class="mini-label">原型 RTP</div>
+                    <b>90.069375%</b>
+                    <span>只作为基础倍率形状来源，不作为常态成本口径。</span>
+                  </div>
+                </div>
+                <div class="check-list" style="margin-top: 12px;">
+                  <div class="check-item" id="rtpCheck1">奖池注入比例满足目标 RTP + 5% 缓冲。</div>
+                  <div class="check-item">风险用户只允许降权或关闭倍率，不做 VIP/大 R 正向提奖。</div>
+                  <div class="check-item">关闭倍率的概率并入 0 倍，不向低倍补偿。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>概率表</h2>
+                <p>当前表为未叠加水位、风控、预算系数前的基础概率。</p>
+              </div>
+              <div class="badge-row">
+                <span class="badge blue" id="probRtpBadge">理论即时 RTP 25%</span>
+                <span class="badge neutral">非 0 倍等比例缩放</span>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="probTable">
+                <thead>
+                  <tr>
+                    <th>结果</th>
+                    <th>最终基础概率</th>
+                    <th>期望贡献</th>
+                    <th>水位准入</th>
+                    <th>风控准入</th>
+                    <th>客户端展示</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Axure 原型概率参考</h2>
+                  <p>用于追溯倍率配置来源。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="asset-preview">
+                  <figure>
+                    <img src="assets/review/axure_probability_table.png" alt="Axure 概率表">
+                    <figcaption>原型概率表，理论即时 RTP 为 90.069375%</figcaption>
+                  </figure>
+                  <figure>
+                    <img src="assets/review/axure_default_config.png" alt="Axure 默认配置">
+                    <figcaption>默认追档与礼物配置参考，最终以后端配置为准</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>风控联动摘要</h2>
+                  <p>此处只读展示，规则请在风控模块维护。</p>
+                </div>
+                <button class="btn light" data-jump="risk">查看风控</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>风险状态</th>
+                      <th>risk_coef</th>
+                      <th>概率动作</th>
+                      <th>榜单动作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>正常</td><td>1.0</td><td>正常开奖</td><td>正常参与</td></tr>
+                    <tr><td>观察</td><td>0.7</td><td>非 0 倍概率降权</td><td>后台标记</td></tr>
+                    <tr><td>限制</td><td>0 ~ 0.5</td><td>仅开放 0/5 倍</td><td>不参与亏损补偿</td></tr>
+                    <tr><td>危险</td><td>0</td><td>隐藏入口或禁止参与</td><td>不参与</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="pool">
+          <div class="page-head">
+            <div>
+              <h1>奖池水位与预算控制</h1>
+              <p>5% 缓冲只吸收常规波动，高倍奖还必须满足水位阈值、单笔支付上限、预算系数和风控系数。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge green">保护线 30%</span>
+              <span class="badge blue">单笔上限 21%</span>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>缓冲消耗监控</h2>
+                  <p>buffer_usage_rate 决定预算收紧动作。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="water-bars">
+                  <div class="water-line"><span>当日流水</span><div class="bar"><span style="--w: 84%; --c: var(--brand);"></span></div><span>846,000</span></div>
+                  <div class="water-line"><span>理论返奖</span><div class="bar"><span style="--w: 63%; --c: var(--green);"></span></div><span>211,500</span></div>
+                  <div class="water-line"><span>实际返奖</span><div class="bar"><span style="--w: 64%; --c: var(--cyan);"></span></div><span>216,900</span></div>
+                  <div class="water-line"><span>缓冲使用</span><div class="bar"><span style="--w: 22%; --c: var(--amber);"></span></div><span>22%</span></div>
+                </div>
+                <div class="formula" style="margin-top: 14px;">
+                  available_buffer = prior_unconsumed_buffer + lucky_gift_cost * (pool_in_ratio - target_rtp)<br>
+                  buffer_used = max(actual_instant_reward_out - expected_instant_reward, 0)<br>
+                  buffer_usage_rate = buffer_used / available_buffer
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>单笔大奖水位计算</h2>
+                  <p>用于判断命中后是否可以支付，不能支付则降级或转 0 倍。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>奖池余额</label>
+                    <input class="control" id="calcPool" value="328400">
+                  </div>
+                  <div class="field">
+                    <label>礼物消耗</label>
+                    <input class="control" id="calcGift" value="100">
+                  </div>
+                  <div class="field">
+                    <label>命中倍率</label>
+                    <select class="control" id="calcMulti">
+                      <option>1000</option>
+                      <option>500</option>
+                      <option>250</option>
+                      <option>100</option>
+                      <option>20</option>
+                      <option>10</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>单笔最大支付</label>
+                    <input class="control" value="30%" readonly>
+                  </div>
+                </div>
+                <div class="calc-result">
+                  <div><span class="mini-label">可用奖池</span><b id="availablePool">229,880</b></div>
+                  <div><span class="mini-label">单笔支付上限</span><b id="singleLimit">68,964</b></div>
+                  <div><span class="mini-label">支付判断</span><b id="payJudge">需降级</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>水位与倍率准入</h2>
+                <p>低水位关闭高倍，关闭概率统一并入 0 倍。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>水位</th>
+                    <th>可用奖池条件</th>
+                    <th>开放倍率</th>
+                    <th>迟滞恢复</th>
+                    <th>系统动作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge red">低水位</span></td>
+                    <td>&lt; 50,000</td>
+                    <td>0/5/10/20</td>
+                    <td>达到 55,000 进入中水位</td>
+                    <td>关闭 100 倍及以上</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge amber">中水位</span></td>
+                    <td>50,000 ~ 200,000</td>
+                    <td>0/5/10/20/100</td>
+                    <td>低于 45,000 回低水位；达到 220,000 进入高水位</td>
+                    <td>关闭 250/500/1000 倍</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge green">高水位</span></td>
+                    <td>200,000 ~ 1,000,000</td>
+                    <td>0/5/10/20/100/250/500</td>
+                    <td>低于 180,000 回中水位；达到 1,100,000 进入爆奖水位</td>
+                    <td>1000 倍继续受单笔上限约束</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge purple">爆奖水位</span></td>
+                    <td>&gt;= 1,000,000</td>
+                    <td>0/5/10/20/100/250/500/1000</td>
+                    <td>低于 900,000 回高水位</td>
+                    <td>仍需通过预算和风控</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>缓冲动作配置</h2>
+                <p>超过缓冲阈值时，自动关闭高倍或收紧 budget_coef。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>buffer_usage_rate</th>
+                    <th>系统动作</th>
+                    <th>budget_coef</th>
+                    <th>是否通知</th>
+                    <th>恢复条件</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>0% ~ 50%</td><td>正常开奖</td><td>1.0</td><td>否</td><td>持续监控</td></tr>
+                  <tr><td>50% ~ 80%</td><td>关闭 500/1000 倍</td><td>0.7</td><td>运营&财务</td><td>连续 2 小时回到 50% 以下</td></tr>
+                  <tr><td>80% ~ 100%</td><td>关闭 250/500/1000 倍</td><td>0.4</td><td>运营&财务&风控</td><td>人工确认或回到 50% 以下</td></tr>
+                  <tr><td>&gt;= 100%</td><td>仅开放 5/10 倍，必要时关闭 Lucky Roll</td><td>0.1</td><td>全量告警</td><td>负责人解锁</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="risk">
+          <div class="page-head">
+            <div>
+              <h1>风控规则中心</h1>
+              <p>幸运礼物风控独立展示和维护，活动配置只绑定策略版本；紧急风控可单独灰度和回滚。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge purple">一级模块</span>
+              <span class="badge green">策略复用</span>
+              <span class="badge amber">独立审计</span>
+            </div>
+          </div>
+
+          <div class="rule-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>策略绑定</h2>
+                  <p>当前活动绑定的风控策略。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>策略 ID</label>
+                    <input class="control" value="RISK_LUCKY_GIFT_V1">
+                  </div>
+                  <div class="field">
+                    <label>策略版本</label>
+                    <input class="control" value="v1.0.3">
+                  </div>
+                  <div class="field">
+                    <label>生效范围</label>
+                    <input class="control" value="SA, AE, KW">
+                  </div>
+                  <div class="field">
+                    <label>生效模式</label>
+                    <select class="control">
+                      <option>拦截 + 降权</option>
+                      <option>只观察</option>
+                      <option>只拦截</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="decision" style="margin-top: 12px;">
+                  <strong>不建议把风控规则塞进活动配置。</strong>
+                  <p>活动运营只需要看到当前绑定策略和命中摘要；规则阈值、黑名单分级、紧急开关由风控中心维护，减少误配置和权限争议。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>黑名单分级</h2>
+                  <p>入口、送礼、开奖、榜单按等级控制。</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>等级</th><th>入口</th><th>送礼</th><th>即时开奖</th><th>榜单奖励</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="badge green">正常</span></td><td>显示</td><td>允许</td><td>正常</td><td>正常</td></tr>
+                    <tr><td><span class="badge amber">观察</span></td><td>显示</td><td>允许</td><td>risk_coef=0.7</td><td>后台标记</td></tr>
+                    <tr><td><span class="badge red">限制</span></td><td>显示</td><td>允许</td><td>仅 0/5 倍</td><td>不参与亏损补偿</td></tr>
+                    <tr><td><span class="badge neutral">危险</span></td><td>隐藏</td><td>禁止</td><td>不参与</td><td>不参与</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>规则列表</h2>
+                <p>规则动作只允许降低中奖机会或限制参与，不允许提升正常用户中奖概率。</p>
+              </div>
+              <div class="top-actions">
+                <button class="btn light">新增规则</button>
+                <button class="btn primary">发布策略</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>规则</th>
+                    <th>阈值</th>
+                    <th>处理动作</th>
+                    <th>risk_coef</th>
+                    <th>榜单动作</th>
+                    <th>状态</th>
+                    <th>负责人</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>财富等级不足自赠</td><td>level &lt; 5 且 sender=receiver</td><td>拒绝自赠，不扣款不开奖</td><td>0</td><td>不参与</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                  <tr><td>异常自赠刷流水</td><td>自赠占比高、短时高频或集中冲榜</td><td>限制级，关闭中高倍</td><td>0 ~ 0.5</td><td>剔除或不补偿</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                  <tr><td>同设备多账号互送</td><td>1 小时 >= 3 笔</td><td>限制级</td><td>0 ~ 0.5</td><td>标记</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                  <tr><td>同 IP 多账号互送</td><td>1 小时 >= 5 笔</td><td>观察级</td><td>0.7</td><td>标记</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                  <tr><td>高频送礼</td><td>1 小时 &gt; 30 笔</td><td>关闭 100 倍及以上</td><td>0.7</td><td>正常</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                  <tr><td>退款用户</td><td>30 天内有退款</td><td>关闭中高倍或禁止参与</td><td>0 ~ 0.3</td><td>不参与补偿</td><td><span class="badge green">开启</span></td><td>支付风控</td></tr>
+                  <tr><td>接口重放</td><td>nonce/signature 重复</td><td>拒绝请求</td><td>0</td><td>不参与</td><td><span class="badge green">开启</span></td><td>研发</td></tr>
+                  <tr><td>单房间高爆集中</td><td>1 小时 >= 3 次 100 倍及以上</td><td>房间冷却 6 小时</td><td>0.3</td><td>标记</td><td><span class="badge green">开启</span></td><td>风控</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>大额奖励人审</h2>
+                <p>中奖记录先冻结，审核通过后发放或解冻。</p>
+              </div>
+            </div>
+            <div class="form-grid" style="padding: 15px;">
+              <div class="field">
+                <label>单笔奖励人审阈值</label>
+                <input class="control" value="50000">
+              </div>
+              <div class="field">
+                <label>24 小时累计阈值</label>
+                <input class="control" value="200000">
+              </div>
+              <div class="field">
+                <label>审核时限</label>
+                <input class="control" value="24h">
+              </div>
+              <div class="field">
+                <label>审核失败动作</label>
+                <select class="control">
+                  <option>回收奖励 + 记录原因</option>
+                  <option>人工补发</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="audit">
+          <div class="page-head">
+            <div>
+              <h1>审计发布与订单回放</h1>
+              <p>概率、奖池、风控、降级和派奖必须可回放；后台不允许直接修改开奖结果。</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge blue">版本留痕</span>
+              <span class="badge green">订单可回放</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>发布审批流</h2>
+                <p>涉及成本、结算和风控的变更必须多人审批。</p>
+              </div>
+              <button class="btn primary">提交发布</button>
+            </div>
+            <div class="panel-body">
+              <div class="approval-flow">
+                <div class="step"><b>产品提交</b><span>活动、礼物、展示配置。</span></div>
+                <div class="step"><b>研发校验</b><span>字段完整、幂等、回滚。</span></div>
+                <div class="step"><b>财务确认</b><span>RTP、预算、外部结算。</span></div>
+                <div class="step"><b>风控确认</b><span>策略版本、阈值、紧急开关。</span></div>
+                <div class="step"><b>数据确认</b><span>埋点、报表、对账字段。</span></div>
+                <div class="step"><b>定时发布</b><span>生效时间、灰度国家、回滚版本。</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>发布前检查</h2>
+                  <p>有任一危险项时禁止生产发布。</p>
+                </div>
+                <span class="badge amber">1 项待处理</span>
+              </div>
+              <div class="panel-body">
+                <div class="check-list">
+                  <div class="check-item">RTP 25%，奖池注入 30%，满足 5% 缓冲。</div>
+                  <div class="check-item">礼物 ID 与活动绑定无冲突。</div>
+                  <div class="check-item">奖励金币循环消费默认不进入外部结算。</div>
+                  <div class="check-item">自赠幸运礼物默认不参与榜单、排名和亏损补偿。</div>
+                  <div class="check-item warn">礼物动效资源低端机兜底待资源审核确认。</div>
+                  <div class="check-item">风控策略 RISK_LUCKY_GIFT_V1 已绑定。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>版本历史</h2>
+                  <p>记录操作人、变更前后值、生效时间。</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>版本</th><th>变更项</th><th>操作人</th><th>状态</th><th>时间</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>v1.0.3</td><td>风控阈值调整</td><td>RiskOps</td><td><span class="badge green">已生效</span></td><td>2026-06-23 18:20</td></tr>
+                    <tr><td>v1.0.2</td><td>RTP 25% 草稿</td><td>PM</td><td><span class="badge blue">待发布</span></td><td>2026-06-23 16:42</td></tr>
+                    <tr><td>v1.0.1</td><td>新增 SA 奖池</td><td>Ops</td><td><span class="badge neutral">已归档</span></td><td>2026-06-22 20:11</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>订单回放字段</h2>
+                <p>客服、研发、财务和风控均可基于同一 order_id 追溯。</p>
+              </div>
+              <div class="top-actions">
+                <input class="control" style="width: 220px;" value="LG2026062300009123">
+                <button class="btn light">查询</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>order_id</th>
+                    <th>用户</th>
+                    <th>礼物</th>
+                    <th>gift_cost</th>
+                    <th>probability_version</th>
+                    <th>water_level</th>
+                    <th>risk_coef</th>
+                    <th>budget_coef</th>
+                    <th>random_value</th>
+                    <th>hit_multiplier</th>
+                    <th>final_reward</th>
+                    <th>降级原因</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">LG2026062300009123</td>
+                    <td>10028451</td>
+                    <td>gift_lucky_falcon_100</td>
+                    <td>100</td>
+                    <td>prob_v25_20260623</td>
+                    <td>高</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>0.982341</td>
+                    <td>20x</td>
+                    <td>2,000</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">LG2026062300009124</td>
+                    <td>10029467</td>
+                    <td>gift_lucky_moon_1000</td>
+                    <td>1,000</td>
+                    <td>prob_v25_20260623</td>
+                    <td>中</td>
+                    <td>0.7</td>
+                    <td>0.7</td>
+                    <td>0.998912</td>
+                    <td>100x -> 20x</td>
+                    <td>20,000</td>
+                    <td>水位不足 + 风险观察</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const viewTitles = {
+      dashboard: "概览",
+      activity: "活动&奖池",
+      upload: "礼物上传",
+      rtp: "RTP&概率",
+      pool: "水位预算",
+      risk: "风控规则",
+      audit: "审计发布"
+    };
+
+    const base25 = [
+      { result: "0倍", multiplier: 0, probability: 97.420168, water: "全部水位", risk: "风险后可保持 0 倍", client: "未中奖" },
+      { result: "5倍", multiplier: 5, probability: 1.955680, water: "低水位及以上", risk: "观察及以上可用", client: "房间轻提示" },
+      { result: "10倍", multiplier: 10, probability: 0.433693, water: "低水位及以上", risk: "限制级可关闭", client: "房间轻提示" },
+      { result: "20倍", multiplier: 20, probability: 0.139649, water: "低水位及以上", risk: "限制级可关闭", client: "房间轻提示" },
+      { result: "100倍", multiplier: 100, probability: 0.038859, water: "中水位及以上", risk: "观察级降权", client: "房间横幅" },
+      { result: "250倍", multiplier: 250, probability: 0.007494, water: "高水位及以上", risk: "正常用户", client: "房间横幅" },
+      { result: "500倍", multiplier: 500, probability: 0.004248, water: "高水位及以上", risk: "正常用户", client: "全服飘屏" },
+      { result: "1000倍", multiplier: 1000, probability: 0.000208, water: "爆奖水位", risk: "正常用户 + 人审", client: "全服飘屏" }
+    ];
+
+    const modes = {
+      mvp: { rtp: 25, pool: 30, rank: 2, loss: 1, top3: .5, subsidy: 1.5 },
+      boost: { rtp: 30, pool: 35, rank: 3, loss: 2, top3: 1, subsidy: 3 },
+      strong: { rtp: 35, pool: 40, rank: 3, loss: 2, top3: 1, subsidy: 3 },
+      prototype: { rtp: 90.069375, pool: 95, rank: 0, loss: 0, top3: 0, subsidy: 0 }
+    };
+
+    const navButtons = document.querySelectorAll(".nav-item");
+    const views = document.querySelectorAll(".view");
+    const crumbTitle = document.getElementById("crumbTitle");
+
+    function showView(id) {
+      navButtons.forEach(btn => btn.classList.toggle("is-active", btn.dataset.view === id));
+      views.forEach(view => view.classList.toggle("is-active", view.id === id));
+      crumbTitle.textContent = viewTitles[id] || "概览";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => showView(btn.dataset.view));
+    });
+
+    document.querySelectorAll("[data-jump]").forEach(btn => {
+      btn.addEventListener("click", () => showView(btn.dataset.jump));
+    });
+
+    const rtpRange = document.getElementById("rtpRange");
+    const poolRange = document.getElementById("poolRange");
+    const bufferRange = document.getElementById("bufferRange");
+    const rtpInput = document.getElementById("rtpInput");
+    const poolInput = document.getElementById("poolInput");
+    const bufferInput = document.getElementById("bufferInput");
+    const probTableBody = document.querySelector("#probTable tbody");
+    const probRtpBadge = document.getElementById("probRtpBadge");
+    const rtpSafeBadge = document.getElementById("rtpSafeBadge");
+    const costTheory = document.getElementById("costTheory");
+    const costFund = document.getElementById("costFund");
+    const costBuffer = document.getElementById("costBuffer");
+    const rtpCheck1 = document.getElementById("rtpCheck1");
+    const rtpFormula = document.getElementById("rtpFormula");
+
+    function fmtPct(value, digits = 2) {
+      return `${Number(value).toFixed(digits)}%`;
+    }
+
+    function updateBoundText(name, text) {
+      document.querySelectorAll(`[data-bind="${name}"]`).forEach(el => { el.textContent = text; });
+    }
+
+    function updateRtpUI() {
+      const target = Number(rtpRange.value);
+      const pool = Number(poolRange.value);
+      const buffer = pool - target;
+      rtpInput.value = fmtPct(target, 0);
+      poolInput.value = fmtPct(pool, 0);
+      bufferRange.value = Math.max(0, Math.min(15, buffer));
+      bufferInput.value = fmtPct(buffer, 0);
+      const rank = target <= 25 ? 2 : 3;
+      const loss = target <= 25 ? 1 : 2;
+      const top3 = target <= 25 ? .5 : 1;
+      const subsidy = target <= 25 ? 1.5 : 3;
+      const theory = target + rank + loss + top3 + subsidy;
+      const fund = pool + rank + loss + top3 + subsidy;
+      const safe = buffer >= 5;
+      rtpSafeBadge.textContent = safe ? "安全线通过" : "低于 5% 缓冲";
+      rtpSafeBadge.className = `badge ${safe ? "green" : "red"}`;
+      rtpCheck1.className = `check-item ${safe ? "" : "danger"}`;
+      rtpCheck1.textContent = safe ? "奖池注入比例满足目标 RTP + 5% 缓冲。" : "奖池注入比例未满足目标 RTP + 5% 缓冲，禁止生产发布。";
+      costTheory.textContent = `<=${theory.toFixed(2)}%`;
+      costFund.textContent = `<=${fund.toFixed(2)}%`;
+      costBuffer.textContent = `${buffer.toFixed(2)}%`;
+      probRtpBadge.textContent = `理论即时 RTP ${target}%`;
+      updateBoundText("targetRtp", `${target}%`);
+      updateBoundText("poolRatio", `${pool}%`);
+      updateBoundText("theoryCost", `<=${theory.toFixed(0)}%`);
+      updateBoundText("fundCost", `<=${fund.toFixed(0)}%`);
+      rtpFormula.innerHTML = `rtp_factor = ${target}% / 90.069375% = ${(target / 90.069375).toFixed(6)}<br>final_probability[m] = base_probability[m] * rtp_factor * water_level_coef * risk_coef * budget_coef<br>pool_buffer = ${pool}% - ${target}% = ${buffer}%`;
+      renderProbability(target);
+    }
+
+    function renderProbability(target) {
+      const scale = target / 25;
+      let nonZeroTotal = 0;
+      const rows = base25.map(item => {
+        if (item.multiplier === 0) return { ...item };
+        const probability = item.probability * scale;
+        nonZeroTotal += probability;
+        return { ...item, probability };
+      });
+      rows[0].probability = Math.max(0, 100 - nonZeroTotal);
+      probTableBody.innerHTML = rows.map(item => {
+        const contribution = item.probability * item.multiplier / 100;
+        return `
+          <tr>
+            <td>${item.result}</td>
+            <td class="mono">${item.probability.toFixed(6)}%</td>
+            <td class="mono">${contribution.toFixed(6)}%</td>
+            <td>${item.water}</td>
+            <td>${item.risk}</td>
+            <td>${item.client}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("modeRow").addEventListener("click", event => {
+      const button = event.target.closest("[data-mode]");
+      if (!button) return;
+      document.querySelectorAll("[data-mode]").forEach(btn => btn.classList.remove("is-active"));
+      button.classList.add("is-active");
+      const mode = modes[button.dataset.mode];
+      if (mode.rtp > 45) {
+        rtpRange.max = 91;
+      } else {
+        rtpRange.max = 45;
+      }
+      rtpRange.value = Math.round(mode.rtp);
+      poolRange.value = Math.round(mode.pool);
+      updateRtpUI();
+      if (button.dataset.mode === "prototype") {
+        rtpInput.value = "90.069375%";
+        updateBoundText("targetRtp", "90.069375%");
+        probRtpBadge.textContent = "理论即时 RTP 90.069375%";
+        renderProbability(90.069375);
+      }
+    });
+
+    [rtpRange, poolRange].forEach(el => el.addEventListener("input", updateRtpUI));
+
+    document.getElementById("mockUpload").addEventListener("click", () => {
+      const status = document.getElementById("uploadStatus");
+      status.textContent = "4/4 通过";
+      status.className = "badge green";
+      document.querySelectorAll(".upload-slot span:last-child").forEach((el, index) => {
+        el.textContent = ["icon_lucky_falcon.webp", "preview_512.png", "effect.svga", "broadcast.webp"][index];
+      });
+    });
+
+    document.querySelectorAll(".upload-slot input").forEach(input => {
+      input.addEventListener("change", event => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const slot = input.closest(".upload-slot");
+        slot.querySelector("span:last-child").textContent = file.name;
+        slot.querySelector(".slot-icon").textContent = "OK";
+      });
+    });
+
+    const calcPool = document.getElementById("calcPool");
+    const calcGift = document.getElementById("calcGift");
+    const calcMulti = document.getElementById("calcMulti");
+    const availablePool = document.getElementById("availablePool");
+    const singleLimit = document.getElementById("singleLimit");
+    const payJudge = document.getElementById("payJudge");
+
+    function formatNumber(value) {
+      return Math.floor(value).toLocaleString("en-US");
+    }
+
+    function updatePoolCalc() {
+      const pool = Number(calcPool.value.replace(/,/g, "")) || 0;
+      const gift = Number(calcGift.value.replace(/,/g, "")) || 0;
+      const multi = Number(calcMulti.value) || 0;
+      const available = pool * .7;
+      const limit = available * .3;
+      const reward = gift * multi;
+      availablePool.textContent = formatNumber(available);
+      singleLimit.textContent = formatNumber(limit);
+      payJudge.textContent = reward <= limit ? "可支付" : "需降级";
+      payJudge.style.color = reward <= limit ? "var(--green)" : "var(--red)";
+    }
+
+    [calcPool, calcGift, calcMulti].forEach(el => el.addEventListener("input", updatePoolCalc));
+    calcMulti.addEventListener("change", updatePoolCalc);
+
+    updateRtpUI();
+    updatePoolCalc();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wechill 黑金充值校验页原型</title>
+  <style>
+    :root {
+      --bg: #070503;
+      --panel: #16100b;
+      --panel-2: #21170d;
+      --line: rgba(238, 190, 92, .28);
+      --line-strong: rgba(248, 205, 111, .52);
+      --gold: #f7d57b;
+      --gold-2: #c9953a;
+      --gold-3: #8d6124;
+      --text: #fff7e6;
+      --muted: #bda981;
+      --danger: #ff5a52;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .48);
+      --radius: 22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% -20%, rgba(255, 209, 114, .22), transparent 38%),
+        radial-gradient(circle at 18% 28%, rgba(188, 113, 30, .16), transparent 35%),
+        linear-gradient(180deg, #0c0804 0%, #050403 72%, #0d0905 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    body.preview-main {
+      display: block;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    body.preview-main .phone {
+      margin: 0 auto;
+      transform: scale(.78);
+      transform-origin: top center;
+    }
+
+    body.preview-help {
+      overflow: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .phone {
+      width: min(430px, 100%);
+      min-height: 844px;
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 70% 16%, rgba(255, 217, 129, .18), transparent 28%),
+        linear-gradient(180deg, #17100a 0%, #080604 42%, #120d08 100%);
+      border: 1px solid rgba(247, 213, 123, .38);
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, .05);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 54px;
+      padding: 0 28px;
+      font-weight: 800;
+      letter-spacing: .01em;
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--gold);
+    }
+
+    .signal {
+      display: inline-flex;
+      align-items: end;
+      gap: 3px;
+      height: 18px;
+    }
+
+    .signal span {
+      width: 4px;
+      border-radius: 6px;
+      background: currentColor;
+    }
+
+    .signal span:nth-child(1) { height: 7px; }
+    .signal span:nth-child(2) { height: 10px; }
+    .signal span:nth-child(3) { height: 14px; }
+    .signal span:nth-child(4) { height: 18px; }
+
+    .wifi {
+      width: 20px;
+      height: 14px;
+      position: relative;
+    }
+
+    .wifi::before,
+    .wifi::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid currentColor;
+      border-color: currentColor transparent transparent transparent;
+      border-radius: 50%;
+    }
+
+    .wifi::before {
+      width: 20px;
+      height: 20px;
+      top: 2px;
+    }
+
+    .wifi::after {
+      width: 12px;
+      height: 12px;
+      top: 8px;
+    }
+
+    .battery {
+      width: 27px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 3px;
+      width: 3px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #f9de88, #c89334);
+    }
+
+    .address {
+      margin: 8px 22px 24px;
+      min-height: 54px;
+      border-radius: 28px;
+      background: rgba(7, 5, 3, .7);
+      border: 1px solid rgba(247, 213, 123, .26);
+      display: grid;
+      grid-template-columns: 34px 1fr 30px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      color: var(--muted);
+      box-shadow: inset 0 0 22px rgba(247, 213, 123, .07);
+    }
+
+    .browser-icon,
+    .refresh {
+      width: 25px;
+      height: 25px;
+      position: relative;
+      color: var(--gold);
+    }
+
+    .browser-icon::before {
+      content: "";
+      position: absolute;
+      inset: 2px 5px 8px;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+    }
+
+    .browser-icon::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      bottom: 3px;
+      border-top: 2px solid currentColor;
+      box-shadow: 8px -6px 0 -7px currentColor;
+    }
+
+    .refresh::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 3px solid currentColor;
+      border-left-color: transparent;
+      border-radius: 50%;
+    }
+
+    .refresh::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      top: 0;
+      width: 9px;
+      height: 9px;
+      border-top: 3px solid currentColor;
+      border-right: 3px solid currentColor;
+      transform: rotate(8deg);
+    }
+
+    .url {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 14px 28px 38px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .brand-logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 17px;
+      object-fit: cover;
+      border: 1px solid rgba(247, 213, 123, .52);
+      box-shadow: 0 10px 28px rgba(201, 149, 58, .22);
+    }
+
+    .brand-name {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--gold);
+      text-shadow: 0 2px 16px rgba(247, 213, 123, .2);
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      font-size: 42px;
+      line-height: 1.08;
+      letter-spacing: .01em;
+    }
+
+    .subtitle {
+      margin: 0 0 14px;
+      color: #f7ecd2;
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 650;
+    }
+
+    .hint {
+      margin: 0 0 58px;
+      color: var(--gold);
+      line-height: 1.55;
+      font-size: 17px;
+    }
+
+    .field-group {
+      margin-bottom: 30px;
+    }
+
+    .label-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 750;
+      margin-bottom: 10px;
+    }
+
+    .help-btn {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      border: 1px solid rgba(247, 213, 123, .55);
+      color: var(--gold);
+      background: rgba(247, 213, 123, .08);
+      display: inline-grid;
+      place-items: center;
+      font-weight: 900;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .input-row {
+      height: 58px;
+      border-radius: 13px;
+      border: 1px solid var(--line-strong);
+      background: rgba(5, 4, 3, .68);
+      display: grid;
+      align-items: center;
+      padding: 0 14px;
+      box-shadow: inset 0 0 18px rgba(247, 213, 123, .06);
+    }
+
+    .id-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .code-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 100px;
+      gap: 12px;
+    }
+
+    input {
+      width: 100%;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      font-size: 17px;
+      min-width: 0;
+    }
+
+    input::placeholder {
+      color: rgba(189, 169, 129, .72);
+    }
+
+    .send-btn {
+      border: 0;
+      color: #140d05;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      background: linear-gradient(180deg, #fbe391, #c7922f);
+      box-shadow: 0 11px 24px rgba(201, 149, 58, .28);
+      transition: transform .16s ease, opacity .16s ease;
+      min-width: 0;
+    }
+
+    .send-btn:active,
+    .primary:active,
+    .modal-ok:active {
+      transform: scale(.98);
+    }
+
+    .primary {
+      width: 100%;
+      height: 64px;
+      border: 0;
+      border-radius: 36px;
+      color: #120c05;
+      background: linear-gradient(180deg, #ffe99f, #d19a34 64%, #a56b20);
+      font-size: 20px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 22px 40px rgba(201, 149, 58, .24), inset 0 1px 0 rgba(255, 255, 255, .45);
+      margin: 2px 0 22px;
+    }
+
+    .terms {
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .terms a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .pay-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: rgba(189, 169, 129, .35);
+      justify-content: center;
+      margin-top: 62px;
+      font-weight: 800;
+    }
+
+    .pay-divider::before,
+    .pay-divider::after {
+      content: "";
+      width: 88px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(247, 213, 123, .24), transparent);
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 104px;
+      transform: translate(-50%, 14px);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(5, 4, 3, .92);
+      color: var(--gold);
+      border: 1px solid rgba(247, 213, 123, .34);
+      padding: 11px 16px;
+      border-radius: 18px;
+      font-weight: 800;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .36);
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+      z-index: 6;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, .68);
+      z-index: 20;
+    }
+
+    .modal-layer.active {
+      display: grid;
+    }
+
+    body.preview-help .modal-layer.active {
+      place-items: start center;
+    }
+
+    body.preview-help .modal {
+      max-height: none;
+      margin-top: 12px;
+      transform: scale(.55);
+      transform-origin: top center;
+    }
+
+    .modal {
+      width: min(612px, 100%);
+      max-height: min(92vh, 920px);
+      overflow: auto;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(247, 213, 123, .16), transparent 32%),
+        linear-gradient(180deg, #19110a, #080604 54%, #15100a);
+      border: 1px solid rgba(247, 213, 123, .42);
+      box-shadow: var(--shadow);
+      padding: 30px 24px 24px;
+      color: var(--text);
+    }
+
+    .modal-head {
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(247, 213, 123, .24);
+      color: var(--gold);
+      background: rgba(247, 213, 123, .08);
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .modal-title {
+      margin: 0;
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--gold);
+      font-size: clamp(25px, 5vw, 35px);
+      line-height: 1.18;
+    }
+
+    .steps {
+      position: relative;
+      padding-left: 26px;
+    }
+
+    .steps::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 10px;
+      bottom: 16px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(247, 213, 123, .58), rgba(247, 213, 123, .14));
+    }
+
+    .step {
+      position: relative;
+      margin-bottom: 34px;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 6px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: #120d08;
+      box-shadow: 0 0 0 5px rgba(247, 213, 123, .08);
+    }
+
+    .step-label {
+      margin: 0 0 18px;
+      color: #fff1d0;
+      font-size: 25px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 800;
+    }
+
+    .step-note {
+      margin: -8px 0 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .visual-frame {
+      border: 1px solid rgba(247, 213, 123, .28);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .04);
+      box-shadow: inset 0 0 26px rgba(247, 213, 123, .06);
+    }
+
+    .tab-reference {
+      width: 100%;
+      display: block;
+      background: #21170d;
+    }
+
+    .profile-mock {
+      padding: 20px;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(247, 213, 123, .16), transparent 35%),
+        linear-gradient(180deg, #21170f, #0d0905);
+    }
+
+    .profile-top {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 74px;
+      height: 74px;
+      border-radius: 24px;
+      object-fit: cover;
+      border: 1px solid rgba(247, 213, 123, .55);
+    }
+
+    .profile-name {
+      font-size: 23px;
+      font-weight: 950;
+      color: #fff7e6;
+      margin-bottom: 8px;
+    }
+
+    .profile-id {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold);
+      border: 2px solid var(--danger);
+      border-radius: 9px;
+      padding: 4px 8px;
+      font-weight: 900;
+      background: rgba(255, 90, 82, .08);
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 34px;
+      margin-top: 22px;
+      color: var(--muted);
+    }
+
+    .profile-stats b {
+      color: var(--text);
+      display: block;
+      font-size: 23px;
+    }
+
+    .mini-form {
+      padding: 18px;
+      background:
+        radial-gradient(circle at 75% 8%, rgba(247, 213, 123, .14), transparent 40%),
+        linear-gradient(180deg, #21170f, #100b07);
+    }
+
+    .mini-line {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .mini-input {
+      height: 38px;
+      border: 1px solid rgba(247, 213, 123, .42);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      color: rgba(255, 247, 230, .45);
+      margin-bottom: 14px;
+      background: rgba(0, 0, 0, .22);
+      font-size: 13px;
+    }
+
+    .mini-code-row {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 10px;
+      align-items: end;
+      position: relative;
+    }
+
+    .mini-send {
+      height: 54px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      color: #120c05;
+      background: linear-gradient(180deg, #ffe99f, #d19a34);
+      font-weight: 950;
+      border: 2px solid #fff0bd;
+      box-shadow: 0 0 0 4px rgba(247, 213, 123, .14), 0 8px 20px rgba(201, 149, 58, .24);
+    }
+
+    .mini-ok {
+      margin-top: 14px;
+      height: 48px;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      color: #140d05;
+      background: linear-gradient(180deg, #fbe391, #c7922f);
+      font-weight: 950;
+    }
+
+    .focus-badge {
+      position: absolute;
+      right: 6px;
+      top: -27px;
+      min-width: 72px;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #f9e6ad;
+      background: #3a2814;
+      border: 1px solid rgba(247, 213, 123, .7);
+      box-shadow: 0 7px 16px rgba(0, 0, 0, .24);
+      font-size: 12px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    .focus-badge::after {
+      content: "";
+      position: absolute;
+      right: 18px;
+      bottom: -7px;
+      border: 4px solid transparent;
+      border-top-color: rgba(247, 213, 123, .82);
+    }
+
+    .message-mock {
+      background: #0d0905;
+      color: var(--text);
+    }
+
+    .message-nav {
+      height: 54px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(247, 213, 123, .2);
+      font-weight: 950;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .back-arrow {
+      width: 15px;
+      height: 15px;
+      border-left: 3px solid var(--gold);
+      border-bottom: 3px solid var(--gold);
+      transform: rotate(45deg);
+    }
+
+    .message-body {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 14px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .02));
+    }
+
+    .official-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 1px solid rgba(247, 213, 123, .42);
+    }
+
+    .bubble {
+      background: rgba(255, 247, 230, .08);
+      border: 1px solid rgba(247, 213, 123, .2);
+      border-radius: 18px 18px 18px 5px;
+      padding: 16px;
+      line-height: 1.45;
+      font-size: 18px;
+    }
+
+    .bubble-title {
+      display: block;
+      color: var(--gold);
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
+    .code-highlight {
+      color: var(--gold);
+      border: 2px solid var(--danger);
+      border-radius: 8px;
+      padding: 0 5px;
+      font-weight: 950;
+      background: rgba(255, 90, 82, .08);
+    }
+
+    .modal-ok {
+      width: 100%;
+      height: 58px;
+      border: 0;
+      border-radius: 32px;
+      background: linear-gradient(180deg, #ffe99f, #d19a34 64%, #a56b20);
+      color: #120c05;
+      font-size: 21px;
+      font-weight: 950;
+      cursor: pointer;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 0;
+        place-items: start center;
+        background: #070503;
+      }
+
+      .phone {
+        width: 100%;
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .content {
+        padding-inline: 22px;
+      }
+
+      .brand-name {
+        font-size: 34px;
+      }
+
+      h1 {
+        font-size: 37px;
+      }
+
+      .code-wrap {
+        grid-template-columns: 1fr 92px;
+      }
+
+      .modal-layer {
+        padding: 12px;
+      }
+
+      .modal {
+        border-radius: 24px;
+        padding: 24px 18px 18px;
+      }
+
+      .steps {
+        padding-left: 22px;
+      }
+
+      .step-label {
+        font-size: 23px;
+      }
+
+      .bubble {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="Wechill recharge verification prototype">
+    <div class="status">
+      <span>3:20</span>
+      <div class="status-icons" aria-hidden="true">
+        <span class="signal"><span></span><span></span><span></span><span></span></span>
+        <span class="wifi"></span>
+        <span class="battery"></span>
+      </div>
+    </div>
+
+    <div class="address">
+      <span class="browser-icon" aria-hidden="true"></span>
+      <span class="url">wechill-web-recharge.wenext.website</span>
+      <span class="refresh" aria-hidden="true"></span>
+    </div>
+
+    <section class="content">
+      <div class="brand">
+        <img class="brand-logo" src="risk_device_basic_assets/wechill_lion_logo_source.png" alt="Wechill logo">
+        <div class="brand-name">Wechill</div>
+      </div>
+
+      <h1>快充登录</h1>
+      <p class="subtitle">为了保护你的账号安全，充值前请先进行身份验证</p>
+      <p class="hint">输入 Wechill ID，验证码我们会在 Wechill App 内发送给您。</p>
+
+      <div class="field-group">
+        <div class="label-line">
+          <span>Wechill ID</span>
+          <button class="help-btn" type="button" data-open="id-modal" aria-label="查看如何找到 Wechill ID">?</button>
+        </div>
+        <label class="input-row id-row">
+          <input id="wechill-id" autocomplete="off" placeholder="请输入 Wechill ID">
+        </label>
+      </div>
+
+      <div class="field-group">
+        <div class="label-line">
+          <span>验证码</span>
+          <button class="help-btn" type="button" data-open="code-modal" aria-label="查看如何接收验证码">?</button>
+        </div>
+        <div class="code-wrap">
+          <label class="input-row">
+            <input id="code" autocomplete="one-time-code" inputmode="numeric" maxlength="4" placeholder="请输入4位验证码">
+          </label>
+          <button class="send-btn" type="button" id="send-code">发送</button>
+        </div>
+      </div>
+
+      <button class="primary" type="button" id="submit">OK</button>
+      <div class="terms">点击 OK，即代表你同意<a href="#">服务条款</a>和<a href="#">隐私政策</a></div>
+      <div class="pay-divider">支付</div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">验证码已发送至 Wechill App</div>
+  </main>
+
+  <section class="modal-layer" id="id-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="id-modal-title">
+      <div class="modal-head">
+        <span></span>
+        <h2 class="modal-title" id="id-modal-title">如何找到 Wechill ID</h2>
+        <button class="close-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <h3 class="step-label">步骤 1</h3>
+          <p class="step-note">打开 Wechill App，点击底部导航的 Mine。</p>
+          <div class="visual-frame">
+            <img class="tab-reference" src="risk_device_basic_assets/black_gold_mine_tab_reference.png" alt="黑金版底部导航 Mine 入口">
+          </div>
+        </article>
+
+        <article class="step">
+          <h3 class="step-label">步骤 2</h3>
+          <p class="step-note">进入个人主页后，在头像和昵称下方查看 Wechill ID。</p>
+          <div class="visual-frame profile-mock">
+            <div class="profile-top">
+              <img class="profile-avatar" src="risk_device_basic_assets/wechill_lion_logo_source.png" alt="Wechill profile avatar">
+              <div>
+                <div class="profile-name">Wechill User</div>
+                <div class="profile-id">ID:10086903</div>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <span><b>233</b>Following</span>
+              <span><b>323</b>Fans</span>
+              <span><b>18</b>Level</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <button class="modal-ok" type="button" data-close>OK</button>
+    </div>
+  </section>
+
+  <section class="modal-layer" id="code-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
+      <div class="modal-head">
+        <span></span>
+        <h2 class="modal-title" id="code-modal-title">如何接收验证码</h2>
+        <button class="close-btn" type="button" data-close aria-label="关闭">×</button>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <h3 class="step-label">步骤 1</h3>
+          <p class="step-note">在当前页面输入 Wechill ID 后，点击发送验证码。</p>
+          <div class="visual-frame mini-form">
+            <div class="mini-line">Wechill ID ?</div>
+            <div class="mini-input">Please enter Wechill ID</div>
+            <div class="mini-code-row">
+              <div>
+                <div class="mini-line">Verification code ?</div>
+                <div class="mini-input">Enter the verification code</div>
+              </div>
+              <div class="mini-send">Send</div>
+              <div class="focus-badge" aria-hidden="true">点击发送</div>
+            </div>
+            <div class="mini-ok">OK</div>
+          </div>
+        </article>
+
+        <article class="step">
+          <h3 class="step-label">步骤 2</h3>
+          <p class="step-note">返回 Wechill App，在 Wechill Official 消息中查看验证码。</p>
+          <div class="visual-frame message-mock">
+            <div class="message-nav">
+              <span class="back-arrow" aria-hidden="true"></span>
+              <span>Wechill Official</span>
+              <span></span>
+            </div>
+            <div class="message-body">
+              <img class="official-logo" src="risk_device_basic_assets/wechill_lion_logo_source.png" alt="Wechill official logo">
+              <div class="bubble">
+                <span class="bubble-title">Website Recharge</span>
+                Hello, your verification code <span class="code-highlight">2938</span>, this verification code is only used for authentication, please complete the verification within 120s.
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <button class="modal-ok" type="button" data-close>OK</button>
+    </div>
+  </section>
+
+  <script>
+    const modalTriggers = document.querySelectorAll("[data-open]");
+    const closeTriggers = document.querySelectorAll("[data-close]");
+    const layers = document.querySelectorAll(".modal-layer");
+    const toast = document.getElementById("toast");
+    const sendCode = document.getElementById("send-code");
+    const submit = document.getElementById("submit");
+
+    function openModal(id) {
+      const layer = document.getElementById(id);
+      if (!layer) return;
+      layer.classList.add("active");
+      layer.setAttribute("aria-hidden", "false");
+      const close = layer.querySelector("[data-close]");
+      if (close) close.focus();
+    }
+
+    function closeModal(layer) {
+      layer.classList.remove("active");
+      layer.setAttribute("aria-hidden", "true");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    modalTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => openModal(trigger.dataset.open));
+    });
+
+    closeTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => closeModal(trigger.closest(".modal-layer")));
+    });
+
+    layers.forEach((layer) => {
+      layer.addEventListener("click", (event) => {
+        if (event.target === layer) closeModal(layer);
+      });
+    });
+
+    const previewParams = new URLSearchParams(window.location.search);
+    if (previewParams.get("preview") === "main") document.body.classList.add("preview-main");
+
+    const previewHelp = previewParams.get("help");
+    if (["id-modal", "code-modal"].includes(previewHelp)) {
+      document.body.classList.add("preview-help");
+      openModal(previewHelp);
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      layers.forEach((layer) => {
+        if (layer.classList.contains("active")) closeModal(layer);
+      });
+    });
+
+    sendCode.addEventListener("click", () => {
+      const id = document.getElementById("wechill-id").value.trim();
+      if (!id) {
+        showToast("请先输入 Wechill ID");
+        return;
+      }
+      sendCode.disabled = true;
+      let seconds = 10;
+      sendCode.textContent = seconds + "s";
+      showToast("验证码已发送至 Wechill App");
+      const timer = window.setInterval(() => {
+        seconds -= 1;
+        sendCode.textContent = seconds > 0 ? seconds + "s" : "发送";
+        if (seconds <= 0) {
+          sendCode.disabled = false;
+          window.clearInterval(timer);
+        }
+      }, 1000);
+    });
+
+    submit.addEventListener("click", () => {
+      const id = document.getElementById("wechill-id").value.trim();
+      const code = document.getElementById("code").value.trim();
+      if (!id) {
+        showToast("请先输入 Wechill ID");
+        return;
+      }
+      if (!code) {
+        showToast("请输入验证码");
+        return;
+      }
+      if (!/^\d{4}$/.test(code)) {
+        showToast("请输入4位数字验证码");
+        return;
+      }
+      showToast("校验通过，进入支付页");
+    });
+  </script>
+</body>
+</html>

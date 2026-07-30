@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wechill 公会加入风控提醒原型</title>
+  <style>
+    :root {
+      --bg: #080604;
+      --panel: #17100b;
+      --panel-2: #21160d;
+      --gold: #e8b649;
+      --gold-light: #f6d579;
+      --line: rgba(232, 182, 73, .46);
+      --text: #fff4d7;
+      --muted: #b4a386;
+      --danger: #ef5a55;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(224, 171, 63, .14), transparent 34%),
+        #050403;
+      color: var(--text);
+    }
+
+    button { font: inherit; }
+
+    .scene-switcher {
+      display: flex;
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid rgba(232, 182, 73, .22);
+      background: rgba(16, 11, 7, .92);
+      border-radius: 8px;
+    }
+
+    .scene-switcher button {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 5px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .scene-switcher button.is-active {
+      color: #241605;
+      background: linear-gradient(180deg, #f6d77e, #d89c2f);
+      font-weight: 800;
+    }
+
+    .phone {
+      position: relative;
+      width: 430px;
+      height: 844px;
+      overflow: hidden;
+      border: 1px solid rgba(232, 182, 73, .34);
+      border-radius: 38px;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(226, 170, 57, .13), transparent 28%),
+        linear-gradient(180deg, #171009 0%, #080604 54%, #100b07 100%);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .52);
+    }
+
+    .status {
+      height: 52px;
+      padding: 0 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--gold-light);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .app-head {
+      min-height: 58px;
+      padding: 0 22px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      border-bottom: 1px solid rgba(232, 182, 73, .14);
+    }
+
+    .back {
+      width: 13px;
+      height: 13px;
+      border-left: 2px solid var(--gold-light);
+      border-bottom: 2px solid var(--gold-light);
+      transform: rotate(45deg);
+      margin-left: 7px;
+    }
+
+    .app-title {
+      text-align: center;
+      font-weight: 820;
+      color: #ffe9b0;
+    }
+
+    .screen {
+      padding: 26px 22px;
+    }
+
+    .guild-card {
+      padding: 20px;
+      border: 1px solid rgba(232, 182, 73, .28);
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(49, 32, 16, .88), rgba(18, 12, 8, .92));
+      box-shadow: inset 0 1px rgba(255, 255, 255, .03);
+    }
+
+    .guild-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .guild-logo,
+    .avatar {
+      width: 66px;
+      height: 66px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(232, 182, 73, .34);
+    }
+
+    .guild-name {
+      font-size: 21px;
+      font-weight: 850;
+      color: #fff0c9;
+    }
+
+    .guild-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .guild-copy {
+      margin: 18px 0;
+      color: #cbb998;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .primary {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 8px;
+      color: #261704;
+      background: linear-gradient(180deg, #f9dc87, #d99d30);
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid rgba(232, 182, 73, .22);
+      border-radius: 10px;
+      background: rgba(29, 19, 12, .84);
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+    }
+
+    .member-info { flex: 1; }
+    .member-name { font-weight: 820; color: #fff0ca; }
+    .member-id { margin-top: 4px; color: var(--muted); font-size: 12px; }
+
+    .invite-btn {
+      min-width: 74px;
+      height: 38px;
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      color: var(--gold-light);
+      background: rgba(232, 182, 73, .08);
+      cursor: pointer;
+      font-weight: 750;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(0, 0, 0, .68);
+      z-index: 5;
+    }
+
+    .overlay.is-open { display: flex; }
+
+    .dialog {
+      width: 100%;
+      border: 1.5px solid var(--gold);
+      border-radius: 18px;
+      overflow: hidden;
+      color: var(--text);
+      background: #1a100a;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .56), inset 0 0 36px rgba(232, 182, 73, .035);
+    }
+
+    .dialog-body {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
+
+    .dialog-title {
+      color: var(--gold-light);
+      font-size: 25px;
+      font-weight: 850;
+    }
+
+    .dialog-copy {
+      margin-top: 24px;
+      color: #f4e5c7;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .dialog-ok {
+      width: 100%;
+      height: 62px;
+      border: 0;
+      border-top: 1px solid rgba(232, 182, 73, .35);
+      color: var(--gold-light);
+      background: transparent;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(340px, calc(100% - 44px));
+      padding: 18px 20px;
+      border: 1px solid rgba(232, 182, 73, .48);
+      border-radius: 10px;
+      background: rgba(24, 15, 9, .96);
+      box-shadow: 0 18px 56px rgba(0, 0, 0, .52);
+      opacity: 0;
+      transform: translate(-50%, -42%);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      text-align: center;
+      z-index: 6;
+    }
+
+    .toast.is-open {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .toast-title {
+      color: var(--gold-light);
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .toast-copy {
+      margin-top: 7px;
+      color: #f3e3c4;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    body.is-preview {
+      display: block;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    body.is-preview .scene-switcher { display: none; }
+
+    body.is-preview .phone {
+      margin: 0 auto;
+      transform: scale(.82);
+      transform-origin: top center;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 0; }
+      .scene-switcher { display: none; }
+      .phone { width: 100vw; height: 100vh; border: 0; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene-switcher" aria-label="提醒场景">
+    <button data-scene="member-join">用户主动加入</button>
+    <button data-scene="member-accept">用户接受邀请</button>
+    <button data-scene="leader-invite">公会长邀请</button>
+  </div>
+
+  <main class="phone">
+    <div class="status"><span>10:13</span><span>5G&nbsp;&nbsp;90%</span></div>
+    <header class="app-head">
+      <span class="back" aria-hidden="true"></span>
+      <div class="app-title" id="appTitle">加入公会</div>
+      <span></span>
+    </header>
+
+    <section class="screen" id="memberScreen">
+      <div class="guild-card">
+        <div class="guild-top">
+          <img class="guild-logo" src="risk_device_basic_assets/wechill_lion_logo_source.png" alt="Wechill guild logo">
+          <div>
+            <div class="guild-name">Star Guild</div>
+            <div class="guild-meta">公会 ID：812 · 成员 326</div>
+          </div>
+        </div>
+        <div class="guild-copy" id="guildCopy">加入公会后可参与主播任务、活动和公会结算。</div>
+        <button class="primary" id="memberAction">申请加入</button>
+      </div>
+    </section>
+
+    <section class="screen" id="leaderScreen" hidden>
+      <div class="member-row">
+        <img class="avatar" src="risk_device_basic_assets/wechill_lion_logo_source.png" alt="User avatar">
+        <div class="member-info">
+          <div class="member-name">Layla</div>
+          <div class="member-id">ID: WC10091</div>
+        </div>
+        <button class="invite-btn" id="inviteAction">邀请</button>
+      </div>
+    </section>
+
+    <div class="overlay" id="joinDialog" aria-hidden="true">
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="joinDialogTitle">
+        <div class="dialog-body">
+          <div class="dialog-title" id="joinDialogTitle">加入失败</div>
+          <div class="dialog-copy" id="joinDialogCopy">当前设备已存在主播/公会长账号，<br>一个设备仅支持一个账号加入公会</div>
+        </div>
+        <button class="dialog-ok" id="dialogOk">确定</button>
+      </section>
+    </div>
+
+    <div class="toast" id="inviteToast" role="status" aria-live="polite">
+      <div class="toast-title">邀请失败</div>
+      <div class="toast-copy">该用户暂不符合加入公会条件，无法发送邀请</div>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const preview = params.get("preview") === "1";
+    const initialScene = params.get("scene") || "member-join";
+    const memberScreen = document.getElementById("memberScreen");
+    const leaderScreen = document.getElementById("leaderScreen");
+    const appTitle = document.getElementById("appTitle");
+    const guildCopy = document.getElementById("guildCopy");
+    const memberAction = document.getElementById("memberAction");
+    const joinDialog = document.getElementById("joinDialog");
+    const joinDialogCopy = document.getElementById("joinDialogCopy");
+    const inviteToast = document.getElementById("inviteToast");
+
+    function hideFeedback() {
+      joinDialog.classList.remove("is-open");
+      joinDialog.setAttribute("aria-hidden", "true");
+      inviteToast.classList.remove("is-open");
+    }
+
+    function showJoinFailure(copy) {
+      joinDialogCopy.innerHTML = copy;
+      joinDialog.classList.add("is-open");
+      joinDialog.setAttribute("aria-hidden", "false");
+    }
+
+    function showInviteFailure() {
+      inviteToast.classList.add("is-open");
+      if (!preview) window.setTimeout(() => inviteToast.classList.remove("is-open"), 2600);
+    }
+
+    function showScene(scene, showFeedback = true) {
+      hideFeedback();
+      const isLeader = scene === "leader-invite";
+      memberScreen.hidden = isLeader;
+      leaderScreen.hidden = !isLeader;
+      appTitle.textContent = isLeader ? "邀请成员" : scene === "member-accept" ? "公会邀请" : "加入公会";
+      guildCopy.textContent = scene === "member-accept"
+        ? "Star Guild 邀请你加入公会，接受后将成为公会成员。"
+        : "加入公会后可参与主播任务、活动和公会结算。";
+      memberAction.textContent = scene === "member-accept" ? "接受邀请" : "申请加入";
+      document.querySelectorAll("[data-scene]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.scene === scene);
+      });
+      if (!showFeedback) return;
+      if (isLeader) {
+        showInviteFailure();
+      } else if (scene === "member-accept") {
+        showJoinFailure("当前设备已存在主播/公会长账号，<br>暂无法接受该公会邀请");
+      } else {
+        showJoinFailure("当前设备已存在主播/公会长账号，<br>一个设备仅支持一个账号加入公会");
+      }
+    }
+
+    document.querySelectorAll("[data-scene]").forEach((button) => {
+      button.addEventListener("click", () => showScene(button.dataset.scene, false));
+    });
+    memberAction.addEventListener("click", () => showScene(memberAction.textContent === "接受邀请" ? "member-accept" : "member-join"));
+    document.getElementById("inviteAction").addEventListener("click", showInviteFailure);
+    document.getElementById("dialogOk").addEventListener("click", hideFeedback);
+    joinDialog.addEventListener("click", (event) => {
+      if (event.target === joinDialog) hideFeedback();
+    });
+
+    if (preview) document.body.classList.add("is-preview");
+    showScene(["member-join", "member-accept", "leader-invite"].includes(initialScene) ? initialScene : "member-join");
+  </script>
+</body>
+</html>
