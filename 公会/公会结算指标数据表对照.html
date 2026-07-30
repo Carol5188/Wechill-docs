@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App 公会结算指标 — 算法与数据表映射</title>
+<style>
+:root{--p:#0d9488;--pd:#115e59;--pl:#ccfbf1;--a:#f59e0b;--s:#16a34a;--sl:#dcfce7;--w:#b45309;--wl:#fffbeb;--d:#dc2626;--dl:#fef2f2;--i:#0ea5e9;--il:#e0f2fe;--pp:#7c3aed;--ppl:#f5f3ff;--t:#0891b2;--tl:#ecfeff;--dk:#1c1917;--g:#78716c;--gl:#f5f5f4;--bd:#e7e5e4;--bg:#fafaf9;--rose:#be185d;--cs:0 2px 12px rgba(0,0,0,.08);--hs:0 8px 32px rgba(0,0,0,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--dk);line-height:1.7;font-size:15px}
+.hero{background:linear-gradient(135deg,#042f2e,#0d4f4a 50%,#134e4a);color:#fff;padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background:radial-gradient(circle at 25% 50%,rgba(13,148,136,.2),transparent 50%),radial-gradient(circle at 75% 50%,rgba(245,158,11,.1),transparent 50%);animation:hf 25s ease-in-out infinite}
+@keyframes hf{0%,100%{transform:translate(0,0)}50%{transform:translate(-2%,1%)}}
+.hero>*{position:relative;z-index:1}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 20px;font-size:13px;letter-spacing:1px;margin-bottom:18px}
+.hero h1{font-size:36px;font-weight:800;margin-bottom:14px}.hero h1 .hl{color:#fbbf24}
+.hero .sub{font-size:15px;opacity:.85;max-width:800px;margin:0 auto 28px;line-height:1.8}
+.hero-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.hero-stat .num{font-size:28px;font-weight:800;color:#fbbf24}.hero-stat .label{font-size:12px;opacity:.65;margin-top:3px}
+nav.tn{background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ti{max-width:1300px;margin:0 auto;padding:0 12px;display:flex;overflow-x:auto;scrollbar-width:none}
+.ti::-webkit-scrollbar{display:none}
+.ti a{display:block;padding:12px 13px;color:var(--g);text-decoration:none;font-size:12.5px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.ti a:hover{color:var(--p);border-bottom-color:var(--p);background:var(--pl)}
+.ct{max-width:1200px;margin:0 auto;padding:0 24px}
+.sec{padding:52px 0 38px}.sec:nth-child(even){background:#fff}
+.sh{text-align:center;margin-bottom:40px}
+.sn{display:inline-block;background:var(--p);color:#fff;width:32px;height:32px;border-radius:50%;line-height:32px;font-size:14px;font-weight:700;margin-bottom:8px}
+.sn-w{background:var(--w)}.sn-g{background:var(--g)}
+.sh h2{font-size:24px;font-weight:700;margin-bottom:5px}.sh .sd{color:var(--g);font-size:14px}
+.card{background:#fff;border-radius:12px;padding:22px;box-shadow:var(--cs);border:1px solid var(--bd);margin:16px 0;transition:all .3s}
+.card:hover{box-shadow:var(--hs);transform:translateY(-2px)}
+.card.changed{border-left:4px solid var(--w)}.card.new{border-left:4px solid var(--rose)}
+.card h3{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.card p,.card .desc{font-size:13px;color:#57534e;line-height:1.8;margin-bottom:8px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin:14px 0}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:14px 0}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:24px}.hero{padding:50px 20px 40px}}
+.cb{background:#282c34;border-radius:10px;overflow:hidden;margin:12px 0;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.ch{background:#21252b;padding:8px 14px;display:flex;align-items:center;gap:6px}
+.cd{width:9px;height:9px;border-radius:50%}.cd.r{background:#ff5f56}.cd.y{background:#ffbd2e}.cd.g{background:#27c93f}
+.cl{margin-left:auto;color:#888;font-size:11px;font-family:monospace}
+.cb pre{padding:14px;overflow-x:auto;font-size:12px;line-height:1.7;font-family:"JetBrains Mono","Fira Code","Consolas",monospace}
+.cb code{color:#ebebeb;background:none;border:none;padding:0}
+.kw{color:#c678dd;font-weight:600}.fn{color:#61afef}.str{color:#98c379}.num{color:#d19a66}.cm{color:#abb2bf;font-style:italic}.type{color:#e5c07b}.var{color:#e06c75}.ph{color:#e5c07b;font-weight:700;background:rgba(229,192,123,.12);padding:1px 4px;border-radius:3px}
+.dt{width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;box-shadow:var(--cs);margin:12px 0}
+.dt th{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;padding:11px 13px;font-size:12px;font-weight:600;text-align:left;white-space:nowrap}
+.dt td{padding:9px 13px;border-bottom:1px solid var(--bd);font-size:12.5px;vertical-align:top}
+.dt tr:last-child td{border-bottom:none}.dt tr:nth-child(even) td{background:#f9fafb}.dt tr:hover td{background:var(--pl)}
+.al{padding:13px 16px;border-radius:10px;margin:12px 0;display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.7}
+.al-i{font-size:17px;flex-shrink:0;margin-top:1px}
+.al-info{background:var(--il);border-left:4px solid var(--i)}
+.al-warn{background:var(--wl);border-left:4px solid var(--w)}
+.al-ok{background:var(--sl);border-left:4px solid var(--s)}
+.al-err{background:var(--dl);border-left:4px solid var(--d)}
+.al-pp{background:var(--ppl);border-left:4px solid var(--pp)}
+.al-tl{background:var(--tl);border-left:4px solid var(--t)}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10.5px;font-weight:600}
+.b-bl{background:#dbeafe;color:#1e40af}.b-gn{background:#dcfce7;color:#166534}.b-or{background:#ffedd5;color:#9a3412}.b-rd{background:#fee2e2;color:#991b1b}.b-pp{background:#f3e8ff;color:#6b21a8}.b-gy{background:#f1f5f9;color:#475569}.b-tl{background:#ccfbf1;color:#115e59}.b-rs{background:#ffe4e6;color:#9f1239}
+details{margin:10px 0;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:#fff}
+details summary{padding:12px 16px;font-weight:600;font-size:13.5px;cursor:pointer;background:var(--gl);transition:background .2s}
+details summary:hover{background:#eee}
+details[open] summary{border-bottom:1px solid var(--bd)}
+details .dc{padding:16px}
+.formula{background:var(--pl);border:1px solid #99f6e4;border-radius:10px;padding:14px 18px;margin:10px 0;font-size:13px;color:#134e4a;line-height:2}
+.diff{background:#fafaf9;border:1px solid var(--bd);border-radius:10px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:2}
+.diff .lb{font-weight:700;display:inline-block;min-width:76px;font-size:12px}
+.diff-old{color:var(--d);text-decoration:line-through}
+.diff-new{color:var(--s);font-weight:600}
+.fd{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;padding:14px;margin:12px 0}
+.fs{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;color:#fff;text-align:center;min-width:80px}
+.fa{color:var(--g);font-size:16px}
+.mc{text-align:center;padding:20px 12px;background:#fff;border-radius:12px;border:1px solid var(--bd);box-shadow:var(--cs);transition:all .3s}
+.mc:hover{box-shadow:var(--hs);transform:translateY(-3px)}
+.mc .mi{font-size:30px;margin-bottom:6px}.mc .mv{font-size:24px;font-weight:800;color:var(--p)}.mc .ml{font-size:12px;color:var(--g);margin-top:2px}
+.hb{background:linear-gradient(135deg,#0d948820,#f59e0b15);border:1px solid rgba(13,148,136,.25);border-radius:12px;padding:20px;margin:16px 0}
+.hb h4{color:var(--pd);margin-bottom:6px;font-size:15px}
+code{background:var(--gl);border:1px solid var(--bd);padding:1px 6px;border-radius:5px;font-size:12px;color:var(--pp);font-family:'JetBrains Mono','Fira Code',Consolas,monospace}
+.ft{background:var(--dk);color:rgba(255,255,255,.7);padding:34px 24px;text-align:center;font-size:12.5px}
+.st{position:fixed;bottom:26px;right:26px;width:40px;height:40px;border-radius:50%;background:var(--p);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(13,148,136,.4);font-size:17px;display:none;align-items:center;justify-content:center;z-index:1000;transition:all .3s}
+.st:hover{background:var(--pd);transform:translateY(-3px)}
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:12px 0}
+.ii{background:#fff;border-radius:8px;padding:12px 14px;border:1px solid var(--bd);font-size:12.5px}
+.ii .in{font-weight:700;color:var(--pd);margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.ii .if{background:#f8f9ff;padding:5px 9px;border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:11px;color:#555;margin:5px 0}
+.ii .id{color:var(--g);font-size:11.5px}
+</style>
+</head>
+<body>
+
+<!-- ======== Hero ======== -->
+<div class="hero">
+  <div class="hero-badge">📊 Data Center 指标核对手册 · v2.0</div>
+  <h1>App 公会结算 <span class="hl">Data Center</span></h1>
+  <p class="sub">搞清楚一件事：<strong>App Data Center 页面上的每个数字，是从数据库哪些表、哪些字段算出来的</strong>。<br>
+  当页面数字看起来不对时，按文档里的 SQL 去查数据库，就能定位问题出在哪一步。<br>
+  结算周期：每月分两半 — <strong>1~15 日</strong>和 <strong>16~月底</strong>。基于 <code style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fef3c7">refact/guild_settle</code> 分支代码实际验证。</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">25</div><div class="label">页面指标</div></div>
+    <div class="hero-stat"><div class="num">8</div><div class="label">核心数据表</div></div>
+    <div class="hero-stat"><div class="num">4</div><div class="label">CHANGED</div></div>
+    <div class="hero-stat"><div class="num">4</div><div class="label">NEW</div></div>
+  </div>
+</div>
+
+<!-- ======== Nav ======== -->
+<nav class="tn"><div class="ti">
+  <a href="#overview">概览</a><a href="#prereq">读前须知</a>
+  <a href="#i1">1.钻石流水</a><a href="#i2">2.钻石余额</a><a href="#i3">3.主播工资</a><a href="#i4">4.TG奖励</a><a href="#i5">5.总工资</a><a href="#i-ratio">发放比例</a><a href="#i6">6.等级</a><a href="#i7">7.有效天</a><a href="#i8">8.预支</a><a href="#i9">9.工资余额</a><a href="#i10">10.佣金</a><a href="#i11">11.可提现</a>
+  <a href="#i12">12~16.公会汇总</a><a href="#i17">17.余额★</a><a href="#i18">18.借支★</a><a href="#i19">19.可借支★</a><a href="#i20">20~21.会长</a><a href="#i22">22~25.NEW★</a>
+  <a href="#unit">单位</a><a href="#faq">FAQ</a>
+</div></nav>
+
+<!-- ======== 1: Overview ======== -->
+<div class="sec" id="overview">
+<div class="ct">
+  <div class="sh"><div class="sn sn-g">0</div><h2>分支变更总览</h2><p class="sd">出了问题先看这里 — 25 个指标的分支归属</p></div>
+  <div class="g3">
+    <div class="mc"><div class="mi">✅</div><div class="mv">20</div><div class="ml">master 不变</div></div>
+    <div class="mc"><div class="mi">🔄</div><div class="mv">4</div><div class="ml">CHANGED 算法变更</div></div>
+    <div class="mc"><div class="mi">🆕</div><div class="mv">4</div><div class="ml">NEW 新增指标</div></div>
+  </div>
+  <div class="al al-info"><span class="al-i">ℹ️</span><div><strong>CHANGED 4个</strong> — 第 17/18/19/21 项：工资余额不再减借支（<code>totalSalary - advanceUsd</code>）；借支改「结算后清零」口径（<code>sumPeriodBorrowAfterLastSettlement</code>）；可借支修复双扣直接读字段</div></div>
+  <div class="al al-pp"><span class="al-i">🆕</span><div><strong>NEW 4个</strong> — 第 22~25 项，公会长专属（本期薪资/借支/实际工资/历史欠款），master 上没有；展示口径：结算后清零、欠款取最新归档（<code>findLatest</code> 不限周期）</div></div>
+
+  <div class="al al-warn"><span class="al-i">📝</span><div><strong>2026-06-15 更新：</strong>基于 <code>refact/guild_settle</code> 分支代码全面核对 —
+  第 17/21 项确认 <code>= totalSalary - advanceUsd</code> ✅ ·
+  第 18/23 项补充 type=3 主动还款扣减 + 盈余归档时间双层回退 ✅ ·
+  第 22 项补充 <code>coerceAtLeast(0)</code> 保护 ✅ ·
+  第 25 项区分展示/归档两套口径 ✅</div></div>
+</div>
+</div>
+
+<!-- ======== 2: Prerequisites ======== -->
+<div class="sec" id="prereq" style="background:#fff">
+<div class="ct">
+  <div class="sh"><div class="sn sn-g">?</div><h2>读前须知</h2><p class="sd">谁能看什么 · 数据从哪来 · 涉及哪些表</p></div>
+
+  <div class="g2">
+    <div class="card"><h3>👤 主播登录</h3><p>只查<strong>自己一个人</strong>的数据 → "公会"开头的字段 = 自己的值</p></div>
+    <div class="card"><h3>👑 公会长登录</h3><p>查<strong>全公会所有人</strong>的数据 → "公会"开头的字段 = 真正的全员合计</p></div>
+  </div>
+
+  <div class="hb">
+    <h4>📊 数据来源</h4>
+    <div class="fd">
+      <span class="fs" style="background:var(--p)">当前周期</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--i)">app_user_account 实时余额</span>
+      <span class="fa">+</span>
+      <span class="fs" style="background:var(--w)">薪资配置</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--pp)">内存实时计算</span>
+    </div>
+    <div class="fd">
+      <span class="fs" style="background:var(--g)">历史周期</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--i)">结算记录表 detail_v2</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--pp)">SUM(status=2)</span>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📋 涉及的数据库表</summary>
+    <div class="dc">
+    <table class="dt"><thead><tr><th>表名</th><th>通俗说明</th><th>什么时候用</th></tr></thead><tbody>
+      <tr><td>app_user_account</td><td>用户钱包 — 钻石余额、预支余额、可提现余额。<strong>当前周期工资用这里的实时钻石余额现场算</strong></td><td>余额类指标 + 当前周期工资</td></tr>
+      <tr><td>app_payer_host_salary_detail_v2</td><td>历史结算记录 — 每次结算打款后生成一条</td><td>历史周期工资 + 已结算钻石</td></tr>
+      <tr><td>app_payer_host_salary_config_v2</td><td>薪资档位配置 — 钻石达到多少对应什么等级和工资</td><td>Diamond salary level</td></tr>
+      <tr><td>app_payer_diamond_purchase_detail</td><td>钻石兑换金币记录 — <code>spent_diamonds</code> = 花掉的钻石</td><td>Diamond target 的一部分</td></tr>
+      <tr><td>app_live_user_site_daily_summary</td><td>每天直播时长汇总</td><td>Effective days</td></tr>
+      <tr><td>app_user_agency</td><td>公会信息 — <code>borrowable_amount</code>（可借支）、<code>borrowed_amount</code>（已借支），<strong>两个字段单位都是美元</strong>，是滚动余额</td><td>借支相关指标</td></tr>
+      <tr><td>app_payer_agency_owner_surplus</td><td>公会长盈余归档表 — 每次结算归档一条本期账目快照，欠款靠它跨周期传导</td><td>历史欠款 + 盈余详情列表</td></tr>
+      <tr><td>admin_content_agency_borrow_salary_log</td><td>借支/预支流水 — type: 1=借支 2=预支 3=还款 4=预支还款（美元）。<strong>type=3 分两种</strong>：settlement_id IS NULL = Admin 手动还款；有 settlement_id = 结算自动扣还</td><td>本期借支 + 借支记录页</td></tr>
+    </tbody></table>
+    </div>
+  </details>
+
+  <div class="al al-tl"><span class="al-i">💡</span><div>SQL 占位符：<code>?uid</code> = 用户ID，<code>?aid</code> = 公会ID，<code>?start</code> / <code>?end</code> = 周期起止时间（如 '2026-06-01' / '2026-06-15'）</div></div>
+</div>
+</div>
+
+<!-- ======== 3: Anchor Indicators 1-11 ======== -->
+<div class="sec" id="s-anchor">
+<div class="ct">
+  <div class="sh"><div class="sn">A</div><h2>主播视角 — Data Center 页面指标（1~11 项）</h2><p class="sd">主播 + 公会长都能看到的基础指标</p></div>
+
+  <!-- #1 -->
+  <div class="card" id="i1"><h3>1. Current Diamond target（本期钻石流水）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p><strong>一句话：</strong>主播在本结算周期里经手过多少钻石。</p>
+    <div class="fd">
+      <span class="fs" style="background:var(--p)">账户表<br>gain_diamond + send_gain_diamond</span>
+      <span class="fa">+</span>
+      <span class="fs" style="background:var(--i)">结算记录表<br>SUM(diamonds) 已打款</span>
+      <span class="fa">+</span>
+      <span class="fs" style="background:var(--w)">兑换记录表<br>SUM(spent_diamonds)</span>
+      <span class="fa">=</span>
+      <span class="fs" style="background:var(--pp)">页面显示值</span>
+    </div>
+    <p>当前余额 + 已被结算扣走的 + 兑换花掉的 = 本周期真实钻石流水。<strong>在数据库里找不到这个值</strong>——它是三张表数据加起来的。</p>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">验证 SQL</span></div>
+    <pre><code><span class="cm">-- ① 当前钻石余额</span>
+<span class="kw">SELECT</span> gain_diamond + send_gain_diamond <span class="kw">AS</span> <span class="ph">当前余额</span>
+<span class="kw">FROM</span> app_user_account <span class="kw">WHERE</span> user_id = <span class="ph">?uid</span>;
+
+<span class="cm">-- ② 本周期已结算钻石</span>
+<span class="kw">SELECT</span> <span class="fn">IFNULL</span>(<span class="fn">SUM</span>(diamonds), 0) <span class="kw">AS</span> <span class="ph">已结算钻石</span>
+<span class="kw">FROM</span> app_payer_host_salary_detail_v2
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> status = 2
+  <span class="kw">AND</span> settlement_time <span class="kw">BETWEEN</span> <span class="ph">?start</span> <span class="kw">AND</span> <span class="ph">?end</span>;
+
+<span class="cm">-- ③ 本周期兑换金币花掉的钻石</span>
+<span class="kw">SELECT</span> <span class="fn">IFNULL</span>(<span class="fn">SUM</span>(spent_diamonds), 0) <span class="kw">AS</span> <span class="ph">兑换花掉的钻石</span>
+<span class="kw">FROM</span> app_payer_diamond_purchase_detail
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> create_time <span class="kw">BETWEEN</span> <span class="ph">?start</span> <span class="kw">AND</span> <span class="ph">?end</span>;
+
+<span class="cm">-- 页面值 = ① + ② + ③</span></code></pre></div>
+  </div>
+
+  <!-- #2 -->
+  <div class="card" id="i2"><h3>2. Diamond Balance（当前钻石余额）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p><strong>一句话：</strong>主播账户里<strong>现在</strong>有多少钻石 = <code>gain_diamond</code>（收礼赚的）+ <code>send_gain_diamond</code>（后台赠送的）</p>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">SQL</span></div>
+    <pre><code><span class="kw">SELECT</span> gain_diamond + send_gain_diamond <span class="kw">AS</span> <span class="ph">钻石余额</span>
+<span class="kw">FROM</span> app_user_account <span class="kw">WHERE</span> user_id = <span class="ph">?uid</span>;</code></pre></div>
+  </div>
+
+  <!-- #3 -->
+  <div class="card" id="i3"><h3>3. Current Host Salary（主播档位工资）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p><strong>一句话：</strong>档位工资 + 超出部分额外工资。<strong>不含 TG 奖励</strong>（TG 在第 4 项单独显示）。</p>
+    <div class="formula">
+      <strong>算法</strong> = 配置表 <code>host_salary</code> + 超出部分 <code>(钻石 - 档位阈值) ÷ excessDiamondsRate</code><br>
+      <strong>当前周期</strong> → 实时余额匹配档位，现场计算<br>
+      <strong>历史周期</strong> → <code>SUM((host_salary + excess_diamonds_salary) × salary_ratio)</code><br>
+      <strong>页面值 = (host_salary + excess) × ratio</strong>，代码在 <code>SalaryAggregationCalculator</code> 做了合并和乘比例
+    </div>
+    <div class="al al-warn"><span class="al-i">⚠️</span><div>detail_v2 表存的是<strong>原始值</strong>（乘比例前），页面显示的是<strong>聚合后</strong>的值，两者不能直接对比！</div></div>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">验证 SQL</span></div>
+    <pre><code><span class="cm">-- 当前周期：查钻石余额 → 匹配薪资配置表</span>
+<span class="kw">SELECT</span> gain_diamond + send_gain_diamond <span class="kw">AS</span> <span class="ph">钻石余额</span>
+<span class="kw">FROM</span> app_user_account <span class="kw">WHERE</span> user_id = <span class="ph">?uid</span>;
+
+<span class="kw">SELECT</span> level, diamonds, host_salary, host_tg_reward
+<span class="kw">FROM</span> app_payer_host_salary_config_v2
+<span class="kw">WHERE</span> diamonds &lt;= <span class="ph">{上面查到的钻石余额}</span> <span class="kw">ORDER BY</span> diamonds <span class="kw">DESC LIMIT</span> 1;
+
+<span class="cm">-- 历史周期</span>
+<span class="kw">SELECT</span> <span class="fn">SUM</span>((host_salary + <span class="fn">IFNULL</span>(excess_diamonds_salary, 0)) * salary_ratio) <span class="kw">AS</span> <span class="ph">页面主播工资</span>
+<span class="kw">FROM</span> app_payer_host_salary_detail_v2
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> status = 2 <span class="kw">AND</span> settlement_time <span class="kw">BETWEEN</span> <span class="ph">?start</span> <span class="kw">AND</span> <span class="ph">?end</span>;</code></pre></div>
+  </div>
+
+  <!-- #4 -->
+  <div class="card" id="i4"><h3>4. Current TG Reward（TG 奖励）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p><strong>一句话：</strong>TG 渠道拉新的额外奖励。数据来源和第 3 项一样。</p>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">SQL — 历史周期（也要乘比例）</span></div>
+    <pre><code><span class="kw">SELECT</span> <span class="fn">SUM</span>(host_tg_reward * salary_ratio) <span class="kw">AS</span> <span class="ph">页面TG奖励</span>
+<span class="kw">FROM</span> app_payer_host_salary_detail_v2
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> status = 2 <span class="kw">AND</span> settlement_time <span class="kw">BETWEEN</span> <span class="ph">?start</span> <span class="kw">AND</span> <span class="ph">?end</span>;</code></pre></div>
+  </div>
+
+  <!-- #5 -->
+  <div class="card" id="i5"><h3>5. Host Total salary（主播实际总工资）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p><strong>一句话：</strong>主播最终能拿到的总金额。当前周期<strong>每次打开页面实时计算</strong>。</p>
+    <div class="fd">
+      <span class="fs" style="background:var(--p)">钻石余额</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--w)">匹配档位</span>
+      <span class="fa">→</span>
+      <span class="fs" style="background:var(--i)">(host_salary + excess + tg)</span>
+      <span class="fa">×</span>
+      <span class="fs" style="background:var(--pp)">salary_ratio</span>
+      <span class="fa">=</span>
+      <span class="fs" style="background:var(--s)">页面值</span>
+    </div>
+    <p>发放比例：有效天 ≥ 6 且 总时长 ≥ 12h → 100%，否则 → 70%（首周期保护不打折）</p>
+  </div>
+
+  <!-- ratio -->
+  <div class="card" id="i-ratio"><h3>补充：salary_ratio（发放比例）<span class="badge b-tl">影响第 3/4/5 项</span><span class="badge b-gy">master 不变</span></h3>
+    <div class="formula">
+      ① <strong>首个周期保护</strong> — <code>app_agency_member.join_time</code> 在当前周期 startTime 之后 → <strong>1.00</strong><br>
+      ② <strong>达标</strong> — 有效天 ≥ 6 且 总上麦 ≥ 12h → <strong>1.00</strong><br>
+      ③ <strong>未达标</strong> → <strong>0.70（扣 30%）</strong>
+    </div>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">验证 SQL</span></div>
+    <pre><code><span class="cm">-- 有效天数和总时长</span>
+<span class="kw">SELECT</span>
+  <span class="fn">COUNT</span>(<span class="kw">CASE WHEN</span> duration >= 7200 <span class="kw">THEN</span> 1 <span class="kw">END</span>) <span class="kw">AS</span> <span class="ph">有效天数</span>,
+  <span class="fn">ROUND</span>(<span class="fn">SUM</span>(duration) / 3600, 2) <span class="kw">AS</span> <span class="ph">总上麦小时</span>
+<span class="kw">FROM</span> app_live_user_site_daily_summary
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> dates <span class="kw">BETWEEN</span> <span class="ph">?start</span> <span class="kw">AND</span> <span class="ph">?end</span>;
+
+<span class="cm">-- 是否首周期</span>
+<span class="kw">SELECT</span> join_time <span class="kw">FROM</span> app_agency_member
+<span class="kw">WHERE</span> user_id = <span class="ph">?uid</span> <span class="kw">AND</span> status = 1;
+<span class="cm">-- join_time > ?start → 首周期保护，ratio = 1.00</span></code></pre></div>
+  </div>
+
+  <!-- #6 -->
+  <div class="card" id="i6"><h3>6. Diamond salary level（薪资等级）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>根据 Diamond Balance（第 2 项）去配置表匹配的等级。</p>
+  </div>
+
+  <!-- #7 -->
+  <div class="card" id="i7"><h3>7. Effective days（有效天数）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>周期内每天直播满 2 小时算 1 天。来自 <code>app_live_user_site_daily_summary</code> 表的 <code>duration >= 7200</code> 记录数。</p>
+  </div>
+
+  <!-- #8 -->
+  <div class="card" id="i8"><h3>8. Host Advance Salary（已预支金额）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <div class="formula">
+      <strong>当前周期</strong> → <code>app_user_account.advance_salary_total_amount</code>（美元）<br>
+      <strong>历史周期</strong> → <code>SUM(advanced_amount) ÷ 100</code>（<strong>注意：这个字段存「分」！</strong>）
+    </div>
+  </div>
+
+  <!-- #9 -->
+  <div class="card" id="i9"><h3>9. Current Salary balance（工资余额）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <div class="formula"><strong>= 第 5 项（总工资）</strong> <span style="color:var(--d);font-weight:800;font-size:16px">−</span> <strong>第 8 项（已预支）</strong></div>
+  </div>
+
+  <!-- #10 -->
+  <div class="card" id="i10"><h3>10. Agent shared salary（分给公会长的佣金）<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <div class="formula">
+      <strong>当前周期</strong> → 实时计算<br>
+      <strong>历史周期</strong> → <code>SUM(agency_owner_salary) + SUM(agency_owner_tg_reward)</code>
+    </div>
+  </div>
+
+  <!-- #11 -->
+  <div class="card" id="i11"><h3>11. 钱包可提现金额<span class="badge b-tl">主播+公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>直接读 <code>app_user_account.withdrawal_balance</code>（美元）。<strong>跟选哪个周期没关系</strong>，永远是账户实时值。</p>
+  </div>
+</div>
+</div>
+
+<!-- ======== 4: Owner Indicators 12-25 ======== -->
+<div class="sec" id="s-owner" style="background:#fff">
+<div class="ct">
+  <div class="sh"><div class="sn sn-w">B</div><h2>公会长额外视角 — 公会级汇总 + 专属（12~25 项）</h2><p class="sd">只有公会长和管理员能看到完整数据</p></div>
+
+  <!-- #12 -->
+  <div class="card" id="i12"><h3>12. 公会钻石流水/余额<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>全员的第 1 项加起来 / 全员的第 2 项加起来。</p>
+  </div>
+
+  <!-- #13 -->
+  <div class="card" id="i13"><h3>13. 公会主播薪资/TG<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <div class="formula">
+      <strong>公会主播薪资</strong> = 全员 SUM(<code>actual_salary</code>)（已包含 TG 和发放比例）<br>
+      <strong>公会主播 TG</strong> = 全员 SUM(<code>host_tg_reward × salary_ratio</code>)（仅展示用，<strong>不在第 15 项再加一次</strong>）
+    </div>
+  </div>
+
+  <!-- #14 -->
+  <div class="card" id="i14"><h3>14. 公会长佣金<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>全员的第 10 项加起来 = <code>SUM(agency_owner_salary + agency_owner_tg_reward)</code></p>
+  </div>
+
+  <!-- #15 -->
+  <div class="card" id="i15"><h3>15. 公会总工资<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>= 全员 SUM(beansSalary + diamondsSalary + agencyCommission)。<br>
+    <strong>代码路径：</strong><code>OwnerSalaryAggregationTemplate.calcTotalSalary</code> — 每个人的佣金逐人累加，等效「全员主播薪资 + 公会长佣金」。</p>
+  </div>
+
+  <!-- #16 -->
+  <div class="card" id="i16"><h3>16. 公会已预支<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>全员的第 8 项（已预支）加起来。</p>
+  </div>
+
+  <!-- #17 CHANGED -->
+  <div class="card changed" id="i17"><h3>17. 公会工资余额<span class="badge b-or">公会长</span><span class="badge b-rd">CHANGED</span></h3>
+    <p><strong>一句话：</strong>公会总工资扣掉已预支后还剩多少。</p>
+    <div class="diff">
+      <span class="lb">master：</span><span class="diff-old">总工资 − 已预支 − 已借支（可能出现负数）</span><br>
+      <span class="lb">refact：</span><span class="diff-new">总工资 − 已预支（不再减借支，最低 0）</span>
+    </div>
+    <div class="al al-info"><span class="al-i">🔍</span><div><strong>代码路径：</strong><code>AgencySalaryDataCenterServiceImpl:45</code> — <code>agentSalaryBalance = dto.totalSalary.subtract(advanceBorrow.advanceUsd)</code><br>
+    VO 注释写的"总工资 - 借支 - 预支"是过时的，实际代码<strong>只减预支，不减借支</strong>。</div></div>
+  </div>
+
+  <!-- #18 CHANGED -->
+  <div class="card changed" id="i18"><h3>18. 公会已借支<span class="badge b-or">公会长</span><span class="badge b-rd">CHANGED</span></h3>
+    <p><strong>一句话：</strong>本期内、<strong>最后一次结算之后</strong>新借的<strong>净额</strong>。<br>
+    <strong>净额 = type=1（借支）- type=3 且 settlement_id IS NULL（主动还款）</strong>。结算自动还款不参与。净额为负时服务层钳 0。</p>
+    <div class="diff">
+      <span class="lb">旧口径：</span><span class="diff-old">app_user_agency.borrowed_amount（累计未还，结算后不清零）</span><br>
+      <span class="lb">新口径：</span><span class="diff-new">最后一次结算之后的借支净额（结算后清零，未还部分转历史欠款）</span>
+    </div>
+    <details>
+      <summary>📄 完整 SQL（代码 ContentAgencyOwnerSurplusDao.xml: sumPeriodBorrowAfterLastSettlement）</summary>
+      <div class="dc">
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">SQL — 三层 COALESCE 回退</span></div>
+    <pre><code><span class="cm">-- 截止时间：V2 结算时间 → 盈余归档时间 → '1970-01-01'</span>
+<span class="kw">SELECT</span> <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(<span class="kw">CASE</span>
+    <span class="kw">WHEN</span> l.type = 1 <span class="kw">THEN</span> l.salary_amount
+    <span class="kw">WHEN</span> l.type = 3 <span class="kw">AND</span> l.settlement_id <span class="kw">IS NULL THEN</span> -l.salary_amount
+    <span class="kw">ELSE</span> 0 <span class="kw">END</span>), 0) <span class="kw">AS</span> <span class="ph">本期借支净额</span>
+<span class="kw">FROM</span> admin_content_agency_borrow_salary_log l
+<span class="kw">WHERE</span> l.agency_id = <span class="ph">?aid</span>
+  <span class="kw">AND</span> l.to_user_id = <span class="ph">?owner_uid</span>
+  <span class="kw">AND</span> l.type <span class="kw">IN</span> (1, 3)
+  <span class="kw">AND</span> l.create_time >= <span class="ph">?start</span>
+  <span class="kw">AND</span> l.create_time &lt; <span class="fn">DATE_ADD</span>(<span class="ph">?end</span>, <span class="kw">INTERVAL</span> 1 <span class="kw">DAY</span>)
+  <span class="kw">AND</span> l.create_time > <span class="fn">COALESCE</span>(
+      (<span class="kw">SELECT</span> <span class="fn">MAX</span>(s.settlement_time)
+       <span class="kw">FROM</span> app_payer_host_salary_detail_v2 s
+       <span class="kw">WHERE</span> s.user_id = <span class="ph">?owner_uid</span> <span class="kw">AND</span> s.agency_id = <span class="ph">?aid</span>
+         <span class="kw">AND</span> s.status = 2
+         <span class="kw">AND</span> s.settlement_time >= <span class="ph">?start</span>
+         <span class="kw">AND</span> s.settlement_time &lt; <span class="fn">DATE_ADD</span>(<span class="ph">?end</span>, <span class="kw">INTERVAL</span> 1 <span class="kw">DAY</span>)),
+      (<span class="kw">SELECT</span> <span class="fn">MAX</span>(os.create_time)
+       <span class="kw">FROM</span> app_payer_agency_owner_surplus os
+       <span class="kw">WHERE</span> os.agency_id = <span class="ph">?aid</span> <span class="kw">AND</span> os.status = 1),
+      '1970-01-01');
+<span class="cm">-- 服务层 coerceAtLeast(0)</span></code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- #19 CHANGED -->
+  <div class="card changed" id="i19"><h3>19. 公会可借支<span class="badge b-or">公会长</span><span class="badge b-rd">CHANGED</span></h3>
+    <p><strong>一句话：</strong>直接读 <code>app_user_agency.borrowable_amount</code>（美元），不做任何动态扣减。字段是滚动余额：借支审批通过时已原子扣减、结算还款时加回。</p>
+    <div class="diff">
+      <span class="lb">06-09 版：</span><span class="diff-old">字段 − 本期借支 − 历史欠款（双重扣减，借 100 少 200）</span><br>
+      <span class="lb">06-12 版：</span><span class="diff-new">直接读字段，不再动态扣减</span>
+    </div>
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">SQL + 恒等式验证</span></div>
+    <pre><code><span class="kw">SELECT</span> borrowable_amount <span class="kw">AS</span> <span class="ph">可借支美元</span>,
+       borrowed_amount <span class="kw">AS</span> <span class="ph">未还借支美元</span>,
+       borrowable_amount + borrowed_amount <span class="kw">AS</span> <span class="ph">总授信额度</span>
+<span class="kw">FROM</span> app_user_agency <span class="kw">WHERE</span> agency_id = <span class="ph">?aid</span>;
+<span class="cm">-- 恒等式：borrowable + borrowed ≡ 总额度</span></code></pre></div>
+  </div>
+
+  <!-- #20 -->
+  <div class="card" id="i20"><h3>20. 公会长总工资<span class="badge b-or">公会长</span><span class="badge b-gy">master 不变</span></h3>
+    <p>= 管理佣金（第 14 项）+ 自己作为主播的工资（beansSalary + diamondsSalary）。<br>
+    <strong>代码：</strong><code>OwnerSalaryAggregationTemplate.buildPersonalCard:84</code> — <code>totalSalary = owner.beansSalary + owner.diamondsSalary + commission</code></p>
+  </div>
+
+  <!-- #21 CHANGED -->
+  <div class="card changed" id="i21"><h3>21. 公会长工资余额<span class="badge b-or">公会长</span><span class="badge b-rd">CHANGED</span></h3>
+    <p>与第 17 项共用 <code>agentSalaryBalance</code> 字段，代码路径完全相同。</p>
+    <div class="diff">
+      <span class="lb">master：</span><span class="diff-old">总工资 − 预支 − 借支</span><br>
+      <span class="lb">refact：</span><span class="diff-new">总工资 − 预支（<code>dto.totalSalary.subtract(advanceBorrow.advanceUsd)</code>）</span>
+    </div>
+  </div>
+
+  <!-- #22~25 NEW -->
+  <div class="card new" id="i22"><h3>22. 本期薪资<span class="badge b-or">公会长</span><span class="badge b-rs">NEW</span></h3>
+    <p><strong>一句话：</strong>公会长本期未结算的实时收入 = 公会长总工资 − 本期预支。结算后自然清零。</p>
+    <div class="formula">
+      <strong>当前周期代码（<code>AgencySalaryDataCenterServiceImpl:57-58</code>）：</strong><br>
+      <code>realtimePeriodSalary = myPersonalCard.totalSalary - advanceBorrow.advanceUsd</code><br>
+      → 传入后做 <code>coerceAtLeast(0)</code>：<strong>预支 > 工资时按 0 展示，不会出现负数</strong><br><br>
+      <strong>历史周期：</strong>从 <code>getSurplusDetailList</code> 分页查归档表，匹配 cycleStart + cycleEnd 后读 <code>periodSalary</code>
+    </div>
+  </div>
+
+  <div class="card new" id="i23"><h3>23. 本期借支<span class="badge b-or">公会长</span><span class="badge b-rs">NEW</span></h3>
+    <p>与第 18 项<strong>完全同口径同值</strong>（PRD 要求两处统一）：本期内最后一次结算之后的借支净额，结算后清零。查询 SQL 见第 18 项。</p>
+  </div>
+
+  <div class="card new" id="i24"><h3>24. 本期实际工资<span class="badge b-or">公会长</span><span class="badge b-rs">NEW</span></h3>
+    <p>= 本期薪资（#22）− 本期借支（#23）− 历史欠款（#25）。借多了或背着旧债时<strong>会显示负数</strong>。<br>
+    <strong>代码：</strong><code>calculateOwnerSurplusForDisplay:149</code> — <code>periodActualSalary = periodSalary - periodBorrow - historicalDebt</code></p>
+  </div>
+
+  <div class="card new" id="i25"><h3>25. 历史欠款<span class="badge b-or">公会长</span><span class="badge b-rs">NEW</span></h3>
+    <p><strong>一句话：</strong>公会长到目前为止还欠平台多少钱。</p>
+    <div class="formula">
+      取该公会<strong>最新一条</strong>盈余归档记录（<code>findLatest</code>，不限周期）：<br>
+      • 实际工资 < 0 → 历史欠款 = |实际工资|<br>
+      • 实际工资 ≥ 0 → 历史欠款 = 0
+    </div>
+    <div class="al al-warn"><span class="al-i">⚠️</span><div><strong>两套口径：</strong><br>
+      • <strong>页面展示</strong>（<code>calculateOwnerSurplusForDisplay</code>）→ <code>findLatest</code>：最新归档，不限周期，含本期期中结算归档<br>
+      • <strong>结算归档</strong>（<code>calculateOwnerSurplus</code>）→ <code>findLatestBefore</code>：本周期之前的最新归档，避免同周期重复扣</div></div>
+    <details>
+      <summary>📄 两套口径 SQL</summary>
+      <div class="dc">
+    <div class="cb"><div class="ch"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span><span class="cl">SQL</span></div>
+    <pre><code><span class="cm">-- 页面展示口径：findLatest（不限周期）</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> app_payer_agency_owner_surplus
+<span class="kw">WHERE</span> agency_id = <span class="ph">?aid</span> <span class="kw">AND</span> status = 1
+<span class="kw">ORDER BY</span> cycle_end <span class="kw">DESC</span>, id <span class="kw">DESC LIMIT</span> 1;
+<span class="cm">-- 历史欠款 = period_actual_salary &lt; 0 ? ABS(period_actual_salary) : 0</span>
+
+<span class="cm">-- 结算归档口径：findLatestBefore（本周期之前）</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> app_payer_agency_owner_surplus
+<span class="kw">WHERE</span> agency_id = <span class="ph">?aid</span> <span class="kw">AND</span> cycle_start &lt; <span class="ph">?cycleStart</span> <span class="kw">AND</span> status = 1
+<span class="kw">ORDER BY</span> cycle_end <span class="kw">DESC</span>, id <span class="kw">DESC LIMIT</span> 1;</code></pre></div>
+      </div>
+    </details>
+  </div>
+</div>
+</div>
+
+<!-- ======== 5: Units ======== -->
+<div class="sec" id="unit">
+<div class="ct">
+  <div class="sh"><div class="sn sn-g">!</div><h2>容易踩的坑 — 单位不统一</h2><p class="sd">有的存美元、有的存分，差 100 倍</p></div>
+  <div class="al al-err"><span class="al-i">🚨</span><div>数据库里的金额字段，<strong>有的存美元、有的存分</strong>，不小心就会差 100 倍！对不上时先检查单位。</div></div>
+  <table class="dt"><thead><tr><th>字段名</th><th>所在表</th><th>存储单位</th><th>页面单位</th><th>需要换算</th></tr></thead><tbody>
+    <tr><td>host_salary / host_tg_reward / actual_salary</td><td>快照表 / 结算记录表</td><td>美元</td><td>美元</td><td>不需要</td></tr>
+    <tr><td>advanced_amount</td><td>结算记录表</td><td style="color:var(--d);font-weight:700">分！</td><td>美元</td><td style="color:var(--d);font-weight:700">÷ 100</td></tr>
+    <tr><td>borrowed_amount</td><td>结算记录表（detail_v2）</td><td style="color:var(--d);font-weight:700">分！</td><td>美元</td><td style="color:var(--d);font-weight:700">÷ 100</td></tr>
+    <tr><td>borrowed_amount / borrowable_amount</td><td>公会表（app_user_agency）</td><td>美元</td><td>美元</td><td>不需要（<strong>同名字段两张表单位不同！</strong>）</td></tr>
+    <tr><td>salary_amount</td><td>借支预支日志表</td><td>美元</td><td>美元</td><td>不需要</td></tr>
+    <tr><td>advance_salary_total_amount / withdrawal_balance</td><td>账户表</td><td>美元</td><td>美元</td><td>不需要</td></tr>
+    <tr><td>duration</td><td>时长汇总表</td><td style="color:var(--d);font-weight:700">秒！</td><td>小时</td><td style="color:var(--d);font-weight:700">÷ 3600</td></tr>
+  </tbody></table>
+</div>
+</div>
+
+<!-- ======== 6: FAQ ======== -->
+<div class="sec" id="faq" style="background:#fff">
+<div class="ct">
+  <div class="sh"><div class="sn sn-g">?</div><h2>常见疑问</h2><p class="sd">排查三步走 · 分支判断 · 借支欠款流转</p></div>
+
+  <details open>
+    <summary>Q1: 页面值和数据库对不上？</summary>
+    <div class="dc"><p>三步走：① 当前周期工资是实时算的 — 查余额 + 配置表对照；历史周期查结算记录表 ② 检查单位（分 vs 美元）③ 确认时间范围和周期对得上。</p></div>
+  </details>
+  <details>
+    <summary>Q2: Bug 是 master 还是 refact 引入的？</summary>
+    <div class="dc"><p><span class="badge b-gy">master 不变</span> 有问题 → 线上也有。<span class="badge b-rd">CHANGED</span> / <span class="badge b-rs">NEW</span> 有问题 → refact 引入。</p></div>
+  </details>
+  <details>
+    <summary>Q3: refact 到底改了什么？</summary>
+    <div class="dc"><p><strong>工资余额不再减去借支</strong>（<code>totalSalary - advanceUsd</code>）。新增 4 个公会长专属指标。<br>
+    <strong>06-12 修了三处：</strong>① 可借支直接读字段（修复双扣 Bug）；② 借支改为最后一次结算后的净额（type=1 - type=3 无 settlement_id），三层 COALESCE 回退；③ 历史欠款用 <code>findLatest</code>（不限周期）。<br>
+    <strong>06-15 基于代码核对补充：</strong>第 22 项 coerceAtLeast(0) 保护。</p></div>
+  </details>
+  <details>
+    <summary>Q4: Current Diamond target 为什么在单表里找不到？</summary>
+    <div class="dc"><p>它是 3 张表的数据加起来的（钻石余额 + 已结算钻石 + 兑换花掉的钻石），不直接存储。</p></div>
+  </details>
+  <details>
+    <summary>Q5: 可提现金额为什么不随周期变化？</summary>
+    <div class="dc"><p>直接读账户余额，代表「以前结算打过来但还没提走的钱」，跟查询周期无关。</p></div>
+  </details>
+  <details>
+    <summary>Q6: 主播和公会长看到的数字为什么不一样？</summary>
+    <div class="dc"><p>主播只查自己 → "公会"字段 = 自己的值。公会长查全员 → 真正的全公会合计。</p></div>
+  </details>
+  <details>
+    <summary>Q7: App 端的工资会不会有延迟？</summary>
+    <div class="dc"><p>App 端每次打开页面都是实时计算的（读实时钻石余额 → 套公式），没有延迟。Admin 后台用快照表（每 10 分钟刷新），机制不同。</p></div>
+  </details>
+  <details>
+    <summary>Q8: 借支了 100，可借支为什么只少 100 不少 200？</summary>
+    <div class="dc"><p><code>borrowable_amount</code> 是滚动余额：借支审批通过那一刻 DAO 已原子扣了 100，页面直接读字段就是正确剩余额度。任何在字段基础上再减「本期借支/历史欠款」的算法都是双重扣减。</p></div>
+  </details>
+  <details>
+    <summary>Q9: 结算后「本期借支」清零了，欠的钱去哪了？</summary>
+    <div class="dc"><p>两本账同时记：① <strong>实际占额</strong>留在 <code>borrowed_amount</code>（额度不恢复）；② <strong>展示</strong>转到第 25 项「历史欠款」（取最新归档的负实际工资）。两边金额一致，还清后同时归零。</p></div>
+  </details>
+</div>
+</div>
+
+<!-- ======== Footer ======== -->
+<div class="ft">
+  App 公会结算 Data Center 指标核对手册 · 基于 <code style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#ccc">refact/guild_settle</code> 分支代码验证 · 2026-06-15
+</div>
+
+<button class="st" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const st=document.getElementById('scrollTop');
+window.addEventListener('scroll',()=>{st.style.display=window.scrollY>400?'flex':'none'},{passive:true});
+const links=document.querySelectorAll('.ti a[href^="#"]');
+links.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}));
+</script>
+</body>
+</html>
